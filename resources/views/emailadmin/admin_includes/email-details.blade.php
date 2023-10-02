@@ -168,7 +168,7 @@
                         <select multiple name="listSelect[]" id="listSelect" class="form-control"
                                 {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
 
-                            @foreach(Proto\Models\EmailList::all() as $list)
+                            @foreach(App\Models\EmailList::all() as $list)
 
                                 <option value="{{ $list->id }}" @selected($email?->hasRecipientList($list))>
                                     {{ $list->name }}

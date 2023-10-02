@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Address;
+use App\Models\Address;
 
 /**
  * @extends Factory<Address>

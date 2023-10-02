@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use AbcAeffchen\SepaUtilities\SepaUtilities;
 use AbcAeffchen\Sephpa\SephpaDirectDebit;
@@ -14,14 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use Mail;
-use Proto\Mail\OmnomcomFailedWithdrawalNotification;
-use Proto\Mail\OmnomcomWithdrawalNotification;
-use Proto\Models\Account;
-use Proto\Models\FailedWithdrawal;
-use Proto\Models\OrderLine;
-use Proto\Models\Product;
-use Proto\Models\User;
-use Proto\Models\Withdrawal;
+use App\Mail\OmnomcomFailedWithdrawalNotification;
+use App\Mail\OmnomcomWithdrawalNotification;
+use App\Models\Account;
+use App\Models\FailedWithdrawal;
+use App\Models\OrderLine;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\Withdrawal;
 use Redirect;
 use Response;
 

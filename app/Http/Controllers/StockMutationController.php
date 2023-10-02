@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Proto\Models\Product;
-use Proto\Models\StockMutation;
+use App\Models\Product;
+use App\Models\StockMutation;
 
 class StockMutationController extends Controller
 {

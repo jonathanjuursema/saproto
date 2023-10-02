@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -41,13 +41,13 @@ class GoodIdea extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User');
+        return $this->belongsTo('App\Models\User');
     }
 
     /** @return HasMany */
     public function votes()
     {
-        return $this->hasMany('Proto\Models\GoodIdeaVote');
+        return $this->hasMany('App\Models\GoodIdeaVote');
     }
 
     /** @return int */

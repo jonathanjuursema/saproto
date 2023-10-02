@@ -1,19 +1,19 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Carbon;
 use Illuminate\Console\Command;
-use Proto\Models\Achievement;
-use Proto\Models\AchievementOwnership;
-use Proto\Models\Activity;
-use Proto\Models\ActivityParticipation;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\Event;
-use Proto\Models\OrderLine;
-use Proto\Models\Product;
-use Proto\Models\ProductCategory;
-use Proto\Models\User;
+use App\Models\Achievement;
+use App\Models\AchievementOwnership;
+use App\Models\Activity;
+use App\Models\ActivityParticipation;
+use App\Models\CommitteeMembership;
+use App\Models\Event;
+use App\Models\OrderLine;
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\User;
 
 class AchievementsCron extends Command
 {

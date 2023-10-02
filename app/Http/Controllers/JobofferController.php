@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\Company;
-use Proto\Models\Joboffer;
+use App\Models\Company;
+use App\Models\Joboffer;
 use Redirect;
 use Session;
 

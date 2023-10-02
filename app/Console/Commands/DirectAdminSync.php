@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Proto\Models\Alias;
-use Proto\Models\Committee;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\Member;
+use App\Models\Alias;
+use App\Models\Committee;
+use App\Models\CommitteeMembership;
+use App\Models\Member;
 use Solitweb\DirectAdmin\DirectAdmin;
 
 class DirectAdminSync extends Command

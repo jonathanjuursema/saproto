@@ -58,7 +58,7 @@
                 <li class="list-group-item">
                     @if($transaction->mollie_id != 'temp')
                         @php
-                            $status = Proto\Models\MollieTransaction::translateStatus($transaction->translatedStatus())
+                            $status = App\Models\MollieTransaction::translateStatus($transaction->translatedStatus())
                         @endphp
                         <a href="{{ route('omnomcom::mollie::status', ['id' => $transaction->id]) }}">
                             {{ date('d-m-Y H:i', strtotime($transaction->created_at)) }}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,18 +40,18 @@ class FailedWithdrawal extends Model
     /** @return BelongsTo */
     public function correctionOrderline()
     {
-        return $this->belongsTo('Proto\Models\OrderLine', 'correction_orderline_id');
+        return $this->belongsTo('App\Models\OrderLine', 'correction_orderline_id');
     }
 
     /** @return HasOne */
     public function withdrawal()
     {
-        return $this->hasOne('Proto\Models\Withdrawal', 'withdrawal_id');
+        return $this->hasOne('App\Models\Withdrawal', 'withdrawal_id');
     }
 
     /** @return HasOne */
     public function user()
     {
-        return $this->hasOne('Proto\Models\User', 'user_id');
+        return $this->hasOne('App\Models\User', 'user_id');
     }
 }

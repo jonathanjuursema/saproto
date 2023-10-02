@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use DateInterval;
 use Eloquent;
@@ -51,7 +51,7 @@ class Video extends Model
     /** @return BelongsTo */
     public function event()
     {
-        return $this->belongsTo('Proto\Models\Event', 'event_id');
+        return $this->belongsTo('App\Models\Event', 'event_id');
     }
 
     /** @return string */

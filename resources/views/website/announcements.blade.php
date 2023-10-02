@@ -1,4 +1,4 @@
-@foreach(Proto\Models\Announcement::all() as $announcement)
+@foreach(App\Models\Announcement::all() as $announcement)
 
     @if($announcement->showForUser(Auth::user()))
 

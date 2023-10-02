@@ -22,7 +22,7 @@
                         height: 150px !important;
                     @endif
             ">
-                @php /** @var Proto\Models\HeaderImage $header */ @endphp
+                @php /** @var App\Models\HeaderImage $header */ @endphp
                 @if($header?->user)
                     <small class="ellipsis text-end pe-3 pt-2">
                         @if (Auth::user()?->is_member && $header->user->member)

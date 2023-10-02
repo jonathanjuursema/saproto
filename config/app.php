@@ -148,11 +148,11 @@ return [
         /*
          * Application Service Providers...
          */
-        Proto\Providers\AppServiceProvider::class,
-        Proto\Providers\AuthServiceProvider::class,
-        Proto\Providers\EventServiceProvider::class,
-        Proto\Providers\RouteServiceProvider::class,
-        Proto\Providers\BroadcastServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
 
         /*
          * External Service Providers

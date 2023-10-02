@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,13 +10,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Response as SupportResponse;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\View\View;
-use Proto\Models\Achievement;
-use Proto\Models\Committee;
-use Proto\Models\Event;
-use Proto\Models\Page;
-use Proto\Models\PhotoAlbum;
-use Proto\Models\Product;
-use Proto\Models\User;
+use App\Models\Achievement;
+use App\Models\Committee;
+use App\Models\Event;
+use App\Models\Page;
+use App\Models\PhotoAlbum;
+use App\Models\Product;
+use App\Models\User;
 use Session;
 
 class SearchController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use DB;
@@ -40,7 +40,7 @@ class Account extends Model
     /** @return hasMany */
     public function products()
     {
-        return $this->hasMany('Proto\Models\Product');
+        return $this->hasMany('App\Models\Product');
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Handlers\Events;
+namespace App\Handlers\Events;
 
 use Illuminate\Auth\Events\Login;
-use Proto\Models\Committee;
-use Proto\Models\User;
+use App\Models\Committee;
+use App\Models\User;
 
 class AuthLoginEventHandler
 {

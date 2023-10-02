@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -9,12 +9,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Mail;
-use Proto\Mail\ProductBulkUpdateNotification;
-use Proto\Models\Account;
-use Proto\Models\Product;
-use Proto\Models\ProductCategory;
-use Proto\Models\StockMutation;
-use Proto\Models\StorageEntry;
+use App\Mail\ProductBulkUpdateNotification;
+use App\Models\Account;
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\StockMutation;
+use App\Models\StorageEntry;
 use Redirect;
 use Session;
 use Symfony\Component\HttpFoundation\StreamedResponse;

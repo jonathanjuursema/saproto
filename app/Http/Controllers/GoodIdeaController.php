@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Carbon;
 use Exception;
@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Proto\Models\GoodIdea;
-use Proto\Models\GoodIdeaVote;
+use App\Models\GoodIdea;
+use App\Models\GoodIdeaVote;
 use Session;
 
 class GoodIdeaController extends Controller

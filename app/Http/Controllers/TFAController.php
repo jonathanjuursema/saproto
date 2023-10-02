@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use PragmaRX\Google2FA\Google2FA;
-use Proto\Models\User;
+use App\Models\User;
 use Redirect;
 use Session;
 

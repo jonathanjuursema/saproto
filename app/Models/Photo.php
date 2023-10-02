@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -48,19 +48,19 @@ class Photo extends Model
     /** @return BelongsTo */
     public function album()
     {
-        return $this->belongsTo('Proto\Models\PhotoAlbum', 'album_id');
+        return $this->belongsTo('App\Models\PhotoAlbum', 'album_id');
     }
 
     /** @return HasMany */
     public function likes()
     {
-        return $this->hasMany('Proto\Models\PhotoLikes');
+        return $this->hasMany('App\Models\PhotoLikes');
     }
 
     /** @return hasOne */
     public function file()
     {
-        return $this->hasOne('Proto\Models\StorageEntry', 'id', 'file_id');
+        return $this->hasOne('App\Models\StorageEntry', 'id', 'file_id');
     }
 
     /**

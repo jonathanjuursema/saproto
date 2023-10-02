@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
- * Proto\Models\Page.
+ * App\Models\Page.
  *
  * @property int $id
  * @property string $title
@@ -62,13 +62,13 @@ class Page extends Model
     /** @return BelongsTo */
     public function featuredImage()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'featured_image_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'featured_image_id');
     }
 
     /** @return BelongsToMany */
     public function files()
     {
-        return $this->belongsToMany('Proto\Models\StorageEntry', 'pages_files', 'page_id', 'file_id');
+        return $this->belongsToMany('App\Models\StorageEntry', 'pages_files', 'page_id', 'file_id');
     }
 
     /** @return string */

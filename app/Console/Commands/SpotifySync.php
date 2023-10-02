@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use DB;
 use Illuminate\Console\Command;
-use Proto\Http\Controllers\SpotifyController;
+use App\Http\Controllers\SpotifyController;
 
 class SpotifySync extends Command
 {

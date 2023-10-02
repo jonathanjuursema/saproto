@@ -16,7 +16,7 @@ parameters:
         # Issue with the Auth facade (see https://github.com/nunomaduro/larastan/issues/506)
         - '#Illuminate\\Contracts\\Auth\\Authenticatable#'
         # Issue with pivot not seen as a property (see https://github.com/nunomaduro/larastan/issues/515)
-        - '#Access to an undefined property Proto\\Models\\(.*)::\$pivot#'
+        - '#Access to an undefined property App\\Models\\(.*)::\$pivot#'
         # Issue with the analysis of dynamic object type (see https://github.com/phpstan/phpstan/issues/928)
         - '#Access to an undefined property object::(.*)#'
         - '#Cannot access property (.*) on array\|object.#'

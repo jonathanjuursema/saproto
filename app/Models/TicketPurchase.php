@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -49,19 +49,19 @@ class TicketPurchase extends Model
     /** @return BelongsTo */
     public function ticket()
     {
-        return $this->belongsTo('Proto\Models\Ticket', 'ticket_id');
+        return $this->belongsTo('App\Models\Ticket', 'ticket_id');
     }
 
     /** @return BelongsTo */
     public function orderline()
     {
-        return $this->belongsTo('Proto\Models\OrderLine', 'orderline_id');
+        return $this->belongsTo('App\Models\OrderLine', 'orderline_id');
     }
 
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User', 'user_id')->withTrashed();
+        return $this->belongsTo('App\Models\User', 'user_id')->withTrashed();
     }
 
     /** @return bool*/

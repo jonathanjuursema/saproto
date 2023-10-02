@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Carbon;
 use Exception;
 use Illuminate\Console\Command;
-use Proto\Models\Member;
+use App\Models\Member;
 
 class MemberCleanup extends Command
 {

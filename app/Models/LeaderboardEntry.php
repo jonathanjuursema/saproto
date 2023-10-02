@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Proto\Models\LeaderboardEntry.
+ * App\Models\LeaderboardEntry.
  *
  * @property int $id
  * @property int $leaderboard_id
@@ -41,12 +41,12 @@ class LeaderboardEntry extends Model
     /** @return BelongsTo */
     public function leaderboard()
     {
-        return $this->belongsTo('Proto\Models\Leaderboard', 'leaderboard_id');
+        return $this->belongsTo('App\Models\Leaderboard', 'leaderboard_id');
     }
 
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User', 'user_id');
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

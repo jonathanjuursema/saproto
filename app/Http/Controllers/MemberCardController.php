@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use PDF;
-use Proto\Models\User;
+use App\Models\User;
 
 class MemberCardController extends Controller
 {

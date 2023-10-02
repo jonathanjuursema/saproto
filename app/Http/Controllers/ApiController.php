@@ -1,23 +1,23 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Proto\Models\AchievementOwnership;
-use Proto\Models\ActivityParticipation;
-use Proto\Models\EmailListSubscription;
-use Proto\Models\OrderLine;
-use Proto\Models\Photo;
-use Proto\Models\PhotoLikes;
-use Proto\Models\PlayedVideo;
-use Proto\Models\Quote;
-use Proto\Models\QuoteLike;
-use Proto\Models\RfidCard;
-use Proto\Models\Token;
-use Proto\Models\User;
+use App\Models\AchievementOwnership;
+use App\Models\ActivityParticipation;
+use App\Models\EmailListSubscription;
+use App\Models\OrderLine;
+use App\Models\Photo;
+use App\Models\PhotoLikes;
+use App\Models\PlayedVideo;
+use App\Models\Quote;
+use App\Models\QuoteLike;
+use App\Models\RfidCard;
+use App\Models\Token;
+use App\Models\User;
 use stdClass;
 
 class ApiController extends Controller

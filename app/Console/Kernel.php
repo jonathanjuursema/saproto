@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Console;
+namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Proto\Models\WallstreetDrink;
+use App\Models\WallstreetDrink;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,7 +16,6 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\SyncRoles::class,
         Commands\TestEmail::class,
-        Commands\MailAliasSync::class,
         Commands\EmailCron::class,
         Commands\NewsletterCron::class,
         Commands\BirthdayCron::class,

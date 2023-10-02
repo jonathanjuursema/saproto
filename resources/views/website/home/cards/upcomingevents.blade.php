@@ -7,7 +7,7 @@
 
         @php
             /** @var int $n */
-            $events = Proto\Models\Event::query()
+            $events = App\Models\Event::query()
                 ->where('is_featured', false)
                 ->where('end', '>=', date('U'))
                 ->orderBy('start')->with('activity')

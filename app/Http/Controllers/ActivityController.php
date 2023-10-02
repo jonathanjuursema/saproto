@@ -1,17 +1,17 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\Activity;
-use Proto\Models\ActivityParticipation;
-use Proto\Models\Committee;
-use Proto\Models\Event;
-use Proto\Models\HelpingCommittee;
+use App\Models\Activity;
+use App\Models\ActivityParticipation;
+use App\Models\Committee;
+use App\Models\Event;
+use App\Models\HelpingCommittee;
 use Redirect;
 use Session;
 

@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Proto\Models\User;
+use App\Models\User;
 
 /**
  * @extends Factory<User>

@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\EmailList;
-use Proto\Models\Event;
-use Proto\Models\Newsletter;
+use App\Models\EmailList;
+use App\Models\Event;
+use App\Models\Newsletter;
 use Redirect;
 use Session;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -8,8 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use PostcodeApi;
-use Proto\Models\Address;
-use Proto\Models\User;
+use App\Models\Address;
+use App\Models\User;
 use Redirect;
 use Session;
 

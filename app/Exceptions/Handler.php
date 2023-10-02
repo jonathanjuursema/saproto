@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Exceptions;
+namespace App\Exceptions;
 
 use App;
 use Illuminate\Auth\Access\AuthorizationException;

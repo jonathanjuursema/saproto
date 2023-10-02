@@ -17,6 +17,6 @@
     }
 </script>
 
-@vite('resources/assets/js/application.js')
+@vite('resources/js/application.js')
 
 <script src="https://kit.fontawesome.com/63e98a7060.js" crossorigin="anonymous"></script>

@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Proto\Models\StorageEntry;
+use App\Models\StorageEntry;
 
 class FileController extends Controller
 {

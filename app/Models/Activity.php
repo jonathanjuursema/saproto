@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Proto\Http\Controllers\ParticipationController;
+use App\Http\Controllers\ParticipationController;
 
 /**
  * Activity Model.
@@ -75,19 +75,19 @@ class Activity extends Validatable
     /** @return BelongsTo */
     public function event()
     {
-        return $this->belongsTo('Proto\Models\Event');
+        return $this->belongsTo('App\Models\Event');
     }
 
     /** @return BelongsTo */
     public function closedAccount()
     {
-        return $this->belongsTo('Proto\Models\Account', 'closed_account');
+        return $this->belongsTo('App\Models\Account', 'closed_account');
     }
 
     /** @return BelongsToMany */
     public function users()
     {
-        return $this->belongsToMany('Proto\Models\User', 'activities_users')
+        return $this->belongsToMany('App\Models\User', 'activities_users')
             ->withPivot('id', 'committees_activities_id', 'is_present')
             ->whereNull('activities_users.deleted_at')
             ->whereNull('committees_activities_id')
@@ -98,7 +98,7 @@ class Activity extends Validatable
     /** @return BelongsToMany */
     public function presentUsers()
     {
-        return $this->belongsToMany('Proto\Models\User', 'activities_users')
+        return $this->belongsToMany('App\Models\User', 'activities_users')
             ->withPivot('id', 'committees_activities_id', 'is_present')
             ->whereNull('activities_users.deleted_at')
             ->whereNull('committees_activities_id')
@@ -110,7 +110,7 @@ class Activity extends Validatable
     /** @return BelongsToMany */
     public function allUsers()
     {
-        return $this->belongsToMany('Proto\Models\User', 'activities_users')
+        return $this->belongsToMany('App\Models\User', 'activities_users')
             ->withPivot('id', 'committees_activities_id', 'is_present')
             ->whereNull('activities_users.deleted_at')
             ->where('backup', false)
@@ -120,19 +120,19 @@ class Activity extends Validatable
     /** @return BelongsToMany */
     public function backupUsers()
     {
-        return $this->belongsToMany('Proto\Models\User', 'activities_users')->whereNull('activities_users.deleted_at')->whereNull('committees_activities_id')->where('backup', true)->withPivot('id')->withTimestamps();
+        return $this->belongsToMany('App\Models\User', 'activities_users')->whereNull('activities_users.deleted_at')->whereNull('committees_activities_id')->where('backup', true)->withPivot('id')->withTimestamps();
     }
 
     /** @return BelongsToMany */
     public function helpingCommittees()
     {
-        return $this->belongsToMany('Proto\Models\Committee', 'committees_activities')->withPivot(['amount', 'id'])->withTimestamps();
+        return $this->belongsToMany('App\Models\Committee', 'committees_activities')->withPivot(['amount', 'id'])->withTimestamps();
     }
 
     /** @return HasMany */
     public function helpingCommitteeInstances()
     {
-        return $this->hasMany('Proto\Models\HelpingCommittee', 'activity_id');
+        return $this->hasMany('App\Models\HelpingCommittee', 'activity_id');
     }
 
     /**

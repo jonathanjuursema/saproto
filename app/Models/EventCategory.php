@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Proto\Models\EventCategory.
+ * App\Models\EventCategory.
  *
  * @property int $id
  * @property string $name
@@ -37,6 +37,6 @@ class EventCategory extends Model
     /** @return HasMany */
     public function events()
     {
-        return $this->hasMany('Proto\Models\Event', 'category_id');
+        return $this->hasMany('App\Models\Event', 'category_id');
     }
 }

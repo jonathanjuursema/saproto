@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -57,13 +57,13 @@ class Newsitem extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User', 'user_id');
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 
     /** @return BelongsTo */
     public function featuredImage()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'featured_image_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'featured_image_id');
     }
 
     /** @return bool */

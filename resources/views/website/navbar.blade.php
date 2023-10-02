@@ -247,7 +247,7 @@
 
                         @endcan
 
-                        @if(\Proto\Models\Leaderboard::isAdminAny(Auth::user()))
+                        @if(\App\Models\Leaderboard::isAdminAny(Auth::user()))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route("leaderboards::admin") }}" role="button"
                                    aria-haspopup="false" aria-expanded="false">Leaderboards Admin</a>

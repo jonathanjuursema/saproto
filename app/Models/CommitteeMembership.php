@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -62,12 +62,12 @@ class CommitteeMembership extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User')->withTrashed();
+        return $this->belongsTo('App\Models\User')->withTrashed();
     }
 
     /** @return BelongsTo */
     public function committee()
     {
-        return $this->belongsTo('Proto\Models\Committee');
+        return $this->belongsTo('App\Models\Committee');
     }
 }

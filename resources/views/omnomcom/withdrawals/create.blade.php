@@ -25,9 +25,9 @@
                         <p class="card-text text-center">
 
                             There are currently
-                            <strong>{{ \Proto\Http\Controllers\WithdrawalController::openOrderlinesTotal() }}</strong>
+                            <strong>{{ \App\Http\Controllers\WithdrawalController::openOrderlinesTotal() }}</strong>
                             unpaid orderlines for a grand total of
-                            <strong>&euro;{{ number_format(\Proto\Http\Controllers\WithdrawalController::openOrderlinesSum(), 2, ',', '.') }}</strong>.
+                            <strong>&euro;{{ number_format(\App\Http\Controllers\WithdrawalController::openOrderlinesSum(), 2, ',', '.') }}</strong>.
 
                         </p>
 

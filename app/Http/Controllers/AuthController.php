@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -13,22 +13,22 @@ use Mail;
 use nickurt\PwnedPasswords\PwnedPasswords;
 use OneLogin\Saml2\AuthnRequest;
 use PragmaRX\Google2FA\Google2FA;
-use Proto\Mail\PasswordResetEmail;
-use Proto\Mail\PwnedPasswordNotification;
-use Proto\Mail\RegistrationConfirmation;
-use Proto\Mail\UsernameReminderEmail;
-use Proto\Models\AchievementOwnership;
-use Proto\Models\Address;
-use Proto\Models\Alias;
-use Proto\Models\Bank;
-use Proto\Models\EmailListSubscription;
-use Proto\Models\HashMapItem;
-use Proto\Models\Member;
-use Proto\Models\PasswordReset;
-use Proto\Models\RfidCard;
-use Proto\Models\User;
-use Proto\Models\WelcomeMessage;
-use Proto\Rules\NotUtwenteEmail;
+use App\Mail\PasswordResetEmail;
+use App\Mail\PwnedPasswordNotification;
+use App\Mail\RegistrationConfirmation;
+use App\Mail\UsernameReminderEmail;
+use App\Models\AchievementOwnership;
+use App\Models\Address;
+use App\Models\Alias;
+use App\Models\Bank;
+use App\Models\EmailListSubscription;
+use App\Models\HashMapItem;
+use App\Models\Member;
+use App\Models\PasswordReset;
+use App\Models\RfidCard;
+use App\Models\User;
+use App\Models\WelcomeMessage;
+use App\Rules\NotUtwenteEmail;
 use Redirect;
 use Session;
 

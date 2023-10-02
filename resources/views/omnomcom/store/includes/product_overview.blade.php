@@ -7,7 +7,7 @@
         <div class="category-view {{ ($category == $categories[0] ? '' : 'inactive') }}"
              data-id="{{ $category->category->id }}">
 
-            <?php /** @var $product \Proto\Models\Product */ ?>
+            <?php /** @var $product \App\Models\Product */ ?>
             @foreach($category->products as $product)
                 @if($product->isVisible())
                     <?php

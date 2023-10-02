@@ -31,10 +31,10 @@
                     <hr>
                 @endif
 
-                @if(\Proto\Models\PhotoAlbum::whereNull('event_id')->count() > 0)
+                @if(\App\Models\PhotoAlbum::whereNull('event_id')->count() > 0)
 
                     <select name="album_id" class="form-control" required>
-                        @foreach(\Proto\Models\PhotoAlbum::whereNull('event_id')->orderBy('date_taken', 'desc')->get() as $album)
+                        @foreach(\App\Models\PhotoAlbum::whereNull('event_id')->orderBy('date_taken', 'desc')->get() as $album)
                             <option value="{{ $album->id }}">{{ date('Y-m-d', $album->date_taken) }}
                                 : {{ $album->name }}</option>
                         @endforeach
@@ -52,7 +52,7 @@
 
             </div>
 
-            @if(\Proto\Models\PhotoAlbum::whereNull('event_id')->count() > 0)
+            @if(\App\Models\PhotoAlbum::whereNull('event_id')->count() > 0)
 
                 <div class="card-footer">
 

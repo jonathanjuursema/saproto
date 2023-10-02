@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Auth;
 use Carbon;
@@ -116,7 +116,7 @@ class Event extends Model
     /** @return BelongsTo */
     public function committee()
     {
-        return $this->belongsTo('Proto\Models\Committee');
+        return $this->belongsTo('App\Models\Committee');
     }
 
     /** @return bool */
@@ -153,43 +153,43 @@ class Event extends Model
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry');
+        return $this->belongsTo('App\Models\StorageEntry');
     }
 
     /** @return HasOne */
     public function activity()
     {
-        return $this->hasOne('Proto\Models\Activity');
+        return $this->hasOne('App\Models\Activity');
     }
 
     /** @return HasMany */
     public function videos()
     {
-        return $this->hasMany('Proto\Models\Video');
+        return $this->hasMany('App\Models\Video');
     }
 
     /** @return HasMany */
     public function albums()
     {
-        return $this->hasMany('Proto\Models\PhotoAlbum', 'event_id');
+        return $this->hasMany('App\Models\PhotoAlbum', 'event_id');
     }
 
     /** @return HasMany */
     public function tickets()
     {
-        return $this->hasMany('Proto\Models\Ticket', 'event_id');
+        return $this->hasMany('App\Models\Ticket', 'event_id');
     }
 
     /** @return HasMany */
     public function dinnerforms()
     {
-        return $this->hasMany('Proto\Models\Dinnerform', 'event_id');
+        return $this->hasMany('App\Models\Dinnerform', 'event_id');
     }
 
     /** @return BelongsTo */
     public function category()
     {
-        return $this->BelongsTo('Proto\Models\EventCategory');
+        return $this->BelongsTo('App\Models\EventCategory');
     }
 
     /**

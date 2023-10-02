@@ -1,0 +1,18 @@
+// Don't forget to also add an entry to the proto.themes config,
+// otherwise it will not show up in the user dashboard theme dropdown.
+
+@charset "UTF-8"; // Make sure the charset is set appropriately
+
+// Custom variables
+@import 'partials/_variables';
+
+// Theme variables and bootstrap variables overwrites
+
+//import bootstrap after setting/overwriting variables
+@import 'bootstrap';
+
+// Vendors (S)CSS
+@import 'partials/_vendors';
+
+// concatenated SCSS from views
+@import 'partials/_components';

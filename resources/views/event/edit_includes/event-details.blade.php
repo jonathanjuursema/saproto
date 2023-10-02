@@ -106,7 +106,7 @@
                         </div>
 
                         <!-- Category -->
-                        @php($categories = Proto\Models\EventCategory::all())
+                        @php($categories = App\Models\EventCategory::all())
                         @if(count($categories) > 0)
                             <div class="col-md-6 mb-3">
 

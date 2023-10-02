@@ -1,19 +1,19 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Carbon;
 use Illuminate\View\View;
-use Proto\Models\Committee;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\Company;
-use Proto\Models\Dinnerform;
-use Proto\Models\HeaderImage;
-use Proto\Models\Newsitem;
-use Proto\Models\User;
-use Proto\Models\Video;
-use Proto\Models\WelcomeMessage;
+use App\Models\Committee;
+use App\Models\CommitteeMembership;
+use App\Models\Company;
+use App\Models\Dinnerform;
+use App\Models\HeaderImage;
+use App\Models\Newsitem;
+use App\Models\User;
+use App\Models\Video;
+use App\Models\WelcomeMessage;
 
 class HomeController extends Controller
 {

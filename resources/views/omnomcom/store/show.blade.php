@@ -9,7 +9,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
 
         <link rel='shortcut icon' href='{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}'/>
-        @vite('resources/assets/sass/dark.scss')
+        @vite('resources/sass/dark.scss')
 
         <style>
             * { box-sizing: border-box; }

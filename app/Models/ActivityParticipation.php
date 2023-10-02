@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -62,18 +62,18 @@ class ActivityParticipation extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User')->withTrashed();
+        return $this->belongsTo('App\Models\User')->withTrashed();
     }
 
     /** @return BelongsTo */
     public function activity()
     {
-        return $this->belongsTo('Proto\Models\Activity');
+        return $this->belongsTo('App\Models\Activity');
     }
 
     /** @return BelongsTo */
     public function help()
     {
-        return $this->belongsTo('Proto\Models\HelpingCommittee', 'committees_activities_id');
+        return $this->belongsTo('App\Models\HelpingCommittee', 'committees_activities_id');
     }
 }

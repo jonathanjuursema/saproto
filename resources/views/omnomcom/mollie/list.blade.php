@@ -81,10 +81,10 @@
                                 </td>
 
                                 <td>
-                                    {!! Proto\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "open" ? '<i class="fas fa-spinner ml-2 text-normal"></i>' : "" !!}
-                                    {!! Proto\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "failed" ? '<i class="fas fa-times ml-2 text-danger"></i>' : "" !!}
-                                    {!! Proto\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "paid" ? '<i class="fas fa-check ml-2 text-success"></i>' : "" !!}
-                                    {!! Proto\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "unknown" ? '<i class="fas fa-question ml-2 text-normal"></i>' : "" !!}
+                                    {!! App\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "open" ? '<i class="fas fa-spinner ml-2 text-normal"></i>' : "" !!}
+                                    {!! App\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "failed" ? '<i class="fas fa-times ml-2 text-danger"></i>' : "" !!}
+                                    {!! App\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "paid" ? '<i class="fas fa-check ml-2 text-success"></i>' : "" !!}
+                                    {!! App\Models\MollieTransaction::translateStatus($transaction->translatedStatus()) == "unknown" ? '<i class="fas fa-question ml-2 text-normal"></i>' : "" !!}
                                     <span class="label label-default"> - {{ $transaction->status }}</span>
                                 </td>
 
@@ -136,7 +136,7 @@
                         @for($m = 0; $m <= 11 ; $m++)
                             <?php
                             $month = strtotime(sprintf('-%s months', $m));
-                            $total = \Proto\Http\Controllers\MollieController::getTotalForMonth(date('Y-m', $month));
+                            $total = \App\Http\Controllers\MollieController::getTotalForMonth(date('Y-m', $month));
                             ?>
                             <tr>
                                 <td>

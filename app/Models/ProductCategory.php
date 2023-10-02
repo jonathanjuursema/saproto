@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -50,7 +50,7 @@ class ProductCategory extends Model
     /** @return Collection|Product[] */
     public function products()
     {
-        $products = $this->belongsToMany('Proto\Models\Product', 'products_categories', 'category_id', 'product_id')->get();
+        $products = $this->belongsToMany('App\Models\Product', 'products_categories', 'category_id', 'product_id')->get();
 
         return $products->sortBy('name');
     }

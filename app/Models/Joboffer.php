@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -42,6 +42,6 @@ class Joboffer extends Model
     /** @return BelongsTo */
     public function company()
     {
-        return $this->belongsTo('Proto\Models\Company', 'company_id');
+        return $this->belongsTo('App\Models\Company', 'company_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Carbon;
@@ -11,12 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Mail;
-use Proto\Mail\AnonymousEmail;
-use Proto\Models\Committee;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\HelperReminder;
-use Proto\Models\StorageEntry;
-use Proto\Models\User;
+use App\Mail\AnonymousEmail;
+use App\Models\Committee;
+use App\Models\CommitteeMembership;
+use App\Models\HelperReminder;
+use App\Models\StorageEntry;
+use App\Models\User;
 use Redirect;
 use Session;
 

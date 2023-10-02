@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Achievement;
-use Proto\Models\AchievementOwnership;
+use App\Models\Achievement;
+use App\Models\AchievementOwnership;
 
 /**
  * @extends Factory<AchievementOwnership>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Proto\Models\GoodIdeaVote.
+ * App\Models\GoodIdeaVote.
  *
  * @property int $id
  * @property int $user_id
@@ -40,6 +40,6 @@ class GoodIdeaVote extends Model
     /** @return HasOne */
     public function goodIdea()
     {
-        return $this->hasOne('Proto\Models\GoodIdea');
+        return $this->hasOne('App\Models\GoodIdea');
     }
 }

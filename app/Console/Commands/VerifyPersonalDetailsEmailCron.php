@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Mail;
-use Proto\Mail\VerifyPersonalDetails;
-use Proto\Models\User;
+use App\Mail\VerifyPersonalDetails;
+use App\Models\User;
 
 class VerifyPersonalDetailsEmailCron extends Command
 {

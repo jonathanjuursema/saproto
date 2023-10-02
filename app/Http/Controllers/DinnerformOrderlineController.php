@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Proto\Models\Dinnerform;
-use Proto\Models\DinnerformOrderline;
+use App\Models\Dinnerform;
+use App\Models\DinnerformOrderline;
 use Session;
 
 class DinnerformOrderlineController extends Controller

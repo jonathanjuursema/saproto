@@ -15,11 +15,11 @@
             <em>Click on a list for more info.</em>
         </p>
 
-        @if(Proto\Models\EmailList::all()->count() > 0)
+        @if(App\Models\EmailList::all()->count() > 0)
 
             <div class="accordion" id="email__accordion">
 
-                @foreach(Proto\Models\EmailList::all() as $i => $list)
+                @foreach(App\Models\EmailList::all() as $i => $list)
 
                     <div class="card border">
                         <div class="card-header border-bottom-0 cursor-pointer">

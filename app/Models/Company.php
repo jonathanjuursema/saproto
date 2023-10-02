@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -59,12 +59,12 @@ class Company extends Model
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'image_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'image_id');
     }
 
     /** @return HasMany */
     public function joboffers()
     {
-        return $this->hasMany('Proto\Models\Joboffer', 'company_id');
+        return $this->hasMany('App\Models\Joboffer', 'company_id');
     }
 }

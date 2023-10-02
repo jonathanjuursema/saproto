@@ -38,21 +38,21 @@
                         <tr>
                             <td>All members</td>
                             <td></td>
-                            <td>{{ Proto\Models\Member::countValidMembers() }}</td>
+                            <td>{{ App\Models\Member::countValidMembers() }}</td>
                             <td></td>
                         </tr>
 
                         <tr>
                             <td>All pending members</td>
                             <td></td>
-                            <td>{{ Proto\Models\Member::countPendingMembers() }}</td>
+                            <td>{{ App\Models\Member::countPendingMembers() }}</td>
                             <td></td>
                         </tr>
 
                         <tr>
                             <td>All active members</td>
                             <td></td>
-                            <td>{{ Proto\Models\Member::countActiveMembers() }}</td>
+                            <td>{{ App\Models\Member::countActiveMembers() }}</td>
                             <td></td>
                         </tr>
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Proto\Models\PhotoLikes;
-use Proto\Models\PhotoManager;
+use App\Models\PhotoLikes;
+use App\Models\PhotoManager;
 use Redirect;
 
 class PhotoController extends Controller

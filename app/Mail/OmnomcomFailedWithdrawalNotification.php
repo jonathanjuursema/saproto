@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Mail;
+namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Proto\Models\User;
-use Proto\Models\Withdrawal;
+use App\Models\User;
+use App\Models\Withdrawal;
 
 class OmnomcomFailedWithdrawalNotification extends Mailable
 {

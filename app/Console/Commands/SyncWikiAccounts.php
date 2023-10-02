@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Proto\Models\Committee;
-use Proto\Models\User;
+use App\Models\Committee;
+use App\Models\User;
 
 class SyncWikiAccounts extends Command
 {

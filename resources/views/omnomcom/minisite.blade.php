@@ -158,7 +158,7 @@
             <input type="text" id="search_query" name="query">
 
             <div id="results">
-                @foreach(Proto\Models\Product::where('is_visible', true)
+                @foreach(App\Models\Product::where('is_visible', true)
                         ->where(function ($query) {
                             $query->where('is_visible_when_no_stock', true)
                             ->orWhere('stock','>',0);

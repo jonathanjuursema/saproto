@@ -1,4 +1,4 @@
-@php($leaderboard = Proto\Models\Leaderboard::where('featured', true)->first())
+@php($leaderboard = App\Models\Leaderboard::where('featured', true)->first())
 
 @if($leaderboard)
 

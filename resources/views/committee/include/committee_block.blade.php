@@ -1,5 +1,5 @@
 @php
-    /** @var Proto\Models\Committee $committee */
+    /** @var App\Models\Committee $committee */
     $name = isset($override_committee_name) && $override_committee_name ? $override_committee_name : $committee->name
 @endphp
 

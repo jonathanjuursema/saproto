@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,19 +48,19 @@ class Ticket extends Model
     /** @return BelongsTo */
     public function product()
     {
-        return $this->belongsTo('Proto\Models\Product');
+        return $this->belongsTo('App\Models\Product');
     }
 
     /** @return BelongsTo */
     public function event()
     {
-        return $this->belongsTo('Proto\Models\Event');
+        return $this->belongsTo('App\Models\Event');
     }
 
     /** @return HasMany */
     public function purchases()
     {
-        return $this->hasMany('Proto\Models\TicketPurchase');
+        return $this->hasMany('App\Models\TicketPurchase');
     }
 
     /** @return Collection */

@@ -15,7 +15,7 @@
             @endif
 
             @foreach($years as $y)
-                @if(Proto\Models\Event::countEventsPerYear($y) > 0)
+                @if(App\Models\Event::countEventsPerYear($y) > 0)
                     <a href="{{ route('event::archive', ['year'=>$y, 'category' => $cur_category]) }}"
                        class="btn btn-{{ Route::currentRouteName() == 'event::archive' && $y == $year ? 'primary' : 'light' }}
                         {{ $loop->index == count($years)-1 ? 'rounded-end' : '' }}">
@@ -37,7 +37,7 @@
                 </a>
             @endcan
 
-            @php($categories = \Proto\Models\EventCategory::all())
+            @php($categories = \App\Models\EventCategory::all())
             @if(count($categories) > 0)
                 <form class="form-inline ms-3" action="{{ Route::currentRouteName() == 'event::archive' ? route('event::archive', ['year' => $year]) : route('event::list')}}">
                     <div id="category-search" class="input-group">

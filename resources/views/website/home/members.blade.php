@@ -65,14 +65,14 @@
 
         @endif
 
-        @if(Proto\Models\Newsletter::showTextOnHomepage())
+        @if(App\Models\Newsletter::showTextOnHomepage())
 
             <div class="card mb-3">
                 <div class="card-header bg-dark text-white">
                     <i class="fas fa-bullhorn fa-fw me-2"></i> Weekly update
                 </div>
                 <div class="card-body overflow-hidden" style="max-height: calc(100vh - 250px)">
-                    {!! Markdown::convert(Proto\Models\Newsletter::text()) !!}
+                    {!! Markdown::convert(App\Models\Newsletter::text()) !!}
                 </div>
                 <div class="card-footer">
                     <a href="{{ route("newsletter::preview") }}" class="btn btn-info btn-block my-2">Continue

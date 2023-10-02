@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -8,9 +8,9 @@ use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\Achievement;
-use Proto\Models\AchievementOwnership;
-use Proto\Models\User;
+use App\Models\Achievement;
+use App\Models\AchievementOwnership;
+use App\Models\User;
 use Redirect;
 use Session;
 

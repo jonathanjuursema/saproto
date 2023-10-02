@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -34,13 +34,13 @@ class DinnerformOrderline extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User')->withTrashed();
+        return $this->belongsTo('App\Models\User')->withTrashed();
     }
 
     /** @return BelongsTo */
     public function dinnerform()
     {
-        return $this->belongsTo('Proto\Models\Dinnerform');
+        return $this->belongsTo('App\Models\Dinnerform');
     }
 
     /** @return float Price of orderline reduced by possible discounts. */

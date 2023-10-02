@@ -5,7 +5,7 @@
  * http://stackoverflow.com/questions/33791494/laravel-restricting-access-for-development-site.
  */
 
-namespace Proto\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

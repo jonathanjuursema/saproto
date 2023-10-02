@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use DB;
 use Illuminate\Console\Command;
-use Proto\Http\Controllers\SpotifyController;
-use Proto\Models\PlayedVideo;
+use App\Http\Controllers\SpotifyController;
+use App\Models\PlayedVideo;
 
 class SpotifyUpdate extends Command
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Proto\Models\AchievementOwnership;
-use Proto\Models\Address;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\OrderLine;
-use Proto\Models\User;
+use App\Models\AchievementOwnership;
+use App\Models\Address;
+use App\Models\CommitteeMembership;
+use App\Models\OrderLine;
+use App\Models\User;
 
 class UserApiController extends Controller
 {

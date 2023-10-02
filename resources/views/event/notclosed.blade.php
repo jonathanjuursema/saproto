@@ -58,7 +58,7 @@
 
                                     <td>
                                         <select name="account" class="form-control">
-                                            @foreach(\Proto\Models\Account::orderBy('account_number', 'asc')->get() as $account)
+                                            @foreach(\App\Models\Account::orderBy('account_number', 'asc')->get() as $account)
                                                 <option value="{{ $account->id }}">({{ $account->account_number }}
                                                     ) {{ $account->name }}</option>
                                             @endforeach

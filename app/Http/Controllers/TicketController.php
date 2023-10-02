@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -8,11 +8,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use PDF;
-use Proto\Models\Event;
-use Proto\Models\OrderLine;
-use Proto\Models\Product;
-use Proto\Models\Ticket;
-use Proto\Models\TicketPurchase;
+use App\Models\Event;
+use App\Models\OrderLine;
+use App\Models\Product;
+use App\Models\Ticket;
+use App\Models\TicketPurchase;
 use Redirect;
 use Session;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Handlers\Events;
+namespace App\Handlers\Events;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Session;

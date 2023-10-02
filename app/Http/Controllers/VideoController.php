@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\Event;
-use Proto\Models\Video;
+use App\Models\Event;
+use App\Models\Video;
 use Redirect;
 use Session;
 use Youtube;

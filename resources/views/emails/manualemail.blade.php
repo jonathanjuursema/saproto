@@ -16,7 +16,7 @@
         <sub>
             @if($destination == 'list')
                 You receive this e-mail because you are subscribed to one or more of the following e-mail lists:
-                {!! Proto\Models\Email::getListUnsubscribeFooter($user_id, $email_id) !!}.
+                {!! App\Models\Email::getListUnsubscribeFooter($user_id, $email_id) !!}.
             @elseif($destination == 'event' || $destination=='event with backup')
                 You receive this e-mail because you signed up for any of the following events as a participant, helper
                 or by buying a ticket {{$destination=='event with backup'?'or you are on the backuplist':''}}:

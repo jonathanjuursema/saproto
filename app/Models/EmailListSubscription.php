@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -40,12 +40,12 @@ class EmailListSubscription extends Model
     /** @return HasOne */
     public function user()
     {
-        return $this->hasOne('Proto\Models\User');
+        return $this->hasOne('App\Models\User');
     }
 
     /** @return BelongsTo */
     public function emaillist()
     {
-        return $this->belongsTo('Proto\Models\EmailList', 'list_id');
+        return $this->belongsTo('App\Models\EmailList', 'list_id');
     }
 }

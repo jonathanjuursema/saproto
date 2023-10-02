@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\HashMapItem;
+use App\Models\HashMapItem;
 
 /**
  * @extends Factory<HashMapItem>

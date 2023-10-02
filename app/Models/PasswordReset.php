@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +35,6 @@ class PasswordReset extends Model
     /** @return HasOne */
     public function user()
     {
-        return $this->hasOne('Proto\Models\User', 'email', 'email');
+        return $this->hasOne('App\Models\User', 'email', 'email');
     }
 }

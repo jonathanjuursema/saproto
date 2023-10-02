@@ -879,4 +879,10 @@ Route::group(['middleware' => ['forcedomain']], function () {
             Route::post('/admin', ['as' => 'admin', 'uses' => 'IsAlfredThereController@postAdminInterface', 'middleware' => ['auth', 'permission:sysadmin|alfred']]);
         });
     });
+
+
+    Route::group(['prefix' => 'inertia', 'as' => 'inertia::'], function () {
+        Route::get('', [\App\Http\Controllers\InertiaTestController::class, 'show'])->name('home');
+    });
 });
+

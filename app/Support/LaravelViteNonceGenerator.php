@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Support;
+namespace App\Support;
 
 use Illuminate\Support\Facades\Vite;
 use Spatie\Csp\Nonce\NonceGenerator;

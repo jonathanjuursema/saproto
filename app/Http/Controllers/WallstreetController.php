@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use Proto\Models\WallstreetDrink;
-use Proto\Models\WallstreetPrice;
+use App\Models\WallstreetDrink;
+use App\Models\WallstreetPrice;
 use Response;
 
 class WallstreetController extends Controller

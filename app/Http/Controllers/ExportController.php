@@ -1,23 +1,23 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Permission;
-use Proto\Models\Account;
-use Proto\Models\Achievement;
-use Proto\Models\Activity;
-use Proto\Models\Committee;
-use Proto\Models\Company;
-use Proto\Models\EmailList;
-use Proto\Models\Event;
-use Proto\Models\HelpingCommittee;
-use Proto\Models\MenuItem;
-use Proto\Models\Page;
-use Proto\Models\Product;
-use Proto\Models\ProductCategory;
-use Proto\Models\ProductCategoryEntry;
-use Proto\Models\Ticket;
-use Proto\Models\User;
+use App\Models\Account;
+use App\Models\Achievement;
+use App\Models\Activity;
+use App\Models\Committee;
+use App\Models\Company;
+use App\Models\EmailList;
+use App\Models\Event;
+use App\Models\HelpingCommittee;
+use App\Models\MenuItem;
+use App\Models\Page;
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductCategoryEntry;
+use App\Models\Ticket;
+use App\Models\User;
 use Role;
 
 class ExportController extends Controller

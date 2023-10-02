@@ -1,29 +1,30 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Auth;
 use Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Inertia\Inertia;
 use Mail;
 use PDF;
 use PragmaRX\Google2FA\Google2FA;
-use Proto\Mail\UserMailChange;
-use Proto\Models\Member;
-use Proto\Models\StorageEntry;
-use Proto\Models\User;
-use Proto\Rules\NotUtwenteEmail;
+use App\Mail\UserMailChange;
+use App\Models\Member;
+use App\Models\StorageEntry;
+use App\Models\User;
+use App\Rules\NotUtwenteEmail;
 use Redirect;
 use Session;
 use Validator;
 
 class UserDashboardController extends Controller
 {
-    /** @return View */
+    /** @return \Inertia\Response */
     public function show()
     {
         /** @var User $user */
@@ -39,7 +40,11 @@ class UserDashboardController extends Controller
 
         $memberships = $user->getMemberships();
 
-        return view('users.dashboard.dashboard', ['user' => $user, 'memberships' => $memberships, 'tfa_qrcode' => $qrcode, 'tfa_key' => $tfakey]);
+
+        return Inertia::render('SettingsPage', [
+            'user' => Auth::user(),
+            'memberships' => $memberships,
+        ]);
     }
 
     /**
@@ -112,8 +117,8 @@ class UserDashboardController extends Controller
 
         if ($user->phone) {
             $userdata['phone'] = str_replace([' ', '-', '(', ')'], ['', '', '', ''], $request->input('phone'));
-            $userdata['phone_visible'] = $request->has('phone_visible');
-            $userdata['receive_sms'] = $request->has('receive_sms');
+            $userdata['phone_visible'] = $request->input('phone_visible');
+            $userdata['receive_sms'] = $request->input('receive_sms');
             $validator = Validator::make($userdata, [
                 'phone' => 'required|regex:(\+[0-9]{8,16})',
             ], ['phone.regex' => 'Please enter your phone number in international format, with a plus (+) and country code: +123456789012']);
@@ -123,18 +128,18 @@ class UserDashboardController extends Controller
         }
 
         if ($user->is_member) {
-            $userdata['show_birthday'] = $request->has('show_birthday');
-            $userdata['show_omnomcom_total'] = $request->has('show_omnomcom_total');
-            $userdata['show_omnomcom_calories'] = $request->has('show_omnomcom_calories');
-            $userdata['show_achievements'] = $request->has('show_achievements');
-            $userdata['profile_in_almanac'] = $request->has('profile_in_almanac');
+            $userdata['show_birthday'] = $request->input('show_birthday');
+            $userdata['show_omnomcom_total'] = $request->input('show_omnomcom_total');
+            $userdata['show_omnomcom_calories'] = $request->input('show_omnomcom_calories');
+            $userdata['show_achievements'] = $request->input('show_achievements');
+            $userdata['profile_in_almanac'] = $request->input('profile_in_almanac');
         }
 
-        if ($request->has('disable_omnomcom')) {
+        if ($request->input('disable_omnomcom')) {
             $userdata['disable_omnomcom'] = true;
         }
 
-        $userdata['keep_omnomcom_history'] = $request->has('keep_omnomcom_history');
+        $userdata['keep_omnomcom_history'] = $request->input('keep_omnomcom_history');
         $userdata['theme'] = $request->input('theme');
 
         $user->fill($userdata);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use DB;
@@ -40,7 +40,7 @@ class Withdrawal extends Model
     /** @return HasMany */
     public function orderlines()
     {
-        return $this->hasMany('Proto\Models\OrderLine', 'payed_with_withdrawal');
+        return $this->hasMany('App\Models\OrderLine', 'payed_with_withdrawal');
     }
 
     /** @return array */

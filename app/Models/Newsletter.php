@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Artisan;
 use Carbon;
 use Eloquent;
 
 /**
- * Proto\Models\Newsletter.
+ * App\Models\Newsletter.
  *
  * @mixin Eloquent
  */

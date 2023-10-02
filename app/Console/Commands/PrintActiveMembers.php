@@ -1,9 +1,9 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Proto\Models\Member;
+use App\Models\Member;
 
 class PrintActiveMembers extends Command
 {

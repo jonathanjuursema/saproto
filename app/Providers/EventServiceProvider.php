@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Providers;
+namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -13,10 +13,10 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'Illuminate\Auth\Events\Login' => [
-            'Proto\Handlers\Events\AuthLoginEventHandler',
+            'App\Handlers\Events\AuthLoginEventHandler',
         ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
-            'Proto\Handlers\Events\SamlLoginEventHandler',
+            'App\Handlers\Events\SamlLoginEventHandler',
         ],
     ];
 

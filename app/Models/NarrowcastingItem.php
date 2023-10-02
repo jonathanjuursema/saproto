@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -46,6 +46,6 @@ class NarrowcastingItem extends Model
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry');
+        return $this->belongsTo('App\Models\StorageEntry');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -73,19 +73,19 @@ class Member extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User')->withTrashed();
+        return $this->belongsTo('App\Models\User')->withTrashed();
     }
 
     /** @return BelongsTo */
     public function membershipForm()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'membership_form_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'membership_form_id');
     }
 
     /** @return BelongsTo */
     public function customOmnomcomSound()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'omnomcom_sound_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'omnomcom_sound_id');
     }
 
     /** @return int */

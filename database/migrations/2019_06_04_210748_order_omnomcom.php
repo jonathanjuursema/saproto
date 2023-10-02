@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Proto\Models\ProductCategoryEntry;
+use App\Models\ProductCategoryEntry;
 
 class OrderOmnomcom extends Migration
 {

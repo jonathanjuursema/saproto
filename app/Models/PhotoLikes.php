@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -38,6 +38,6 @@ class PhotoLikes extends Model
     /** @return BelongsTo */
     public function photo()
     {
-        return $this->belongsTo('Proto\Models\Photo', 'photo_id');
+        return $this->belongsTo('App\Models\Photo', 'photo_id');
     }
 }

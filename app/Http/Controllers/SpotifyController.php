@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Proto\Models\HashMapItem;
+use App\Models\HashMapItem;
 use Redirect;
 use Session;
 use SpotifyWebAPI\Session as SpotifySession;

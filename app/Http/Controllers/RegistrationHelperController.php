@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\User;
+use App\Models\User;
 
 class RegistrationHelperController extends Controller
 {

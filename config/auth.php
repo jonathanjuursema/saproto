@@ -60,7 +60,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => Proto\Models\User::class,
+            'model' => App\Models\User::class,
         ],
     ],
 ];

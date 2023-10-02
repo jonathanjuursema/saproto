@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Csp\Policies;
+namespace App\Csp\Policies;
 
 use function Sentry\captureException;
 use Spatie\Csp\Directive;

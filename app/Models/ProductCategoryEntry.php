@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -45,12 +45,12 @@ class ProductCategoryEntry extends Model
     /** @return BelongsTo */
     public function product()
     {
-        return $this->belongsTo('Proto\Models\Product');
+        return $this->belongsTo('App\Models\Product');
     }
 
     /** @return BelongsTo */
     public function ProductCategory()
     {
-        return $this->belongsTo('Proto\Models\ProductCategory');
+        return $this->belongsTo('App\Models\ProductCategory');
     }
 }

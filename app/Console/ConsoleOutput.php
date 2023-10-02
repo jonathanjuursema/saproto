@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Console;
+namespace App\Console;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;

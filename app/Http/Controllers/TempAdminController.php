@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Carbon;
@@ -10,8 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
-use Proto\Models\Tempadmin;
-use Proto\Models\User;
+use App\Models\Tempadmin;
+use App\Models\User;
 use Redirect;
 
 class TempAdminController extends Controller

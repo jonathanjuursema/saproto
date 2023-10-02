@@ -25,12 +25,12 @@
 
                         <p class="card-text text-center">
                             The newsletter was last sent
-                            <strong>{{ Proto\Models\Newsletter::sentAt()->diffForHumans() }}</strong>
+                            <strong>{{ App\Models\Newsletter::sentAt()->diffForHumans() }}</strong>
                         </p>
 
-                        <button class="btn {{ Proto\Models\Newsletter::lastSentMoreThanWeekAgo() ? "btn-success" : "btn-danger" }} btn-block"
+                        <button class="btn {{ App\Models\Newsletter::lastSentMoreThanWeekAgo() ? "btn-success" : "btn-danger" }} btn-block"
                                 data-bs-toggle="modal" data-bs-target="#sendnewsletter" type="button">
-                            {{ (Proto\Models\Newsletter::lastSentMoreThanWeekAgo() ? 'Send the weekly newsletter!': 'Newsletter already sent this week!') }}
+                            {{ (App\Models\Newsletter::lastSentMoreThanWeekAgo() ? 'Send the weekly newsletter!': 'Newsletter already sent this week!') }}
                         </button>
 
                         <hr>
@@ -40,7 +40,7 @@
                             @include('components.forms.markdownfield', [
                                 'name' => 'text',
                                 'placeholder' => 'Text goes here.',
-                                'value' => Proto\Models\Newsletter::text()
+                                'value' => App\Models\Newsletter::text()
                             ])
                         </div>
 
@@ -134,7 +134,7 @@
                     <p>
                         The newsletter was last sent: <br>
                         <strong>
-                            {{ Proto\Models\Newsletter::sentAt()->diffForHumans() }}
+                            {{ App\Models\Newsletter::sentAt()->diffForHumans() }}
                         </strong>
                     </p>
                     <p>
@@ -146,7 +146,7 @@
                         {!! csrf_field() !!}
                         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         <button type="submit"
-                                class="btn {{ Proto\Models\Newsletter::lastSentMoreThanWeekAgo() ? "btn-success" : "btn-danger" }}">
+                                class="btn {{ App\Models\Newsletter::lastSentMoreThanWeekAgo() ? "btn-success" : "btn-danger" }}">
                             Send
                         </button>
                     </form>

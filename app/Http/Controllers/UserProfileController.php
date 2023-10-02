@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
-use Proto\Models\ActivityParticipation;
-use Proto\Models\CommitteeMembership;
-use Proto\Models\OrderLine;
-use Proto\Models\User;
+use App\Models\ActivityParticipation;
+use App\Models\CommitteeMembership;
+use App\Models\OrderLine;
+use App\Models\User;
 
 class UserProfileController extends Controller
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\DmxChannel;
-use Proto\Models\DmxFixture;
-use Proto\Models\DmxOverride;
+use App\Models\DmxChannel;
+use App\Models\DmxFixture;
+use App\Models\DmxOverride;
 use Redirect;
 use Session;
 

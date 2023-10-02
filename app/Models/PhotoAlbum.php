@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Proto\Models\PhotoAlbum.
+ * App\Models\PhotoAlbum.
  *
  * @property int $id
  * @property string $name
@@ -53,19 +53,19 @@ class PhotoAlbum extends Model
     /** @return BelongsTo */
     public function event()
     {
-        return $this->belongsTo('Proto\Models\Event', 'event_id');
+        return $this->belongsTo('App\Models\Event', 'event_id');
     }
 
     /** @return HasOne */
     private function thumbPhoto()
     {
-        return $this->hasOne('Proto\Models\Photo', 'id', 'thumb_id');
+        return $this->hasOne('App\Models\Photo', 'id', 'thumb_id');
     }
 
     /** @return HasMany */
     public function items()
     {
-        return $this->hasMany('Proto\Models\Photo', 'album_id');
+        return $this->hasMany('App\Models\Photo', 'album_id');
     }
 
     /** @return string|null */

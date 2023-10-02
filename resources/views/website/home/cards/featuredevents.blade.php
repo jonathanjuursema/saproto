@@ -1,6 +1,6 @@
 @php
     /** @var int $n */
-    $featuredevents = Proto\Models\Event::where('secret', false)->where('is_featured', true)->where('end', '>=', date('U'))->orderBy('start')->limit($n)->get()
+    $featuredevents = App\Models\Event::where('secret', false)->where('is_featured', true)->where('end', '>=', date('U'))->orderBy('start')->limit($n)->get()
 @endphp
 
 @if(count($featuredevents) > 0)

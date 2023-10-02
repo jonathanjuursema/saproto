@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Activity;
-use Proto\Models\ActivityParticipation;
+use App\Models\Activity;
+use App\Models\ActivityParticipation;
 
 /**
  * @extends Factory<ActivityParticipation>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -44,12 +44,12 @@ class QuoteLike extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User');
+        return $this->belongsTo('App\Models\User');
     }
 
     /** @return BelongsTo */
     public function quote()
     {
-        return $this->belongsTo('Proto\Models\Quote');
+        return $this->belongsTo('App\Models\Quote');
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Mail;
+namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Proto\Models\EmailList;
-use Proto\Models\User;
+use App\Models\EmailList;
+use App\Models\User;
 
 class MembershipEnded extends Mailable
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Carbon;
@@ -10,14 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Mail;
 use PDF;
-use Proto\Http\Requests\MP3Request;
-use Proto\Mail\MembershipEnded;
-use Proto\Mail\MembershipEndSet;
-use Proto\Mail\MembershipStarted;
-use Proto\Models\HashMapItem;
-use Proto\Models\Member;
-use Proto\Models\StorageEntry;
-use Proto\Models\User;
+use App\Http\Requests\MP3Request;
+use App\Mail\MembershipEnded;
+use App\Mail\MembershipEndSet;
+use App\Mail\MembershipStarted;
+use App\Models\HashMapItem;
+use App\Models\Member;
+use App\Models\StorageEntry;
+use App\Models\User;
 use Redirect;
 use Session;
 use Spatie\Permission\Models\Permission;

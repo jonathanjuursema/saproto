@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Page;
+use App\Models\Page;
 
 /**
  * @extends Factory<Page>

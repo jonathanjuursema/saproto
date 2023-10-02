@@ -32,13 +32,13 @@
                     <tr>
                         <th>Status</th>
                         <td>
-                            @if(Proto\Models\MollieTransaction::translateStatus($mollie->status) == 'open')
+                            @if(App\Models\MollieTransaction::translateStatus($mollie->status) == 'open')
                                 <a href="{{ $transaction->payment_url }}">
                                     <span class="label label-success">{{ $mollie->status }} - Continue Payment</span>
                                 </a>
-                            @elseif(Proto\Models\MollieTransaction::translateStatus($mollie->status) == 'paid')
+                            @elseif(App\Models\MollieTransaction::translateStatus($mollie->status) == 'paid')
                                 <span class="label label-success">{{ $mollie->status }}</span>
-                            @elseif(Proto\Models\MollieTransaction::translateStatus($mollie->status) == 'failed')
+                            @elseif(App\Models\MollieTransaction::translateStatus($mollie->status) == 'failed')
                                 <span class="label label-danger">{{ $mollie->status }}</span>
                             @else
                                 <span class="label label-warning">{{ $mollie->status }}</span>
@@ -49,7 +49,7 @@
 
                 <div class="card-body">
 
-                    @if(Proto\Models\MollieTransaction::translateStatus($mollie->status) == 'failed')
+                    @if(App\Models\MollieTransaction::translateStatus($mollie->status) == 'failed')
                         <p>
                             This payment has failed. All orderlines associated with this payment have been set back to unpaid. You can
                             try to start a new payment.

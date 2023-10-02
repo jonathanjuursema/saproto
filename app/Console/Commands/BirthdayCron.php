@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Mail;
-use Proto\Mail\BirthdayEmail;
-use Proto\Mail\BirthdayEmailForBoard;
-use Proto\Models\User;
+use App\Mail\BirthdayEmail;
+use App\Mail\BirthdayEmailForBoard;
+use App\Models\User;
 
 class BirthdayCron extends Command
 {

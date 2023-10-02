@@ -1,15 +1,15 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Proto\Models\Leaderboard;
-use Proto\Models\LeaderboardEntry;
-use Proto\Models\User;
+use App\Models\Leaderboard;
+use App\Models\LeaderboardEntry;
+use App\Models\User;
 use Redirect;
 use Session;
 

@@ -67,7 +67,7 @@
                 <br>
                 This website has been created with <i class="fas fa-heart text-primary"></i> by the folks of the
                 <a href="{{ route('developers') }}" class="text-white">
-                    {{ Proto\Models\Committee::where('slug', '=', config('proto.rootcommittee'))->first()->name }}
+                    {{ App\Models\Committee::where('slug', '=', config('proto.rootcommittee'))->first()->name }}
                 </a>.
             </sub>
         </p>

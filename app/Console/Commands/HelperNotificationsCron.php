@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Mail;
-use Proto\Mail\DailyHelperMail;
-use Proto\Models\HelpingCommittee;
-use Proto\Models\User;
+use App\Mail\DailyHelperMail;
+use App\Models\HelpingCommittee;
+use App\Models\User;
 
 class HelperNotificationsCron extends Command
 {

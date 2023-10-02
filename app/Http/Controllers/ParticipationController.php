@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
@@ -8,16 +8,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Mail;
-use Proto\Mail\ActivityMovedFromBackup;
-use Proto\Mail\ActivitySubscribedTo;
-use Proto\Mail\ActivityUnsubscribedFrom;
-use Proto\Mail\ActivityUnsubscribedToHelp;
-use Proto\Mail\HelperMutation;
-use Proto\Models\Activity;
-use Proto\Models\ActivityParticipation;
-use Proto\Models\Event;
-use Proto\Models\HelpingCommittee;
-use Proto\Models\User;
+use App\Mail\ActivityMovedFromBackup;
+use App\Mail\ActivitySubscribedTo;
+use App\Mail\ActivityUnsubscribedFrom;
+use App\Mail\ActivityUnsubscribedToHelp;
+use App\Mail\HelperMutation;
+use App\Models\Activity;
+use App\Models\ActivityParticipation;
+use App\Models\Event;
+use App\Models\HelpingCommittee;
+use App\Models\User;
 use Redirect;
 use Session;
 

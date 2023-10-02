@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Proto\Models\StockMutation.
+ * App\Models\StockMutation.
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $before
  * @property int $after
  * @property int $is_bulk
- * @property-read \Proto\Models\Product|null $product
- * @property-read \Proto\Models\User|null $user
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\User|null $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|StockMutation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|StockMutation newQuery()
@@ -42,12 +42,12 @@ class StockMutation extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo("Proto\Models\Product");
+        return $this->belongsTo("App\Models\Product");
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo("Proto\Models\User");
+        return $this->belongsTo("App\Models\User");
     }
 
     public function date(): string

@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Quote;
-use Proto\Models\User;
+use App\Models\Quote;
+use App\Models\User;
 
 /**
  * @extends Factory<Quote>

@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Proto\Models\QrAuthRequest;
-use Proto\Models\RfidCard;
+use App\Models\QrAuthRequest;
+use App\Models\RfidCard;
 use Redirect;
 use Session;
 

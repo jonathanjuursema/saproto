@@ -19,7 +19,7 @@
                         <div class="col-lg-3">
 
                             <select name="user[]" class="form-control orderline-user">
-                                {{ $members = Proto\Models\User::has('member')->orderBy('name')->get()->reject(function(Proto\Models\User $user, int $index) { return $user->member->is_pending == true; }) }}
+                                {{ $members = App\Models\User::has('member')->orderBy('name')->get()->reject(function(App\Models\User $user, int $index) { return $user->member->is_pending == true; }) }}
                                 @foreach($members as $member)
                                     <option value="{{ $member->id }}">{{ $member->name }} (#{{ $member->id }})</option>
                                 @endforeach
@@ -30,7 +30,7 @@
                         <div class="col-lg-3">
 
                             <select name="product[]" class="form-control orderline-product">
-                                @foreach(Proto\Models\Product::where('is_visible', true)->orderBy('name', 'asc')->get() as $product)
+                                @foreach(App\Models\Product::where('is_visible', true)->orderBy('name', 'asc')->get() as $product)
                                     <option value="{{ $product->id }}" data-price="{{ $product->price }}">{{ $product->name }}
                                         (&euro;{{ $product->price }}, #{{ $product->id }})
                                     </option>

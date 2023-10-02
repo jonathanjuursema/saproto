@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Providers;
+namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
-use Proto\Models\MenuItem;
+use App\Models\MenuItem;
 
 class AppServiceProvider extends ServiceProvider
 {

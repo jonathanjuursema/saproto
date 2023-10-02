@@ -45,7 +45,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row justify-content-center">
-                        @php($categories = \Proto\Models\EventCategory::all())
+                        @php($categories = \App\Models\EventCategory::all())
                         @if(count($categories) > 0)
                             @foreach($categories as $category)
                                 <div class="col-5 row m-1">

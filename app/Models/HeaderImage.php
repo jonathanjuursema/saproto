@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -41,12 +41,12 @@ class HeaderImage extends Model
     /** @return BelongsTo */
     public function user()
     {
-        return $this->belongsTo('Proto\Models\User', 'credit_id');
+        return $this->belongsTo('App\Models\User', 'credit_id');
     }
 
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'image_id', 'id');
+        return $this->belongsTo('App\Models\StorageEntry', 'image_id', 'id');
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Carbon;
 use Exception;
 use Illuminate\Console\Command;
 use Mail;
-use Proto\Http\Controllers\UserAdminController;
-use Proto\Mail\MembershipEndedForBoard;
-use Proto\Models\Member;
+use App\Http\Controllers\UserAdminController;
+use App\Mail\MembershipEndedForBoard;
+use App\Models\Member;
 
 class EndMemberships extends Command
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,6 +37,6 @@ class SoundboardSound extends Model
     /** @return BelongsTo */
     public function file()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'file_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'file_id');
     }
 }

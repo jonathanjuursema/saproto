@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Proto\Models\Committee;
-use Proto\Models\OrderLine;
-use Proto\Models\Product;
+use App\Models\Committee;
+use App\Models\OrderLine;
+use App\Models\Product;
 
 /**
  * @extends Factory<OrderLine>

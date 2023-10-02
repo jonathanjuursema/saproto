@@ -1,12 +1,12 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
-use Proto\Models\Event;
-use Proto\Models\Member;
+use App\Models\Event;
+use App\Models\Member;
 
 class QueryController extends Controller
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Mail;
-use Proto\Mail\Newsletter as NewsletterMail;
-use Proto\Models\EmailList;
-use Proto\Models\Event;
-use Proto\Models\Newsletter;
+use App\Mail\Newsletter as NewsletterMail;
+use App\Models\EmailList;
+use App\Models\Event;
+use App\Models\Newsletter;
 
 class NewsletterCron extends Command
 {

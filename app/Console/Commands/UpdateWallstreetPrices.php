@@ -1,11 +1,11 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Proto\Models\OrderLine;
-use Proto\Models\WallstreetDrink;
-use Proto\Models\WallstreetPrice;
+use App\Models\OrderLine;
+use App\Models\WallstreetDrink;
+use App\Models\WallstreetPrice;
 
 class UpdateWallstreetPrices extends Command
 {

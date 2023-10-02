@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -53,13 +53,13 @@ class Achievement extends Model
     /** @return BelongsToMany */
     public function users()
     {
-        return $this->belongsToMany('Proto\Models\User', 'achievements_users');
+        return $this->belongsToMany('App\Models\User', 'achievements_users');
     }
 
     /** @return HasMany */
     public function achievementOwnership()
     {
-        return $this->hasMany('Proto\Models\AchievementOwnership');
+        return $this->hasMany('App\Models\AchievementOwnership');
     }
 
     /** @return int */

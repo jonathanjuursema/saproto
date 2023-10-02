@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,13 +49,13 @@ class Leaderboard extends Model
     /** @return BelongsTo */
     public function committee()
     {
-        return $this->belongsTo('Proto\Models\Committee', 'committee_id');
+        return $this->belongsTo('App\Models\Committee', 'committee_id');
     }
 
     /** @return HasMany */
     public function entries()
     {
-        return $this->hasMany('Proto\Models\LeaderboardEntry');
+        return $this->hasMany('App\Models\LeaderboardEntry');
     }
 
     public static function isAdminAny(User $user): bool

@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Carbon;
 use Eloquent;
@@ -39,6 +39,6 @@ class FinancialAccount extends Model
     /** @return HasMany */
     public function products()
     {
-        return $this->hasMany('Proto\Models\Product', 'account_id');
+        return $this->hasMany('App\Models\Product', 'account_id');
     }
 }

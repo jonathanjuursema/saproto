@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Rules;
+namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 

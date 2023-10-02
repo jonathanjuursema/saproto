@@ -1,4 +1,4 @@
-@php /** @var $order \Proto\Models\DinnerformOrderline */ @endphp
+@php /** @var $order \App\Models\DinnerformOrderline */ @endphp
 
 <div class="card mb-3">
 

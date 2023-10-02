@@ -1,10 +1,10 @@
 <?php
 
-namespace Proto\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
-use Proto\Models\StorageEntry;
+use App\Models\StorageEntry;
 
 class FileCleanup extends Command
 {

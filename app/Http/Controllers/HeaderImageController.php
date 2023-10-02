@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Proto\Models\HeaderImage;
-use Proto\Models\StorageEntry;
+use App\Models\HeaderImage;
+use App\Models\StorageEntry;
 
 class HeaderImageController extends Controller
 {

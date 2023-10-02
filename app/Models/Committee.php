@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Models;
+namespace App\Models;
 
 use Auth;
 use Carbon;
@@ -71,7 +71,7 @@ class Committee extends Model
     /** @return BelongsToMany */
     public function users()
     {
-        return $this->belongsToMany('Proto\Models\User', 'committees_users')
+        return $this->belongsToMany('App\Models\User', 'committees_users')
             ->where(function ($query) {
                 $query
                     ->whereNull('committees_users.deleted_at')
@@ -86,19 +86,19 @@ class Committee extends Model
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo('Proto\Models\StorageEntry', 'image_id');
+        return $this->belongsTo('App\Models\StorageEntry', 'image_id');
     }
 
     /** @return HasMany */
     public function organizedEvents()
     {
-        return $this->hasMany('Proto\Models\Event', 'committee_id');
+        return $this->hasMany('App\Models\Event', 'committee_id');
     }
 
     /** @return HasMany */
     public function helperReminderSubscriptions()
     {
-        return $this->hasMany('Proto\Models\HelperReminder');
+        return $this->hasMany('App\Models\HelperReminder');
     }
 
     /** @return string */
@@ -162,7 +162,7 @@ class Committee extends Model
     public function helpedEvents($includeSecret = false)
     {
         /** @var Activity[] $activities */
-        $activities = $this->belongsToMany('Proto\Models\Activity', 'committees_activities')->orderBy('created_at', 'desc')->get();
+        $activities = $this->belongsToMany('App\Models\Activity', 'committees_activities')->orderBy('created_at', 'desc')->get();
 
         $events = [];
         foreach ($activities as $activity) {
@@ -179,7 +179,7 @@ class Committee extends Model
     public function pastHelpedEvents()
     {
         /** @var Activity[] $activities */
-        $activities = $this->belongsToMany('Proto\Models\Activity', 'committees_activities')->orderBy('created_at', 'desc')->get();
+        $activities = $this->belongsToMany('App\Models\Activity', 'committees_activities')->orderBy('created_at', 'desc')->get();
 
         $events = [];
         foreach ($activities as $activity) {

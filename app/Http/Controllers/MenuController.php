@@ -1,6 +1,6 @@
 <?php
 
-namespace Proto\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Proto\Models\MenuItem;
-use Proto\Models\Page;
+use App\Models\MenuItem;
+use App\Models\Page;
 use Session;
 
 class MenuController extends Controller
