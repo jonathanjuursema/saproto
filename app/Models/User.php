@@ -152,12 +152,23 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
 
     protected $guarded = ['password', 'remember_token'];
 
-    protected $appends = ['is_member', 'photo_preview', 'welcome_message', 'is_protube_admin'];
+    protected $appends = ['is_member', 'photo_preview', 'welcome_message', 'is_protube_admin', 'is_active_member', 'bank'];
 
     protected $hidden = ['password', 'remember_token', 'personal_key', 'deleted_at', 'created_at', 'image_id', 'tfa_totp_key', 'updated_at', 'diet'];
 
+
     protected $casts = [
         'deleted_at' => 'datetime',
+        'show_birthday' => 'boolean',
+        'phone_visible' => 'boolean',
+        'receive_sms' => 'boolean',
+        'show_omnomcom_total' => 'boolean',
+        'show_omnomcom_calories' => 'boolean',
+        'disable_omnomcom' => 'boolean',
+        'keep_omnomcom_history' => 'boolean',
+        'show_achievements' => 'boolean',
+        'profile_in_almanac' => 'boolean',
+        'is_member' => 'boolean',
     ];
 
     /** @return string|null */
@@ -167,7 +178,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /**
-     * @param  string  $public_id
+     * @param string $public_id
      * @return mixed|User|null
      */
     public static function fromPublicId($public_id)
@@ -184,7 +195,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
      */
     public function isStale()
     {
-        return ! (
+        return !(
             $this->password ||
             $this->edu_username ||
             strtotime($this->created_at) > strtotime('-1 hour') ||
@@ -252,15 +263,21 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /** @return HasOne */
-    public function member()
+    public function member(): HasOne
     {
         return $this->hasOne('App\Models\Member');
     }
 
     /** @return HasOne */
-    public function bank()
+    public function bank(): HasOne
     {
         return $this->hasOne('App\Models\Bank');
+    }
+
+    /** @return Bank | null */
+    public function getBankAttribute(): Bank | null
+    {
+        return $this->bank()->first();
     }
 
     /** @return HasOne */
@@ -368,7 +385,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /**
-     * @param  string  $password
+     * @param string $password
      *
      * @throws Exception
      */
@@ -404,10 +421,10 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function hasUnpaidOrderlines()
     {
         foreach ($this->orderlines as $orderline) {
-            if (! $orderline->isPayed()) {
+            if (!$orderline->isPayed()) {
                 return true;
             }
-            if ($orderline->orderline && $orderline->withdrawal->id !== 1 && ! $orderline->withdrawal->closed) {
+            if ($orderline->orderline && $orderline->withdrawal->id !== 1 && !$orderline->withdrawal->closed) {
                 return true;
             }
         }
@@ -438,7 +455,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /**
-     * @param  Committee  $committee
+     * @param Committee $committee
      * @return bool
      */
     public function isInCommittee($committee)
@@ -447,7 +464,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /**
-     * @param  string  $slug
+     * @param string $slug
      * @return bool
      */
     public function isInCommitteeBySlug($slug)
@@ -461,21 +478,29 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function isActiveMember()
     {
         return count(
-            CommitteeMembership::withTrashed()
-                ->where('user_id', $this->id)
-                ->where('created_at', '<', date('Y-m-d H:i:s'))
-                ->where(function ($q) {
-                    $q->whereNull('deleted_at')
-                        ->orWhere('deleted_at', '>', date('Y-m-d H:i:s'));
-                })
-                ->with('committee')
-                ->get()
-                ->where('committee.is_society', false)
-        ) > 0;
+                CommitteeMembership::withTrashed()
+                    ->where('user_id', $this->id)
+                    ->where('created_at', '<', date('Y-m-d H:i:s'))
+                    ->where(function ($q) {
+                        $q->whereNull('deleted_at')
+                            ->orWhere('deleted_at', '>', date('Y-m-d H:i:s'));
+                    })
+                    ->with('committee')
+                    ->get()
+                    ->where('committee.is_society', false)
+            ) > 0;
     }
 
     /**
-     * @param  int  $limit
+     * @return bool
+     */
+    public function getIsActiveMemberAttribute(): bool
+    {
+        return $this->isActiveMember();
+    }
+
+    /**
+     * @param int $limit
      * @return Withdrawal[]
      */
     public function withdrawals($limit = 0)
@@ -493,17 +518,17 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return $withdrawals;
     }
 
-    /** @return string|null*/
+    /** @return string|null */
     public function websiteUrl()
     {
         if (preg_match("/(?:http|https):\/\/.*/i", $this->website) === 1) {
             return $this->website;
         } else {
-            return 'https://'.$this->website;
+            return 'https://' . $this->website;
         }
     }
 
-    /** @return string|null*/
+    /** @return string|null */
     public function websiteDisplay()
     {
         if (preg_match("/(?:http|https):\/\/(.*)/i", $this->website, $matches) === 1) {
@@ -519,7 +544,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return strlen(str_replace(["\r", "\n", ' '], '', $this->diet)) > 0;
     }
 
-    /** @return string*/
+    /** @return string */
     public function getDisplayEmail()
     {
         return ($this->is_member && $this->isActiveMember()) ? sprintf('%s@%s', $this->member->proto_username, config('proto.emaildomain')) : $this->email;
@@ -594,8 +619,9 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     /** @return array<string, Collection<Member>> */
     public function getMemberships()
     {
-        $memberships['pending'] = Member::withTrashed()->where('user_id', '=', $this->id)->where('deleted_at', '=', null)->where('is_pending', '=', true)->get();
-        $memberships['previous'] = Member::withTrashed()->where('user_id', '=', $this->id)->where('deleted_at', '!=', null)->get();
+        $baseQuery = Member::withTrashed()->where('user_id', '=', $this->id)->with('user');
+        $memberships['pending'] = $baseQuery->where('deleted_at', '=', null)->where('is_pending', '=', true)->get();
+        $memberships['previous'] = $baseQuery->where('deleted_at', '!=', null)->get();
 
         return $memberships;
     }
@@ -606,7 +632,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return $this->pref_calendar_alarm;
     }
 
-    /** @param  float|null  $hours */
+    /** @param float|null $hours */
     public function setCalendarAlarm($hours)
     {
         $hours = floatval($hours);
@@ -623,7 +649,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     /** @return void */
     public function toggleCalendarRelevantSetting()
     {
-        $this->pref_calendar_relevant_only = ! $this->pref_calendar_relevant_only;
+        $this->pref_calendar_relevant_only = !$this->pref_calendar_relevant_only;
         $this->save();
     }
 
@@ -634,9 +660,9 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /** @return bool Whether user has a current membership that is not pending. */
-    public function getIsMemberAttribute()
+    public function getIsMemberAttribute(): bool
     {
-        return $this->member && ! $this->member->is_pending;
+        return $this->member->exists && !$this->member->is_pending;
     }
 
     /** @return bool */

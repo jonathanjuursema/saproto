@@ -145,3 +145,79 @@ PhpStorm  for zero-configuration debugging. In case of zero-configuration debugg
 
 ### Clockwork
 [Clockwork](https://underground.works/clockwork) is a php dev tool in your browser. When running the website in debug mode you can access the clockwork debug page at <localhost:8080/clockwork>. The application has various debugging features such as timelines of runtime requests, database queries and client-metrics.
+
+## Inertia & Vue
+Inertia is beautiful magic layer that allows controllers to return Vue pages and allows for async form requests and data updates.
+Normal Blade templates are replaced by Vue Pages, these are to be placed under the `resources/js/Pages` folder and can be returned by Inertia the same way Blade templates under the `resources/view` folder are returned.
+
+## Layouts
+All Inertia responses are rendered in the `resources/views/inertia/app.blade.php` view. This is a basic html boilerplate which includes the necessary blade directives to get inertia working.
+Next to that, A generic layout can be found in the `resources/js/Layout/` folder. This layout includes the default navbar and footer.
+To use the layout in a page, simply wrap everything in your template in the layout component like this:
+```vue
+
+<script setup>
+import GenericLayout from "@/Layout/GenericLayout.vue";
+</script>
+
+<template>
+  <GenericLayout>
+    <div>
+      <span></span>
+    </div>
+    <img/>
+  </GenericLayout>
+</template>
+```
+
+### Model types
+The Vue app in this project uses TypeScript. To make life easier, TypeScript types for Laravel models can be automatically generated using the `artisan types:generate` command.
+
+### Linting
+EsLint is configured for TypeScript, Vue and Prettier. Using `npm run lint` most things will be automatically fixed, what couldn't be fixed will be displayed in a nice list.
+
+### Links
+In Inertia, `<a>` tags are mostly replaced by the Inertia `<Link>` component. However, the Inertia `<Link>` component only works when the href is an inertia route.
+Most link components in this project will use the Inertia `<Link>` component by default, if the link directs to a regular, non inertia, page the `no-inertia` directive should be added.
+
+### Permission checking
+To make it easy to check permissions in Vue files as well, a `useCan` composable is included in this project.
+This composable contains a `can`, `canNot`, `canAny` and `canAll` method that check the given permissions for the currently logged in user.
+Since this check happens in the frontend JavaScript it is easy to meddle with.
+
+⚠️**This check is not safe and should never be used as an actual security method**⚠️
+
+### Routes
+The Ziggy Vue helper is included to make the standard `route()` method available in JS as well.
+
+### CSS & Themes
+In the Inertia pages, bootstrap is traded in for tailwind. In the `tailwind.config.ts` file the Theme colours are defined as well.
+
+#### Dynamic classes
+Tailwind automatically removes unused classes when bundled by vite. It checks for usage in all .vue files. This limits the ability to use dynamic classes.
+When using dynamic classes, make sure not to use notations like
+```vue
+<template>
+  <div :class="`bg-${variable}`"></div>
+</template>
+```
+Instead, use a map like this:
+```vue
+<script>
+  const styles = {
+    primary: 'bg-primary',
+    secondary: 'bg-secondary',
+  };
+</script>
+
+<template>
+  <div :class="styles[variable]"></div>  
+</template>
+```
+This way the full class name is present in the file, and tailwind won't remove it during the bundling step.
+
+### Env Variables
+Since JS runs in the clients browser, there is no access to variables in the .env file.
+Vite includes a little magic which includes any .env variables prepended with `VITE_` to be included in the JS bundle.
+In our current deployment the bundling step takes place before being deployed to the production server that contains our .env file.
+So it won't give access to production .env variables, unfortunately.

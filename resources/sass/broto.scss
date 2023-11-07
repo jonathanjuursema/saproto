@@ -1,0 +1,178 @@
+@charset "UTF-8";
+
+// Custom variables
+$primary: #b57000;
+$success: #cdd911;
+@import 'partials/_variables';
+
+//colors
+$grey-light: #424242;
+$grey-medium: #303030;
+$grey-dark: #212121;
+$dark: $grey-medium;
+$light: $grey-medium;
+
+//body
+$body-bg: $grey-light;
+$body-color: #fff;
+
+//modal
+$modal-content-bg: $grey-medium;
+
+//table
+$table-color: #fff;
+$table-border-color: $grey-light;
+
+//list group
+$list-group-bg: $grey-medium;
+
+//input
+$input-group-addon-border-color: $grey-light;
+$input-group-addon-bg: $grey-light;
+$input-group-addon-color: #fff;
+$input-border-color: #aaaaaa;
+
+//link
+$link-color: $info;
+$link-hover-color: lighten($info, 10%);
+
+//navbar
+$navbar-dark-color: rgba(255, 255, 255, .75);
+$navbar-dark-hover-color: #fff;
+
+//photos
+$photo_pop-color: #fff;
+$photo_pop-text-shadow: 0 0 5px #fff;
+$photo-color: #fff;
+$photo-hover-color: #fff;
+$photo-text-shadow: 0 0 5px #fff;
+$photo-gradient: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
+$photo-hover-gradient: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
+
+//calendar events
+$event-gradient: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
+$event-hover-gradient: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
+$event-bg: $grey-dark;
+$event-hover-bg: $grey-medium;
+
+//cards
+$card-bg: $grey-medium;
+$card-color: #f1f1f1;
+$card-collapse-bg: #fff;
+
+//pagination
+$pagination-bg: $grey-light;
+$pagination-border-color: $grey-dark;
+$pagination-hover-bg: $grey-medium;
+$pagination-hover-border-color: $grey-dark;
+$pagination-disabled-bg: $grey-medium;
+$pagination-disabled-border-color: $grey-light;
+
+$popover-bg: $grey-medium;
+$popover-header-bg: $grey-dark;
+
+//import bootstrap after setting variables
+@import 'bootstrap';
+
+// Vendors (S)CSS
+@import 'partials/_vendors';
+
+// concatenated SCSS from views
+@import 'partials/_components';
+
+.text-dark {
+  color: #f1f1f1 !important;
+}
+
+//horizontal line
+hr {
+  border-color: $grey-light !important;
+}
+
+//list group
+.list-group-item {
+  background-color: $grey-light !important;
+}
+.list-group-item-dark {
+  background-color: $grey-dark !important;
+  color: #fff !important;
+}
+
+//select2
+.select2-dropdown {
+  background-color: $grey-dark;
+  border: 1px solid rgba(0,0,0,.125);
+}
+
+//buttons
+.btn.btn-outline-dark {
+  color: #fff;
+  border-color: #aaa;
+}
+
+.btn.btn-outline-dark:hover {
+  background: $info;
+}
+
+.btn.lampOn:hover {
+  background: $primary;
+  border-color: $primary;
+}
+
+.btn.lampOff:hover {
+  background: $warning;
+  border-color: $warning;
+}
+
+//modals
+.modal-header button {
+  color: #fff;
+  text-shadow: 0 1px 0 $grey-dark;
+}
+
+//cards
+.card.leftborder.leftborder-info { background-color: $grey-dark; }
+.card-header.bg-dark { background-color: $grey-dark !important; }
+.card-header.bg-white { background-color: $grey-dark !important; }
+
+//simplemde
+.editor-toolbar button {
+  @extend .text-white;
+  &.active, &:hover{
+    @extend .bg-dark;
+  }
+}
+
+.editor-toolbar.disabled-for-preview button {
+  @extend .bg-dark
+}
+
+//datetimepicker
+.bootstrap-datetimepicker-widget.dropdown-menu { background-color: $grey-dark !important; }
+
+//custom file labels
+.custom-file-label::after {
+  color: #fff !important;
+}
+
+//protube admin search results
+.video:nth-child(2n) {
+  background-color: $grey-dark !important;
+}
+
+//scrollbar (webkit only)
+html {
+  scrollbar-face-color: $grey-dark;
+  scrollbar-base-color: $grey-dark;
+  scrollbar-3dlight-color: $grey-dark;
+  scrollbar-highlight-color: $grey-dark;
+  scrollbar-track-color: $grey-medium;
+  scrollbar-shadow-color: $grey-dark;
+}
+
+::-webkit-scrollbar { width: 10px; height: 3px; }
+::-webkit-scrollbar-track { background-color: $grey-dark; }
+::-webkit-scrollbar-track-piece { background-color: #000; }
+::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px; }
+::-webkit-scrollbar-corner { background-color: $grey-dark; }
+::-webkit-resizer { background-color: #666; }

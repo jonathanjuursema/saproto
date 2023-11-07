@@ -122,7 +122,7 @@ Route::group(['middleware' => ['forcedomain']], function () {
 
         Route::post('change_email', ['as' => 'changemail', 'middleware' => ['throttle:3,1'], 'uses' => 'UserDashboardController@updateMail']);
 
-        Route::get('dashboard', ['as' => 'dashboard', 'uses' => 'UserDashboardController@show']);
+        Route::get('dashboard/{page?}', ['as' => 'dashboard', 'uses' => 'UserDashboardController@show']);
         Route::post('dashboard', ['as' => 'dashboard', 'uses' => 'UserDashboardController@update']);
 
         Route::get('{id?}', ['as' => 'profile', 'middleware' => ['member'], 'uses' => 'UserProfileController@show']);

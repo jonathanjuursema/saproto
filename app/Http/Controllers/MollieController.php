@@ -194,7 +194,7 @@ class MollieController extends Controller
         if (Session::has('mollie_paid_tickets')) {
             $event_id = Session::get('mollie_paid_tickets');
             Session::remove('mollie_paid_tickets');
-            $isMember = Auth::user()->getIsMemberAttribute();
+            $isMember = Auth::user()->is_member;
 
             switch (MollieTransaction::translateStatus($transaction->status)) {
                 case 'failed':

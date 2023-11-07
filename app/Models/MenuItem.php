@@ -47,6 +47,9 @@ class MenuItem extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = ['created_at', 'updated_at', 'parent', 'page_id', 'order'];
+    protected $appends = ['parsed_url'];
+
     /** @return BelongsTo */
     public function page()
     {
@@ -60,7 +63,7 @@ class MenuItem extends Model
     }
 
     /** @return string|null */
-    public function getUrl()
+    public function getUrl() : string | null
     {
         if (substr($this->url, 0, 8) == '(route) ') {
             try {
@@ -71,6 +74,12 @@ class MenuItem extends Model
         } else {
             return $this->url;
         }
+    }
+
+    /** @return string|null */
+    public function getParsedUrlAttribute() : string | null
+    {
+        return $this->getUrl();
     }
 
     /** @return bool */

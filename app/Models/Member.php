@@ -66,6 +66,8 @@ class Member extends Model
 
     protected $guarded = ['id', 'user_id'];
 
+    protected $appends = ['member_type'];
+
     protected $casts = [
         'deleted_at' => 'datetime',
     ];
@@ -109,7 +111,7 @@ class Member extends Model
     }
 
     /** @return OrderLine|null */
-    public function getMembershipOrderline()
+    public function getMembershipOrderline() : OrderLine | null
     {
         if (intval(date('n')) >= 9) {
             $year_start = intval(date('Y'));
@@ -120,12 +122,12 @@ class Member extends Model
         return OrderLine::query()
             ->whereIn('product_id', array_values(config('omnomcom.fee')))
             ->where('created_at', '>=', $year_start.'-09-01 00:00:01')
-            ->where('user_id', '=', $this->user->id)
+            ->where('user_id', '=', $this->user()->pluck('id')->first())
             ->first();
     }
 
     /** @return string|null */
-    public function getMemberType()
+    public function getMemberTypeAttribute() : string | null
     {
         $membershipOrderline = $this->getMembershipOrderline();
 

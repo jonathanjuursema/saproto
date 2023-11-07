@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EnforceWizard::class,
             \App\Http\Middleware\ApiMiddleware::class,
             \Spatie\Csp\AddCspHeaders::class,
+            \App\Http\Middleware\HandleInertiaRequests::class
         ],
         'api' => [
             'throttle:60,1',
