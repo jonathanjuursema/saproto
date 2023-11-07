@@ -4,7 +4,7 @@ type Company = {
     url: string;
     excerpt: string;
     description: string;
-    image_id: number;
+    photo_id: number;
     on_carreer_page: boolean;
     in_logo_bar: boolean;
     created_at: string /* Date */ | null;

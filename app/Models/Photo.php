@@ -55,13 +55,19 @@ class Photo extends Model
 
     protected $guarded = ['id'];
 
-    public function makePhoto($photo, $original_name, $date_taken, $private = false, $pathInPhotos = null, $albumId = null, $addWatermark = false, $watermarkUserName = null)
+
+    public function savePhoto()
     {
-        $original_photo_storage = 'photos/original_photos/'.($albumId ?? $pathInPhotos).'/';
-        $large_photos_storage = 'photos/large_photos/'.($albumId ?? $pathInPhotos).'/';
-        $medium_photos_storage = 'photos/medium_photos/'.($albumId ?? $pathInPhotos).'/';
-        $small_photos_storage = 'photos/small_photos/'.($albumId ?? $pathInPhotos).'/';
-        $tiny_photos_storage = 'photos/tiny_photos/'.($albumId ?? $pathInPhotos).'/';
+
+    }
+
+    public function makePhoto($original_photo, $original_name, $date_taken, $private = false, $pathInPhotos = null, $albumId = null, $addWatermark = false, $watermarkUserName = null)
+    {
+        $original_photo_storage = 'photos/original_photos/' . ($albumId ?? $pathInPhotos) . '/';
+        $large_photos_storage = 'photos/large_photos/' . ($albumId ?? $pathInPhotos) . '/';
+        $medium_photos_storage = 'photos/medium_photos/' . ($albumId ?? $pathInPhotos) . '/';
+        $small_photos_storage = 'photos/small_photos/' . ($albumId ?? $pathInPhotos) . '/';
+        $tiny_photos_storage = 'photos/tiny_photos/' . ($albumId ?? $pathInPhotos) . '/';
 
         $watermark = null;
         if ($addWatermark) {
@@ -74,23 +80,23 @@ class Photo extends Model
         }
 
         $original_file = new StorageEntry();
-        $original_file->createFromPhoto($photo, $original_photo_storage, null, $original_name, $watermark, $private);
+        $original_file->createFromPhoto($original_photo, $original_photo_storage, null, $original_name, $watermark, $private);
         $original_file->save();
 
         $large_file = new StorageEntry();
-        $large_file->createFromPhoto($photo, $large_photos_storage, 1080, $original_name, $watermark, $private);
+        $large_file->createFromPhoto($original_photo, $large_photos_storage, 1080, $original_name, $watermark, $private);
         $large_file->save();
 
         $medium_file = new StorageEntry();
-        $medium_file->createFromPhoto($photo, $medium_photos_storage, 750, $original_name, $watermark, $private);
+        $medium_file->createFromPhoto($original_photo, $medium_photos_storage, 750, $original_name, $watermark, $private);
         $medium_file->save();
 
         $small_file = new StorageEntry();
-        $small_file->createFromPhoto($photo, $small_photos_storage, 420, $original_name, $watermark, $private);
+        $small_file->createFromPhoto($original_photo, $small_photos_storage, 420, $original_name, $watermark, $private);
         $small_file->save();
 
         $tiny_file = new StorageEntry();
-        $tiny_file->createFromPhoto($photo, $tiny_photos_storage, 50, $original_name, $watermark, $private);
+        $tiny_file->createFromPhoto($original_photo, $tiny_photos_storage, 50, $original_name, $watermark, $private);
         $tiny_file->save();
 
         $this->file_id = $original_file->id;
@@ -143,8 +149,8 @@ class Photo extends Model
     }
 
     /**
-     * @param  bool  $next
-     * @param  User  $user
+     * @param bool $next
+     * @param User $user
      */
     public function getAdjacentPhoto($next = true, $user = null): ?Photo
     {
@@ -155,7 +161,7 @@ class Photo extends Model
             $ord = 'DESC';
             $comp = '<';
         }
-        $result = self::where('album_id', $this->album_id)->where('date_taken', $comp.'=', $this->date_taken);
+        $result = self::where('album_id', $this->album_id)->where('date_taken', $comp . '=', $this->date_taken);
 
         if ($user == null || $user->member() == null) {
             $result = $result->where('private', false);
@@ -180,7 +186,7 @@ class Photo extends Model
     }
 
     /**
-     * @param  int  $paginateLimit
+     * @param int $paginateLimit
      * @return float|int
      */
     public function getAlbumPageNumber($paginateLimit)
@@ -238,7 +244,7 @@ class Photo extends Model
 
     public function mayViewPhoto($user): bool
     {
-        if (! $this->private) {
+        if (!$this->private) {
             return true;
         }
         if ($user) {
@@ -274,11 +280,11 @@ class Photo extends Model
 
         static::updated(function ($photo) {
             if ($photo->private) {
-                if (! $photo->makePrivate()) {
+                if (!$photo->makePrivate()) {
                     $photo->private = false;
                 }
             } else {
-                if (! $photo->makePublic()) {
+                if (!$photo->makePublic()) {
                     $photo->private = true;
                 }
             }

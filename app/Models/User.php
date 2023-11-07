@@ -218,6 +218,11 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return $this->belongsTo('App\Models\Photo', 'photo_id');
     }
 
+    public function getPhotoPreviewAttribute()
+    {
+        return $this->generateSmallPhotoPath();
+    }
+
     /** @return BelongsTo */
     public function helperReminderSubscriptions()
     {
@@ -275,7 +280,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     }
 
     /** @return Bank | null */
-    public function getBankAttribute(): Bank | null
+    public function getBankAttribute(): Bank|null
     {
         return $this->bank()->first();
     }

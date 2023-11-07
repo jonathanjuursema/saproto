@@ -10,6 +10,7 @@ type Dinnerform = {
     regular_discount: number;
     closed: boolean;
     visible_home_page: boolean;
+    ordered_by_user_id: number;
     ordered_by?: User | null;
     regular_discount_percentage?: any;
 }

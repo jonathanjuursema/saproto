@@ -3,6 +3,7 @@ type User = {
     name: string;
     calling_name: string;
     email: string;
+    photo_id: number | null;
     birthdate: string /* Date */ | null;
     phone: string | null;
     website: string | null;
@@ -27,12 +28,11 @@ type User = {
     did_study_itech: boolean;
     signed_nda: boolean;
     member?: Member | null;
-    bank?: any;
+    bank?: any | null;
     is_active_member?: boolean;
     completed_profile?: any;
     is_member?: boolean;
     signed_membership_form?: any;
     is_protube_admin?: any;
-    photo_preview?: any;
     welcome_message?: string | any;
 }

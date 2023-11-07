@@ -12,9 +12,9 @@ type Event = {
     is_featured: boolean;
     involves_food: boolean;
     force_calendar_sync: boolean;
+    photo_id: number | null;
     committee_id: number | null;
     summary: string | null;
-    include_in_newsletter: boolean;
     is_future?: any;
     formatted_date?: any;
 }

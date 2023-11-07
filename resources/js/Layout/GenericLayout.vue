@@ -6,7 +6,7 @@ import WebsiteFooter from '@/Layout/WebsiteFooter.vue';
 
 const page = usePage();
 
-const theme = computed(() => page.props.user.theme);
+const theme = computed(() => page.props.auth.user.theme);
 const themes = computed(() => page.props.themes);
 </script>
 

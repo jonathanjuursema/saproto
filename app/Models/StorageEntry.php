@@ -48,7 +48,7 @@ class StorageEntry extends Model
     /**
      * **IMPORTANT!** IF YOU ADD ANY RELATION TO A FILE IN ANOTHER MODEL, DON'T FORGET TO UPDATE THIS.
      *
-     * @return bool whether or not the file is orphaned (not in use, can really be deleted safely)
+     * @return bool whether the file is orphaned (not in use, can really be deleted safely)
      */
     public function isOrphan()
     {
@@ -77,8 +77,8 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  UploadedFile  $file
-     * @param  string|null  $customPath
+     * @param UploadedFile $file
+     * @param string|null $customPath
      *
      * @throws FileNotFoundException
      */
@@ -86,10 +86,10 @@ class StorageEntry extends Model
     {
         $this->hash = $this->generateHash();
 
-        $this->filename = date('Y\/F\/d').'/'.$this->hash;
+        $this->filename = date('Y\/F\/d') . '/' . $this->hash;
 
         if ($customPath) {
-            $this->filename = $customPath.$this->hash;
+            $this->filename = $customPath . $this->hash;
         }
 
         Storage::disk('local')->put($this->filename, File::get($file));
@@ -101,20 +101,20 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  resource|string  $data
-     * @param  string  $mime
-     * @param  string  $name
-     * @param  string|null  $customPath
+     * @param resource|string $data
+     * @param string $mime
+     * @param string $name
+     * @param string|null $customPath
      */
     public function createFromData($data, $mime, $name, $customPath = null)
     {
         $this->hash = $this->generateHash();
-        $this->filename = date('Y\/F\/d').'/'.$this->hash;
+        $this->filename = date('Y\/F\/d') . '/' . $this->hash;
         $this->mime = $mime;
         $this->original_filename = $name;
 
         if ($customPath) {
-            $this->filename = $customPath.$this->hash;
+            $this->filename = $customPath . $this->hash;
         }
 
         Storage::disk('local')->put($this->filename, $data);
@@ -123,18 +123,18 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  UploadedFile|string  $file
-     * @param  string|null  $customPath
-     * @param  int|null  $width
-     * @param  string|null  $original_name
-     * @param  Image|null  $watermark
+     * @param UploadedFile|string $file
+     * @param string|null $customPath
+     * @param int|null $width
+     * @param string|null $original_name
+     * @param Image|null $watermark
      */
     public function createFromPhoto($file, $customPath = null, $width = null, $original_name = null, $watermark = null, $private = false)
     {
         $this->hash = $this->generateHash();
-        $this->filename = date('Y\/F\/d').'/'.$this->hash;
+        $this->filename = date('Y\/F\/d') . '/' . $this->hash;
         if ($customPath) {
-            $this->filename = $customPath.$this->hash;
+            $this->filename = $customPath . $this->hash;
         }
         $image = ImageManagerStatic::make($file);
         $image->orientate();
@@ -148,7 +148,7 @@ class StorageEntry extends Model
                 $constraint->aspectRatio();
             });
 
-            $offset = (int) floor($image->width() / 100 * 2.5);
+            $offset = (int)floor($image->width() / 100 * 2.5);
             $image->insert($watermark, 'bottom-right', $offset, 2 * $offset);
         }
         $image->stream();
@@ -156,17 +156,17 @@ class StorageEntry extends Model
         $this->original_filename = $original_name;
         $this->mime = $image->mime();
 
-        if (! File::exists(Storage::disk('local')->path($customPath))) {
+        if (!File::exists(Storage::disk('local')->path($customPath))) {
             File::makeDirectory(Storage::disk('local')->path($customPath), 0777, true);
         }
-        if (! File::exists(Storage::disk('public')->path($customPath))) {
+        if (!File::exists(Storage::disk('public')->path($customPath))) {
             File::makeDirectory(Storage::disk('public')->path($customPath), 0777, true);
         }
 
         if ($private) {
-            Storage::disk('local')->put($customPath.$this->hash, $image);
+            Storage::disk('local')->put($customPath . $this->hash, $image);
         } else {
-            Storage::disk('public')->put($customPath.$this->hash, $image);
+            Storage::disk('public')->put($customPath . $this->hash, $image);
         }
 
         return back();
@@ -175,7 +175,7 @@ class StorageEntry extends Model
     /** @return string */
     private function generateHash()
     {
-        return sha1(date('U').mt_rand(1, intval(99999999999)));
+        return sha1(date('U') . mt_rand(1, intval(99999999999)));
     }
 
     /** @return string */
@@ -194,8 +194,8 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  int|null  $w
-     * @param  int|null  $h
+     * @param int|null $w
+     * @param int|null $h
      * @return string
      */
     public function getBase64($w = null, $h = null)
@@ -205,7 +205,7 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  bool  $human Defaults to true.
+     * @param bool $human Defaults to true.
      * @return string|int
      */
     public function getFileSize($human = true)
@@ -213,13 +213,13 @@ class StorageEntry extends Model
         $size = File::size($this->generateLocalPath());
         if ($human) {
             if ($size < 1024) {
-                return $size.' bytes';
+                return $size . ' bytes';
             } elseif ($size < pow(1024, 2)) {
-                return round($size / pow(1024, 1), 1).' kilobytes';
+                return round($size / pow(1024, 1), 1) . ' kilobytes';
             } elseif ($size < pow(1024, 3)) {
-                return round($size / pow(1024, 2), 1).' megabytes';
+                return round($size / pow(1024, 2), 1) . ' megabytes';
             } else {
-                return round($size / pow(1024, 3), 1).' gigabytes';
+                return round($size / pow(1024, 3), 1) . ' gigabytes';
             }
         } else {
             return $size;
@@ -237,12 +237,12 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  string  $algo Defaults to md5.
+     * @param string $algo Defaults to md5.
      * @return string
      */
     public function getFileHash($algo = 'md5')
     {
-        return $algo.': '.hash_file($algo, $this->generateLocalPath());
+        return $algo . ': ' . hash_file($algo, $this->generateLocalPath());
     }
 
     /**

@@ -8,5 +8,9 @@ type Newsitem = {
     created_at: string /* Date */ | null;
     updated_at: string /* Date */ | null;
     deleted_at: string /* Date */;
-    url?: any;
+    is_weekly: boolean;
+    user?: User | null;
+    events?: Event[] | null;
+    featured_image?: StorageEntry | null;
+    url?: string;
 }

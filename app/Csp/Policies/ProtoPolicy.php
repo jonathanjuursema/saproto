@@ -52,6 +52,7 @@ class ProtoPolicy extends Policy
                     Keyword::SELF,
                     '*',
                     'data:',
+                    'blob:',
                 ])
                 ->addDirective(Directive::MEDIA, [
                     Keyword::SELF,

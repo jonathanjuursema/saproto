@@ -10,4 +10,5 @@ type Achievement = {
     is_archived: boolean;
     created_at: string /* Date */ | null;
     updated_at: string /* Date */ | null;
+    achievement_ownership?: AchievementOwnership[] | null;
 }

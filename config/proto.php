@@ -276,7 +276,7 @@ return [
     |
     */
 
-    'sepa_info' => (object) [
+    'sepa_info' => (object)[
         'iban' => env('SEPA_IBAN'),
         'bic' => env('SEPA_BIC'),
         'creditor_id' => env('SEPA_CI'),
@@ -297,6 +297,13 @@ return [
         2 => 'rainbowbarf',
         3 => 'broto',
         4 => 'nightMode',
+    ],
+
+    'photo_resizes' => [
+        'large' => 1080,
+        'medium' => 750,
+        'small' => 420,
+        'tiny' => 50,
     ],
 
     // Analytics URL

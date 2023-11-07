@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Photo;
 use App\Models\PhotoAlbum;
+use App\Models\StorageEntry;
 use Auth;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -12,6 +13,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Redirect;
 use Session;
 
@@ -46,20 +49,24 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @return View
+     * @param int $id
+     * @return Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        $fileSizeLimit = ini_get('post_max_size');
-        $album = PhotoAlbum::findOrFail($id);
-        $photos = $album->items()->get();
+//        $photos = PhotoManager::getPhotos($id);
 
-        return view('photos.admin.edit', ['album' => $album, 'photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
+//        if ($photos == null) {
+//            abort(404);
+//        }
+//
+//        return view('photos.admin.edit', ['photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
+
+        return Inertia::render('Photos/UploadPage');
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function update(Request $request, $id)
@@ -78,27 +85,46 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse|string
      */
     public function upload(Request $request, $id)
     {
         $album = PhotoAlbum::findOrFail($id);
-
-        if (! $request->hasFile('file')) {
-            return response()->json([
-                'message' => 'photo not found in request!',
-            ], 404);
-        } elseif ($album->published) {
+        foreach (config('proto.photo_resizes') as $key => $value) {
+            if (!$request->hasFile($value)) {
+                return response()->json([
+                    'message' => 'The response does not have the size ' . $key . ' in it!',
+                ], 404);
+            }
+        }
+        if ($album->published) {
             return response()->json([
                 'message' => 'album already published! Unpublish to add more photos!',
             ], 500);
+        } else if (!$request->hasFile('original')) {
+            return response()->json([
+                'message' => 'original photo not found in request!',
+            ], 404);
+        } else if (!$request->has('resized_photos') || count($request->input('resized_photos')) < 4) {
+            return response()->json([
+                'message' => 'resized photos not found in request!',
+            ], 404);
         }
         try {
-            $uploadFile = $request->file('file');
+            $uploadFile = $request->file('original');
             $addWaterMark = $request->has('addWaterMark');
 
-            $photo = $this->createPhotoFromUpload($uploadFile, $id, $addWaterMark);
+            $photo = new Photo();
+            $photo->makePhoto($uploadFile, $uploadFile->getClientOriginalName(), $uploadFile->getCTime(), $album->private, $album->id, $album->id, $addWaterMark, Auth::user()->name);
+
+            foreach (config('proto.photo_resizes') as $key => $value) {
+                $file = new StorageEntry();
+                $original_file->createFromPhoto($original_photo, $original_photo_storage, null, $original_name, $watermark, $private);
+                $original_file->save();
+
+
+            $photo->save();
 
             return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
         } catch (Exception $e) {
@@ -109,7 +135,22 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param UploadedFile $uploaded_photo
+     * @param int $album_id
+     * @param bool $addWatermark
+     * @return Photo
+     *
+     */
+    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id, $addWatermark = false): Photo
+    {
+        $album = PhotoAlbum::findOrFail($album_id);
+
+
+        return $photo;
+    }
+
+    /**
+     * @param int $id
      * @return RedirectResponse
      *
      * @throws Exception
@@ -122,7 +163,7 @@ class PhotoAdminController extends Controller
         if ($photos) {
             $album = PhotoAlbum::findOrFail($id);
 
-            if ($album->published && ! Auth::user()->can('publishalbums')) {
+            if ($album->published && !Auth::user()->can('publishalbums')) {
                 abort(403, 'Unauthorized action.');
             }
 
@@ -134,14 +175,14 @@ class PhotoAdminController extends Controller
                     break;
 
                 case 'thumbnail':
-                    $album->thumb_id = (int) $photos[0];
+                    $album->thumb_id = (int)$photos[0];
                     break;
 
                 case 'private':
                     foreach ($photos as $photoId) {
                         $photo = Photo::find($photoId);
-                        if ($photo && ! $album->published) {
-                            $photo->private = ! $photo->private;
+                        if ($photo && !$album->published) {
+                            $photo->private = !$photo->private;
                             $photo->save();
                         }
                     }
@@ -154,7 +195,7 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      *
      * @throws Exception
@@ -168,14 +209,14 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function publish($id)
     {
         $album = PhotoAlbum::where('id', '=', $id)->first();
 
-        if (! count($album->items) > 0 || $album->thumb_id == null) {
+        if (!count($album->items) > 0 || $album->thumb_id == null) {
             Session::flash('flash_message', 'Albums need at least one photo and a thumbnail to be published.');
 
             return Redirect::back();
@@ -188,7 +229,7 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function unpublish($id)
@@ -198,18 +239,5 @@ class PhotoAdminController extends Controller
         $album->save();
 
         return Redirect::route('photo::admin::edit', ['id' => $id]);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id, $addWatermark = false): Photo
-    {
-        $album = PhotoAlbum::findOrFail($album_id);
-        $photo = new Photo();
-        $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), $album->private, $album->id, $album->id, $addWatermark, Auth::user()->name);
-        $photo->save();
-
-        return $photo;
     }
 }
