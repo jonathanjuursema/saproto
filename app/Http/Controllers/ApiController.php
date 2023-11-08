@@ -17,6 +17,7 @@ use App\Models\Token;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use stdClass;
@@ -118,6 +119,9 @@ class ApiController extends Controller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function randomPhoto(): JsonResponse
     {
         $privateQuery = Photo::query()->where('private', false)->whereHas('album', function ($query) {
@@ -128,7 +132,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'No public photos found!.'], 404);
         }
 
-        $random = mt_rand(1, 100);
+        $random = random_int(1, 100);
         if ($random > 0 && $random <= 30) { //30% chance the photo is from within the last year
             $query = (clone $privateQuery)->whereBetween('date_taken', [Carbon::now()->subYear()->timestamp, Carbon::now()->timestamp]);
         } elseif ($random > 30 && $random <= 55) { //25% chance the photo is from one year ago

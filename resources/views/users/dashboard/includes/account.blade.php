@@ -230,7 +230,8 @@
                                 'label' => 'After checkout, show how many calories I\'ve bought today.'
                             ])
                             <small class="form-text text-muted mb-2 d-block">
-                                This feature was requested by members who want to be aware of how much calories they eat.
+                                This feature was requested by members who want to be aware of how much calories they
+                                eat.
                             </small>
 
                             @include('components.forms.checkbox', [
@@ -238,8 +239,10 @@
                                 'checked' =>  $user->disable_omnomcom,
                                 'label' => 'Don\'t let me use the OmNomCom.'
                             ])
-                            <small class="d-block text-warning mb-1"><i class="fas fa-warning me-1"></i> Only the board can allow you access to the OmNomCom again.</small>
-                            <small class="d-block mb-1"><i class="fas fa-info-circle me-1"></i> You can still sign-up for
+                            <small class="d-block text-warning mb-1"><i class="fas fa-warning me-1"></i> Only the board
+                                can allow you access to the OmNomCom again.</small>
+                            <small class="d-block mb-1"><i class="fas fa-info-circle me-1"></i> You can still sign-up
+                                for
                                 activities, and the board can manually buy something for you if you need that.
                             </small>
                             <small class="form-text text-muted mb-2 d-block">
@@ -275,6 +278,16 @@
                         <small class="form-text text-muted">
                             This feature was requested by pretty much everyone.
                         </small>
+
+                        @if(Carbon::now()->month===Carbon::DECEMBER)
+                            <br>
+                            <a href="{{route('december::toggle')}}">
+                                <button type="button"
+                                        class="btn btn-warning">{{Cookie::get('disable-december')==='disabled'?'enable':'disable'}}
+                                    december theme
+                                </button>
+                            </a>
+                        @endif
 
                     </td>
                 </tr>

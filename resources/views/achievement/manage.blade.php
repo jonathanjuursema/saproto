@@ -13,6 +13,7 @@
             @if($achievement)
                 @include('achievement.includes.achievement_include', [
                     'achievement' => $achievement,
+                    'obtained' => null,
                 ])
             @endif
 

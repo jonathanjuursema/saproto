@@ -37,40 +37,48 @@
         @endif
 
         @if($outstandingAmount>0)
-            <p class="card-text">
-                Remaining outstanding
-                <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="The amount caught up in activities you signed up for that still have to be processed. This will not be in the next withdrawal AND you CAN NOT pay this now, but you will have to pay this this money somewhere in the future."></i>
-            </p>
-            <ul class="list-group list-group-flush" id="outstanding-accordion">
+            <div class="border-bottom-0">
+                            <span class="w-100 d-inline-flex justify-content-between">
+                                <span class=" cursor-pointer" data-bs-toggle="collapse"
+                                      data-bs-target="#collapse-outstanding">
+                                     Remaining outstanding
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip"
+                                       data-bs-placement="right"
+                                       title="The amount owed for activities you signed up for that have not yet been processed by the treasurer. Therefore, you can not pay this yet."></i>
+                                    <i class="fas fa-sm fa-fw fa-caret-down"></i>
+                                </span>
+                            </span>
+                <h3 class="card-title d-inline-block">
+                    &euro; {{ number_format($outstandingAmount, 2, '.', '') }}
+                </h3>
 
-                    <li class="cursor-pointer" data-bs-toggle="collapse"
-                        data-bs-target="#outstanding">
-                        <h3 class="card-title">
-                            &euro; {{ number_format($outstandingAmount, 2, '.', '') }}
-                        </h3>
-                    </li>
-                    <div id="outstanding" class="collapse" data-parent="#outstanding-accordion">
-                        <table class="table table-borderless table-hover table-sm mt-1">
+                <div id="collapse-outstanding" class="collapse">
+                    <div class="cursor-default p-0">
+
+                        <table class="table table-borderless table-responsive table-sm mt-1">
                             <thead>
                             <tr>
                                 <th scope="col">Activity</th>
                                 <th scope="col">Amount</th>
                             </tr>
                             </thead>
-                            <tbody
-                                @foreach($outstanding as $outstandingActivity)
-                                    <tr>
-                                        <td>{{ $outstandingActivity->event->title }}</td>
-                                        <td>&euro; {{ number_format($outstandingActivity->price, 2, '.', '') }}</td>
-                                    </tr>
-                                @endforeach
+                            <tbody>
+                            @foreach($outstanding as $outstandingActivity)
+                                <tr>
+                                    <td>{{ $outstandingActivity->event->title }}</td>
+                                    <td>
+                                        &euro; {{ number_format($outstandingActivity->price, 2, '.', '') }}</td>
+                                </tr>
+                            @endforeach
                             </tbody>
                         </table>
+
                     </div>
-            </ul>
-        @endif
+                </div>
+            </div>
     </div>
-    
+    @endif
+
     @if($next_withdrawal > 0)
 
         <div class="card-footer">
@@ -90,3 +98,11 @@
     @endif
 
 </div>
+
+<script nonce="{{ csp_nonce() }}">
+    var outstanding = document.querySelector('[data-bs-target="#collapse-outstanding"]');
+    outstanding.addEventListener('click', (e) => {
+        var outstanding_caret = outstanding.querySelector('.fa-caret-down');
+        outstanding_caret.classList.toggle('fa-rotate-180');
+    })
+</script>

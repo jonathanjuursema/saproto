@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool $review
  * @property int $reviewer_id
  * @property bool $can_reply
+ * @property bool $show_publisher
  * @property-read User|null $reviewer
  * @property-read Collection|FeedbackVote[] $votes
  *

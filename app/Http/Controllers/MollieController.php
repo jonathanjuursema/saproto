@@ -10,7 +10,6 @@ use App\Models\Product;
 use App\Models\User;
 use Auth;
 use Carbon;
-use DB;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -153,12 +152,17 @@ class MollieController extends Controller
         }
 
         // We do one massive query to reduce the number of queries.
-        $orderlines = DB::table('orderlines')
+        $orderlines = OrderLine::query()
             ->join('products', 'orderlines.product_id', '=', 'products.id')
             ->join('accounts', 'products.account_id', '=', 'accounts.id')
-            ->select('orderlines.*', 'accounts.account_number', 'accounts.name')
-            ->whereNotNull('orderlines.payed_with_mollie')
-            ->whereBetween('orderlines.created_at', [$start, $end])
+            ->select(['orderlines.*', 'accounts.account_number', 'accounts.name'])
+            ->whereHas('molliePayment', function ($query) use ($start, $end) {
+                $query->where(function ($query) {
+                    $query->where('status', 'paid')
+                        ->orWhere('status', 'paidout');
+                })
+                    ->whereBetween('created_at', [$start, $end]);
+            })
             ->get();
 
         return view('omnomcom.accounts.orderlines-breakdown', [
@@ -243,7 +247,7 @@ class MollieController extends Controller
         if (config('omnomcom.mollie')['use_fees']) {
             $fee = round(
                 $selected_method->pricing[0]->fixed->value +
-                    $total * (floatval($selected_method->pricing[0]->variable) / 100),
+                $total * (floatval($selected_method->pricing[0]->variable) / 100),
                 2
             );
             if ($fee > 0) {
@@ -315,8 +319,13 @@ class MollieController extends Controller
             $end->nextWeekday();
         }
 
-        return OrderLine::whereNotNull('payed_with_mollie')
-            ->whereBetween('created_at', [$start, $end])
+        return OrderLine::whereHas('molliePayment', function ($query) use ($start, $end) {
+            $query->where(function ($query) {
+                $query->where('status', 'paid')
+                    ->orWhere('status', 'paidout');
+            })
+                ->whereBetween('created_at', [$start, $end]);
+        })
             ->sum('total_price');
     }
 
