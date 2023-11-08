@@ -55,6 +55,8 @@ class Photo extends Model
     protected $table = 'photos';
     protected $appends = ['original_url', 'large_url', 'medium_url', 'small_url', 'tiny_url'];
 
+    protected $with = ['file', 'large_file', 'medium_file', 'small_file', 'tiny_file'];
+
     protected $guarded = ['id'];
 
     protected $casts = [
