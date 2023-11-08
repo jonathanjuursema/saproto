@@ -1,16 +1,46 @@
 <template>
   <GenericLayout>
-    <card>
+    <card class="mb-3">
       <DropZone @drop.prevent="drop" />
     </card>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid gap-3">
+        <div v-for="photo in photos.slice(0, photos.length / 4)" :key="photo.id">
+          <img class="h-auto max-w-full rounded-lg" :src="photo.small_url" alt="unable to load Photo" />
+        </div>
+      </div>
+      <div class="grid gap-3">
+        <div v-for="photo in photos.slice(photos.length / 4, (photos.length / 4) * 2)" :key="photo.id">
+          <img class="h-auto max-w-full rounded-lg" :src="photo.small_url" alt="" />
+        </div>
+      </div>
+      <div class="grid gap-3">
+        <div v-for="photo in photos.slice((photos.length / 4) * 2, (photos.length / 4) * 3)" :key="photo.id">
+          <img class="h-auto max-w-full rounded-lg" :src="photo.small_url" alt="" />
+        </div>
+      </div>
+      <div class="grid gap-3">
+        <div v-for="photo in photos.slice((photos.length / 4) * 3, photos.length)" :key="photo.id">
+          <img class="h-auto max-w-full rounded-lg" :src="photo.small_url" alt="" />
+        </div>
+      </div>
+    </div>
     <div v-for="file in dropZoneFiles" :key="file.name">
       {{ file.name }}
     </div>
-    <div id="canva"></div>
+    <div v-for="url in uploadedUrls" :key="url">
+      <!--      create img with url-->
+      <div class="h-32" @click="clickMethod">
+        <img class="h-auto max-w-full" :src="url" alt="An uploaded image" />
+      </div>
+    </div>
   </GenericLayout>
 </template>
 
 <script lang="ts" setup>
+defineProps<{
+  photos: Array<Photo>;
+}>();
 import axios from 'axios';
 import DropZone from '@/Components/Photos/DropZone.vue';
 import GenericLayout from '@/Layout/GenericLayout.vue';
@@ -18,6 +48,7 @@ import Card from '@/Components/CardComponent.vue';
 import { ref } from 'vue';
 
 let dropZoneFiles = ref('');
+let uploadedUrls = ref([]);
 const drop = (event) => {
   dropZoneFiles.value = event.dataTransfer.files;
   Array.from(event.dataTransfer.files).forEach((file, index) => {
@@ -39,8 +70,9 @@ const drop = (event) => {
           data.append(value.size, value.blob);
         });
         axios.post(route('photo::admin::upload', { id: 1 }), data).then((response) => {
-          //remove file from dropzone array
-          console.log(response);
+          console.log(JSON.parse(response.data.photo));
+          props.photos.unshift(JSON.parse(response.data.photo));
+          uploadedUrls.value.push(response.data.url);
         });
       });
     };
@@ -71,5 +103,9 @@ function calculateSize(img, longestSide) {
     width = longestSide * ratio;
   }
   return [Math.round(width), Math.round(height)];
+}
+
+function clickMethod(event) {
+  console.log(event);
 }
 </script>

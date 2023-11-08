@@ -14,4 +14,9 @@ type Photo = {
     likes?: PhotoLikes[] | null;
     file?: StorageEntry | null;
     tiny_file?: StorageEntry | null;
+    original_url?: string;
+    large_url?: string;
+    medium_url?: string;
+    small_url?: string;
+    tiny_url?: string;
 }

@@ -45,6 +45,8 @@ class StorageEntry extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = ['hash', 'original_filename', 'created_at', 'updated_at'];
+
     /**
      * **IMPORTANT!** IF YOU ADD ANY RELATION TO A FILE IN ANOTHER MODEL, DON'T FORGET TO UPDATE THIS.
      *
@@ -82,7 +84,7 @@ class StorageEntry extends Model
      *
      * @throws FileNotFoundException
      */
-    public function createFromFile($file, $customPath = null)
+    public function createFromFile($file, $customPath = null, $private = false)
     {
         $this->hash = $this->generateHash();
 
@@ -92,7 +94,11 @@ class StorageEntry extends Model
             $this->filename = $customPath . $this->hash;
         }
 
-        Storage::disk('local')->put($this->filename, File::get($file));
+        if ($private) {
+            Storage::disk('local')->put($this->filename, File::get($file));
+        } else {
+            Storage::disk('public')->put($this->filename, File::get($file));
+        }
 
         $this->mime = $file->getClientMimeType();
         $this->original_filename = $file->getClientOriginalName();
@@ -106,7 +112,7 @@ class StorageEntry extends Model
      * @param string $name
      * @param string|null $customPath
      */
-    public function createFromData($data, $mime, $name, $customPath = null)
+    public function createFromData($data, $mime, $name, $customPath = null, $private = false)
     {
         $this->hash = $this->generateHash();
         $this->filename = date('Y\/F\/d') . '/' . $this->hash;
@@ -117,7 +123,11 @@ class StorageEntry extends Model
             $this->filename = $customPath . $this->hash;
         }
 
-        Storage::disk('local')->put($this->filename, $data);
+        if ($private) {
+            Storage::disk('local')->put($this->filename, $data);
+        } else {
+            Storage::disk('public')->put($this->filename, $data);
+        }
 
         $this->save();
     }

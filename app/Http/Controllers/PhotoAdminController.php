@@ -62,7 +62,10 @@ class PhotoAdminController extends Controller
 //
 //        return view('photos.admin.edit', ['photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
 
-        return Inertia::render('Photos/UploadPage');
+        return Inertia::render('Photos/UploadPage', [
+            'album' => PhotoAlbum::findOrFail($id),
+            'photos' => Photo::where('album_id', '=', $id)->orderBy('date_taken', 'asc')->orderBy('id', 'asc')->get(),
+        ]);
     }
 
     /**
@@ -86,18 +89,28 @@ class PhotoAdminController extends Controller
 
     /**
      * @param int $id
-     * @return JsonResponse|string
      */
     public function upload(Request $request, $id)
     {
         $album = PhotoAlbum::findOrFail($id);
         foreach (config('proto.photo_resizes') as $key => $value) {
-            if (!$request->hasFile($value)) {
-                return response()->json([
-                    'message' => 'The response does not have the size ' . $key . ' in it!',
-                ], 404);
+            if (!$request->hasFile($value) || !$request->file($value)->isValid()) {
+                $imageSizes = getimagesize($request->file($value));
+                if (!$imageSizes || $imageSizes[0] == 0 || $imageSizes[1] == 0) {
+                    return response()->json([
+                        'message' => 'The response does not have the correct form with key ' . $key . ' in it!',
+                    ], 400);
+                }
+                $width = $imageSizes[0];
+                $height = $imageSizes[1];
+                if (($width > $height && $width > $value) || ($height > $width && $height > $value)) {
+                    return response()->json([
+                        'message' => 'The image with key' . $key . ' is not the right size!',
+                    ], 400);
+                }
             }
         }
+
         if ($album->published) {
             return response()->json([
                 'message' => 'album already published! Unpublish to add more photos!',
@@ -106,47 +119,31 @@ class PhotoAdminController extends Controller
             return response()->json([
                 'message' => 'original photo not found in request!',
             ], 404);
-        } else if (!$request->has('resized_photos') || count($request->input('resized_photos')) < 4) {
-            return response()->json([
-                'message' => 'resized photos not found in request!',
-            ], 404);
         }
+
         try {
-            $uploadFile = $request->file('original');
-            $addWaterMark = $request->has('addWaterMark');
+            $original = $request->file('original');
+            $large = $request->file('1080');
+            $medium = $request->file('750');
+            $small = $request->file('420');
+            $tiny = $request->file('50');
 
             $photo = new Photo();
-            $photo->makePhoto($uploadFile, $uploadFile->getClientOriginalName(), $uploadFile->getCTime(), $album->private, $album->id, $album->id, $addWaterMark, Auth::user()->name);
-
-            foreach (config('proto.photo_resizes') as $key => $value) {
-                $file = new StorageEntry();
-                $original_file->createFromPhoto($original_photo, $original_photo_storage, null, $original_name, $watermark, $private);
-                $original_file->save();
-
+            $photo->savePhoto($original, $large, $medium, $small, $tiny, $original->getCTime(), $album->private, $album->id, $album->id);
 
             $photo->save();
 
-            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
+            return response()->json([
+                'message' => 'Photo uploaded successfully!',
+                'url' => $photo->getMediumUrlAttribute(),
+                'name' => $original->getClientOriginalName(),
+                'photo' => json_encode($photo),
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e,
             ], 500);
         }
-    }
-
-    /**
-     * @param UploadedFile $uploaded_photo
-     * @param int $album_id
-     * @param bool $addWatermark
-     * @return Photo
-     *
-     */
-    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id, $addWatermark = false): Photo
-    {
-        $album = PhotoAlbum::findOrFail($album_id);
-
-
-        return $photo;
     }
 
     /**

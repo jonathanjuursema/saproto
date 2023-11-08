@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon;
 use Eloquent;
 use File;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -52,13 +53,49 @@ use Intervention\Image\Facades\Image;
 class Photo extends Model
 {
     protected $table = 'photos';
+    protected $appends = ['original_url', 'large_url', 'medium_url', 'small_url', 'tiny_url'];
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'private' => 'boolean',
+    ];
 
-    public function savePhoto()
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public function savePhoto($original_photo, $large_photo, $medium_photo, $small_photo, $tiny_photo, $date_taken, $private = false, $pathInPhotos = null, $albumId = null): void
     {
+        $original_file = new StorageEntry();
+        $original_file->createFromFile($original_photo, 'photos/original_photos/' . ($albumId ?? $pathInPhotos) . '/', $private);
+        $original_file->save();
 
+        $large_file = new StorageEntry();
+        $large_file->createFromFile($large_photo, 'photos/large_photos/' . ($albumId ?? $pathInPhotos) . '/', $private);
+        $large_file->save();
+
+        $medium_file = new StorageEntry();
+        $medium_file->createFromFile($medium_photo, 'photos/medium_photos/' . ($albumId ?? $pathInPhotos) . '/', $private);
+        $medium_file->save();
+
+        $small_file = new StorageEntry();
+        $small_file->createFromFile($small_photo, 'photos/small_photos/' . ($albumId ?? $pathInPhotos) . '/', $private);
+        $small_file->save();
+
+        $tiny_file = new StorageEntry();
+        $tiny_file->createFromFile($tiny_photo, 'photos/tiny_photos/' . ($albumId ?? $pathInPhotos) . '/', $private);
+        $tiny_file->save();
+
+        $this->file_id = $original_file->id;
+        $this->large_file_id = $large_file->id;
+        $this->medium_file_id = $medium_file->id;
+        $this->small_file_id = $small_file->id;
+        $this->tiny_file_id = $tiny_file->id;
+        $this->private = $private;
+
+        $this->date_taken = $date_taken;
+        $this->album_id = $albumId;
     }
 
     public function makePhoto($original_photo, $original_name, $date_taken, $private = false, $pathInPhotos = null, $albumId = null, $addWatermark = false, $watermarkUserName = null)
@@ -217,27 +254,27 @@ class Photo extends Model
         return false;
     }
 
-    public function getOriginalUrl(): string
+    public function getOriginalUrlAttribute(): string
     {
         return $this->file->generateUrl();
     }
 
-    public function getLargeUrl(): string
+    public function getLargeUrlAttribute(): string
     {
         return $this->large_file->generateUrl();
     }
 
-    public function getMediumUrl(): string
+    public function getMediumUrlAttribute(): string
     {
         return $this->medium_file->generateUrl();
     }
 
-    public function getSmallUrl(): string
+    public function getSmallUrlAttribute(): string
     {
         return $this->small_file->generateUrl();
     }
 
-    public function getTinyUrl(): string
+    public function getTinyUrlAttribute(): string
     {
         return $this->tiny_file->generateUrl();
     }
