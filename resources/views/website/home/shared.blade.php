@@ -53,7 +53,7 @@
                                         <div class="swiper-slide justify-content-center align-items-center d-flex">
                                             <a href="{{ route('companies::show', ['id' => $company->id]) }}">
                                                 <img class="company-{{strtolower($company->name)}}"
-                                                     src="{{ $company->photo->getSmallUrl() }}"
+                                                     src="{{ $company->photo->getSmallUrlAttribute() }}"
                                                      alt="logo of {{ $company->name }}"
                                                      height="50px"
                                                 />

@@ -7,7 +7,7 @@
 
         @if($committee->photo)
 
-            <img class="card-img-top" src="{!! $committee->photo->getMediumUrl() !!}" width="100%">
+            <img class="card-img-top" src="{!! $committee->photo->getMediumUrlAttribute() !!}" width="100%">
 
             <div class="card-header bg-dark text-white">
                 Replace image
@@ -15,16 +15,16 @@
 
         @else
 
-        <div class="card-header bg-dark text-white">
-            Set image
-        </div>
+            <div class="card-header bg-dark text-white">
+                Set image
+            </div>
 
         @endif
 
         <div class="card-body">
 
             <div class="custom-file">
-                <input  type="file" class="form-control" id="image" name="image">
+                <input type="file" class="form-control" id="image" name="image">
                 <label class=form-label for="image">Choose file</label>
             </div>
 

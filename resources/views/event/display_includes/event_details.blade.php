@@ -38,7 +38,7 @@
 <div class="card mb-3">
 
     @if($event->photo)
-        <img class="card-img-top" src="{{ $event->photo->getMediumUrl() }}" width="100%">
+        <img class="card-img-top" src="{{ $event->photo->getMediumUrlAttribute() }}" width="100%">
     @endif
 
     <div class="card-header bg-light justify-content-between d-inline-flex align-items-center">
@@ -73,7 +73,8 @@
             <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i>
             {{ $event->location }}
             @if($event->maps_location)
-                <a  class="btn btn-sm btn-secondary ms-3" target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ urlencode($event->maps_location) }}">
+                <a class="btn btn-sm btn-secondary ms-3" target="_blank"
+                   href="https://www.google.com/maps/search/?api=1&query={{ urlencode($event->maps_location) }}">
                     <i class="fas fa-fw fa-map-marker-alt text-danger" aria-hidden="true"></i>
                     View on Maps
                 </a>

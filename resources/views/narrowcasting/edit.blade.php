@@ -66,7 +66,8 @@
 
                             <div class="row">
                                 <iframe height="300"
-                                        src="https://www.youtube.com/embed/{{$item->youtube_id}}" allow="encrypted-media" allowfullscreen></iframe>
+                                        src="https://www.youtube.com/embed/{{$item->youtube_id}}"
+                                        allow="encrypted-media" allowfullscreen></iframe>
                             </div>
 
                         @else
@@ -83,7 +84,7 @@
                             @if($item?->image)
 
                                 <label>Current image:</label>
-                                <img src="{!! $item->photo->getSmallUrl() !!}" class="w-100">
+                                <img src="{!! $item->photo->getSmallUrlAttribute() !!}" class="w-100">
 
                             @endif
 

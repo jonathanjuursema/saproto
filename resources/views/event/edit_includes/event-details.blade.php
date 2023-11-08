@@ -43,7 +43,8 @@
                                data-html="true"
                                title="Fill in the Google Maps name or coordinates to add a Google Maps link."></i>
                             <input type="text" class="form-control" id="maps_location" name="maps_location"
-                                   placeholder="52.239198, 6.857367" value="{{ old('location',$event->maps_location ?? '') }}">
+                                   placeholder="52.239198, 6.857367"
+                                   value="{{ old('location',$event->maps_location ?? '') }}">
                         </div>
 
                         <!-- Start -->
@@ -166,7 +167,7 @@
 
                         <hr>
                         <h5>Current image:</h5>
-                        <img src="{!! $event->photo->getMediumUrl() !!}" class="w-100 border">
+                        <img src="{!! $event->photo->getMediumUrlAttribute() !!}" class="w-100 border">
 
                     @endif
 

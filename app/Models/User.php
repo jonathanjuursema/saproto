@@ -341,7 +341,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function generateTinyPhotoPath()
     {
         if ($this->photo) {
-            return $this->photo->getTinyUrl();
+            return $this->photo->getTinyUrlAttribute();
         } else {
             return asset('images/default-avatars/other.png');
         }
@@ -355,7 +355,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function generateSmallPhotoPath()
     {
         if ($this->photo) {
-            return $this->photo->getSmallUrl();
+            return $this->photo->getSmallUrlAttribute();
         } else {
             return asset('images/default-avatars/other.png');
         }
@@ -369,7 +369,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function generateMediumPhotoPath()
     {
         if ($this->photo) {
-            return $this->photo->getMediumUrl();
+            return $this->photo->getMediumUrlAttribute();
         } else {
             return asset('images/default-avatars/other.png');
         }
@@ -383,7 +383,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     public function generateLargePhotoPath()
     {
         if ($this->photo) {
-            return $this->photo->getLargeUrl();
+            return $this->photo->getLargeUrlAttribute();
         } else {
             return asset('images/default-avatars/other.png');
         }

@@ -27,7 +27,7 @@
                         @if($company?->photo)
 
                             <div class="text-center">
-                                <img src="{!! $company->photo->getSmallUrl() !!}"
+                                <img src="{!! $company->photo->getSmallUrlAttribute() !!}"
                                      style="max-height: 100px;">
                             </div>
 

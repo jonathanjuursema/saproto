@@ -102,10 +102,11 @@
                 <div class="card-footer text-center">
                     <strong>Previous contributors</strong> -
                     @foreach($developers['old'] as $i => $dev)
-                        @if($dev->user->isMember) <a
-                                href="{{ route('user::profile', ['id' => $dev->user->getPublicId()]) }}">
-                            {{ $dev->user->name }}
-                        </a>
+                        @if($dev->user->isMember)
+                            <a
+                                    href="{{ route('user::profile', ['id' => $dev->user->getPublicId()]) }}">
+                                {{ $dev->user->name }}
+                            </a>
                         @else
                             {{ $dev->user->name }}
                         @endif
@@ -124,7 +125,7 @@
             <div class="card mb-3">
 
                 @if($committee->photo)
-                    <img class="card-img-top w-100" src="{{ $committee->photo->getMediumUrl() }}">
+                    <img class="card-img-top w-100" src="{{ $committee->photo->getMediumUrlAttribute() }}">
                 @endif
 
                 <div class="card-body">

@@ -26,7 +26,7 @@ class PhotoController extends Controller
     public function show(int $id): View|RedirectResponse
     {
         $album = PhotoAlbum::findOrFail($id);
-        if (! $album->published && ! Auth::user()?->can('protography')) {
+        if (!$album->published && !Auth::user()?->can('protography')) {
             Session::flash('flash_message', 'You do not have the permissions for this.');
 
             return Redirect::back();
@@ -44,7 +44,7 @@ class PhotoController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return View
      */
     public function photo($id)
@@ -55,24 +55,24 @@ class PhotoController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function getPhoto($id)
     {
         $photo = Photo::find($id);
-        if (! $photo) {
+        if (!$photo) {
             return response()->json(['error' => 'Photo not found.', 'id' => $id], 404);
         }
-        if (! $photo->mayViewPhoto(Auth::user())) {
+        if (!$photo->mayViewPhoto(Auth::user())) {
             return response()->json(['error' => 'This photo is only visible to members!', 'id' => $id], 403);
         }
 
         return response()->JSON([
             'id' => $photo->id,
-            'largeUrl' => $photo->getLargeUrl(),
-            'tinyUrl' => $photo->getTinyUrl(),
-            'albumUrl' => route('photo::album::list', ['id' => $photo->album_id]).'?page='.$photo->getAlbumPageNumber(24),
+            'largeUrl' => $photo->getLargeUrlAttribute(),
+            'tinyUrl' => $photo->getTinyUrlAttribute(),
+            'albumUrl' => route('photo::album::list', ['id' => $photo->album_id]) . '?page=' . $photo->getAlbumPageNumber(24),
             'albumTitle' => $photo->album->name,
             'likes' => $photo->getLikes(),
             'likedByUser' => $photo->likedByUser(Auth::user()),
@@ -106,7 +106,7 @@ class PhotoController extends Controller
     }
 
     /**
-     * @param  int  $photo_id
+     * @param int $photo_id
      * @return JsonResponse
      **/
     public function toggleLike($photo_id)
@@ -124,21 +124,21 @@ class PhotoController extends Controller
         $photo = Photo::findOrFail($photo_id);
 
         return response()->json([
-            'likes' => $photo->getLikes(),
-            'likedByUser' => $photo->likedByUser(Auth::user()),
-        ]
+                'likes' => $photo->getLikes(),
+                'likedByUser' => $photo->likedByUser(Auth::user()),
+            ]
         );
     }
 
     /**
-     * @param  bool  $published
+     * @param bool $published
      **@return Collection
      */
     public static function getAlbums($published = true)
     {
         $albums = PhotoAlbum::orderBy('date_taken', 'desc');
         $albums = $albums->where('published', '=', $published);
-        if (! (Auth::check() && Auth::user()->member() !== null)) {
+        if (!(Auth::check() && Auth::user()->member() !== null)) {
             $albums = $albums->where('private', false);
         }
 
@@ -154,7 +154,7 @@ class PhotoController extends Controller
     }
 
     /**
-     * @param  int  $album_id
+     * @param int $album_id
      * @return string JSON
      */
 
@@ -164,7 +164,7 @@ class PhotoController extends Controller
         $album = PhotoAlbum::findOrFail($album_id);
         $items = $album->items();
 
-        if (! (Auth::check() && Auth::user()->member() !== null)) {
+        if (!(Auth::check() && Auth::user()->member() !== null)) {
             $items = $items->where('private', '=', false);
         }
         $items = $items->orderBy('date_taken', 'asc')->orderBy('id', 'asc')->get();
