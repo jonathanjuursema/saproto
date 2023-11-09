@@ -64,7 +64,7 @@ class PhotoAdminController extends Controller
 
         return Inertia::render('Photos/UploadPage', [
             'album' => PhotoAlbum::findOrFail($id),
-            'photos' => Photo::where('album_id', '=', $id)->orderBy('date_taken', 'asc')->orderBy('id', 'asc')->get(),
+            'photos' => Photo::where('album_id', '=', $id)->orderBy('date_taken', 'asc')->orderBy('id')->paginate(16),
         ]);
     }
 

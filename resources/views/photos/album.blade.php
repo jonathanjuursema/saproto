@@ -44,7 +44,7 @@
                                 @include('website.home.cards.card-bg-image', [
                                 'id' => sprintf('photo_%s', $photo->id),
                                 'url' => isset($liked) ? route("photo::liked::likedPhoto", ["id"=> $photo->id]):route("photo::view", ["id"=> $photo->id]),
-                                'img' => $photo->getSmallUrlAttribute(),
+                                'img' => $photo->getLargeUrlAttribute(),
                                 'html' => sprintf('<i class="fas fa-heart"></i> %s %s',
                                     $photo->getLikes(), $photo->private ?
                                     '<i class="fas fa-eye-slash ms-4 me-2 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This photo is only visible to members."></i>'
