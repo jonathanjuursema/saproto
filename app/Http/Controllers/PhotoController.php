@@ -11,6 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Session;
 
 class PhotoController extends Controller
@@ -23,7 +25,7 @@ class PhotoController extends Controller
         return view('photos.list', ['albums' => $albums]);
     }
 
-    public function show(int $id): View|RedirectResponse
+    public function show(int $id)
     {
         $album = PhotoAlbum::findOrFail($id);
         if (!$album->published && !Auth::user()?->can('protography')) {
@@ -32,10 +34,13 @@ class PhotoController extends Controller
             return Redirect::back();
         }
 
-        $photos = $album->items()->orderBy('date_taken', 'asc')->orderBy('id', 'asc')->paginate(24);
+        $photos = $album->items()->withCount('likes')->orderBy('date_taken', 'asc')->orderBy('id', 'asc')->paginate(24);
 
         if ($photos->count()) {
-            return view('photos.album', ['album' => $album, 'photos' => $photos]);
+            return Inertia::render('Photos/AlbumPage', [
+                'album' => $album,
+                'photos' => $photos,
+            ]);
         }
 
         Session::flash('flash_message', 'Album not found.');

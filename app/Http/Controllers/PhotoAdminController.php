@@ -54,17 +54,11 @@ class PhotoAdminController extends Controller
      */
     public function edit(int $id)
     {
-//        $photos = PhotoManager::getPhotos($id);
-
-//        if ($photos == null) {
-//            abort(404);
-//        }
-//
-//        return view('photos.admin.edit', ['photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
-
+        $album = PhotoAlbum::findOrFail($id);
         return Inertia::render('Photos/UploadPage', [
-            'album' => PhotoAlbum::findOrFail($id),
-            'photos' => Photo::where('album_id', '=', $id)->orderBy('date_taken', 'asc')->orderBy('id')->paginate(16),
+            'album' => $album,
+            'photos' => $album->items()->orderBy('date_taken')->orderBy('id')->get(),
+            'thumbnail_url' => $album->thumb(),
         ]);
     }
 

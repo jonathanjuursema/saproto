@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {router, useForm, usePage} from '@inertiajs/vue3';
-import {computed, onUnmounted} from 'vue';
+import { router, useForm, usePage } from '@inertiajs/vue3';
+import { computed, onUnmounted } from 'vue';
 import InputGroup from '@/Components/Input/InputGroup.vue';
 import SolidButton from '@/Components/SolidButton.vue';
 import InfoText from '@/Components/InfoText.vue';
@@ -39,11 +39,11 @@ const defaultFormData = computed(() => {
 const form = useForm('PersonalDetails', defaultFormData.value);
 
 onUnmounted(
-    router.on('before', (event) => {
-      if (form.isDirty && event.detail.visit.method !== 'post') {
-        return confirm('You have unsaved data, are you sure you want to leave?');
-      }
-    })
+  router.on('before', (event) => {
+    if (form.isDirty && event.detail.visit.method !== 'post') {
+      return confirm('You have unsaved data, are you sure you want to leave?');
+    }
+  })
 );
 const postForm = () => {
   if (form.isDirty) {
@@ -61,7 +61,7 @@ const postForm = () => {
 <template>
   <div>
     <h1 class="text-4xl">Personal details</h1>
-    <hr class="mb-4"/>
+    <hr class="mb-4" />
     <div class="flex space-x-8">
       <form @submit.prevent="postForm">
         <InputGroup name="name">
@@ -79,8 +79,8 @@ const postForm = () => {
               Creative Technology
             </span>
             <span
-                class="rounded text-white py-1 px-2 ml-2"
-                :class="user.did_study_itech ? 'bg-primary' : 'bg-back-light'"
+              class="rounded text-white py-1 px-2 ml-2"
+              :class="user.did_study_itech ? 'bg-primary' : 'bg-back-light'"
             >
               <i class="fas fa-fw" :class="user.did_study_itech ? 'fa-check-square' : 'fa-xmark-square'"></i>
               Interaction Technology
@@ -92,13 +92,13 @@ const postForm = () => {
         <InputGroup name="birthdate">
           Birthdate
           <template #input>
-            <InputField name="birthdate" disabled :value="user.birthdate"/>
+            <InputField name="birthdate" disabled :value="user.birthdate" />
             <InputField
-                v-if="user.birthdate"
-                v-model="form.show_birthday"
-                :type="InputType.Checkbox"
-                name="show_birthday"
-                class="mb-4"
+              v-if="user.birthdate"
+              v-model="form.show_birthday"
+              :type="InputType.Checkbox"
+              name="show_birthday"
+              class="mb-4"
             >
               Show to members
             </InputField>
@@ -109,11 +109,11 @@ const postForm = () => {
           University account
           <template #input>
             <InputField
-                name="edu_username"
-                disabled
-                :value="user.utwente_username ?? user.edu_username ?? 'Not linked'"
-                :after-variant="user.edu_username ? 'danger' : 'info'"
-                after-hover
+              name="edu_username"
+              disabled
+              :value="user.utwente_username ?? user.edu_username ?? 'Not linked'"
+              :after-variant="user.edu_username ? 'danger' : 'info'"
+              after-hover
             >
               <template #after>
                 <a v-if="user.edu_username" class="px-2" :href="route('user::edu::delete')">
@@ -131,11 +131,11 @@ const postForm = () => {
           Address
           <template #input>
             <InputField
-                name="address"
-                disabled
-                :value="user.address ? `${user.address.street} ${user.address.number}` : 'Let us know your address'"
-                :after-variant="user.address ? (user.is_member ? 'info' : 'danger') : 'primary'"
-                after-hover
+              name="address"
+              disabled
+              :value="user.address ? `${user.address.street} ${user.address.number}` : 'Let us know your address'"
+              :after-variant="user.address ? (user.is_member ? 'info' : 'danger') : 'primary'"
+              after-hover
             >
               <template #after>
                 <a v-if="!user.address" class="px-2" :href="route('user::address::add')">
@@ -160,9 +160,9 @@ const postForm = () => {
 
         <div v-if="user.address" class="mb-4">
           <SolidButton
-              as="a"
-              :variant="user.address_visible ? 'info' : 'primary'"
-              :href="route('user::address::togglehidden')"
+            as="a"
+            :variant="user.address_visible ? 'info' : 'primary'"
+            :href="route('user::address::togglehidden')"
           >
             <span v-if="user.address_visible">Hide from members.</span>
             <span v-else> Make visible to members. </span>
@@ -172,23 +172,23 @@ const postForm = () => {
         <InputGroup name="phone">
           Phone
           <template #input>
-            <InputField v-model="form.phone" name="phone"/>
+            <InputField v-model="form.phone" name="phone" />
           </template>
         </InputGroup>
 
         <template v-if="user.phone">
           <InputField v-model="form.phone_visible" :type="InputType.Checkbox" name="phone_visible" class="mb-4"
-          >Show to members
+            >Show to members
           </InputField>
           <InputField v-model="form.receive_sms" :type="InputType.Checkbox" name="receive_sms" class="mb-4"
-          >Receive messages
+            >Receive messages
           </InputField>
         </template>
 
         <InputGroup name="website">
           Website
           <template #input>
-            <InputField v-model="form.website" name="website"/>
+            <InputField v-model="form.website" name="website" />
           </template>
         </InputGroup>
 
@@ -205,9 +205,9 @@ const postForm = () => {
                 </InfoText>
 
                 <InputField
-                    v-model="form.show_omnomcom_calories"
-                    :type="InputType.Checkbox"
-                    name="show_omnomcom_calories"
+                  v-model="form.show_omnomcom_calories"
+                  :type="InputType.Checkbox"
+                  name="show_omnomcom_calories"
                 >
                   After checkout, show how many calories I've bought today.
                 </InputField>
@@ -216,19 +216,19 @@ const postForm = () => {
                 </InfoText>
 
                 <InputField
-                    v-model="form.disable_omnomcom"
-                    :type="InputType.Checkbox"
-                    name="disable_omnomcom"
-                    :disabled="form.disable_omnomcom"
+                  v-model="form.disable_omnomcom"
+                  :type="InputType.Checkbox"
+                  name="disable_omnomcom"
+                  :disabled="form.disable_omnomcom"
                 >
                   Don't let me use the OmNomCom.
                 </InputField>
                 <InfoText
-                ><i class="fas fa-warning me-1"></i>
+                  ><i class="fas fa-warning me-1"></i>
                   Only the board can allow you access to the OmNomCom again.
                 </InfoText>
                 <InfoText
-                ><i class="fas fa-info-circle me-1"></i> You can still sign-up for activities, and the board can
+                  ><i class="fas fa-info-circle me-1"></i> You can still sign-up for activities, and the board can
                   manually buy something for you if you need that.
                 </InfoText>
                 <InfoText>
@@ -264,7 +264,7 @@ const postForm = () => {
               Show my achievements on my profile.
             </InputField>
             <InfoText>
-              Achievements you obtain may reveal some personal details.<br/>
+              Achievements you obtain may reveal some personal details.<br />
               Only members can see your achievements.
             </InfoText>
 
@@ -287,8 +287,8 @@ const postForm = () => {
         <InputGroup>
           Profile picture
           <template #input>
-            <img :src="user.generat"/>
-            <InputField :type="InputType.File"/>
+            <img :src="user.generat" />
+            <InputField :type="InputType.File" />
           </template>
         </InputGroup>
       </div>

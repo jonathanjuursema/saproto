@@ -29,6 +29,7 @@ const toggleActive = () => {
 const props = defineProps<{
   albumId: number;
 }>();
+
 const drop = (event) => {
   toggleActive();
   dropZoneFiles.value = event.dataTransfer.files;

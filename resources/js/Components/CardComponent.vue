@@ -16,7 +16,7 @@ const slots = useSlots();
 </script>
 
 <template>
-  <div :class="background" class="overflow-clip rounded-md shadow-lg ring-1 ring-front ring-opacity-5">
+  <div :class="background" class="overflow-clip rounded-md shadow-lg ring-1 ring-front ring-opacity-5 w-full">
     <div v-if="slots.header" :class="headerBackground" class="text-front-dark px-4 py-2">
       <slot name="header" />
     </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\PhotoController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 

@@ -12,8 +12,8 @@ type Photo = {
     private: boolean;
     album?: PhotoAlbum | null;
     likes?: PhotoLikes[] | null;
-    file?: StorageEntry | null;
-    tiny_file?: StorageEntry | null;
+    file: StorageEntry | null;
+    tiny_file: StorageEntry | null;
     original_url?: string;
     large_url?: string;
     medium_url?: string;
