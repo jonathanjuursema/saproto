@@ -1,40 +1,59 @@
 <template>
   <div
-    :class="{ 'active-dropzone': !isActive }"
-    class="dropzone"
+    :class="{
+      'border-gray-400': !isActive && !uploading,
+      'border-gray-200': isActive && !uploading,
+      'border-warning cursor-wait': uploading,
+    }"
+    class="dropzone border-2 border-dashed rounded-lg p-4 text-center"
     @dragenter.prevent="toggleActive"
     @dragleave.prevent="toggleActive"
     @dragover.prevent
     @drop.prevent="drop"
   >
-    <span>Drag or drop file</span>
-    <div v-for="file in dropZoneFiles" :key="file.name">
+    <span v-if="!uploading">Drag or drop file</span>
+    <span v-else>Uploading...</span>
+    <div v-for="file in dropZoneFiles" :key="file.name" class="text-grey">
       {{ file.name }}
+    </div>
+  </div>
+
+  <div v-if="errors.length > 0" class="border-error border-2">
+    <div v-for="error in errors" :key="error" class="text-red-500">
+      {{ error }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import axios from 'axios';
-import { InertiaLinkProps } from '@inertiajs/vue3';
 
 const isActive = ref(false);
-let dropZoneFiles = ref('');
-let uploadedUrls = ref([]);
+let dropZoneFiles = ref([]);
+let errors = ref([]);
 const toggleActive = () => {
   isActive.value = !isActive.value;
 };
+
+const uploading = computed(() => {
+  return dropZoneFiles.value.length > 0;
+});
 
 const props = defineProps<{
   albumId: number;
 }>();
 
+const emit = defineEmits<{
+  uploaded: (photo: Photo) => void;
+  uploading: (uploading: boolean) => void;
+}>();
+
 const drop = (event) => {
   toggleActive();
-  dropZoneFiles.value = event.dataTransfer.files;
-  console.log(dropZoneFiles.value);
+  emit('uploading', true);
   Array.from(event.dataTransfer.files).forEach((file, index) => {
+    dropZoneFiles.value.push({ index: index, name: file.name });
     const image = new Image();
     image.src = URL.createObjectURL(file);
     image.onload = () => {
@@ -51,12 +70,25 @@ const drop = (event) => {
         data.append('original', file);
         values.forEach((value) => {
           data.append(value.size, value.blob);
+          if (value.size === 1080) {
+            let image = document.createElement('image');
+            //set the src of the image to the blob url
+            image.src = URL.createObjectURL(value.blob);
+          }
         });
-        axios.post(route('photo::admin::upload', { id: props.albumId }), data).then((response) => {
-          // uploadedPhotos.value.push(JSON.parse(response.data.photo));
-          console.log(response);
-          uploadedUrls.value.push(response.data.url);
-        });
+        axios
+          .post(route('photo::admin::upload', { id: props.albumId }), data)
+          .then((response) => {
+            emit('uploaded', JSON.parse(response.data.photo));
+            dropZoneFiles.value = dropZoneFiles.value.filter((file) => file.index !== values[0].index);
+            if (!uploading.value) {
+              emit('uploading', false);
+            }
+          })
+          .catch(function (error) {
+            dropZoneFiles.value = dropZoneFiles.value.filter((file) => file.index !== values[0].index);
+            errors.value.push(image.name + ' - ' + error.message);
+          });
       });
     };
   });
@@ -88,16 +120,3 @@ function calculateSize(img, longestSide) {
   return [Math.round(width), Math.round(height)];
 }
 </script>
-<style scoped>
-.dropzone {
-  border: 2px dashed #ccc;
-  border-radius: 5px;
-  padding: 25px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.active-dropzone {
-  border: 2px dashed #000;
-}
-</style>

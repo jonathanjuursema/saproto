@@ -58,7 +58,7 @@ class PhotoAdminController extends Controller
         return Inertia::render('Photos/UploadPage', [
             'album' => $album,
             'photos' => $album->items()->orderBy('date_taken')->orderBy('id')->get(),
-            'thumbnail_url' => $album->thumb(),
+            'thumbnailUrl' => $album->thumb(),
         ]);
     }
 
