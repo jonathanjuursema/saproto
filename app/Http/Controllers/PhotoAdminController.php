@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Photo;
 use App\Models\PhotoAlbum;
-use App\Models\StorageEntry;
 use Auth;
 use Exception;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -58,27 +55,30 @@ class PhotoAdminController extends Controller
         return Inertia::render('Photos/UploadPage', [
             'album' => $album,
             'photos' => $album->items()->orderBy('date_taken')->orderBy('id')->get(),
-            'thumbnailUrl' => $album->thumb(),
+            'thumbnail' => $album->thumbPhoto()->first(),
         ]);
     }
 
     /**
      * @param int $id
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
         $album = PhotoAlbum::find($id);
-        $album->name = $request->input('album');
-        $album->date_taken = strtotime($request->input('date'));
-        $album->private = $request->has('private');
+        $private = $request->has('private') && $request->input('private') == true;
+        $album->name = $request->input('name');
+        $album->date_taken = strtotime($request->input('date_taken'));
+        $album->private = $private;
         foreach ($album->items as $photo) {
-            $photo->private = $request->has('private');
+            $photo->private = $private;
             $photo->save();
         }
         $album->save();
 
-        return Redirect::route('photo::admin::edit', ['id' => $id]);
+        return response()->json([
+            'message' => 'Album updated successfully!',
+        ], 200);
     }
 
     /**
@@ -142,7 +142,7 @@ class PhotoAdminController extends Controller
 
     /**
      * @param int $id
-     * @return RedirectResponse
+     * @return RedirectResponse | JsonResponse
      *
      * @throws Exception
      */
@@ -155,7 +155,9 @@ class PhotoAdminController extends Controller
             $album = PhotoAlbum::findOrFail($id);
 
             if ($album->published && !Auth::user()->can('publishalbums')) {
-                abort(403, 'Unauthorized action.');
+                return response()->json([
+                    'message' => 'Unauthorized action.',
+                ], 403);
             }
 
             switch ($action) {

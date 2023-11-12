@@ -36,7 +36,8 @@
     "quagga": "^0.12.1",
     "signature_pad": "^3.0.0-beta.4",
     "swiper": "^8.0.7",
-    "util.promisify": "^1.0.1"
+    "util.promisify": "^1.0.1",
+    "vue-tailwind-datepicker": "^1.6.1"
   },
   "devDependencies": {
     "@inertiajs/vue3": "^1.0.9",

@@ -23,7 +23,7 @@ const mobileOpen: Ref<boolean> = ref(false);
 </script>
 
 <template>
-  <nav class="bg-primary text-white fixed w-full">
+  <nav class="bg-primary text-white fixed w-full z-50">
     <div class="mx-auto px-2 sm:px-4 lg:px-4">
       <div class="relative flex h-14 items-center justify-between">
         <div class="flex items-center flex-none justify-center lg:justify-start">
@@ -99,7 +99,7 @@ const mobileOpen: Ref<boolean> = ref(false);
 
               <template v-if="user">
                 <Dropdown v-if="canAny(['omnomcom', 'tipcie', 'drafters'])">
-                  <template #parent> OmNomCom </template>
+                  <template #parent> OmNomCom</template>
                   <template #children>
                     <DropdownLink>Stores</DropdownLink>
                     <template v-if="can('omnomcom')">
@@ -131,7 +131,7 @@ const mobileOpen: Ref<boolean> = ref(false);
                 </Dropdown>
                 <Dropdown v-if="canAny(['board', 'finadmin', 'alfred'])"
                   >>
-                  <template #parent> Admin </template>
+                  <template #parent> Admin</template>
                   <template #children>
                     <template v-if="can('board')">
                       <DropdownLink no-inertia :href="route('user::admin::list')">Users</DropdownLink>
@@ -143,7 +143,7 @@ const mobileOpen: Ref<boolean> = ref(false);
                       <DropdownLink class="disabled" no-inertia :href="route('protube::admin')"
                         >ProTube Admin
                       </DropdownLink>
-                      <DropdownLink no-inertia :href="route('tempadmin::index')">Temp ProTube Admin </DropdownLink>
+                      <DropdownLink no-inertia :href="route('tempadmin::index')">Temp ProTube Admin</DropdownLink>
 
                       <template v-if="can('sysadmin')">
                         <hr />
@@ -161,7 +161,7 @@ const mobileOpen: Ref<boolean> = ref(false);
                       <hr />
                       <DropdownLink no-inertia :href="route('committee::add')">Add Committee</DropdownLink>
                       <DropdownLink no-inertia :href="route('event::add')">Add Event</DropdownLink>
-                      <DropdownLink no-inertia :href="route('event::category::admin')">Event Categories </DropdownLink>
+                      <DropdownLink no-inertia :href="route('event::category::admin')">Event Categories</DropdownLink>
 
                       <hr />
                       <DropdownLink no-inertia :href="route('narrowcasting::list')">Narrowcasting</DropdownLink>
@@ -176,7 +176,7 @@ const mobileOpen: Ref<boolean> = ref(false);
                       <DropdownLink no-inertia :href="route('event::financial::list')">Activities</DropdownLink>
                       <DropdownLink no-inertia :href="route('omnomcom::withdrawal::list')">Withdrawals</DropdownLink>
                       <DropdownLink no-inertia :href="route('omnomcom::unwithdrawable')">Unwithdrawable</DropdownLink>
-                      <DropdownLink no-inertia :href="route('omnomcom::mollie::list')">Mollie Payments </DropdownLink>
+                      <DropdownLink no-inertia :href="route('omnomcom::mollie::list')">Mollie Payments</DropdownLink>
                       <DropdownLink no-inertia :href="route('omnomcom::payments::statistics')"
                         >Cash & Card Payments
                       </DropdownLink>
@@ -195,7 +195,7 @@ const mobileOpen: Ref<boolean> = ref(false);
                   </template>
                 </Dropdown>
                 <Dropdown v-if="can('board')">
-                  <template #parent> Site </template>
+                  <template #parent> Site</template>
                   <template #children>
                     <DropdownLink no-inertia :href="route('menu::list')">Menu</DropdownLink>
                     <DropdownLink no-inertia :href="route('video::admin::index')">Videos</DropdownLink>
@@ -225,10 +225,10 @@ const mobileOpen: Ref<boolean> = ref(false);
                 <template v-if="canNot('board')">
                   <template v-if="can('protography')">
                     <Dropdown v-if="can('header-images')">
-                      <template #parent> Site </template>
+                      <template #parent> Site</template>
                       <template #children>
-                        <DropdownLink no-inertia :href="route('headerimage::index')"> Header Images </DropdownLink>
-                        <DropdownLink no-inertia :href="route('photo::admin::index')"> Photo Admin </DropdownLink>
+                        <DropdownLink no-inertia :href="route('headerimage::index')"> Header Images</DropdownLink>
+                        <DropdownLink no-inertia :href="route('photo::admin::index')"> Photo Admin</DropdownLink>
                       </template>
                     </Dropdown>
                     <NavLink v-else no-inertia :href="route('photo::admin::index')">Photo Admin</NavLink>

@@ -11,7 +11,7 @@
     @dragover.prevent
     @drop.prevent="drop"
   >
-    <span v-if="!uploading">Drag or drop file</span>
+    <span v-if="!uploading">Drag and drop photos</span>
     <span v-else>Uploading...</span>
     <div v-for="file in dropZoneFiles" :key="file.name" class="text-grey">
       {{ file.name }}

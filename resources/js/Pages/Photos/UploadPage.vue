@@ -1,6 +1,41 @@
 <template>
-  <AdminLayout>
+  <AdminLayout :class="uploading ? 'cursor-wait' : ''">
     <template #left-bar>
+      <card class="mb-3">
+        <template #header>
+          <div class="flex justify-between">
+            <p class="text-center">Edit album</p>
+            <SolidButton
+              type="submit"
+              variant="info"
+              :disabled="form.processing"
+              @click="router.get(route('photo::album::list', props.album.id))"
+              >Preview
+            </SolidButton>
+          </div>
+        </template>
+        <form @submit.prevent="submitForm">
+          <InputGroup>
+            <template #input>
+              Album name
+              <InputField v-model="form.name" :value="album.name" :place-holder="album.name" />
+              Album date
+              <vue-tailwind-datepicker
+                v-model="form.date_taken"
+                :placeholder="moment(album.date_taken).format('yyyy-MM-DD HH:mm:ss')"
+                as-single
+                text-input
+                class="text-dark mb-3"
+              />
+
+              <InputField v-model="form.private" :type="InputType.Checkbox"> Private album</InputField>
+              <solid-button variant="primary" type="submit">Save</solid-button>
+            </template>
+            <template #error>{{ formerror }}</template>
+          </InputGroup>
+        </form>
+      </card>
+
       <card class="mb-3">
         <DropZone v-if="!album.published" :album-id="props.album.id" @uploaded="addPhoto" @uploading="uploadSwitch" />
         <div v-else class="text-center">
@@ -10,11 +45,14 @@
       </card>
 
       <card class="mb-3">
-        <div class="grid grid-cols-1 md:grid-cols-3 justify-content-between gap-4">
-          <solid-button :disabled="uploading" variant="danger" @click="action('remove')"> Remove</solid-button>
-          <solid-button :disabled="uploading" variant="info" @click="action('thumbnail')"> Set thumbnail</solid-button>
+        <div class="grid grid-cols-2 md:grid-cols-4 justify-content-between gap-4">
+          <solid-button :disabled="uploading" variant="danger" @click="action('remove')">Remove photos</solid-button>
+          <solid-button :disabled="uploading" variant="info" @click="action('thumbnail')">Set thumbnail</solid-button>
           <solid-button :disabled="uploading" variant="warning" @click="action('private')">
             Toggle private
+          </solid-button>
+          <solid-button :disabled="uploading" variant="primary" @click="togglePublished">
+            {{ album.published ? 'Unpublish album' : 'Publish album' }}
           </solid-button>
         </div>
       </card>
@@ -23,12 +61,9 @@
           <div class="text-center">Thumbnail</div>
         </template>
         <div class="grid grid-cols-1 justify-items-center">
-          <img
-            v-if="props.thumbnailUrl"
-            class="inline rounded-lg h-20 object-cover object-center border-2 border-white"
-            :src="props.thumbnailUrl"
-            alt="thumbnail"
-          />
+          <div v-if="props.thumbnail" class="w-3/4">
+            <PhotoCard class="cursor-default" :photo="props.thumbnail" @click.prevent />
+          </div>
           <div v-else class="text-center">
             <div class="text-2xl">No thumbnail</div>
             <div class="text-sm">Set a thumbnail by clicking on the photo and then clicking on set thumbnail</div>
@@ -37,22 +72,14 @@
       </card>
     </template>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <a
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <PhotoCard
         v-for="photo in allPhotos"
         :key="photo.id"
-        :href="route('photo::view', { id: photo.id })"
-        class="h-48 w-100 rounded-lg overflow-hidden"
-        :class="selectedPhotos.includes(photo.id) ? 'border-4 border-opacity-1 border-primary' : ''"
-        :style="{
-          backgroundImage: 'url(' + photo.small_url + ')',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }"
-        @click.prevent
-        @click="clicked(photo.id)"
-      >
-      </a>
+        :photo="photo"
+        :selected="selectedPhotos.includes(photo.id)"
+        @click.prevent="clicked(photo.id)"
+      />
     </div>
   </AdminLayout>
 </template>
@@ -60,20 +87,56 @@
 <script lang="ts" setup>
 import Card from '@/Components/CardComponent.vue';
 import DropZone from '@/Components/Photos/DropZone.vue';
-import { computed, ref } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 import axios from 'axios';
 import SolidButton from '@/Components/SolidButton.vue';
 import AdminLayout from '@/Layout/AdminLayout.vue';
-import { router } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
+import PhotoCard from '@/Components/Photos/PhotoCard.vue';
+import moment from 'moment';
+import VueTailwindDatepicker from 'vue-tailwind-datepicker';
+import InputField from '@/Components/Input/InputField.vue';
+import InputGroup from '@/Components/Input/InputGroup.vue';
+import InputType from '@/types/InputType.d.ts';
+import NavLink from '@/Components/Nav/NavLink.vue';
 
 const uploading = ref(false);
 const selectedPhotos = ref([]);
 const uploadedPhotos = ref([]);
+const formerror = ref('');
 const props = defineProps<{
   photos: Photo[];
   album: PhotoAlbum;
-  thumbnailUrl?: string;
+  thumbnail?: Photo;
 }>();
+
+onUnmounted(
+  router.on('before', (event) => {
+    if (uploading.value) {
+      return confirm('You are still uploading photos, are you sure you want to leave?');
+    }
+  })
+);
+
+const form = useForm({
+  name: props.album.name,
+  date_taken: moment(props.album.date_taken).format('YYYY/MM/DD'),
+  private: props.album.private,
+});
+
+function submitForm() {
+  axios
+    .post(route('photo::admin::edit', { id: props.album.id }), form.data())
+    .then((response) => {
+      if (!uploading.value) {
+        router.reload();
+      }
+    })
+    .catch((error) => {
+      formerror.value = error.message;
+      console.log(error);
+    });
+}
 
 const allPhotos = computed(() => {
   return props.photos.concat(uploadedPhotos.value);
@@ -88,6 +151,18 @@ function action(action: string) {
     .then(() => {
       router.reload();
     });
+}
+
+function togglePublished() {
+  if (props.album.published) {
+    return axios.get(route('photo::admin::unpublish', { id: props.album.id })).then(() => {
+      router.reload();
+    });
+  } else {
+    axios.get(route('photo::admin::publish', { id: props.album.id })).then(() => {
+      router.reload();
+    });
+  }
 }
 
 document.addEventListener('keydown', function (event) {
@@ -108,10 +183,7 @@ document.addEventListener('keydown', function (event) {
       const highestIndex = props.photos.findIndex(
         (photo: Photo) => photo.id === selectedPhotos.value[selectedPhotos.value.length - 1]
       );
-      //get the index of the photo in the props that has an index higher than the highest index and is not already selected
-      // const nextPhotoIndex = props.photos.findIndex(
-      //   (photo: Photo) => photo.index > highestIndex && !selectedPhotos.value.includes(photo.id)
-      // );
+
       console.log(nextPhotoIndex);
       selectedPhotos.value.push(props.photos[highestIndex + 1].id);
     }

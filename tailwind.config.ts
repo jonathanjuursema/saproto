@@ -61,6 +61,7 @@ export default {
     content: [
         "./resources/views/inertia/app.blade.php",
         "./resources/js/**/*.{js,ts,vue}",
+        "./node_modules/vue-tailwind-datepicker/**/*.js",
     ],
     theme: {
         extend: {

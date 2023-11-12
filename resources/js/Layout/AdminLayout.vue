@@ -14,7 +14,7 @@ const themes = computed(() => page.props.themes);
   <div :data-theme="themes[theme ?? 0]" class="flex flex-col bg-back-light text-front min-h-screen">
     <NavBar />
     <main role="main" class="w-full p-4 mx-auto mb-auto">
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <slot name="left-bar" />
         </div>

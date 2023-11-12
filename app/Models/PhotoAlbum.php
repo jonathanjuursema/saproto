@@ -50,6 +50,11 @@ class PhotoAlbum extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'private' => 'boolean',
+        'published' => 'boolean',
+    ];
+
     /** @return BelongsTo */
     public function event()
     {
@@ -71,11 +76,7 @@ class PhotoAlbum extends Model
     /** @return string|null */
     public function thumb()
     {
-        if ($this->thumb_id) {
-            return $this->thumbPhoto()->first()->getSmallUrlAttribute();
-        } else {
-            return null;
-        }
+        return $this->thumbPhoto()->first()?->getSmallUrlAttribute() ?? null;
     }
 
     public function mayViewAlbum($user)
