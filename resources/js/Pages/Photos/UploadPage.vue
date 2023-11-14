@@ -87,7 +87,7 @@
 <script lang="ts" setup>
 import Card from '@/Components/CardComponent.vue';
 import DropZone from '@/Components/Photos/DropZone.vue';
-import { computed, onUnmounted, ref } from 'vue';
+import { computed, onUnmounted, Ref, ref } from 'vue';
 import axios from 'axios';
 import SolidButton from '@/Components/SolidButton.vue';
 import AdminLayout from '@/Layout/AdminLayout.vue';
@@ -103,7 +103,7 @@ import NavLink from '@/Components/Nav/NavLink.vue';
 const uploading = ref(false);
 const selectedPhotos = ref([]);
 const uploadedPhotos = ref([]);
-const formerror = ref('');
+const formerror: Ref<string> = ref('');
 const props = defineProps<{
   photos: Photo[];
   album: PhotoAlbum;

@@ -34,7 +34,7 @@ export default defineConfig({
         }),
         eslint({
             fix: true,
-            exclude: ['resources/js/*.js', 'vendor/**/*.js'],
+            exclude: ['resources/js/*.js', 'vendor/**/*.js', '**/node_modules/**'],
         }),
     ],
     build: {

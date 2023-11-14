@@ -31,9 +31,14 @@ import NavPill from '@/Components/NavPill.vue';
 import NavLink from '@/Components/Nav/NavLink.vue';
 import PhotoCard from '@/Components/Photos/PhotoCard.vue';
 
+interface ModelPagination<T> extends InertiaLinkProps {
+  data: T[];
+}
+
 const props = defineProps<{
-  photos: InertiaLinkProps;
+  photos: ModelPagination<Photo>;
   album: PhotoAlbum;
 }>();
-console.log(props.photos.data[0]);
+
+console.log(props.photos);
 </script>
