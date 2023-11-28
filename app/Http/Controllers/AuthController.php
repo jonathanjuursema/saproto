@@ -233,25 +233,36 @@ class AuthController extends Controller
      */
     public function deleteUser(Request $request)
     {
-        $user = Auth::user();
+        $user = User::findOrFail($request->id ?? Auth::id());
 
-        $password = $request->input('password');
-        $auth_check = self::verifyCredentials($user->email, $password);
-
-        if ($user->hasUnpaidOrderlines()) {
-            Session::flash('flash_message', 'You cannot deactivate your account while you have open payments!');
-
-            return Redirect::route('omnomcom::orders::list');
-        }
-
-        if ($auth_check == null || $auth_check->id != $user->id) {
-            Session::flash('flash_message', 'You need to provide a valid password to delete your account.');
+        if ($user->name != $request->name) {
+            Session::flash('flash_message', 'You need to correctly input the user\'s name before the account is deactivated.');
 
             return Redirect::back();
         }
 
+        if (Auth::id() != $user->id && Auth::user()->cannot('sysadmin')) {
+            Session::flash('flash_message', 'You cannot deactivate someone else\'s account.');
+        }
+
+        if (Auth::id() == $user->id) {
+            $password = $request->input('password');
+            $auth_check = self::verifyCredentials($user->email, $password);
+            if ($auth_check == null || $auth_check->id != $user->id) {
+                Session::flash('flash_message', 'You need to provide a valid password to delete an account.');
+
+                return Redirect::back();
+            }
+        }
+
+        if ($user->hasUnpaidOrderlines()) {
+            Session::flash('flash_message', 'An account cannot be deactivated while it has open payments!');
+
+            return Redirect::route('omnomcom::orders::list');
+        }
+
         if ($user->member) {
-            Session::flash('flash_message', 'You cannot deactivate your account while you are a member.');
+            Session::flash('flash_message', 'An account cannot be deactivated while it still has an active membership.');
 
             return Redirect::back();
         }
@@ -289,7 +300,7 @@ class AuthController extends Controller
         $user->save();
         $user->delete();
 
-        Session::flash('flash_message', 'Your account has been deactivated.');
+        Session::flash('flash_message', 'The account has been deactivated.');
 
         return Redirect::route('homepage');
     }

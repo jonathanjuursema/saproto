@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\ParticipationController;
 use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -320,10 +319,15 @@ class Activity extends Validatable
      */
     public function getAttendees(): int
     {
-        if (ParticipationController::getPresent($this->id) > 0) {
-            return ParticipationController::getPresent($this->id);
-        }
+        return $this->getPresent() ?? $this->attendees;
+    }
 
-        return $this->attendees ?? 0;
+    public function getPresent(): int
+    {
+        return ActivityParticipation::where('activity_id', $this->id)
+            ->where('is_present', true)
+            ->where('backup', false)
+            ->whereNull('deleted_at')
+            ->count();
     }
 }

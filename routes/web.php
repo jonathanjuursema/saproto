@@ -883,6 +883,7 @@ Route::group(['middleware' => ['forcedomain']], function () {
     Route::group(['prefix' => 'queries', 'as' => 'queries::', 'middleware' => ['auth', 'permission:board']], function () {
         Route::get('/', ['as' => 'index', 'uses' => 'QueryController@index']);
         Route::get('/activity_overview', ['as' => 'activity_overview', 'uses' => 'QueryController@activityOverview']);
+        Route::get('/activity_statistics', ['as' => 'activity_statistics', 'uses' => 'QueryController@activityStatistics']);
         Route::get('/membership_totals', ['as' => 'membership_totals', 'uses' => 'QueryController@membershipTotals']);
     });
 

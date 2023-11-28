@@ -136,18 +136,25 @@ class CommitteeController extends Controller
      */
     public function update($id, Request $request)
     {
+        // Retrieve the committee
         $committee = Committee::find($id);
 
+        // Check if the committee is protected
         if ($committee->slug == config('proto.rootcommittee') && $request->slug != $committee->slug) {
             Session::flash('flash_message', "This committee is protected. You cannot change it's e-mail alias.");
 
             return Redirect::back();
         }
 
+        // Update the committee with the request data
         $committee->fill($request->all());
+
+        // The is_active value is either unset or 'on' so only set it to false if selected.
+        $committee->is_active = ! $request->has('is_active');
 
         $committee->save();
 
+        // Redirect back with a message
         Session::flash('flash_message', 'Changes have been saved.');
 
         return Redirect::route('committee::edit', ['new' => false, 'id' => $id]);

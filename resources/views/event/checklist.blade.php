@@ -27,7 +27,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td><span id="present">{{\App\Http\Controllers\ParticipationController::getPresent($event->activity->id)}}</span>/{{$event->allUsers()->count()}}</td>
+                            <td><span id="present">{{$event->activity->getPresent()}}</span>/{{$event->allUsers()->count()}}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -55,6 +55,18 @@
 
                     </tr>
 
+                    <tr>
+
+                        <td>Activity statistics</td>
+                        <td>Generates activity statistics between two dates.</td>
+                        <td>
+                            <a href="{{ route("queries::activity_statistics") }}">
+                                <i class="fas fa-running"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+
                 </table>
                 </div>
 
