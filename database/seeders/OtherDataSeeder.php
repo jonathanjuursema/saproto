@@ -15,8 +15,6 @@ use App\Models\Newsitem;
 use App\Models\OrderLine;
 use App\Models\Page;
 use App\Models\User;
-use Artisan;
-use DB;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 
@@ -130,21 +128,5 @@ class OtherDataSeeder extends Seeder
         // Create newsitems and weekly newsitems
         $n = 40;
         $output->task("creating $n newsitems", fn () => Newsitem::factory()->count($n)->create());
-
-        $output->task('Creating ProTube OAUTH client', function () {
-            Artisan::call('passport:client', [
-                '--name' => 'ProTube',
-                '--no-interaction' => true,
-                '--redirect_uri' => 'http://localhost:3000/auth/login/callback',
-            ]);
-        });
-
-        $client = DB::table('oauth_clients')
-            ->where('name', 'ProTube')
-            ->latest()
-            ->first();
-
-        $output->info("<options=bold>ProTube OAUTH Id:</> <fg=green>$client->id</>
-               <options=bold>secret:</> <fg=green>$client->secret</>");
     }
 }

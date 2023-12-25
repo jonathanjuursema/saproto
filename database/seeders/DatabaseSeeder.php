@@ -37,6 +37,9 @@ class DatabaseSeeder extends Seeder
         $otherSeeder = new OtherDataSeeder();
         $otherSeeder->run($output);
 
+        $protubeSeeder = new ProTubeSeeder();
+        $protubeSeeder->run($output);
+
         Model::reguard();
 
         $adminUsername = User::find(1)->getPublicId();
