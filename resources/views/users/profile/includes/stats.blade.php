@@ -1,8 +1,8 @@
 <div class="card mb-3">
 
-    <div class="card-header px-1 border-bottom-0 text-white bg-white">
+    <div class="card-header px-1 border-bottom-0 text-bg-dark bg-dark">
 
-        <div class="text-center text-dark">
+        <div class="text-center text-bg-dark">
             <h3 class="mb-0">
                 User statistics <i class="fas fa-info-circle fa-fw mr-2" data-bs-toggle="tooltip" data-bs-placement="top" title="This info is only visible to you!"></i>
             </h3>

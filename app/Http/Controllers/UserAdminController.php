@@ -184,7 +184,7 @@ class UserAdminController extends Controller
         ]);
 
         // Disabled because ProTube is down.
-        // Artisan::call('proto:playsound', ['sound' =>  config('proto.soundboardSounds')['new-member']]);
+        // Removed; Here should the playsound new-member be played
 
         Session::flash('flash_message', 'Congratulations! '.$user->name.' is now our newest member!');
 

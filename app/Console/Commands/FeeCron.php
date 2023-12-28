@@ -89,7 +89,7 @@ class FeeCron extends Command
                     $email_remittance_reason = 'you signed up for life-long membership when you became a member';
                 } elseif ($member->is_pet) {
                     $reason = 'Pet member';
-                    $email_remittance_reason = 'you are a pet and therefore do not posses any money';
+                    $email_remittance_reason = 'you are a pet and therefore do not possess any money';
                 } elseif ($member->is_donor) {
                     $reason = 'Donor';
                     $email_remittance_reason = 'you are a donor of the association, and your donation is not handled via the membership fee system';

@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Tempadmin;
 use App\Models\User;
+use App\Services\ProTubeApiService;
 use Auth;
 use Carbon;
 use DB;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Redirect;
 
@@ -22,6 +22,7 @@ class TempAdminController extends Controller
      */
     public function make($id)
     {
+        /** @var User */
         $user = User::findOrFail($id);
 
         $tempAdmin = new Tempadmin();
@@ -30,6 +31,8 @@ class TempAdminController extends Controller
         $tempAdmin->end_at = Carbon::tomorrow();
         $tempAdmin->user()->associate($user);
         $tempAdmin->save();
+
+        ProTubeApiService::updateAdmin($user->id, $user->isTempadminLaterToday());
 
         return Redirect::back();
     }
@@ -50,11 +53,7 @@ class TempAdminController extends Controller
             }
         }
 
-        // Call Herbert webhook to run check through all connected admins.
-        // Will result in kick for users whose temporary admin powers were removed.
-
-        //disabled because protube is down/it is not implemented in the new one yet
-        //Http::get(config('herbert.server').'/adminCheck');
+        ProTubeApiService::updateAdmin($user->id, $user->isTempadminLaterToday());
 
         return Redirect::back();
     }
@@ -75,14 +74,9 @@ class TempAdminController extends Controller
         } else {
             $tempadmin->end_at = Carbon::now()->subSeconds(1);
             $tempadmin->save();
-
-            // Call Herbert webhook to run check through all connected admins.
-            // Will result in kick for users whose temporary admin powers were removed.
-
-            //disabled because protube is down/it is not implemented in the new one yet
-            //Http::get(config('herbert.server').'/adminCheck');
-
         }
+
+        ProTubeApiService::updateAdmin($tempadmin->user->id, $tempadmin->user->isTempadminLaterToday());
 
         return Redirect::back();
     }
@@ -109,12 +103,17 @@ class TempAdminController extends Controller
      */
     public function store(Request $request)
     {
+        /** @var User */
+        $tempAdminUser = User::findOrFail($request->user_id);
+
         $tempadmin = new Tempadmin();
-        $tempadmin->user()->associate(User::findOrFail($request->user_id));
+        $tempadmin->user()->associate($tempAdminUser);
         $tempadmin->creator()->associate(Auth::user());
         $tempadmin->start_at = date('Y-m-d H:i:s', strtotime($request->start_at));
         $tempadmin->end_at = date('Y-m-d H:i:s', strtotime($request->end_at));
         $tempadmin->save();
+
+        ProTubeApiService::updateAdmin($tempAdminUser->id, $tempAdminUser->isTempadminLaterToday());
 
         return Redirect::route('tempadmin::index');
     }
@@ -141,6 +140,8 @@ class TempAdminController extends Controller
         $tempadmin->start_at = date('Y-m-d H:i:s', strtotime($request->start_at));
         $tempadmin->end_at = date('Y-m-d H:i:s', strtotime($request->end_at));
         $tempadmin->save();
+
+        ProTubeApiService::updateAdmin($tempadmin->user->id, $tempadmin->user->isTempadminLaterToday());
 
         return Redirect::route('tempadmin::index');
     }

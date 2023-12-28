@@ -76,8 +76,8 @@
                     </div>
                 </div>
             </div>
-    </div>
     @endif
+    </div>
 
     @if($next_withdrawal > 0)
 

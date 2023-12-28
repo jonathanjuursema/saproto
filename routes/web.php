@@ -762,38 +762,10 @@ Route::group(['middleware' => ['forcedomain']], function () {
 
     /* The routes for Protube. */
     Route::group(['prefix' => 'protube', 'as' => 'protube::'], function () {
-        Route::get('screen', ['as' => 'screen', 'uses' => 'ProtubeController@screen']);
-        Route::get('admin', ['as' => 'admin', 'middleware' => ['auth'], 'uses' => 'ProtubeController@admin']);
-        Route::get('offline', ['as' => 'offline', 'uses' => 'ProtubeController@offline']);
         Route::get('dashboard', ['as' => 'dashboard', 'middleware' => ['auth'], 'uses' => 'ProtubeController@dashboard']);
         Route::get('togglehistory', ['as' => 'togglehistory', 'middleware' => ['auth'], 'uses' => 'ProtubeController@toggleHistory']);
         Route::get('clearhistory', ['as' => 'clearhistory', 'middleware' => ['auth'], 'uses' => 'ProtubeController@clearHistory']);
         Route::get('top', ['as' => 'top', 'uses' => 'ProtubeController@topVideos']);
-        Route::get('login', ['as' => 'login', 'middleware' => ['auth'], 'uses' => 'ProtubeController@loginRedirect']);
-        Route::get('{id?}', ['as' => 'remote', 'uses' => 'ProtubeController@remote']);
-
-        /* Routes related to the Protube Radio */
-        Route::group(['prefix' => 'radio', 'middleware' => ['permission:sysadmin'], 'as' => 'radio::'], function () {
-            Route::get('index', ['as' => 'index', 'uses' => 'RadioController@index']);
-            Route::post('store', ['as' => 'store', 'uses' => 'RadioController@store']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'RadioController@destroy']);
-        });
-
-        /* Routes related to the Protube displays */
-        Route::group(['prefix' => 'display', 'middleware' => ['permission:sysadmin'], 'as' => 'display::'], function () {
-            Route::get('index', ['as' => 'index', 'uses' => 'DisplayController@index']);
-            Route::post('store', ['as' => 'store', 'uses' => 'DisplayController@store']);
-            Route::post('update/{id}', ['as' => 'update', 'uses' => 'DisplayController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'DisplayController@destroy']);
-        });
-
-        /* Routes related to teh Soundboard */
-        Route::group(['prefix' => 'soundboard', 'middleware' => ['permission:sysadmin'], 'as' => 'soundboard::'], function () {
-            Route::get('index', ['as' => 'index', 'uses' => 'SoundboardController@index']);
-            Route::post('store', ['as' => 'store', 'uses' => 'SoundboardController@store']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'SoundboardController@destroy']);
-            Route::get('togglehidden/{id}', ['as' => 'togglehidden', 'uses' => 'SoundboardController@toggleHidden']);
-        });
     });
 
     /* Routes related to calendars. */

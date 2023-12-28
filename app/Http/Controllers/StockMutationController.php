@@ -12,7 +12,7 @@ class StockMutationController extends Controller
     /**
      *  Filters mutations using the filter form
      */
-    public function filterMutations(Request $rq, array $selection = null)
+    public function filterMutations(Request $rq, ?array $selection = null)
     {
         $mutations = StockMutation::orderBy('stock_mutations.created_at', 'desc')->orderBy('stock_mutations.id', 'desc');
 

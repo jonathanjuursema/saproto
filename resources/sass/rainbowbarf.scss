@@ -4,7 +4,9 @@
 @import 'partials/_variables';
 
 //background colour
-$body-bg: #f1f1f1;
+$body-bg: #f3f3f3;
+
+$light: #fff;
 
 //import bootstrap after setting variables
 @import 'bootstrap';
@@ -48,3 +50,7 @@ body, .card, .navbar {
   50%{background-position:100% 19%}
   100%{background-position:0% 82%}
 }
+
+//table
+//$table-color: #fff;
+$table-border-color: #ddd !important;

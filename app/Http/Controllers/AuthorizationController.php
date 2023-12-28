@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ProTubeApiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Permission;
 use Redirect;
@@ -72,11 +72,8 @@ class AuthorizationController extends Controller
         $user = User::findOrFail($userId);
         $user->removeRole($role);
 
-        // Call Herbert webhook to run check through all connected admins.
-        // Will result in kick for users whose temporary admin powers were removed.
-
-        //        disabled because protube is down
-        //        Http::get(config('herbert.server').'/adminCheck');
+        // Call Protube webhook to remove this user's admin rights
+        ProTubeApiService::updateAdmin($user->id, false);
 
         Session::flash('flash_message', '<strong>'.$role->name.'</strong> has been revoked from '.$user->name.'.');
 

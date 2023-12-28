@@ -13,7 +13,7 @@
     </p>
 
     <p>
-        <sub>
+        <sup style="line-height: 1.5;">
             @if($destination == 'list')
                 You receive this e-mail because you are subscribed to one or more of the following e-mail lists:
                 {!! App\Models\Email::getListUnsubscribeFooter($user_id, $email_id) !!}.
@@ -30,7 +30,7 @@
             @elseif($destination == 'active members')
                 You receive this e-mail because you are an active member (participate in a committee) of S.A. Proto.
             @endif
-        </sub>
+        </sup>
     </p>
 
 @endsection

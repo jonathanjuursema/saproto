@@ -1,6 +1,6 @@
 <div id="about" class="card mb-3">
 
-    <div class="card-header text-white border-bottom-0 bg-white position-relative mb-2">
+    <div class="card-header text-bg-dark border-bottom-0 bg-dark position-relative mb-2">
 
         <div>
 

@@ -110,20 +110,8 @@
                                         <a class="dropdown-item" href="{{ route("queries::index") }}">Queries</a>
 
                                         <li role="separator" class="dropdown-divider"></li>
-                                        <a class="dropdown-item disabled" href="{{ route("protube::admin") }}">ProTube
-                                            Admin</a>
-                                        <a class="dropdown-item" href="{{ route("tempadmin::index") }}">Temp ProTube
-                                            Admin</a>
-
-                                        @can('sysadmin')
-                                            <li role="separator" class="dropdown-divider"></li>
-                                            <a class="dropdown-item" href="{{ route("protube::radio::index") }}">ProTube
-                                                Radio Stations</a>
-                                            <a class="dropdown-item" href="{{ route("protube::display::index") }}">ProTube
-                                                Displays</a>
-                                            <a class="dropdown-item" href="{{ route("protube::soundboard::index") }}">Soundboard
-                                                Sounds</a>
-                                        @endcan
+                                        <a class="dropdown-item" href="{{ route("tempadmin::index") }}">Temp ProTube Admin</a>
+                                        <a class="dropdown-item" href="{{ config('protube.remote_url') }}">ProTube Admin</a>
 
                                         <li role="separator" class="dropdown-divider"></li>
                                         <a class="dropdown-item" href="{{ route("committee::add") }}">Add Committee</a>
@@ -212,13 +200,15 @@
                         @endcanany
 
                         @cannot('board')
-                            @if(Auth::user()->hasPermissionTo('protube') || Auth::user()->isTempadmin())
-                                <li class="nav-item">
-                                    <a class="nav-link disabled" href="{{ route("protube::admin") }}" role="button">ProTube
-                                        Admin</a>
-                                </li>
-                            @endif
-
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ config('protube.remote_url') }}" target="_blank" role="button">
+                                    ProTube 
+                                    @if(Auth::user()->hasPermissionTo('protube') || Auth::user()->isTempadmin())
+                                        Admin
+                                    @endif
+                                </a>
+                            </li>
+                            
                             @if(Auth::user()->hasAllPermissions(['protography', 'header-image']))
                                 <li class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"

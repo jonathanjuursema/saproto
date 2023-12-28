@@ -305,6 +305,14 @@ return [
         'small' => 420,
         'tiny' => 50,
     ],
+    
+    'logoThemes' => [
+        0 => 'regular',
+        1 => 'inverse',
+        2 => 'regular',
+        3 => 'broto-inverse',
+        4 => 'inverse',
+    ],
 
     // Analytics URL
     'analytics_url' => env('ANALYTICS_URL', ''),

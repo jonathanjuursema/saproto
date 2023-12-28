@@ -9,10 +9,10 @@
     <p>
         You receive this e-mail because you requested a new password for your account on the website of Study
         Association Proto. Using the link below, you can set a new password. But be quick! The link below only works for
-        a hour, after which you need to request a new link.
+        an hour, after which you need to request a new link.
     </p>
 
-    <p>
+    <p class="text-break">
         <a href="{{ route("login::resetpass::token",['token' => $token]) }}">{{ route("login::resetpass::token",['token' => $token]) }}</a>
     </p>
 

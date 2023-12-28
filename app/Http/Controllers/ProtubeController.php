@@ -3,58 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\PlayedVideo;
-use App\Models\SoundboardSound;
 use App\Models\User;
 use Auth;
-use Carbon\CarbonInterval;
 use DB;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Session;
 
 class ProtubeController extends Controller
 {
-    /** @return View */
-    public function admin()
-    {
-        if (Auth::user()->can('protube') || Auth::user()->isTempadmin()) {
-            $sounds = SoundboardSound::where('hidden', '=', false)->get();
-
-            return view('protube.admin', ['sounds' => $sounds]);
-        } else {
-            abort(403);
-        }
-    }
-
-    /** @return View */
-    public function screen(Request $request)
-    {
-        return view('protube.screen', ['showPin' => $request->has('showPin')]);
-    }
-
-    /** @return View */
-    public function offline()
-    {
-        return view('protube.offline');
-    }
-
-    /** @return View */
-    public function remote()
-    {
-        error_reporting(0);
-        $max_duration = CarbonInterval::seconds(file_get_contents(config('herbert.server').'/maxDuration?secret='.config('herbert.secret')))->cascade()->forHumans();
-
-        return view('protube.remote', ['max_duration' => $max_duration]);
-    }
-
-    /** @return RedirectResponse */
-    public function loginRedirect()
-    {
-        return Redirect::away('protube::remote');
-    }
-
     /** @return View */
     public function topVideos()
     {

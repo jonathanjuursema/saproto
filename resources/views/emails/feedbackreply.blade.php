@@ -51,9 +51,9 @@
     </table>
 
     <p>
-        <sub>
+        <sup style="line-height: 1.5;">
             You receive this e-mail because you posted something on the <a href="{{ route('feedback::index', ['category' => $feedback->category->url]) }}">{{ $feedback->category->title }} board</a>.
-        </sub>
+        </sup>
     </p>
 
 @endsection

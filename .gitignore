@@ -15,6 +15,7 @@
 
 # IDE files
 /.idea
+.phpactor.json
 
 # Helper files
 .phpstorm.meta.php

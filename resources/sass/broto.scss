@@ -1,16 +1,27 @@
 @charset "UTF-8";
 
 // Custom variables
-$primary: #b57000;
-$success: #cdd911;
-@import 'partials/_variables';
+@import 'partials/variables';
 
 //colors
 $grey-light: #424242;
 $grey-medium: #303030;
 $grey-dark: #212121;
-$dark: $grey-medium;
+$dark: $grey-dark;
 $light: $grey-medium;
+
+ $theme-colors: (
+         "primary": $primary,
+         "secondary": $secondary,
+         "brand-primary": $brand-primary,
+         "success": $success,
+         "info": $info,
+         "warning": $warning,
+         "danger": $danger,
+         "omnomcom": $omnomcom,
+         "dark": $dark,
+         "light": $light
+ );
 
 //body
 $body-bg: $grey-light;
@@ -75,10 +86,10 @@ $popover-header-bg: $grey-dark;
 @import 'bootstrap';
 
 // Vendors (S)CSS
-@import 'partials/_vendors';
+@import 'partials/vendors';
 
 // concatenated SCSS from views
-@import 'partials/_components';
+@import 'partials/components';
 
 .text-dark {
   color: #f1f1f1 !important;
