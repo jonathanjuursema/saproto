@@ -221,9 +221,9 @@ class Event extends Model
     }
 
     /**
-     * @param  string  $long_format Format when timespan is larger than 24 hours.
-     * @param  string  $short_format Format when timespan is smaller than 24 hours.
-     * @param  string  $combiner Character to separate start and end time.
+     * @param  string  $long_format  Format when timespan is larger than 24 hours.
+     * @param  string  $short_format  Format when timespan is smaller than 24 hours.
+     * @param  string  $combiner  Character to separate start and end time.
      * @return string Timespan text in given format
      */
     public function generateTimespanText($long_format, $short_format, $combiner)

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Activity;
 use App\Models\ActivityParticipation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -33,7 +34,11 @@ class ActivityParticipationFactory extends Factory
     public function createAt(array $attributes)
     {
         $activity = Activity::find($attributes['activity_id']);
-        $date = fake()->dateTimeBetween($activity->registration_start, $activity->event->start);
+
+        $start = Carbon::parse($activity->registration_start);
+        $end = Carbon::parse($activity->event->start);
+
+        $date = fake()->dateTimeBetween($start, $end);
 
         return $date->format('Y-m-d H:i:s');
     }
@@ -46,7 +51,11 @@ class ActivityParticipationFactory extends Factory
     public function deletedAt(array $attributes)
     {
         $activity = Activity::find($attributes['activity_id']);
-        $date = fake()->dateTimeBetween($attributes['created_at'], $activity->event->start);
+
+        $start = Carbon::parse($attributes['created_at']);
+        $end = Carbon::parse($activity->event->start);
+
+        $date = fake()->dateTimeBetween($start, $end);
 
         return $date->format('Y-m-d H:i:s');
     }

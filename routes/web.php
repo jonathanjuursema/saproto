@@ -335,6 +335,17 @@ Route::group(['middleware' => ['forcedomain']], function () {
             Route::post('add/{id}', ['as' => 'add', 'uses' => 'WallstreetController@addProducts']);
             Route::get('remove/{id}/{productId}', ['as' => 'remove', 'uses' => 'WallstreetController@removeProduct']);
         });
+
+        Route::group(['prefix' => 'events', 'as' => 'events::'], function () {
+            Route::get('', ['as' => 'list', 'uses' => 'WallstreetController@events']);
+            Route::post('add', ['as' => 'add', 'uses' => 'WallstreetController@addEvent']);
+            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@editEvent']);
+            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@updateEvent']);
+            Route::group(['prefix' => 'products', 'as' => 'products::'], function () {
+                Route::post('add/{id}', ['as' => 'add', 'uses' => 'WallstreetController@addEventProducts']);
+                Route::get('remove/{id}/{productId}', ['as' => 'remove', 'uses' => 'WallstreetController@removeEventProduct']);
+            });
+        });
     });
 
     /*

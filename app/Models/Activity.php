@@ -135,7 +135,7 @@ class Activity extends Validatable
     }
 
     /**
-     * @param  User|null  $user If a user is specified, true will only be returned if the user can actually help.
+     * @param  User|null  $user  If a user is specified, true will only be returned if the user can actually help.
      * @return bool Whether the activity still needs help.
      */
     public function inNeedOfHelp($user = null)

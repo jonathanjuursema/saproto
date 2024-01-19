@@ -160,7 +160,7 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  bool  $human Defaults to true.
+     * @param  bool  $human  Defaults to true.
      * @return string|int
      */
     public function getFileSize($human = true)
@@ -188,7 +188,7 @@ class StorageEntry extends Model
     }
 
     /**
-     * @param  string  $algo Defaults to md5.
+     * @param  string  $algo  Defaults to md5.
      * @return string
      */
     public function getFileHash($algo = 'md5')

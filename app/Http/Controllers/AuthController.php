@@ -59,8 +59,8 @@ class AuthController extends Controller
     /**
      * Handle a submitted log-in form. Returns the application's response.
      *
-     * @param  Request  $request The request object, needed for the log-in data.
-     * @param  Google2FA  $google2fa The Google2FA object, because this is apparently the only way to access it.
+     * @param  Request  $request  The request object, needed for the log-in data.
+     * @param  Google2FA  $google2fa  The Google2FA object, because this is apparently the only way to access it.
      * @return RedirectResponse
      */
     public function postLogin(Request $request, Google2FA $google2fa)
@@ -327,7 +327,7 @@ class AuthController extends Controller
     }
 
     /**
-     * @param  string  $token The reset token, as e-mailed to the user.
+     * @param  string  $token  The reset token, as e-mailed to the user.
      * @return View|RedirectResponse
      *
      * @throws Exception
@@ -391,7 +391,7 @@ class AuthController extends Controller
     }
 
     /**
-     * @param  Request  $request The request object.
+     * @param  Request  $request  The request object.
      * @return View|RedirectResponse
      *
      * @throws Exception
@@ -591,7 +591,7 @@ class AuthController extends Controller
      * and returns the associated user if the combination is valid.
      * Accepts either Proto username or e-mail and password.
      *
-     * @param  string  $username Email address or Proto username.
+     * @param  string  $username  Email address or Proto username.
      * @param  string  $password
      * @return User|null The user associated with the credentials, or null if no user could be found or credentials are invalid.
      *
@@ -621,7 +621,7 @@ class AuthController extends Controller
     /**
      * Login the supplied user and perform post-login checks and redirects.
      *
-     * @param  User  $user The user to be logged in.
+     * @param  User  $user  The user to be logged in.
      * @return RedirectResponse
      */
     public static function loginUser($user)
@@ -666,7 +666,7 @@ class AuthController extends Controller
     /**
      * We know a user has identified itself, but we still need to check for other stuff like SAML or Two Factor Authentication. We do this here.
      *
-     * @param  User  $user The username to be logged in.
+     * @param  User  $user  The username to be logged in.
      * @return View|RedirectResponse
      */
     public static function continueLogin($user)
@@ -684,7 +684,7 @@ class AuthController extends Controller
     /**
      * Handle the submission of two factor authentication data. Return the application's response.
      *
-     * @param  Google2FA  $google2fa The Google2FA object, because this is apparently the only way to access it.
+     * @param  Google2FA  $google2fa  The Google2FA object, because this is apparently the only way to access it.
      * @return View|RedirectResponse
      */
     private static function handleTwoFactorSubmit(Request $request, Google2FA $google2fa)
@@ -741,8 +741,8 @@ class AuthController extends Controller
      * The function expects an authenticated user for which to complete the SAML request.
      * This function assumes the user has already been authenticated one way or another.
      *
-     * @param  User  $user The (currently logged in) user to complete the SAML request for.
-     * @param  string  $saml The SAML data (deflated and encoded).
+     * @param  User  $user  The (currently logged in) user to complete the SAML request for.
+     * @param  string  $saml  The SAML data (deflated and encoded).
      * @return View|RedirectResponse
      */
     private static function handleSAMLRequest($user, $saml)
@@ -784,8 +784,8 @@ class AuthController extends Controller
     /**
      * Another static helper function to build a SAML response based on a user and a request.
      *
-     * @param  User  $user The user to generate the SAML response for.
-     * @param  AuthnRequest  $authnRequest The request to generate a SAML response for.
+     * @param  User  $user  The user to generate the SAML response for.
+     * @param  AuthnRequest  $authnRequest  The request to generate a SAML response for.
      * @return \LightSaml\Model\Protocol\Response A LightSAML response.
      */
     private static function buildSAMLResponse($user, $authnRequest)

@@ -129,6 +129,10 @@
             flex-direction: row;
             justify-content: space-between;
         }
+
+        .modal-body {
+            font-size: 3em;
+        }
     </style>
 @endpush
 
@@ -146,7 +150,22 @@
             </div>
         </div>
     @else
-        <div id="swipers-container" class="h-100 d-flex flex-column overflow-hidden justify-content-end z-index-2">
+        <!-- Modal -->
+        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog"
+             aria-labelledby="eventModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="min-width:70vw">
+                <div class="modal-content" style="min-height: 50vh; min-width:70vw">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-title">Modal title</h5>
+                    </div>
+                    <div class="modal-body" id="modal-body"
+                         style="min-height: 50vh; min-width:70vw; text-align:center;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id=" swipers-container
+                    " class="h-100 d-flex flex-column overflow-hidden justify-content-end z-index-2">
 
             <div class="wallstreet-body mt-2 px-4 py-4">
                 <div>
@@ -157,8 +176,12 @@
                     <div class="wallstreet-info px-4 pb-4 pt-2">
                         <div class="wallstreet-info-title fs-2 mb-4">TIPcie Consolidated, Inc.</div>
                         <div class="wallstreet-info-item">
+                            <div>Current loss</div>
+                            <div><b id="current_loss">{{ rand(500, 600) }}.{{ rand(0, 50) }}</b></div>
+                        </div>
+                        <div class="wallstreet-info-item">
                             <div>Previous close</div>
-                            <div><b>{{rand(500, 600)}}.{{rand(0,50)}}</b></div>
+                            <div><b>{{ rand(500, 600) }}.{{ rand(0, 50) }}</b></div>
                         </div>
                         <div class="wallstreet-info-item">
                             <div>Open</div>
@@ -178,11 +201,7 @@
                         </div>
                         <div class="wallstreet-info-item">
                             <div>Forward Divided & Yield</div>
-                            <div><b>{{rand(0, 10)}} </b><span class="text-green">(0.12%)</span></div>
-                        </div>
-                        <div class="wallstreet-info-item">
-                            <div>Ex-Dividend Date</div>
-                            <div><b>April 20, 2012</b></div>
+                            <div><b>{{ rand(0, 10) }} </b><span class="text-green">(0.12%)</span></div>
                         </div>
                     </div>
                 </div>
@@ -198,7 +217,8 @@
                  class="swiper-container swiper-container-free-mode stonks-cards mb-2 d-flex align-items-center">
                 <div class="swiper-wrapper">
                     @foreach($prices as $price)
-                        <div id="{{preg_replace('/[^a-zA-Z0-9]/', '', $price->name)}}" class="swiper-slide card w-25">
+                        <div id="{{ preg_replace('/[^a-zA-Z0-9]/', '', $price->name) }}"
+                             class="swiper-slide card w-25">
                             <div class="stonks-card card-body event text-start d-flex justify-content-between flex-column {{ $price->image_url ? 'bg-img' : 'no-img'}}"
                                  style="{{ sprintf('background: center no-repeat url(%s);', $price->img) }} background-size: cover;">
 
@@ -214,7 +234,8 @@
                                     </div>
 
                                     {{-- Change --}}
-                                    <div id="diff" class="fs-5 {{$price->diff < 0 ? 'text-green' : 'text-danger'}}">
+                                    <div id="diff"
+                                         class="fs-5 {{ $price->diff < 0 ? 'text-green' : 'text-danger' }}">
                                         {{sprintf("%s %.2f%%", $price->diff < 0 ? "▼" : "▲", $price->diff)}}
                                     </div>
                                 </div>
@@ -229,105 +250,131 @@
 @endsection
 
 @push('javascript')
-{{--    chart.js and the date adapter--}}
-<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script nonce="{{ csp_nonce() }}"
-        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    {{--    chart.js and the date adapter--}}
+    <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce="{{ csp_nonce() }}"
+            src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js" nonce='{{ csp_nonce() }}'></script>
-<script type='text/javascript' nonce='{{ csp_nonce() }}'>
-    const swiperOptions = {
-        loop: true,
-        observer: true,
-        autoplay: {
-            delay: 1,
-            disableOnInteraction: false,
-        },
-        slidesPerView: 'auto',
-        speed: 5000,
-    };
-
-    const swiper = new Swiper("#swiper-container", swiperOptions);
-
-    function updateCards(product, swiperInstance) {
-        let cards = swiperInstance.el.querySelectorAll(`#${product.name.replace(/[^a-zA-Z0-9]+/g, "")}`);
-        if (cards.length > 0) {
-            cards.forEach((card) => {
-                card.querySelector("#price span").innerText = product.price.toFixed(2);
-                card.querySelector("#diff").innerText = `${product.diff < 0 ? "▼" : "▲"} ${product.diff.toFixed(2)}%`;
-                card.querySelector("#diff").className.replace(product.diff < 0 ? "text-danger" : "text-green", product.diff < 0 ? "text-green" : "text-danger");
-            })
-        } else {
-            //a new product has been added, reload the page
-            window.location.reload(true);
-        }
-    }
-
-    function updatePrices() {
-        console.log("Updating prices!")
-        get('{{route('api::wallstreet::updated_prices', ['id' => $activeDrink->id])}}').then((response) => {
-                response.products.forEach((product) => {
-                    updateCards(product, swiper)
-                })
-            }
-        )
-    }
-
-
-
-    const ctx = document.getElementById('wallstreet-graph-canvas');
-    var chart = null;
-
-
-    function createDataSets(products) {
-        let myData = {
-            datasets: [],
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"
+            nonce='{{ csp_nonce() }}'></script>
+    <script type='text/javascript' nonce='{{ csp_nonce() }}'>
+        const swiperOptions = {
+            loop: true,
+            observer: true,
+            autoplay: {
+                delay: 1,
+                disableOnInteraction: false,
+            },
+            slidesPerView: 'auto',
+            speed: 5000,
         };
-        products.forEach((product) => {
-            let prices = [];
-            product.wallstreet_prices.forEach((price) => {
-                prices.push({
-                    x: Date.parse(price.created_at),
-                    y: price.price
+
+        const swiper = new Swiper("#swiper-container", swiperOptions);
+
+        function updateCards(product, swiperInstance) {
+            let cards = swiperInstance.el.querySelectorAll(`#${product.name.replace(/[^a-zA-Z0-9]+/g, "")}`);
+            if (cards.length > 0) {
+                cards.forEach((card) => {
+                    card.querySelector("#price span").innerText = product.price.toFixed(2);
+                    card.querySelector("#diff").innerText = `${product.diff < 0 ? "▼" : "▲"} ${product.diff.toFixed(2)}%`;
+                    card.querySelector("#diff").className.replace(product.diff < 0 ? "text-danger" : "text-green", product.diff < 0 ? "text-green" : "text-danger");
                 })
-            });
-            myData.datasets.push({label: product.name, data: prices})
-        });
-        return myData;
-    }
+            } else {
+                //a new product has been added, reload the page
+                window.location.reload(true);
+            }
+        }
 
-    function updateChart() {
-        get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
-            console.log("updating chart")
-            chart.data = createDataSets(products);
-            chart.update('none');
-        })
-    }
+        const handledEvents = [];
 
-    window.addEventListener('load', _ => {
-        setInterval(updatePrices, 5000);
-        get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
-            console.log("creating chart")
+        function updatePrices() {
+            get('{{route('api::wallstreet::updated_prices', ['id' => $activeDrink->id])}}').then((response) => {
+                    const lossDiv = document.getElementById("current_loss");
+                    lossDiv.innerHTML = "€ " + response.loss.toFixed(2);
+                    response.products.forEach((product) => {
+                        updateCards(product, swiper)
+                    })
 
-            chart = new Chart(ctx, {
-                type: "line",
-                options: {
-                    maintainAspectRatio: false,
-                    spanGaps: true,
-                    scales: {
-                        x: {
-                            type: "time",
-                            parsing: false
+                    response.events.forEach((event) => {
+                        if (!handledEvents.includes(event.pivot.id)) {
+                            showEvent(event);
+                            handledEvents.push(event.pivot.id);
                         }
-                    },
-                    responsive: true,
-                },
-                data: createDataSets(products),
-            });
-        });
+                    })
+                }
+            )
+        }
 
-        updateChart();
-        setInterval(updateChart, 30000);
-    })
-</script>
+        function showEvent(event) {
+            var a = new Audio("{{$sound_path}}");
+            a.play().catch(() => {
+                confirm("Click somewhere within the document for the sound to play!")
+            });
+            modalTitle = document.getElementById('modal-title');
+            modalBody = document.getElementById('modal-body');
+            modalBody.style.backgroundImage = `url(${event.img})`;
+            modalBody.style.backgroundSize = 'cover';
+            modalBody.style.backgroundPosition = 'center';
+            modalTitle.innerText = event.name;
+            modalBody.innerHTML = event.description;
+            window.modals.eventModal.show()
+            setTimeout(() => {
+                window.modals.eventModal.hide()
+            }, 10000)
+        }
+
+
+        const ctx = document.getElementById('wallstreet-graph-canvas');
+        var chart = null;
+
+
+        function createDataSets(products) {
+            let myData = {
+                datasets: [],
+            };
+            products.forEach((product) => {
+                let prices = [];
+                product.wallstreet_prices.forEach((price) => {
+                    prices.push({
+                        x: Date.parse(price.created_at),
+                        y: price.price
+                    })
+                });
+                myData.datasets.push({label: product.name, data: prices})
+            });
+            return myData;
+        }
+
+        function updateChart() {
+            get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
+                chart.data = createDataSets(products);
+                chart.update('none');
+            })
+        }
+
+        window.addEventListener('load', _ => {
+            setInterval(updatePrices, 5000);
+            get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
+
+                chart = new Chart(ctx, {
+                    type: "line",
+                    options: {
+                        maintainAspectRatio: false,
+                        spanGaps: true,
+                        scales: {
+                            x: {
+                                type: "time",
+                                parsing: false
+                            }
+                        },
+                        responsive: true,
+                    },
+                    data: createDataSets(products),
+                });
+            });
+
+            updateChart();
+            setInterval(updateChart, 30000);
+        })
+    </script>
 @endpush

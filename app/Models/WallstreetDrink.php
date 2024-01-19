@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property float minimum_price
  * @property float price_decrease
  * @property float price_increase
+ * @property bool random_events
  **/
 class WallstreetDrink extends Model
 {
@@ -25,6 +26,10 @@ class WallstreetDrink extends Model
     protected $table = 'wallstreet_drink';
 
     protected $fillable = ['end_time', 'start_time', 'name', 'minimum_price', 'price_increase', 'price_decrease'];
+
+    protected $casts = [
+        'random_events' => 'boolean',
+    ];
 
     public function isCurrent(): bool
     {
@@ -39,5 +44,10 @@ class WallstreetDrink extends Model
     public function orders()
     {
         return OrderLine::query()->where('created_at', '>=', Carbon::createFromTimestamp($this->start_time))->where('created_at', '<=', Carbon::createFromTimestamp($this->end_time))->get();
+    }
+
+    public function events()
+    {
+        return $this->belongsToMany(WallstreetEvent::class, 'wallstreet_drink_event', 'wallstreet_drink_id', 'wallstreet_drink_events_id')->withPivot('id')->withTimestamps();
     }
 }

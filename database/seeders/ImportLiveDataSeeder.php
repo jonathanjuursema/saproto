@@ -57,7 +57,7 @@ class ImportLiveDataSeeder extends Seeder
     /**
      * Import data from the live website export API.
      *
-     * @param $tableName string The table to import from the live website.
+     * @param  $tableName  string The table to import from the live website.
      * @return mixed|null
      */
     public static function getDataFromExportApi($tableName)
@@ -73,8 +73,8 @@ class ImportLiveDataSeeder extends Seeder
     }
 
     /**
-     * @param $entries mixed
-     * @param $table array
+     * @param  $entries  mixed
+     * @param  $table  array
      * @return void
      */
     public static function createEntries($entries, $table)
