@@ -23,7 +23,7 @@
                             <div class="product-image">
                                 @if($product->image)
                                     <div class="product-image-inner"
-                                         style="background-image: url('{!! $product->image->generateImagePath(100, null) !!}');"></div>
+                                         style="background-image: url('{!! $product->image->generateUrl() !!}');"></div>
                                 @endif
                             </div>
 
@@ -81,7 +81,7 @@
                 <div class="product col-3">
                     <div class="product-inner">
                         <div class="product-image user-image"
-                             style="background-image: url('{!! $user->generatePhotoPath(200, null) !!}');">
+                             style="background-image: url('{!! $user->generateSmallPhotoPath() !!}');">
                         </div>
                         <div class="product-details">
                             <div class="product-name">

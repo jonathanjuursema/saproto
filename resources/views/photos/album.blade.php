@@ -1,15 +1,14 @@
 @extends('website.layouts.redesign.generic')
 
 @section('page-title')
-    {{ $photos->album_title }} ({{ date('M j, Y', $photos->album_date) }})
+    {{ $album->title }} ({{ date('M j, Y', $album->date_taken) }})
 @endsection
 
 @section('container')
+    @if($album->event !== null)
 
-    @if($photos->event !== null)
-
-        <a class="btn btn-info btn-block mb-3" href="{{ route('event::show', ['id'=>$photos->event->getPublicId()]) }}">
-            These photos were taken at the event {{ $photos->event->title }}, click here for more info.
+        <a class="btn btn-info btn-block mb-3" href="{{ route('event::show', ['id'=>$album->event->getPublicId()]) }}">
+            These photos were taken at the event {{ $album->event->title }}, click here for more info.
         </a>
 
     @endif
@@ -20,45 +19,59 @@
             <a href="{{route("photo::albums")}}" class="btn btn-success float-start me-3">
                 <i class="fas fa-list"></i> <span class="d-none d-sm-inline">Album overview</span>
             </a>
+            @if(!isset($liked))
             @can('protography')
-                <a href="{{route("photo::admin::edit", ['id' => $photos->album_id])}}" class="btn btn-success float-start me-3">
+                <a href="{{route("photo::admin::edit", ['id' => $album->id])}}"
+                   class="btn btn-success float-start me-3">
                     <i class="fas fa-edit"></i> <span class="d-none d-sm-inline">Edit album</span>
                 </a>
             @endcan
+            @endif
             <div class="p-1 m-1 fw-bold">
-                {{ $photos->album_title }} ({{ date('M j, Y', $photos->album_date) }})
+                {{ $album->name }} ({{ date('M j, Y', $album->date_taken) }})
             </div>
         </div>
+
 
         <div class="card-body">
+            @if(isset($liked)||$album->mayViewAlbum(Auth::user()))
+                <div class="row">
 
-            <div class="row">
+                    @foreach($photos as $photo)
+                        @if(!$photo->private || Auth::check() && Auth::user()->member() !== null)
+                            <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 
-                @foreach($photos->photos as $key => $photo)
+                                @include('website.home.cards.card-bg-image', [
+                                'id' => sprintf('photo_%s', $photo->id),
+                                'url' => isset($liked) ? route("photo::liked::likedPhoto", ["id"=> $photo->id]):route("photo::view", ["id"=> $photo->id]),
+                                'img' => $photo->getSmallUrl(),
+                                'html' => sprintf('<i class="fas fa-heart"></i> %s %s',
+                                    $photo->getLikes(), $photo->private ?
+                                    '<i class="fas fa-eye-slash ms-4 me-2 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This photo is only visible to members."></i>'
+                                     : null),
+                                'photo_pop' => true,
+                                'height' => 200
+                                ])
 
-                    <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            @elseif(!$album->published)
+                <div class="d-flex justify-content-center">
+                    This album is not yet published!
+                </div>
+            @else
+                <div class="d-flex justify-content-center">
+                    You must be a member to view this album!
+                </div>
+            @endif
 
-                        @include('website.home.cards.card-bg-image', [
-                        'id' => sprintf('photo_%s', $photo->id),
-                        'url' => route("photo::view", ["id"=> $photo->id]),
-                        'img' => $photo->thumbnail(),
-                        'html' => sprintf('<i class="fas fa-heart"></i> %s %s',
-                            $photo->getLikes(), $photo->private ?
-                            '<i class="fas fa-eye-slash ms-4 me-2 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This photo is only visible to members."></i>'
-                             : null),
-                        'photo_pop' => true,
-                        'height' => 200
-                        ])
-
-                    </div>
-
-                @endforeach
-
-            </div>
 
         </div>
+
         <div class="card-footer">
-            {{ $photos->photos->links() }}
+            {{ $photos->links() }}
         </div>
 
         <div class="card-footer text-center">

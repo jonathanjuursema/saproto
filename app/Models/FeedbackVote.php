@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Proto\Models\FeedbackVote.
+ * App\Models\FeedbackVote.
  *
  * @property int $id
  * @property int $user_id

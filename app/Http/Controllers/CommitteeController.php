@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\AnonymousEmail;
 use App\Models\Committee;
 use App\Models\CommitteeMembership;
-use App\Models\StorageEntry;
 use App\Models\User;
 use Auth;
 use Carbon;
@@ -87,7 +86,7 @@ class CommitteeController extends Controller
                 'name' => $committee->name,
                 'description' => $committee->description,
                 'email' => sprintf('%s@%s', $committee->slug, config('proto.emaildomain')),
-                'photo' => $committee->image->generateImagePath(null, null),
+                'photo' => $committee->photo->getOriginalUrl(),
                 'current_members' => $current_members,
             ];
         }
@@ -169,11 +168,12 @@ class CommitteeController extends Controller
 
         $image = $request->file('image');
         if ($image) {
-            $file = new StorageEntry();
-            $file->createFromFile($image);
-            $committee->image()->associate($file);
+            $photo = new Photo();
+            $photo->makePhoto($image, $image->getClientOriginalName(), $image->getCTime(), false, 'committee_photos');
+            $photo->save();
+            $committee->photo()->associate($photo);
         } else {
-            $committee->image()->dissociate();
+            $committee->photo()->dissociate();
         }
         $committee->save();
 

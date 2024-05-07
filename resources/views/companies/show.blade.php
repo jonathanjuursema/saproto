@@ -12,11 +12,11 @@
 
                 <div class="card mb-3">
 
-                    @if($company->image)
+                    @if($company->photo)
                         <div class="card-header text-center">
                             <div class="align-items-center row " style="height: 200px;">
                                 <div class="col d-block">
-                                    <img class="company-{{strtolower($company->name)}}" src="{{ $company->image->generateImagePath(null, null) }}"
+                                    <img class="company-{{strtolower($company->name)}}" src="{{ $company->photo->getOriginalUrl() }}"
                                          style="max-width: 70%; max-height: 160px;"
                                          alt="logo of {{ $company->name }}"
                                     />

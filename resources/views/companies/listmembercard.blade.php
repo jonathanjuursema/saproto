@@ -16,8 +16,8 @@
                     <div class="card-header text-center">
                         <div class="align-items-center row " style="height: 120px;">
                             <div class="col d-block">
-                                @if($company->image)
-                                    <img src="{{ $company->image->generateImagePath(null, null) }}"
+                                @if($company->photo)
+                                    <img src="{{ $company->photo->getOriginalUrl() }}"
                                          style="max-width: 70%; max-height: 100px;">
                                 @endif
                             </div>

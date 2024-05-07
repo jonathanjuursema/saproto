@@ -37,6 +37,10 @@ class DatabaseSeeder extends Seeder
         $otherSeeder = new OtherDataSeeder();
         $otherSeeder->run($output);
 
+        echo PHP_EOL;
+        $photoSeeder = new PhotoSeeder();
+        $photoSeeder->run();
+
         Model::reguard();
 
         $adminUsername = User::find(1)->getPublicId();

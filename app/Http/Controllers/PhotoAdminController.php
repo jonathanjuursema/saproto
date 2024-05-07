@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Photo;
 use App\Models\PhotoAlbum;
-use App\Models\PhotoManager;
-use App\Models\StorageEntry;
 use Auth;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -22,7 +20,7 @@ class PhotoAdminController extends Controller
     /** @return View */
     public function index()
     {
-        return view('photos.admin.index', ['query' => '']);
+        return view('photos.admin.index');
     }
 
     /** @return View */
@@ -53,14 +51,11 @@ class PhotoAdminController extends Controller
      */
     public function edit($id)
     {
-        $photos = PhotoManager::getPhotos($id);
         $fileSizeLimit = ini_get('post_max_size');
+        $album = PhotoAlbum::findOrFail($id);
+        $photos = $album->items()->get();
 
-        if ($photos == null) {
-            abort(404);
-        }
-
-        return view('photos.admin.edit', ['photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
+        return view('photos.admin.edit', ['album' => $album, 'photos' => $photos, 'fileSizeLimit' => $fileSizeLimit]);
     }
 
     /**
@@ -72,10 +67,10 @@ class PhotoAdminController extends Controller
         $album = PhotoAlbum::find($id);
         $album->name = $request->input('album');
         $album->date_taken = strtotime($request->input('date'));
-        if ($request->input('private')) {
-            $album->private = true;
-        } else {
-            $album->private = false;
+        $album->private = $request->has('private');
+        foreach ($album->items as $photo) {
+            $photo->private = $request->has('private');
+            $photo->save();
         }
         $album->save();
 
@@ -102,11 +97,11 @@ class PhotoAdminController extends Controller
         }
         try {
             $uploadFile = $request->file('file');
+            $addWaterMark = $request->has('addWaterMark');
 
-            $photo = $this->createPhotoFromUpload($uploadFile, $id);
+            $photo = $this->createPhotoFromUpload($uploadFile, $id, $addWaterMark);
 
             return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
-
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e,
@@ -146,11 +141,10 @@ class PhotoAdminController extends Controller
                 case 'private':
                     foreach ($photos as $photoId) {
                         $photo = Photo::find($photoId);
-                        if ($album->published && $photo->private) {
-                            continue;
+                        if ($photo && ! $album->published) {
+                            $photo->private = ! $photo->private;
+                            $photo->save();
                         }
-                        $photo->private = ! $photo->private;
-                        $photo->save();
                     }
                     break;
             }
@@ -168,9 +162,10 @@ class PhotoAdminController extends Controller
      */
     public function delete($id)
     {
-        PhotoManager::deleteAlbum($id);
+        $album = PhotoAlbum::findOrFail($id);
+        $album->delete();
 
-        return Redirect::route('photo::admin::index');
+        return redirect(route('photo::admin::index'));
     }
 
     /**
@@ -207,24 +202,13 @@ class PhotoAdminController extends Controller
     }
 
     /**
-     * @param  UploadedFile  $uploaded_photo
-     * @param  int  $album_id
-     * @return Photo
-     *
      * @throws FileNotFoundException
      */
-    private function createPhotoFromUpload($uploaded_photo, $album_id)
+    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id, $addWatermark = false): Photo
     {
-        $path = 'photos/'.$album_id.'/';
-
-        $file = new StorageEntry();
-        $file->createFromFile($uploaded_photo, $path);
-        $file->save();
-
+        $album = PhotoAlbum::findOrFail($album_id);
         $photo = new Photo();
-        $photo->date_taken = $uploaded_photo->getCTime();
-        $photo->album_id = $album_id;
-        $photo->file_id = $file->id;
+        $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), $album->private, $album->id, $album->id, $addWatermark, Auth::user()->name);
         $photo->save();
 
         return $photo;

@@ -5,9 +5,9 @@
 
     <div class="card mb-3">
 
-        @if($committee->image)
+        @if($committee->photo)
 
-            <img class="card-img-top" src="{!! $committee->image->generateImagePath(700,300) !!}" width="100%">
+            <img class="card-img-top" src="{!! $committee->photo->getMediumUrl() !!}" width="100%">
 
             <div class="card-header bg-dark text-white">
                 Replace image

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\StorageEntry;
+use App\Models\Photo;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
@@ -88,9 +88,11 @@ class CompanyController extends Controller
         $company->sort = Company::with('sort')->max('sort') + 1;
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
-            $file->createFromFile($request->file('image'));
-            $company->image()->associate($file);
+            $uploaded_photo = $request->file('image');
+            $photo = new Photo();
+            $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), false, 'company_photos');
+            $photo->save();
+            $company->photo_id = $photo->id;
         }
 
         $company->save();
@@ -157,9 +159,11 @@ class CompanyController extends Controller
         $company->on_membercard = $request->has('on_membercard');
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
-            $file->createFromFile($request->file('image'));
-            $company->image()->associate($file);
+            $photo = new Photo();
+            $uploaded_photo = $request->file('image');
+            $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), false, 'company_photos');
+            $photo->save();
+            $company->photo_id = $photo->id;
         }
 
         $company->save();

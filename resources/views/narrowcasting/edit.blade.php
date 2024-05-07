@@ -83,7 +83,7 @@
                             @if($item?->image)
 
                                 <label>Current image:</label>
-                                <img src="{!! $item->image->generateImagePath(500, null) !!}" class="w-100">
+                                <img src="{!! $item->photo->getSmallUrl() !!}" class="w-100">
 
                             @endif
 

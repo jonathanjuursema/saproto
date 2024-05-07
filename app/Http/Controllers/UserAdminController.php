@@ -376,7 +376,7 @@ class UserAdminController extends Controller
 
         $form = $member->membershipForm;
 
-        return Redirect::to($form->generatePath());
+        return Redirect::to($form->generateUrl());
     }
 
     /**

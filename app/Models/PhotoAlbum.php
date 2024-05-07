@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Event|null $event
- * @property-read Photo $thumb_photo
+ * @property-read Photo|null $thumb_photo
  * @property-read Collection|Photo[] $items
  *
  * @method static Builder|PhotoAlbum whereCreatedAt($value)
@@ -57,7 +57,7 @@ class PhotoAlbum extends Model
     }
 
     /** @return HasOne */
-    private function thumbPhoto()
+    public function thumbPhoto()
     {
         return $this->hasOne(\App\Models\Photo::class, 'id', 'thumb_id');
     }
@@ -72,9 +72,32 @@ class PhotoAlbum extends Model
     public function thumb()
     {
         if ($this->thumb_id) {
-            return $this->thumbPhoto()->first()->thumbnail();
+            return $this->thumbPhoto()->first()->getSmallUrl();
         }
 
         return null;
+    }
+
+    public function mayViewAlbum($user)
+    {
+        if (! $this->private) {
+            return true;
+        }
+        if ($user) {
+            return $user->member() !== null && $this->published || $user->can('protography');
+        }
+
+        return false;
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($photoAlbum) {
+            foreach ($photoAlbum->items() as $photo) {
+                $photo->delete();
+            }
+        });
     }
 }

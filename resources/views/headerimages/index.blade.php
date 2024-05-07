@@ -44,7 +44,7 @@
                                 <em>{!! $image->user ? $image->user->name : 'None' !!}</em>
                             </td>
                             <td>
-                                <img src="{{ $image->image->generateImagePath(1500, 400) }}" class="rounded float-end" height="100px">
+                                <img src="{{ $image->image->generateUrl(1500, 400) }}" class="rounded float-end" height="100px">
 
                             </td>
 

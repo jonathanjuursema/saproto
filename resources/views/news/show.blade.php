@@ -14,9 +14,9 @@
         <div class="{{count($events)>0?"col-8":''}}">
             <div class="card mb-3">
 
-                @if($newsitem->featuredImage)
-                    <img class="card-img-top" src="{{ $newsitem->featuredImage->generateImagePath('1500', '350') }}">
-                @endif
+        @if($newsitem->featuredImage)
+            <img class="card-img-top" src="{{ $newsitem->featuredImage->generateUrl() }}" width="1500" height="350">
+        @endif
 
                 <div class="card-body">
 

@@ -11,7 +11,6 @@ use App\Models\EventCategory;
 use App\Models\HelpingCommittee;
 use App\Models\PhotoAlbum;
 use App\Models\Product;
-use App\Models\StorageEntry;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -121,9 +120,11 @@ class EventController extends Controller
         ]);
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
-            $file->createFromFile($request->file('image'));
-            $event->image()->associate($file);
+            $photo = new Photo();
+            $uploaded_photo = $request->file('image');
+            $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), false, 'event_photos');
+            $photo->save();
+            $event->photo()->associate($photo);
         }
 
         $committee = Committee::find($request->input('committee'));
@@ -179,10 +180,11 @@ class EventController extends Controller
         }
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
-            $file->createFromFile($request->file('image'));
-
-            $event->image()->associate($file);
+            $photo = new Photo();
+            $uploaded_photo = $request->file('image');
+            $photo->makePhoto($uploaded_photo, $uploaded_photo->getClientOriginalName(), $uploaded_photo->getCTime(), false, 'event_photos');
+            $photo->save();
+            $event->photo()->associate($photo);
         }
 
         if ($request->has('committee')) {
@@ -425,7 +427,7 @@ class EventController extends Controller
             $data[] = (object) [
                 'id' => $event->id,
                 'title' => $event->title,
-                'image' => ($event->image ? $event->image->generateImagePath(800, 300) : null),
+                'image' => ($event->photo ? $event->photo->getOriginalUrl() : null),
                 'description' => $event->description,
                 'start' => $event->start,
                 'organizing_committee' => ($event->committee ? [

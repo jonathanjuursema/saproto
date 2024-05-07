@@ -24,9 +24,9 @@ class UserApiController extends Controller
     public function getUserProfilePicture()
     {
         return json_encode((object) [
-            's' => Auth::user()->generatePhotoPath(100, 100),
-            'm' => Auth::user()->generatePhotoPath(512, 512),
-            'l' => Auth::user()->generatePhotoPath(1024, 1024),
+            's' => Auth::user()->generateSmallPhotoPath(),
+            'm' => Auth::user()->generateMediumPhotoPath(),
+            'l' => Auth::user()->generateLargePhotoPath(),
         ]);
     }
 

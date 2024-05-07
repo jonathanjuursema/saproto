@@ -33,8 +33,8 @@ foreach ($domains['static'] as $domain) {
             Route::get('{id}/{hash}/{name}', ['uses' => 'FileController@get']);
         });
         Route::group(['prefix' => 'image', 'as' => 'image::'], function () {
-            Route::get('{id}/{hash}', ['as' => 'get', 'uses' => 'FileController@getImage']);
-            Route::get('{id}/{hash}/{name}', ['uses' => 'FileController@getImage']);
+            Route::get('{id}/{hash}', ['as' => 'get', 'uses' => 'FileController@get']);
+            Route::get('{id}/{hash}/{name}', ['uses' => 'FileController@get']);
         });
     });
 }

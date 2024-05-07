@@ -13,7 +13,7 @@
     <div class="card mb-3">
 
         @if($page->featuredImage)
-            <img class="card-img-top w-100" alt="featured image" src="{{ $page->featuredImage->generateImagePath('1000', '200') }}">
+            <img class="card-img-top w-100" alt="featured image" src="{{ $page->featuredImage->generateUrl('1000', '200') }}">
         @endif
 
         <div class="card-header">
@@ -38,7 +38,7 @@
 
                     @foreach($page->files as $file)
 
-                        <a href="{{ $file->generatePath() }}"                       target="_blank" class="card-link">
+                        <a href="{{ $file->generateUrl() }}"                       target="_blank" class="card-link">
                             <i class="fas fa-paperclip" aria-hidden="true"></i> {{ $file->original_filename }}
                         </a>
 

@@ -22,7 +22,7 @@
 
                     <tr>
                         <td>
-                            <a href="{{ $attachment->generatePath() }}">{{ $attachment->original_filename }}</a>
+                            <a href="{{ $attachment->generateUrl() }}">{{ $attachment->original_filename }}</a>
                         </td>
                         <td>
                             <i>{{ $attachment->getFileSize() }}</i>

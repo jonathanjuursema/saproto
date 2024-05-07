@@ -170,7 +170,7 @@
                         <div class='result d-none {{ ($product->stock <= 0 ? 'unavailable' : '') }}'>
                             <div class='result_image'
                                  @if($product->image)
-                                 style='background-image:url("{{ $product->image->generateImagePath(400,null) }}")'
+                                 style='background-image:url("{{ $product->image->generateUrl() }}")'
                                     @endif
                             ></div>
                             <div class='result_info'>

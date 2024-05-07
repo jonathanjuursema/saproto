@@ -43,6 +43,7 @@ class HeaderImageController extends Controller
             Session::flash('flash_message', 'Image is required.');
             Redirect::back();
         }
+
         $file = new StorageEntry();
         $file->createFromFile($image);
 

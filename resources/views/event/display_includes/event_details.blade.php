@@ -37,8 +37,8 @@
 
 <div class="card mb-3">
 
-    @if($event->image)
-        <img class="card-img-top" src="{{ $event->image->generateImagePath(800, 300) }}" width="100%">
+    @if($event->photo)
+        <img class="card-img-top" src="{{ $event->photo->getMediumUrl() }}" width="100%">
     @endif
 
     <div class="card-header bg-light justify-content-between d-inline-flex align-items-center">

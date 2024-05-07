@@ -134,7 +134,7 @@
 
                             @include('website.home.cards.card-bg-image', [
                                 'url' => route("page::show", ["slug" => $page->slug]),
-                                'img' => $page->featuredImage ? $page->featuredImage->generateImagePath(300, 200) : null,
+                                'img' => $page->featuredImage ? $page->featuredImage->generateUrl(300, 200) : null,
                                 'photo_pop' => true,
                                 'html' => $page->title,
                                 'height' => 100,

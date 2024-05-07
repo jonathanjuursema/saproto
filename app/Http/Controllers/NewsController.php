@@ -188,7 +188,7 @@ class NewsController extends Controller
                 $returnItem = new \stdClass();
                 $returnItem->id = $newsitem->id;
                 $returnItem->title = $newsitem->title;
-                $returnItem->featured_image_url = $newsitem->featuredImage ? $newsitem->featuredImage->generateImagePath(700, null) : null;
+                $returnItem->featured_image_url = $newsitem->featuredImage ? $newsitem->featuredImage->generateUrl() : null;
                 $returnItem->content = $newsitem->content;
                 $returnItem->published_at = strtotime($newsitem->published_at);
 

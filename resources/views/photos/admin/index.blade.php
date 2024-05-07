@@ -78,8 +78,7 @@
 
                     <div class="row">
 
-
-                        @foreach(App\Models\PhotoManager::getAlbums(null, $query, True, True) as $key => $album)
+                        @foreach(\App\Http\Controllers\PhotoController::getAlbums(False) as $key => $album)
 
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 
@@ -115,7 +114,7 @@
                     <div class="row">
 
 
-                        @foreach(App\Models\PhotoManager::getAlbums(null, $query, False, True) as $key => $album)
+                        @foreach(\App\Http\Controllers\PhotoController::getAlbums(True) as $key => $album)
 
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 

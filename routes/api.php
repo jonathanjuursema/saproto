@@ -56,7 +56,13 @@ Route::group(['middleware' => ['forcedomain'], 'as' => 'api::'], function () {
         Route::get('random_old_photo', ['as' => 'randomOldPhoto', 'uses' => 'ApiController@randomOldPhoto']);
         Route::group(['middleware' => ['web']], function () {
             Route::get('photos', ['as' => 'albums', 'uses' => 'PhotoController@apiIndex']);
-            Route::get('photos/{id?}', ['as' => 'albumList', 'uses' => 'PhotoController@apiShow']);
+            Route::get('photos/{id?}/', ['as' => 'albumList', 'uses' => 'PhotoController@apiShow']);
+            Route::get('photos/get_photo/{id}', ['as' => 'getPhoto', 'uses' => 'PhotoController@getPhoto']);
+            Route::get('photos/get_next_photo/{id}', ['as' => 'getNextPhoto', 'uses' => 'PhotoController@getNextPhoto']);
+            Route::get('photos/get_previous_photo/{id}', ['as' => 'getPreviousPhoto', 'uses' => 'PhotoController@getPreviousPhoto']);
+
+            Route::get('photos/get_next_liked_photo/{id}', ['as' => 'getNextLikedPhoto', 'uses' => 'LikedPicturesController@getNextPhoto']);
+            Route::get('photos/get_previous_liked_photo/{id}', ['as' => 'getPreviousLikedPhoto', 'uses' => 'LikedPicturesController@getPreviousPhoto']);
         });
     });
 

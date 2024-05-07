@@ -66,39 +66,29 @@
 
             <div class="col-md-5">
 
-                <div class="row">
-                    @include('news.includes.activities')
-                    @if($is_weekly && $item?->featuredImage)
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                Replace image
-                            </div>
-                            <div class="card-body">
-                                <div class="custom-file">
-                                    <input id="featured-image" type="file" class="form-control" name="image">
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                        <div class="card mb-3">
-                            <div class="card-body">
-                            <a href="{{ route("news::admin") }}" class="btn btn-default">Cancel</a>
-                            <button type="submit" class="btn btn-success float-end">Save as {{$newsName}}</button>
-                            </div>
-                        </div>
-                </div>
-            </div>
-                <div class="col">
-                    @if($is_weekly && !$new)
-                        <div class="row" style="height:75vh">
-                        <div class="card mb-3 p-0">
-                            <div class="card-header">
-                                Weekly Preview:
-                            </div>
-                            <div class="card-body px-0">
-                                <div class="ratio ratio-21x9 h-100">
-                                    <iframe src="{{route('news::showWeeklyPreview', ['id'=>$item->id])}}" title="W3Schools Free Online Web Tutorials"></iframe>
-                                </div>
+        </div>
+
+        @if(!$new)
+
+            <div class="col-md-3">
+
+                <form method="post" action="{{ route("news::image", ["id" => $item->id]) }}"
+                      enctype="multipart/form-data">
+
+                    {!! csrf_field() !!}
+
+                    <div class="card mb-3">
+
+                        @if($item->featuredImage)
+                            <img src="{!! $item->featuredImage->generateUrl() !!}" width="100%;"
+                                 class="card-img-top">
+                        @endif
+
+                        <div class="card-body">
+
+                            <div class="custom-file">
+                                <input id="featured-image" type="file" class="form-control" name="image">
+                                <label for="featured-image" class="form-label">Upload featured image</label>
                             </div>
 
                             <div class="card-footer">

@@ -97,7 +97,7 @@
 
                         @if($item->featuredImage)
 
-                            <img src="{!! $item->featuredImage->generateImagePath(700,null) !!}" width="100%;"
+                            <img src="{!! $item->featuredImage->generateUrl() !!}" width="100%;"
                                  class="card-img-top">
 
                         @endif
@@ -158,19 +158,19 @@
                                     <tr>
 
                                         <td class="ps-3 ellipsis">
-                                            <a href="{{ $file->generatePath() }}" target="_blank">
+                                            <a href="{{ $file->generateUrl() }}" target="_blank">
                                                 {{ $file->original_filename }}
                                             </a>
                                         </td>
                                         <td>
                                             @if(substr($file->mime, 0, 5) == 'image')
                                                 <a class="pageEdit_insertImage" href="#"
-                                                   rel="{{ $file->generateImagePath(1000, null) }}">
+                                                   rel="{{ $file->generateUrl() }}">
                                                     <i class="fas fa-image me-2 fa-fw"></i>
                                                 </a>
                                             @else
                                                 <a class="pageEdit_insertLink" href="#" role="button"
-                                                   rel="{{ $file->generatePath() }}">
+                                                   rel="{{ $file->generateUrl() }}">
                                                     <i class="fas fa-link me-2 fa-fw"></i>
                                                 </a>
                                             @endif

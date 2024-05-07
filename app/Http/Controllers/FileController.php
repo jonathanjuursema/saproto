@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\StorageEntry;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Image;
 
@@ -24,12 +24,18 @@ class FileController extends Controller
             abort(404);
         }
 
-        $file = Storage::disk('local')->get($entry->filename);
+        if (File::exists(Storage::disk('public')->path($entry->filename))) {
+            $file = Storage::disk('public')->get($entry->filename);
+        } else {
+            $file = Storage::disk('local')->get($entry->filename);
+        }
 
         $response = new Response($file, 200);
         $response->header('Content-Type', $entry->mime);
         $response->header('Cache-Control', 'max-age=86400, public');
-        $response->header('Content-Disposition', sprintf('attachment; filename="%s"', $entry->original_filename));
+        if ($entry->original_filename) {
+            $response->header('Content-Disposition', sprintf('attachment; filename="%s"', $entry->original_filename));
+        }
 
         return $response;
     }
@@ -65,32 +71,6 @@ class FileController extends Controller
                 $image->make($storage['local']['root'].'/'.$entry->filename);
             }
         }, 87600);
-    }
-
-    /**
-     * @param  int  $id
-     * @param  string  $hash
-     * @return Response
-     */
-    public function getImage($id, $hash, Request $request)
-    {
-        /** @var StorageEntry $entry */
-        $entry = StorageEntry::findOrFail($id);
-
-        if ($hash != $entry->hash) {
-            abort(404);
-        }
-
-        $response = new Response($this->makeImage(
-            $entry,
-            ($request->has('w') ? $request->input('w') : null),
-            ($request->has('h') ? $request->input('h') : null)
-        ), 200);
-        $response->header('Content-Type', $entry->mime);
-        $response->header('Cache-Control', 'max-age=86400, public');
-        $response->header('Content-Disposition', sprintf('filename="%s"', $entry->original_filename));
-
-        return $response;
     }
 
     /**

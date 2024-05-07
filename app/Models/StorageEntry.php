@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Http\Controllers\FileController;
+use Barryvdh\LaravelIdeHelper\Eloquent;
 use Carbon;
-use DB;
-use Eloquent;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
+use Intervention\Image\ImageManagerStatic;
 
 /**
  * Storage Entry Model.
@@ -66,6 +68,10 @@ class StorageEntry extends Model
             Newsitem::where('featured_image_id', $id)->count() == 0 &&
             SoundboardSound::where('file_id', $id)->count() == 0 &&
             HeaderImage::where('image_id', $id)->count() == 0 &&
+            Photo::where('large_file_id', $id)->count() == 0 &&
+            Photo::where('medium_file_id', $id)->count() == 0 &&
+            Photo::where('small_file_id', $id)->count() == 0 &&
+            Photo::where('tiny_file_id', $id)->count() == 0 &&
             Photo::where('file_id', $id)->count() == 0 &&
             Member::where('omnomcom_sound_id', $id)->count() == 0 &&
             WallstreetEvent::where('image_id', $id)->count() == 0;
@@ -117,6 +123,56 @@ class StorageEntry extends Model
         $this->save();
     }
 
+    /**
+     * @param  UploadedFile|string  $file
+     * @param  string|null  $customPath
+     * @param  int|null  $width
+     * @param  string|null  $original_name
+     * @param  Image|null  $watermark
+     */
+    public function createFromPhoto($file, $customPath = null, $width = null, $original_name = null, $watermark = null, $private = false)
+    {
+        $this->hash = $this->generateHash();
+        $this->filename = date('Y\/F\/d').'/'.$this->hash;
+        if ($customPath) {
+            $this->filename = $customPath.$this->hash;
+        }
+        $image = ImageManagerStatic::make($file);
+        $image->orientate();
+        if ($width != null) {
+            $image->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        }
+        if ($watermark) {
+            $watermark->resize($image->width() / 5, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $offset = (int) floor($image->width() / 100 * 2.5);
+            $image->insert($watermark, 'bottom-right', $offset, 2 * $offset);
+        }
+        $image->stream();
+
+        $this->original_filename = $original_name;
+        $this->mime = $image->mime();
+
+        if (! File::exists(Storage::disk('local')->path($customPath))) {
+            File::makeDirectory(Storage::disk('local')->path($customPath), 0777, true);
+        }
+        if (! File::exists(Storage::disk('public')->path($customPath))) {
+            File::makeDirectory(Storage::disk('public')->path($customPath), 0777, true);
+        }
+
+        if ($private) {
+            Storage::disk('local')->put($customPath.$this->hash, $image);
+        } else {
+            Storage::disk('public')->put($customPath.$this->hash, $image);
+        }
+
+        return back();
+    }
+
     /** @return string */
     private function generateHash()
     {
@@ -124,24 +180,13 @@ class StorageEntry extends Model
     }
 
     /** @return string */
-    public function generatePath()
+    public function generateUrl()
     {
-        $url = route('file::get', ['id' => $this->id, 'hash' => $this->hash]);
-        if (config('app-proto.assets-domain')) {
-            return str_replace(config('app-proto.primary-domain'), config('app-proto.assets-domain'), $url);
+        if (File::exists(Storage::disk('public')->path($this->filename))) {
+            $url = asset($this->filename);
+        } else {
+            $url = route('file::get', ['id' => $this->id, 'hash' => $this->hash]);
         }
-
-        return $url;
-    }
-
-    /**
-     * @param  int|null  $w
-     * @param  int|null  $h
-     * @return string
-     */
-    public function generateImagePath($w, $h)
-    {
-        $url = route('image::get', ['id' => $this->id, 'hash' => $this->hash, 'w' => $w, 'h' => $h]);
         if (config('app-proto.assets-domain')) {
             return str_replace(config('app-proto.primary-domain'), config('app-proto.assets-domain'), $url);
         }
@@ -186,7 +231,11 @@ class StorageEntry extends Model
     /** @return string */
     public function generateLocalPath()
     {
-        return storage_path('app/'.$this->filename);
+        if (File::exists(Storage::disk('public')->path($this->filename))) {
+            return Storage::disk('public')->path($this->filename);
+        }
+
+        return Storage::disk('local')->path($this->filename);
     }
 
     /**
@@ -198,12 +247,41 @@ class StorageEntry extends Model
         return $algo.': '.hash_file($algo, $this->generateLocalPath());
     }
 
+    /**
+     * @return bool
+     */
+    public function makePublic()
+    {
+        if (File::exists(Storage::disk('local')->path($this->filename))) {
+            File::move(Storage::disk('local')->path($this->filename), Storage::disk('public')->path($this->filename));
+        }
+
+        return File::exists(Storage::disk('public')->path($this->filename));
+    }
+
+    /**
+     * @return bool
+     */
+    public function makePrivate()
+    {
+        if (File::exists(Storage::disk('public')->path($this->filename))) {
+            File::move(Storage::disk('public')->path($this->filename), Storage::disk('local')->path($this->filename));
+        }
+
+        return File::exists(Storage::disk('local')->path($this->filename));
+    }
+
     public static function boot()
     {
         parent::boot();
 
         static::deleting(function ($file) {
-            Storage::disk('local')->delete($file->filename);
+            if (File::exists(Storage::disk('public')->path($file->filename))) {
+                Storage::disk('public')->delete($file->filename);
+            }
+            if (File::exists(Storage::disk('local')->path($file->filename))) {
+                Storage::disk('local')->delete($file->filename);
+            }
         });
     }
 }

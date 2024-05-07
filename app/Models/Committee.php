@@ -23,7 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $public
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int|null $image_id
+ * @property int|null $photo_id
+ * @property Photo|null $photo
  * @property int $allow_anonymous_email
  * @property int $is_society
  * @property int $is_active
@@ -54,7 +55,7 @@ class Committee extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['image_id'];
+    protected $hidden = ['photo_id'];
 
     /** @return string */
     public function getPublicId()
@@ -83,10 +84,10 @@ class Committee extends Model
             ->orderBy('pivot_created_at', 'desc');
     }
 
-    /** @return BelongsTo */
-    public function image()
+    /** @return BelongsTo|Photo */
+    public function photo()
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'image_id');
+        return $this->belongsTo(\App\Models\Photo::class, 'photo_id');
     }
 
     /** @return HasMany */

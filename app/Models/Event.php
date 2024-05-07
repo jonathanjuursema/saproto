@@ -25,6 +25,7 @@ use Illuminate\Support\Collection as SupportCollection;
  * @property int $end
  * @property int $publication
  * @property int|null $image_id
+ * @property Photo|null $photo
  * @property int|null $committee_id
  * @property int|null $category_id
  * @property string|null $summary
@@ -150,7 +151,7 @@ class Event extends Model
     /** @return BelongsTo */
     public function image()
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class);
+        return $this->belongsTo(\App\Models\Photo::class);
     }
 
     /** @return HasOne */

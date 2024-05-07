@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property bool $is_visible_when_no_stock
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property string|null $image_url
  * @property-read FinancialAccount|null $account
  * @property-read StorageEntry|null $image
  * @property-read Ticket|null $ticket

@@ -281,13 +281,14 @@
                                    role="button" aria-haspopup="true" aria-expanded="false">
                                     {{ Auth::user()->calling_name }}
                                     <img id="profile-picture" class="rounded-circle ms-2" alt="your profile picture"
-                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}"/>
+                                         width="100px" height=""100px src="{{ Auth::user()->generateSmallPhotoPath() }}"/>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end mt-2">
                                     <a class="dropdown-item" href="{{ route('user::dashboard') }}">Dashboard</a>
                                     @if(Auth::user()->is_member)
                                         <a class="dropdown-item" href="{{ route('user::profile') }}">My Profile</a>
+                                        <a class="dropdown-item" href="{{ route('photo::liked::list') }}">My Liked Photos</a>
                                     @else
                                         <a class="dropdown-item" href="{{ route('becomeamember') }}">Become a
                                             member!</a>

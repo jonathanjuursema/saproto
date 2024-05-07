@@ -6,7 +6,7 @@
     <div class="btn-group btn-group-sm mb-1">
         <a href="{{ route("user::profile", ['id' => $u->getPublicId()]) }}"
            class="btn btn-outline-primary">
-            <img src="{{ $u->generatePhotoPath(25, 25) }}" class="rounded-circle me-1"
+            <img src="{{ $u->generateTinyPhotoPath() }}" class="rounded-circle me-1"
             style="width: 21px; height: 21px; margin-top: -3px;">
             {{ $u->name }}
         </a>

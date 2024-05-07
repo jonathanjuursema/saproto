@@ -24,10 +24,10 @@
 
                     <div class="card-body">
 
-                        @if($company?->image)
+                        @if($company?->photo)
 
                             <div class="text-center">
-                                <img src="{!! $company->image->generateImagePath(500, null) !!}"
+                                <img src="{!! $company->photo->getSmallUrl() !!}"
                                      style="max-height: 100px;">
                             </div>
 
