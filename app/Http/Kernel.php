@@ -12,6 +12,7 @@ use App\Http\Middleware\ForceDomain;
 use App\Http\Middleware\Member;
 use App\Http\Middleware\ProBoto;
 use App\Http\Middleware\Saml;
+use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\Utwente;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
         CheckForMaintenanceMode::class,
         ValidatePostSize::class,
         StartSession::class,
+        TrustProxies::class,
     ];
 
     protected $middlewareGroups = [
