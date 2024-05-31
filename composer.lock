@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "641858c601695966670586c723120884",
+  "content-hash": "c6c51986a6c8101c68baffbab11b9e71",
   "packages": [
     {
       "name": "aacotroneo/laravel-saml2",
@@ -3166,6 +3166,78 @@
       "time": "2023-01-30T18:31:20+00:00"
     },
     {
+      "name": "laravel/socialite",
+      "version": "v5.14.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laravel/socialite.git",
+        "reference": "c7b0193a3753a29aff8ce80aa2f511917e6ed68a"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/laravel/socialite/zipball/c7b0193a3753a29aff8ce80aa2f511917e6ed68a",
+        "reference": "c7b0193a3753a29aff8ce80aa2f511917e6ed68a",
+        "shasum": ""
+      },
+      "require": {
+        "ext-json": "*",
+        "firebase/php-jwt": "^6.4",
+        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+        "illuminate/http": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+        "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+        "league/oauth1-client": "^1.10.1",
+        "php": "^7.2|^8.0",
+        "phpseclib/phpseclib": "^3.0"
+      },
+      "require-dev": {
+        "mockery/mockery": "^1.0",
+        "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^8.0|^9.3|^10.4"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "5.x-dev"
+        },
+        "laravel": {
+          "providers": [
+            "Laravel\\Socialite\\SocialiteServiceProvider"
+          ],
+          "aliases": {
+            "Socialite": "Laravel\\Socialite\\Facades\\Socialite"
+          }
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Laravel\\Socialite\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Taylor Otwell",
+          "email": "taylor@laravel.com"
+        }
+      ],
+      "description": "Laravel wrapper around OAuth 1 & OAuth 2 libraries.",
+      "homepage": "https://laravel.com",
+      "keywords": [
+        "laravel",
+        "oauth"
+      ],
+      "support": {
+        "issues": "https://github.com/laravel/socialite/issues",
+        "source": "https://github.com/laravel/socialite"
+      },
+      "time": "2024-05-03T20:31:38+00:00"
+    },
+    {
       "name": "laravelcollective/html",
       "version": "v6.4.1",
       "source": {
@@ -4158,6 +4230,75 @@
         }
       ],
       "time": "2021-06-28T04:27:21+00:00"
+    },
+    {
+      "name": "litesaml/lightsaml",
+      "version": "v4.2.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/litesaml/lightsaml.git",
+        "reference": "da88de24e699418918a128f0142dd09e2c41dd38"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/litesaml/lightsaml/zipball/da88de24e699418918a128f0142dd09e2c41dd38",
+        "reference": "da88de24e699418918a128f0142dd09e2c41dd38",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.4",
+        "psr/event-dispatcher": "^1.0",
+        "robrichards/xmlseclibs": "~2.0|~3.0|~4.0",
+        "symfony/http-foundation": "~5.0|~6.0|~7.0"
+      },
+      "require-dev": {
+        "litesaml/schemas": "~1.0.0",
+        "marcocesarato/php-conventional-changelog": "^1.15",
+        "monolog/monolog": "^2.0|^3.0",
+        "phpstan/phpstan": "^1.8",
+        "phpunit/phpunit": "~8.4|~9.5",
+        "pimple/pimple": "~3.0",
+        "squizlabs/php_codesniffer": "^3.6",
+        "symfony/css-selector": "~5.0|~6.0|~7.0",
+        "symfony/dom-crawler": "~5.0|~6.0|~7.0"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "LightSaml\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "William",
+          "email": "work@suppo.fr"
+        },
+        {
+          "name": "Milos Tomic",
+          "email": "tmilos@gmail.com",
+          "homepage": "https://github.com/tmilos/",
+          "role": "Developer"
+        }
+      ],
+      "description": "SAML 2.0 PHP library",
+      "keywords": [
+        "SAML 2.0",
+        "Single Logout",
+        "Single SignOn",
+        "library",
+        "lightSAML",
+        "php"
+      ],
+      "support": {
+        "docs": "https://docs.litesaml.com",
+        "issues": "https://github.com/litesaml/lightsaml/issues",
+        "source": "https://github.com/litesaml/lightsaml"
+      },
+      "time": "2024-02-08T11:59:00+00:00"
     },
     {
       "name": "milon/barcode",
@@ -7090,6 +7231,131 @@
         "source": "https://github.com/SimpleSoftwareIO/simple-qrcode/tree/1.3.3"
       },
       "time": "2016-01-31T02:09:25+00:00"
+    },
+    {
+      "name": "socialiteproviders/manager",
+      "version": "v4.6.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/SocialiteProviders/Manager.git",
+        "reference": "dea5190981c31b89e52259da9ab1ca4e2b258b21"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/SocialiteProviders/Manager/zipball/dea5190981c31b89e52259da9ab1ca4e2b258b21",
+        "reference": "dea5190981c31b89e52259da9ab1ca4e2b258b21",
+        "shasum": ""
+      },
+      "require": {
+        "illuminate/support": "^8.0 || ^9.0 || ^10.0 || ^11.0",
+        "laravel/socialite": "^5.5",
+        "php": "^8.0"
+      },
+      "require-dev": {
+        "mockery/mockery": "^1.2",
+        "phpunit/phpunit": "^9.0"
+      },
+      "type": "library",
+      "extra": {
+        "laravel": {
+          "providers": [
+            "SocialiteProviders\\Manager\\ServiceProvider"
+          ]
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "SocialiteProviders\\Manager\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Andy Wendt",
+          "email": "andy@awendt.com"
+        },
+        {
+          "name": "Anton Komarev",
+          "email": "a.komarev@cybercog.su"
+        },
+        {
+          "name": "Miguel Piedrafita",
+          "email": "soy@miguelpiedrafita.com"
+        },
+        {
+          "name": "atymic",
+          "email": "atymicq@gmail.com",
+          "homepage": "https://atymic.dev"
+        }
+      ],
+      "description": "Easily add new or override built-in providers in Laravel Socialite.",
+      "homepage": "https://socialiteproviders.com",
+      "keywords": [
+        "laravel",
+        "manager",
+        "oauth",
+        "providers",
+        "socialite"
+      ],
+      "support": {
+        "issues": "https://github.com/socialiteproviders/manager/issues",
+        "source": "https://github.com/socialiteproviders/manager"
+      },
+      "time": "2024-05-04T07:57:39+00:00"
+    },
+    {
+      "name": "socialiteproviders/saml2",
+      "version": "4.7.2",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/SocialiteProviders/Saml2.git",
+        "reference": "ae108f5ca999c40f301d397988d905f4ba2df653"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/SocialiteProviders/Saml2/zipball/ae108f5ca999c40f301d397988d905f4ba2df653",
+        "reference": "ae108f5ca999c40f301d397988d905f4ba2df653",
+        "shasum": ""
+      },
+      "require": {
+        "ext-json": "*",
+        "litesaml/lightsaml": "^4.0",
+        "php": "^8.0",
+        "socialiteproviders/manager": "^4.4"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "SocialiteProviders\\Saml2\\": ""
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Chris Lloyd",
+          "email": "chrislloyd403@gmail.com"
+        }
+      ],
+      "description": "SAML2 Service Provider for Laravel Socialite",
+      "keywords": [
+        "SAML2",
+        "laravel",
+        "oauth",
+        "provider",
+        "socialite"
+      ],
+      "support": {
+        "docs": "https://socialiteproviders.com/saml2",
+        "issues": "https://github.com/socialiteproviders/providers/issues",
+        "source": "https://github.com/socialiteproviders/providers"
+      },
+      "time": "2023-11-07T22:07:12+00:00"
     },
     {
       "name": "solitweb/directadmin",
