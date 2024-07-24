@@ -43,10 +43,11 @@ class EmailListController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $list = EmailList::findOrFail($id);
         $list->fill([
@@ -62,12 +63,12 @@ class EmailListController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function destroy(Request $request, $id)
+    public function destroy(int $id)
     {
         $list = EmailList::findOrFail($id);
         $list->delete();
@@ -78,27 +79,25 @@ class EmailListController extends Controller
     }
 
     /**
-     * @param  string  $type
-     * @param  User  $user
+     * @param string $type
+     * @param User $user
      */
-    public static function autoSubscribeToLists($type, $user)
+    public static function autoSubscribeToLists(string $type, User $user)
     {
-        $lists = config('proto.'.$type);
+        $lists = config('proto.' . $type);
         foreach ($lists as $list) {
             $list = EmailList::find($list);
-            if ($list) {
-                $list->subscribe($user);
-            }
+            $list?->subscribe($user);
         }
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function toggleSubscription(Request $request, $id)
+    public function toggleSubscription(int $id)
     {
         $user = Auth::user();
         /** @var EmailList $list */
@@ -106,24 +105,24 @@ class EmailListController extends Controller
 
         if ($list->isSubscribed($user)) {
             if ($list->unsubscribe($user)) {
-                Session::flash('flash_message', 'You have been unsubscribed to the list '.$list->name.'.');
+                Session::flash('flash_message', 'You have been unsubscribed to the list ' . $list->name . '.');
 
                 return Redirect::route('user::dashboard');
             }
         } else {
-            if ($list->is_member_only && ! $user->is_member) {
+            if ($list->is_member_only && !$user->is_member) {
                 Session::flash('flash_message', 'This list is only for members.');
 
                 return Redirect::route('user::dashboard');
             }
             if ($list->subscribe($user)) {
-                Session::flash('flash_message', 'You have been subscribed to the list '.$list->name.'.');
+                Session::flash('flash_message', 'You have been subscribed to the list ' . $list->name . '.');
 
                 return Redirect::route('user::dashboard');
             }
         }
 
-        Session::flash('flash_message', 'Something went wrong toggling your subscription for '.$list->name.'.');
+        Session::flash('flash_message', 'Something went wrong toggling your subscription for ' . $list->name . '.');
 
         return Redirect::route('user::dashboard');
     }

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\EmailDestination;
 use Carbon;
 use DB;
 use Eloquent;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection as SupportCollection;
 
 /**
- * Email Model.
  *
  * @property int $id
  * @property string $description
@@ -22,13 +21,7 @@ use Illuminate\Support\Collection as SupportCollection;
  * @property string $sender_address
  * @property string $body
  * @property int|null $sent_to
- * @property bool $to_user
- * @property bool $to_member
- * @property bool $to_list
- * @property bool $to_event
- * @property bool $to_active
- * @property bool $to_pending
- * @property bool $to_backup
+ * @property EmailDestination $destination
  * @property bool $ready
  * @property bool $sent
  * @property int $time
@@ -61,6 +54,8 @@ use Illuminate\Support\Collection as SupportCollection;
  * @method static Builder|Email query()
  *
  * @mixin Eloquent
+ * /
+ * Email Model.
  */
 class Email extends Model
 {
@@ -68,108 +63,78 @@ class Email extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'ready' => 'boolean',
+        'sent' => 'boolean',
+        'destination' => EmailDestination::class,
+    ];
+
+
     /** @return BelongsToMany */
-    public function lists()
+    public function lists(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\EmailList::class, 'emails_lists', 'email_id', 'list_id');
+        return $this->belongsToMany(EmailList::class, 'emails_lists', 'email_id', 'list_id');
     }
 
     /** @return BelongsToMany */
-    public function events()
+    public function events(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Event::class, 'emails_events', 'email_id', 'event_id');
+        return $this->belongsToMany(Event::class, 'emails_events', 'email_id', 'event_id');
     }
 
     /** @return BelongsToMany */
-    public function attachments()
+    public function attachments(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\StorageEntry::class, 'emails_files', 'email_id', 'file_id');
+        return $this->belongsToMany(StorageEntry::class, 'emails_files', 'email_id', 'file_id');
     }
 
     /**
      * @return string
      *
-     * @throws Exception
      */
-    public function destinationForBody()
+    public function destinationForBody(): string
     {
-        if ($this->to_user) {
-            return 'users';
-        }
-        if ($this->to_member) {
-            return 'members';
-        }
-        if ($this->to_pending) {
-            return 'pending';
-        }
-        if ($this->to_active) {
-            return 'active members';
-        }
-        if ($this->to_list) {
-            return 'list';
-        }
-        if ($this->to_event) {
-            if ($this->to_backup) {
-                return 'event with backup';
-            }
-
-            return 'event';
-        }
-        throw new Exception('Email has no destination');
+        return match ($this->destination) {
+            EmailDestination::ALL_USERS => 'users',
+            EmailDestination::ALL_MEMBERS => 'members',
+            EmailDestination::PENDING_MEMBERS => 'pending',
+            EmailDestination::ACTIVE_MEMBERS => 'active members',
+            EmailDestination::EMAIL_LIST => 'list',
+            EmailDestination::EVENT => 'event',
+            EmailDestination::EVENT_WITH_BACKUP => 'event with backup',
+            EmailDestination::NO_DESTINATION => 'no destination',
+        };
     }
 
     /** @return SupportCollection|User[] */
-    public function recipients()
+    public function recipients(): array|SupportCollection
     {
-        if ($this->to_user) {
-            return User::orderBy('name')->get();
-        }
-        if ($this->to_member) {
-            return User::whereHas('member', function ($q) {
-                $q->where('is_pending', false);
-            })->orderBy('name')->get();
-        }
-        if ($this->to_pending) {
-            return User::whereHas('member', function ($q) {
-                $q->where('is_pending', true);
-            })->orderBy('name')->get();
-        }
-        if ($this->to_active) {
-            return User::whereHas('committees')->orderBy('name')->get();
-        }
-        if ($this->to_list) {
-            return User::whereHas('lists', function ($q) {
-                $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray());
-            })->orderBy('name')->get();
-        }
-        if ($this->to_event) {
-            $user_ids = [];
-            foreach ($this->events as $event) {
-                if ($event != null) {
-                    $user_ids = array_merge($user_ids, $event->allUsers()->pluck('id')->toArray());
-                    if ($this->to_backup && $event->activity) {
-                        $user_ids = array_merge($user_ids, $event->activity->backupUsers()->pluck('users.id')->toArray());
-                    }
-                }
-            }
-
-            return User::whereIn('id', $user_ids)->orderBy('name', 'asc')->get();
-        }
-
-        return collect([]);
+        return match ($this->destination) {
+            EmailDestination::ALL_USERS => User::orderBy('name')->get(),
+            EmailDestination::ALL_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', false))->orderBy('name')->get(),
+            EmailDestination::PENDING_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', true))->orderBy('name')->get(),
+            EmailDestination::ACTIVE_MEMBERS => User::whereHas('committees')->orderBy('name')->get(),
+            EmailDestination::EMAIL_LIST => User::whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
+            EmailDestination::EVENT => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name', 'asc')->get(),
+            EmailDestination::EVENT_WITH_BACKUP => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name', 'asc')->get(),
+            EmailDestination::NO_DESTINATION => collect([]),
+        };
     }
 
-    /** @return bool */
-    public function hasRecipientList(EmailList $list)
+    /**
+     * @param EmailList $list
+     * @return bool
+     */
+    public function hasRecipientList(EmailList $list): bool
     {
         return DB::table('emails_lists')->where('email_id', $this->id)->where('list_id', $list->id)->count() > 0;
     }
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return string Email body with variables parsed.
      */
-    public function parseBodyFor($user)
+    public function parseBodyFor(User $user): string
     {
         $variable_from = ['$calling_name', '$name'];
         $variable_to = [$user->calling_name, $user->name];
@@ -178,35 +143,25 @@ class Email extends Model
     }
 
     /** @return string */
-    public function getEventName()
+    public function getEventName(): string
     {
-        $events = [];
-        if (! $this->to_event) {
-            return '';
-        }
-        foreach ($this->events as $event) {
-            $events[] = $event->title;
-        }
-
-        return implode(', ', $events);
+        return match ($this->destination) {
+            EmailDestination::EVENT, EmailDestination::EVENT_WITH_BACKUP => implode(', ', $this->events->pluck('title')->toArray()),
+            default => '',
+        };
     }
 
     /** @return string */
-    public function getListName()
+    public function getListName(): string
     {
-        $lists = [];
-        if (! $this->to_list) {
-            return '';
-        }
-        foreach ($this->lists as $list) {
-            $lists[] = $list->name;
-        }
-
-        return implode(', ', $lists);
+        return match ($this->destination) {
+            EmailDestination::EMAIL_LIST => implode(', ', $this->lists->pluck('name')->toArray()),
+            default => '',
+        };
     }
 
     /** @return string */
-    public static function getListUnsubscribeFooter($user_id, $email_id)
+    public static function getListUnsubscribeFooter(int $user_id, int $email_id): string
     {
         $footer = [];
         $lists = self::whereId($email_id)->firstOrFail()->lists;

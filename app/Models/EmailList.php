@@ -38,27 +38,27 @@ class EmailList extends Model
     protected $guarded = ['id'];
 
     /** @return BelongsToMany */
-    public function users()
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\User::class, 'users_mailinglists', 'list_id', 'user_id');
+        return $this->belongsToMany(User::class, 'users_mailinglists', 'list_id', 'user_id');
     }
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return bool Whether user is subscribed to mailing list.
      */
-    public function isSubscribed($user)
+    public function isSubscribed(User $user): bool
     {
         return EmailListSubscription::where('user_id', $user->id)->where('list_id', $this->id)->count() > 0;
     }
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return bool Whether user is successfully subscribed to mailing list.
      */
-    public function subscribe($user)
+    public function subscribe(User $user): bool
     {
-        if (! $this->isSubscribed($user)) {
+        if (!$this->isSubscribed($user)) {
             EmailListSubscription::create([
                 'user_id' => $user->id,
                 'list_id' => $this->id,
@@ -71,12 +71,12 @@ class EmailList extends Model
     }
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return bool Whether user is successfully unsubscribed from mailing list.
      *
      * @throws Exception
      */
-    public function unsubscribe($user)
+    public function unsubscribe(User $user): bool
     {
         $s = EmailListSubscription::where('user_id', $user->id)->where('list_id', $this->id);
         if ($s == null) {
@@ -88,11 +88,11 @@ class EmailList extends Model
     }
 
     /**
-     * @param  int  $user_id
-     * @param  int  $list_id
+     * @param int $user_id
+     * @param int $list_id
      * @return string
      */
-    public static function generateUnsubscribeHash($user_id, $list_id)
+    public static function generateUnsubscribeHash(int $user_id, int $list_id): string
     {
         return base64_encode(Crypt::encrypt(json_encode(['user' => $user_id, 'list' => $list_id])));
     }

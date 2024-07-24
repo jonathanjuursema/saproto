@@ -42,6 +42,7 @@ class Kernel extends ConsoleKernel
         Commands\UpdateWallstreetPrices::class,
         Commands\CodexMarkdownConverter::class,
         Commands\RefreshEventUniqueUsers::class,
+        Commands\MoveMailToEnum::class,
     ];
 
     /**

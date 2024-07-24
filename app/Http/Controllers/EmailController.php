@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EmailDestination;
 use App\Models\Email;
 use App\Models\EmailList;
 use App\Models\EmailListSubscription;
 use App\Models\StorageEntry;
 use App\Models\User;
 use Auth;
-use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,28 +23,28 @@ class EmailController extends Controller
     {
         return view('emailadmin.overview', [
             'lists' => EmailList::withCount('users')->get(),
-            'emails' => Email::orderBy('id', 'desc')->paginate(10),
+            'emails' => Email::query()->orderBy('id', 'desc')->paginate(10),
         ]);
     }
 
     public function filter(Request $request): View
     {
-        $filteredEmails = Email::orderBy('id', 'desc');
+        $filteredEmails = Email::query()->orderBy('id', 'desc');
         $description = $request->has('search_description');
         $subject = $request->has('search_subject');
         $body = $request->has('search_body');
         $searchTerm = $request->input('searchterm');
 
         if ($description) {
-            $filteredEmails = $filteredEmails->orWhere('description', 'LIKE', '%'.$searchTerm.'%');
+            $filteredEmails = $filteredEmails->orWhere('description', 'LIKE', '%' . $searchTerm . '%');
         }
 
         if ($subject) {
-            $filteredEmails = $filteredEmails->orWhere('subject', 'LIKE', '%'.$searchTerm.'%');
+            $filteredEmails = $filteredEmails->orWhere('subject', 'LIKE', '%' . $searchTerm . '%');
         }
 
         if ($body) {
-            $filteredEmails = $filteredEmails->orWhere('body', 'LIKE', '%'.$searchTerm.'%');
+            $filteredEmails = $filteredEmails->orWhere('body', 'LIKE', '%' . $searchTerm . '%');
         }
 
         return view('emailadmin.overview', [
@@ -73,7 +73,7 @@ class EmailController extends Controller
 
             return Redirect::route('email::admin');
         }
-        $email = Email::create([
+        $email = Email::query()->create([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
@@ -88,12 +88,13 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return View
      */
-    public function show($id)
+    public function show(int $id)
     {
-        $email = Email::findOrFail($id);
+        /** @var Email $email */
+        $email = Email::query()->findOrFail($id);
 
         return view('emails.manualemail', [
             'body' => $email->parseBodyFor(Auth::user()),
@@ -106,13 +107,13 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return View|RedirectResponse
      */
-    public function edit(Request $request, $id)
+    public function edit(int $id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
         if ($email->sent || $email->ready) {
             Session::flash('flash_message', 'You can currently not edit this e-mail. Please make sure it is in draft mode.');
 
@@ -123,13 +124,14 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
 
         if ($email->sent || $email->ready) {
             Session::flash('flash_message', 'You can currently not edit this e-mail. Please make sure it is in draft mode.');
@@ -160,13 +162,13 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
-    public function toggleReady(Request $request, $id)
+    public function toggleReady(int $id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
 
         if ($email->sent) {
             Session::flash('flash_message', 'This e-mail has been sent and can thus not be edited.');
@@ -193,15 +195,16 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return RedirectResponse
      *
      * @throws FileNotFoundException
      */
-    public function addAttachment(Request $request, $id)
+    public function addAttachment(Request $request, int $id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
         if ($email->sent || $email->ready) {
             Session::flash('flash_message', 'You can currently not edit this e-mail. Please make sure it is in draft mode.');
 
@@ -226,14 +229,14 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @param  int  $file_id
+     * @param int $id
+     * @param int $file_id
      * @return RedirectResponse
      */
-    public function deleteAttachment(Request $request, $id, $file_id)
+    public function deleteAttachment(int $id, int $file_id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
         if ($email->sent || $email->ready) {
             Session::flash('flash_message', 'You can currently not edit this e-mail. Please make sure it is in draft mode.');
 
@@ -251,12 +254,11 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  string  $hash
+     * @param string $hash
      * @return RedirectResponse
      *
-     * @throws Exception
      */
-    public function unsubscribeLink(Request $request, $hash)
+    public function unsubscribeLink(string $hash)
     {
         $data = EmailList::parseUnsubscribeHash($hash);
 
@@ -266,25 +268,24 @@ class EmailController extends Controller
 
         $sub = EmailListSubscription::where('user_id', $user->id)->where('list_id', $list->id)->first();
         if ($sub != null) {
-            Session::flash('flash_message', $user->name.' has been unsubscribed from '.$list->name);
+            Session::flash('flash_message', $user->name . ' has been unsubscribed from ' . $list->name);
             $sub->delete();
         } else {
-            Session::flash('flash_message', $user->name.' was already unsubscribed from '.$list->name);
+            Session::flash('flash_message', $user->name . ' was already unsubscribed from ' . $list->name);
         }
 
         return Redirect::route('homepage');
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      *
-     * @throws Exception
      */
-    public function destroy(Request $request, $id)
+    public function destroy(int $id)
     {
         /** @var Email $email */
-        $email = Email::findOrFail($id);
+        $email = Email::query()->findOrFail($id);
         if ($email->sent) {
             Session::flash('flash_message', 'This e-mail has been sent and can thus not be deleted.');
 
@@ -297,101 +298,59 @@ class EmailController extends Controller
     }
 
     /**
-     * @param  array  $type
-     * @param  array  $lists
-     * @param  array  $events
-     * @param  bool  $toBackup
+     * @param Email $email
+     * @param string $type
+     * @param array $lists
+     * @param array $events
+     * @param bool $toBackup
      */
-    private function updateEmailDestination(Email $email, $type, $lists = [], $events = [], $toBackup = false)
+    private function updateEmailDestination(Email $email, string $type, array $lists = [], array $events = [], bool $toBackup = false)
     {
 
         switch ($type) {
-
             case 'members':
-                $email->to_user = false;
-                $email->to_pending = false;
-                $email->to_member = true;
-                $email->to_active = false;
-
-                $email->to_list = false;
-                $email->to_event = false;
-                $email->to_backup = false;
-
+                $email->destination = EmailDestination::ALL_MEMBERS;
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
                 break;
 
             case 'pending':
-                $email->to_user = false;
-                $email->to_pending = true;
-                $email->to_member = false;
-                $email->to_active = false;
-
-                $email->to_list = false;
-                $email->to_event = false;
-                $email->to_backup = false;
+                $email->destination = EmailDestination::PENDING_MEMBERS;
 
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
                 break;
 
             case 'active':
-                $email->to_user = false;
-                $email->to_pending = false;
-                $email->to_member = false;
-                $email->to_active = true;
-
-                $email->to_list = false;
-                $email->to_event = false;
-                $email->to_backup = false;
+                $email->destination = EmailDestination::ACTIVE_MEMBERS;
 
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
                 break;
 
             case 'event':
-                $email->to_user = false;
-                $email->to_pending = false;
-                $email->to_member = false;
-                $email->to_active = false;
-
-                $email->to_list = false;
-                $email->to_event = true;
-                $email->to_backup = $toBackup;
+                if ($toBackup) {
+                    $email->destination = EmailDestination::EVENT_WITH_BACKUP;
+                } else {
+                    $email->destination = EmailDestination::EVENT;
+                }
                 $email->lists()->sync([]);
-                if (! empty($events)) {
+                if (!empty($events)) {
                     $email->events()->sync($events);
                 }
                 break;
 
             case 'lists':
-                $email->to_user = false;
-                $email->to_pending = false;
-                $email->to_member = false;
-                $email->to_active = false;
-
-                $email->to_list = true;
-                $email->to_event = false;
-                $email->to_backup = false;
-
+                $email->destination = EmailDestination::EMAIL_LIST;
                 $email->lists()->sync((gettype($lists) == 'array' ? $lists : []));
                 $email->events()->sync([]);
                 break;
 
             default:
-                $email->to_user = false;
-                $email->to_pending = false;
-                $email->to_member = false;
-                $email->to_active = false;
-
-                $email->to_list = false;
-                $email->to_event = false;
-                $email->to_backup = false;
-
+                $email->destination = EmailDestination::NO_DESTINATION;
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
                 break;
-
         }
         $email->save();
     }

@@ -40,11 +40,11 @@ class EmailCron extends Command
     {
 
         // Send admin created e-mails.
-        $emails = Email::where('sent', false)->where('ready', true)->where('time', '<', date('U'))->get();
-        $this->info('There are '.$emails->count().' queued e-mails.');
+        $emails = Email::query()->where('sent', false)->where('ready', true)->where('time', '<', date('U'))->get();
+        $this->info('There are ' . $emails->count() . ' queued e-mails.');
 
         foreach ($emails as $email) {
-            $this->info('Sending e-mail <'.$email->subject.'>');
+            $this->info('Sending e-mail <' . $email->subject . '>');
 
             $email->ready = false;
             $email->sent = true;
@@ -54,7 +54,7 @@ class EmailCron extends Command
             foreach ($email->recipients() as $recipient) {
                 Mail::to($recipient)
                     ->queue((new ManualEmail(
-                        $email->sender_address.'@'.config('proto.emaildomain'),
+                        $email->sender_address . '@' . config('proto.emaildomain'),
                         $email->sender_name,
                         $email->subject,
                         $email->parseBodyFor($recipient),
@@ -67,7 +67,7 @@ class EmailCron extends Command
                     )->onQueue('medium'));
             }
 
-            $this->info('Sent to '.$email->recipients()->count().' people.');
+            $this->info('Sent to ' . $email->recipients()->count() . ' people.');
         }
 
         $this->info(($emails->count() > 0 ? 'All e-mails sent.' : 'No e-mails to be sent.'));
