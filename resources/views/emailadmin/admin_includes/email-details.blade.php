@@ -139,9 +139,10 @@
 
                                 <ul class="list-group">
                                     @php /** @var App\Models\User $user */ @endphp
-                                    @foreach($email->specificUsers() as $user)
+
+                                    @foreach($email->specificUsers()->get() as $user)
                                         <li class="list-group-item">
-                                            {{ $user->name }})
+                                            {{ $user->name }}
                                         </li>
                                     @endforeach
                                 </ul>
