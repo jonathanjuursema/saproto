@@ -82,6 +82,11 @@ class Email extends Model
         return $this->belongsToMany(Event::class, 'emails_events', 'email_id', 'event_id');
     }
 
+    public function specificUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'emails_users', 'email_id', 'user_id');
+    }
+
     /** @return BelongsToMany */
     public function attachments(): BelongsToMany
     {
@@ -95,14 +100,15 @@ class Email extends Model
     public function destinationForBody(): string
     {
         return match ($this->destination) {
-            EmailDestination::ALL_USERS => 'users',
-            EmailDestination::ALL_MEMBERS => 'members',
-            EmailDestination::PENDING_MEMBERS => 'pending',
-            EmailDestination::ACTIVE_MEMBERS => 'active members',
-            EmailDestination::EMAIL_LIST => 'list',
-            EmailDestination::EVENT => 'event',
-            EmailDestination::EVENT_WITH_BACKUP => 'event with backup',
+            EmailDestination::ALL_USERS => 'all users',
+            EmailDestination::ALL_MEMBERS => 'all members',
+            EmailDestination::PENDING_MEMBERS => 'all pending members',
+            EmailDestination::ACTIVE_MEMBERS => 'all active members',
+            EmailDestination::EMAIL_LISTS => 'list(s)',
+            EmailDestination::EVENT => 'event(s)',
+            EmailDestination::EVENT_WITH_BACKUP => 'event(s) with backup',
             EmailDestination::NO_DESTINATION => 'no destination',
+            EmailDestination::SPECIFIC_USERS => 'specific users',
         };
     }
 
@@ -114,10 +120,11 @@ class Email extends Model
             EmailDestination::ALL_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', false))->orderBy('name')->get(),
             EmailDestination::PENDING_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', true))->orderBy('name')->get(),
             EmailDestination::ACTIVE_MEMBERS => User::whereHas('committees')->orderBy('name')->get(),
-            EmailDestination::EMAIL_LIST => User::whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
-            EmailDestination::EVENT => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name', 'asc')->get(),
-            EmailDestination::EVENT_WITH_BACKUP => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name', 'asc')->get(),
-            EmailDestination::NO_DESTINATION => collect([]),
+            EmailDestination::EMAIL_LISTS => User::whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
+            EmailDestination::EVENT => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),
+            EmailDestination::EVENT_WITH_BACKUP => User::whereIn('id', array_merge($this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray(), $this->events->map(fn($event) => $event->backupUsers()->pluck('id'))))->orderBy('name')->get(),
+            EmailDestination::NO_DESTINATION => collect(),
+            EmailDestination::SPECIFIC_USERS => $this->specificUsers()->get(),
         };
     }
 
@@ -143,19 +150,12 @@ class Email extends Model
     }
 
     /** @return string */
-    public function getEventName(): string
+    public function getConcatLists(): string
     {
         return match ($this->destination) {
             EmailDestination::EVENT, EmailDestination::EVENT_WITH_BACKUP => implode(', ', $this->events->pluck('title')->toArray()),
-            default => '',
-        };
-    }
-
-    /** @return string */
-    public function getListName(): string
-    {
-        return match ($this->destination) {
-            EmailDestination::EMAIL_LIST => implode(', ', $this->lists->pluck('name')->toArray()),
+            EmailDestination::EMAIL_LISTS => implode(', ', $this->lists->pluck('name')->toArray()),
+            EmailDestination::SPECIFIC_USERS => implode(', ', $this->specificUsers()->pluck('name')->toArray()),
             default => '',
         };
     }

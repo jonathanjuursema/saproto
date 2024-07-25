@@ -8,8 +8,9 @@ enum EmailDestination: int
     case ALL_MEMBERS = 2;
     case PENDING_MEMBERS = 3;
     case ACTIVE_MEMBERS = 4;
-    case EMAIL_LIST = 5;
+    case EMAIL_LISTS = 5;
 
     case EVENT = 6;
     case EVENT_WITH_BACKUP = 7;
+    case SPECIFIC_USERS = 8;
 }

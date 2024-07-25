@@ -119,7 +119,7 @@
                     </tr>
 
                     </thead>
-
+                    @php /** @var \App\Models\Email $email */ @endphp
                     @foreach($emails as $email)
 
                         <tr class="{{ $email->sent ? 'opacity-50' : '' }}">
@@ -129,26 +129,12 @@
                                 @if ($email->sent)
                                     Went to {{ $email->sent_to }} people
                                 @else
-                                    Will go to {{ $email->recipients()->count() }} people
+                                    Will go to {{ count($email->recipients()) }} people
                                 @endif
                                 <br>
                                 via
-                                @if ($email->to_user)
-                                    all users
-                                @elseif ($email->to_pending)
-                                    all pending members
-                                @elseif($email->to_member)
-                                    all members
-                                @elseif($email->to_active)
-                                    all active members
-                                @elseif($email->to_list)
-                                    list(s) {{ $email->getListName() }}
-                                @elseif($email->to_event)
-                                    event(s) {{$email->to_backup?'with backup users':''}}:
-                                    @foreach($email->events()->get() as $event)
-                                        {{$event->title}}.
-                                    @endforeach
-                                @endif
+                                {{$email->destinationForBody()}}
+                                {{ $email->getConcatLists() }}
                             </td>
                             <td>
                                 {{ date('d-m-Y H:i', $email->time) }}

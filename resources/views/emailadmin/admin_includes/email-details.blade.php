@@ -83,90 +83,82 @@
                     <div class="form-group">
                         <label>Recipients:</label>
 
-                        @include('components.forms.checkbox', [
-                            'type' => 'radio',
-                            'id' => 'destination_type_all_members',
-                            'name' => 'destinationType',
-                            'checked' => $email?->to_member,
-                            'required' => true,
-                            'value' => 'members',
-                            'label' => 'All members'
-                        ])
-
-                        @include('components.forms.checkbox', [
-                            'type' => 'radio',
-                            'id' => 'destination_type_active_members',
-                            'name' => 'destinationType',
-                            'checked' => $email?->to_active,
-                            'required' => true,
-                            'value' => 'active',
-                            'label' => 'All active members'
-                        ])
-
-                        @include('components.forms.checkbox', [
-                            'type' => 'radio',
-                            'id' => 'destination_type_pending_members',
-                            'name' => 'destinationType',
-                            'checked' => $email?->to_pending,
-                            'required' => true,
-                            'value' => 'pending',
-                            'label' => 'All pending members'
-                        ])
-
-                        @include('components.forms.checkbox', [
-                            'type' => 'radio',
-                            'id' => 'destination_type_event',
-                            'name' => 'destinationType',
-                            'checked' => $email?->to_event,
-                            'required' => true,
-                            'value' => 'event',
-                            'label' => 'These events:'
-                        ])
-
-                        @if($email?->to_event)
-                            <strong>Current selection</strong>
-
-                            <ul class="list-group">
-                                @foreach($email->events as $event)
-                                    <li class="list-group-item">
-                                        {{ $event->title }} ({{ $event->formatted_date->simple }})
-                                    </li>
-                                @endforeach
-                            </ul>
-
-                            <strong>Replace selection</strong>
-                        @endif
-
+                        {{--                        select component with all EmailDestination cases from email->destination--}}
                         <div class="form-group">
-                            <div class="form-group autocomplete">
-                                <input class="form-control event-search" id="eventSelect" name="eventSelect[]"
-                                       @disabled(!$email?->to_event) multiple>
+                            <label for="destination">Send to:</label>
+                            <select name="destination" id="destination" class="form-select">
+                                <option value="{{\App\Enums\EmailDestination::NO_DESTINATION}}" @selected(empty($email->destination))>
+                                    Choose a destination
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::EMAIL_LISTS}}" @selected($email?->destination == \App\Enums\EmailDestination::EMAIL_LISTS)>
+                                    Email lists
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::EVENT}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT)>
+                                    Events
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::EVENT_WITH_BACKUP}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP)>
+                                    Events with backup users
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::ALL_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ALL_MEMBERS)>
+                                    Members
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::ACTIVE_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ACTIVE_MEMBERS)>
+                                    Active members
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::PENDING_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::PENDING_MEMBERS)>
+                                    Pending members
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::SPECIFIC_USERS}}" @selected($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)>
+                                    Specific users
+                                </option>
+                            </select>
+
+                            @if($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP||$email?->destination == \App\Enums\EmailDestination::EVENT)
+                                <strong>Current selection of events</strong>
+
+                                <ul class="list-group">
+                                    @foreach($email->events as $event)
+                                        <li class="list-group-item">
+                                            {{ $event->title }} ({{ $event->formatted_date->simple }})
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <strong>Replace selection</strong>
+                            @endif
+
+                            <div class="form-group" id="eventGroup">
+                                <div class="form-group autocomplete">
+                                    <input class="form-control event-search" id="eventSelect" name="eventSelect[]"
+                                           multiple>
+                                </div>
                             </div>
+
+                            @if($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)
+                                <strong>Current selection of users</strong>
+
+                                <ul class="list-group">
+                                    @php /** @var App\Models\User $user */ @endphp
+                                    @foreach($email->specificUsers() as $user)
+                                        <li class="list-group-item">
+                                            {{ $user->name }})
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <strong>Replace selection</strong>
+                            @endif
+
+                            <div class="form-group autocomplete"
+                            {{ ($email?->destination!==\App\Enums\EmailDestination::SPECIFIC_USERS ? 'd-none' : '') }}">
+                            <label for="user">User(s):</label>
+                            <input class="form-control user-search" id="users" name="users[]" data-label="User(s):"
+                                   multiple>
                         </div>
 
-                        <div class="form-group {{ ($email?->to_event ?: 'd-none') }} mt-1 mb-2" id="backupDiv">
-                            @include('components.forms.checkbox', [
-                                'name' => 'toBackup',
-                                'checked' => $email?->to_backup,
-                                'label' => 'Send to backup users'
-                            ])
-                            <em>
-                                <b>Note:</b>
-                                Specify in your e-mail that the recipient is not automatically enrolled in the activity!
-                            </em>
-                        </div>
 
-                        @include('components.forms.checkbox', [
-                            'type' => 'radio',
-                            'id' => 'destination_type_lists',
-                            'name' => 'destinationType',
-                            'checked' => $email?->to_list && $email?->to_backup,
-                            'value' => 'lists',
-                            'label' => 'These e-mail lists:'
-                        ])
-
-                        <select multiple name="listSelect[]" id="listSelect" class="form-control"
-                                {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
+                        <select multiple name="listSelect[]" id="listSelect" class="form-control
+                                    {{ ($email?->destination!==\App\Enums\EmailDestination::EMAIL_LISTS ? 'd-none' : '') }}">
 
                             @foreach(App\Models\EmailList::all() as $list)
 
@@ -208,28 +200,28 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        const eventSelect = document.getElementById('eventSelect')
-        const listSelect = document.getElementById('listSelect')
-        const destinationSelectList = Array.from(document.getElementsByName('destinationType'))
-        const backupToggle = document.getElementById('backupDiv');
-        const toggleList = {
-            'event': [false, true, false],
-            'members': [true, true, true],
-            'active': [true, true, true],
-            'pending': [true, true, true],
-            'lists': [true, false, true]
-        }
+      const eventSelect = document.getElementById('eventSelect');
+      const listSelect = document.getElementById('listSelect');
+      const destinationSelectList = Array.from(document.getElementsByName('destinationType'));
+      const backupToggle = document.getElementById('backupDiv');
+      const toggleList = {
+        'event': [false, true, false],
+        'members': [true, true, true],
+        'active': [true, true, true],
+        'pending': [true, true, true],
+        'lists': [true, false, true],
+      };
 
-        destinationSelectList.forEach(el => {
-            el.addEventListener('click', e => {
-                const toggle = toggleList[el.value]
-                eventSelect.disabled = toggle[0]
-                listSelect.disabled = toggle[1]
+      destinationSelectList.forEach(el => {
+        el.addEventListener('click', e => {
+          const toggle = toggleList[el.value];
+          eventSelect.disabled = toggle[0];
+          listSelect.disabled = toggle[1];
 
-                if (toggle[2]) backupToggle.classList.add('d-none')
-                else backupToggle.classList.remove('d-none')
-            })
-        })
+          if (toggle[2]) backupToggle.classList.add('d-none');
+          else backupToggle.classList.remove('d-none');
+        });
+      });
     </script>
 
 @endpush

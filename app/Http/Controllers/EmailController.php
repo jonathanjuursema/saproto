@@ -9,6 +9,7 @@ use App\Models\EmailListSubscription;
 use App\Models\StorageEntry;
 use App\Models\User;
 use Auth;
+use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ use Session;
 class EmailController extends Controller
 {
     /** @return View */
-    public function index()
+    public function index(Request $request)
     {
         return view('emailadmin.overview', [
             'lists' => EmailList::withCount('users')->get(),
@@ -58,7 +59,7 @@ class EmailController extends Controller
     }
 
     /** @return View */
-    public function create()
+    public function create(Request $request)
     {
         return view('emailadmin.editmail', ['email' => null]);
     }
@@ -73,6 +74,11 @@ class EmailController extends Controller
 
             return Redirect::route('email::admin');
         }
+
+        if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
+            Session::flash('flash_message', 'Please select a destination for the email.');
+            return Redirect::back();
+        }
         $email = Email::query()->create([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
@@ -81,7 +87,7 @@ class EmailController extends Controller
             'sender_name' => $request->input('sender_name'),
             'sender_address' => $request->input('sender_address'),
         ]);
-        $this->updateEmailDestination($email, $request->input('destinationType'), $request->input('listSelect'), $request->input('eventSelect'), $request->has('toBackup'));
+        $this->updateEmailDestination($email, $request->enum('destination', EmailDestination::class), $request->input('listSelect') ?? [], $request->input('eventSelect') ?? [], $request->input('users') ?? []);
         Session::flash('flash_message', 'Your e-mail has been saved.');
 
         return Redirect::route('email::admin');
@@ -90,8 +96,9 @@ class EmailController extends Controller
     /**
      * @param int $id
      * @return View
+     * @throws Exception
      */
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
@@ -110,7 +117,7 @@ class EmailController extends Controller
      * @param int $id
      * @return View|RedirectResponse
      */
-    public function edit(int $id)
+    public function edit(Request $request, int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
@@ -145,6 +152,11 @@ class EmailController extends Controller
             return Redirect::back();
         }
 
+        if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
+            Session::flash('flash_message', 'Please select a destination for the email.');
+            return Redirect::back();
+        }
+        
         $email->fill([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
@@ -154,7 +166,7 @@ class EmailController extends Controller
             'sender_address' => $request->input('sender_address'),
         ]);
 
-        $this->updateEmailDestination($email, $request->input('destinationType'), $request->input('listSelect'), $request->input('eventSelect'), $request->has('toBackup'));
+        $this->updateEmailDestination($email, $request->enum('destination', EmailDestination::class), $request->input('listSelect') ?? [], $request->input('eventSelect') ?? [], $request->input('users') ?? []);
 
         Session::flash('flash_message', 'Your e-mail has been saved.');
 
@@ -165,7 +177,7 @@ class EmailController extends Controller
      * @param int $id
      * @return RedirectResponse
      */
-    public function toggleReady(int $id)
+    public function toggleReady(Request $request, int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
@@ -258,7 +270,7 @@ class EmailController extends Controller
      * @return RedirectResponse
      *
      */
-    public function unsubscribeLink(string $hash)
+    public function unsubscribeLink(Request $request, string $hash)
     {
         $data = EmailList::parseUnsubscribeHash($hash);
 
@@ -282,7 +294,7 @@ class EmailController extends Controller
      * @return RedirectResponse
      *
      */
-    public function destroy(int $id)
+    public function destroy(Request $request, int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
@@ -299,58 +311,47 @@ class EmailController extends Controller
 
     /**
      * @param Email $email
-     * @param string $type
+     * @param EmailDestination $type
      * @param array $lists
      * @param array $events
-     * @param bool $toBackup
+     * @param array $users
      */
-    private function updateEmailDestination(Email $email, string $type, array $lists = [], array $events = [], bool $toBackup = false)
+    private function updateEmailDestination(Email $email, EmailDestination $type, array $lists = [], array $events = [], array $users = [])
     {
 
         switch ($type) {
-            case 'members':
-                $email->destination = EmailDestination::ALL_MEMBERS;
-                $email->lists()->sync([]);
-                $email->events()->sync([]);
-                break;
-
-            case 'pending':
-                $email->destination = EmailDestination::PENDING_MEMBERS;
-
-                $email->lists()->sync([]);
-                $email->events()->sync([]);
-                break;
-
-            case 'active':
-                $email->destination = EmailDestination::ACTIVE_MEMBERS;
-
-                $email->lists()->sync([]);
-                $email->events()->sync([]);
-                break;
-
-            case 'event':
-                if ($toBackup) {
-                    $email->destination = EmailDestination::EVENT_WITH_BACKUP;
-                } else {
-                    $email->destination = EmailDestination::EVENT;
-                }
+            case EmailDestination::EVENT_WITH_BACKUP:
+            case EmailDestination::EVENT:
+                $email->destination = $type;
+                $email->specificUsers()->sync([]);
                 $email->lists()->sync([]);
                 if (!empty($events)) {
                     $email->events()->sync($events);
                 }
                 break;
-
-            case 'lists':
-                $email->destination = EmailDestination::EMAIL_LIST;
-                $email->lists()->sync((gettype($lists) == 'array' ? $lists : []));
-                $email->events()->sync([]);
-                break;
-
-            default:
-                $email->destination = EmailDestination::NO_DESTINATION;
+            case EmailDestination::SPECIFIC_USERS:
+                $email->destination = $type;
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
+                if (!empty($users)) {
+                    $email->specificUsers()->sync($users);
+                }
                 break;
+            case EmailDestination::EMAIL_LISTS:
+                $email->destination = $type;
+                $email->events()->sync([]);
+                $email->specificUsers()->sync([]);
+                if (!empty($lists)) {
+                    $email->lists()->sync($lists);
+                }
+                break;
+            default:
+            {
+                $email->destination = $type;
+                $email->specificUsers()->sync([]);
+                $email->lists()->sync([]);
+                $email->events()->sync([]);
+            }
         }
         $email->save();
     }
