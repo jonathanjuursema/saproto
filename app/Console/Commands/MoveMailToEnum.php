@@ -36,7 +36,7 @@ class MoveMailToEnum extends Command
                     $mail->destination = EmailDestination::ALL_MEMBERS;
                 } else if ($mail->to_pending) {
                     $mail->destination = EmailDestination::PENDING_MEMBERS;
-                } else if ($this->to_active) {
+                } else if ($mail->to_active) {
                     $mail->destination = EmailDestination::ACTIVE_MEMBERS;
                 } else if ($mail->to_list) {
                     $mail->destination = EmailDestination::EMAIL_LISTS;

@@ -81,32 +81,30 @@
                 <div class="col-md-6">
 
                     <div class="form-group">
-                        <label>Recipients:</label>
-
                         {{--                        select component with all EmailDestination cases from email->destination--}}
                         <div class="form-group">
-                            <label for="destination">Send to:</label>
+                            <label for="destination">Recipients:</label>
                             <select name="destination" id="destination" class="form-select">
                                 <option value="{{\App\Enums\EmailDestination::NO_DESTINATION}}" @selected(empty($email->destination))>
                                     Choose a destination
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::EMAIL_LISTS}}" @selected($email?->destination == \App\Enums\EmailDestination::EMAIL_LISTS)>
-                                    Email lists
-                                </option>
-                                <option value="{{\App\Enums\EmailDestination::EVENT}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT)>
-                                    Events
-                                </option>
-                                <option value="{{\App\Enums\EmailDestination::EVENT_WITH_BACKUP}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP)>
-                                    Events with backup users
-                                </option>
                                 <option value="{{\App\Enums\EmailDestination::ALL_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ALL_MEMBERS)>
-                                    Members
+                                    All Members
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::PENDING_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::PENDING_MEMBERS)>
+                                    Pending members
                                 </option>
                                 <option value="{{\App\Enums\EmailDestination::ACTIVE_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ACTIVE_MEMBERS)>
                                     Active members
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::PENDING_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::PENDING_MEMBERS)>
-                                    Pending members
+                                <option value="{{\App\Enums\EmailDestination::EVENT}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT)>
+                                    Event participants
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::EVENT_WITH_BACKUP}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP)>
+                                    Events participants with backup users
+                                </option>
+                                <option value="{{\App\Enums\EmailDestination::EMAIL_LISTS}}" @selected($email?->destination == \App\Enums\EmailDestination::EMAIL_LISTS)>
+                                    Email lists
                                 </option>
                                 <option value="{{\App\Enums\EmailDestination::SPECIFIC_USERS}}" @selected($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)>
                                     Specific users
@@ -123,16 +121,18 @@
                                         </li>
                                     @endforeach
                                 </ul>
-
-                                <strong>Replace selection</strong>
                             @endif
 
-                            <div class="form-group" id="eventGroup">
-                                <div class="form-group autocomplete">
+                            <div id="eventGroup"
+                                 class="{{ (($email?->destination!==\App\Enums\EmailDestination::EVENT && $email?->destination!==\App\Enums\EmailDestination::EVENT_WITH_BACKUP) ? 'd-none' : '') }}">
+                                <strong>Replace event selection</strong>
+                                <div class="form-group autocomplete" id="eventGroup">
+                                    <label for="eventSelect">Event(s):</label>
                                     <input class="form-control event-search" id="eventSelect" name="eventSelect[]"
                                            multiple>
                                 </div>
                             </div>
+
 
                             @if($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)
                                 <strong>Current selection of users</strong>
@@ -145,82 +145,88 @@
                                         </li>
                                     @endforeach
                                 </ul>
-
-                                <strong>Replace selection</strong>
                             @endif
 
-                            <div class="form-group autocomplete"
-                            {{ ($email?->destination!==\App\Enums\EmailDestination::SPECIFIC_USERS ? 'd-none' : '') }}">
-                            <label for="user">User(s):</label>
-                            <input class="form-control user-search" id="users" name="users[]" data-label="User(s):"
-                                   multiple>
+                            <div id="userGroup"
+                                 class="{{ ($email?->destination!==\App\Enums\EmailDestination::SPECIFIC_USERS ? 'd-none' : '') }}">
+                                <strong>Replace user selection</strong>
+                                <div class="form-group autocomplete">
+                                    <label for="user">User(s):</label>
+                                    <input class="form-control user-search" id="users" name="users[]"
+                                           data-label="User(s):"
+                                           multiple>
+                                </div>
+                            </div>
+
+                            <div id="emailListGroup"
+                                 class="{{ ($email?->destination!==\App\Enums\EmailDestination::EMAIL_LISTS ? 'd-none' : '') }}">
+                                <label for="listSelect">Email list(s):</label>
+                                <select multiple name="listSelect[]" id="listSelect" class="form-control">
+
+                                    @foreach(App\Models\EmailList::all() as $list)
+
+                                        <option value="{{ $list->id }}" @selected($email?->hasRecipientList($list))>
+                                            {{ $list->name }}
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+                            </div>
+
                         </div>
 
+                    </div>
 
-                        <select multiple name="listSelect[]" id="listSelect" class="form-control
-                                    {{ ($email?->destination!==\App\Enums\EmailDestination::EMAIL_LISTS ? 'd-none' : '') }}">
-
-                            @foreach(App\Models\EmailList::all() as $list)
-
-                                <option value="{{ $list->id }}" @selected($email?->hasRecipientList($list))>
-                                    {{ $list->name }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
+                    <div class="col-md-6">
+                        @include('components.forms.datetimepicker', [
+                            'name' => 'time',
+                            'label' => 'Scheduled:',
+                            'placeholder' => $email ? $email->time : strtotime(Carbon::now()->endOfDay())
+                        ])
                     </div>
 
                 </div>
 
-                <div class="col-md-6">
-                    @include('components.forms.datetimepicker', [
-                        'name' => 'time',
-                        'label' => 'Scheduled:',
-                        'placeholder' => $email ? $email->time : strtotime(Carbon::now()->endOfDay())
-                    ])
-                </div>
+            </div>
+
+            <div class="card-footer">
+
+                <button type="submit" class="btn btn-success float-end">Save</button>
+
+                <a href="{{ route("email::admin") }}" class="btn btn-default">Cancel</a>
 
             </div>
 
         </div>
 
-        <div class="card-footer">
-
-            <button type="submit" class="btn btn-success float-end">Save</button>
-
-            <a href="{{ route("email::admin") }}" class="btn btn-default">Cancel</a>
-
-        </div>
-
-    </div>
-
 </form>
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-      const eventSelect = document.getElementById('eventSelect');
-      const listSelect = document.getElementById('listSelect');
-      const destinationSelectList = Array.from(document.getElementsByName('destinationType'));
-      const backupToggle = document.getElementById('backupDiv');
-      const toggleList = {
-        'event': [false, true, false],
-        'members': [true, true, true],
-        'active': [true, true, true],
-        'pending': [true, true, true],
-        'lists': [true, false, true],
-      };
+      const selectList = document.getElementById('destination');
+      const eventGroup = document.getElementById('eventGroup');
+      const userGroup = document.getElementById('userGroup');
+      const emailListSelect = document.getElementById('emailListGroup');
 
-      destinationSelectList.forEach(el => {
-        el.addEventListener('click', e => {
-          const toggle = toggleList[el.value];
-          eventSelect.disabled = toggle[0];
-          listSelect.disabled = toggle[1];
+      selectList.addEventListener('change', function() {
+        if (selectList.value === '{{ \App\Enums\EmailDestination::EVENT }}' || selectList.value === '{{ \App\Enums\EmailDestination::EVENT_WITH_BACKUP }}') {
+          eventGroup.classList.remove('d-none');
+        } else {
+          eventGroup.classList.add('d-none');
+        }
 
-          if (toggle[2]) backupToggle.classList.add('d-none');
-          else backupToggle.classList.remove('d-none');
-        });
+        if (selectList.value === '{{ \App\Enums\EmailDestination::SPECIFIC_USERS }}') {
+          userGroup.classList.remove('d-none');
+        } else {
+          userGroup.classList.add('d-none');
+        }
+
+        if (selectList.value === '{{ \App\Enums\EmailDestination::EMAIL_LISTS }}') {
+          emailListSelect.classList.remove('d-none');
+        } else {
+          emailListSelect.classList.add('d-none');
+        }
       });
     </script>
 
