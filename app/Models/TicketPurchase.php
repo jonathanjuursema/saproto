@@ -46,8 +46,7 @@ class TicketPurchase extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function ticket()
+    public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class, 'ticket_id');
     }
@@ -58,8 +57,7 @@ class TicketPurchase extends Model
         return $this->belongsTo(OrderLine::class, 'orderline_id');
     }
 
-    /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
@@ -70,14 +68,5 @@ class TicketPurchase extends Model
             (! $this->ticket->is_prepaid) ||
             ($this->orderline->isPayed() && $this->orderline->payed_with_mollie === null) ||
             ($this->orderline->molliePayment?->translatedStatus() == 'paid');
-    }
-
-    public function getApiAttributesAttribute(): array
-    {
-        return [
-            'id' => $this->id,
-            'barcode' => $this->canBeDownloaded() ? $this->barcode : null,
-            'scanned' => $this->scanned,
-        ];
     }
 }

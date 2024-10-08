@@ -12,11 +12,11 @@ class UsernameReminderEmail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    public $name;
+    public string $name;
 
-    public $username;
+    public ?string $username;
 
-    public $ismember;
+    public bool $ismember;
 
     /**
      * Create a new message instance.
@@ -35,7 +35,7 @@ class UsernameReminderEmail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this
             ->subject('Your username for S.A. Proto.')

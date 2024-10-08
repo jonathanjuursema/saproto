@@ -594,7 +594,7 @@ CALSCALE:GREGORIAN
                 sprintf(
                     'ORGANIZER;CN=%s:MAILTO:%s',
                     ($event->committee ? $event->committee->name : 'S.A. Proto'),
-                    ($event->committee ? $event->committee->email_address : 'board@proto.utwente.nl')
+                    ($event->committee ? $event->committee->email : 'board@proto.utwente.nl')
                 )."\r\n".
                 sprintf('LAST_UPDATED:%s', gmdate('Ymd\THis\Z', strtotime($event->updated_at)))."\r\n".
                 sprintf('SEQUENCE:%s', $event->update_sequence)."\r\n";

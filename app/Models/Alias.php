@@ -38,7 +38,7 @@ class Alias extends Model
     protected $guarded = ['id'];
 
     /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

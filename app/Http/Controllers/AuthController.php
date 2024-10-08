@@ -20,6 +20,9 @@ use App\Models\WelcomeMessage;
 use App\Rules\NotUtwenteEmail;
 use DateTime;
 use Exception;
+use Google\Service\Directory;
+use Google\Service\Directory\User as GoogleUser;
+use Google_Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -497,12 +500,14 @@ class AuthController extends Controller
             return Redirect::route('login::show');
         }
 
-        $pass = $request->get('password');
+        $password = $request->get('password');
         $user = Auth::user();
-        $user_verify = self::verifyCredentials($user->email, $pass);
+        $user_verify = self::verifyCredentials($user->email, $password);
 
         if ($user_verify?->id === $user->id) {
-            $user->setPassword($pass);
+            $user->setPassword($password);
+            $this->syncGooglePassword($user, $password);
+
             Session::flash('flash_message', 'Your password was successfully synchronized.');
 
             return Redirect::route('user::dashboard::show');
@@ -511,6 +516,25 @@ class AuthController extends Controller
         Session::flash('flash_message', 'Password incorrect.');
 
         return view('auth.sync');
+    }
+
+    /**
+     * @throws \Google\Service\Exception
+     */
+    private function syncGooglePassword($protoUser, $password)
+    {
+        $client = new Google_Client();
+        $client->useApplicationDefaultCredentials();
+        $client->setSubject('superadmin@proto.utwente.nl');
+        $client->setApplicationName('Proto Website');
+        $client->setScopes(['https://www.googleapis.com/auth/admin.directory.user']);
+        $directory = new Directory($client);
+        $optParams = ['domain' => 'proto.utwente.nl', 'query' => "externalId:$protoUser->id"];
+        $googleUser = $directory->users->listUsers($optParams)->getUsers()[0];
+        $directory->users->update(
+            $googleUser->id,
+            new GoogleUser(['password' => $password])
+        );
     }
 
     /** @return RedirectResponse */
