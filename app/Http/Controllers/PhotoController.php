@@ -6,7 +6,6 @@ use App\Models\Photo;
 use App\Models\PhotoAlbum;
 use App\Models\PhotoLikes;
 use App\Models\PhotoManager;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -63,11 +62,11 @@ class PhotoController extends Controller
     /**
      * @return View
      */
-    public function likedPhotos() {
+    public function likedPhotos()
+    {
         $photos = Photo::query()->with('album')->whereIn('id', PhotoLikes::query()->where('user_id', Auth::id())->pluck('photo_id'))->paginate(24);
-        $photos->setCollection($photos->groupBy(function ($photo) {
-            return $photo->album->name." (".date('d-m-Y',$photo->album->date_taken).")";
-        }));
+        $photos->setCollection($photos->groupBy(fn ($photo): string => $photo->album->name.' ('.date('d-m-Y', $photo->album->date_taken).')'));
+
         return view('photos.liked', ['albums' => $photos]);
     }
 
