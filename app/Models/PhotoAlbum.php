@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\PhotoAlbum.
@@ -45,13 +50,22 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *
  * @mixin Eloquent
  */
-class PhotoAlbum extends Model
+class PhotoAlbum extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     protected $table = 'photo_albums';
 
     protected $guarded = ['id'];
+
+    public function registerMediaConversions(Media|null $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Fit::Contain, 300, 300)
+            ->nonQueued();
+    }
 
     public function event(): BelongsTo
     {
@@ -66,6 +80,15 @@ class PhotoAlbum extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Photo::class, 'album_id');
+    }
+
+    public function scopeVisible($query)
+    {
+        if (!Auth::user()?->is_member) {
+            $query = $query->where('private', false);
+        }
+
+        return $query->where('published', true)->whereNotNull('thumb_id');
     }
 
     public function thumb(): ?string

@@ -251,50 +251,51 @@
 @push('javascript')
 
     <script async type="text/javascript" nonce="{{ csp_nonce() }}">
-        let fileSizeLimit = '{{ $fileSizeLimit }}B'
-        let fileId = 1
-        let uploadRunning = false
-        let dropArea = document.getElementById('droparea')
+        let fileSizeLimit = '{{ $fileSizeLimit }}B';
+        let fileId = 1;
+        let uploadRunning = false;
+        let dropArea = document.getElementById('droparea');
 
         document.getElementById('published-modal').addEventListener('show.bs.modal', e => {
-            const footer = document.querySelector('#published-modal .modal-footer')
-            const btn = e.relatedTarget.cloneNode(true)
-            btn.type = 'submit'
-            footer.replaceChild(btn, footer.lastChild)
-        })
+            const footer = document.querySelector('#published-modal .modal-footer');
+            const btn = e.relatedTarget.cloneNode(true);
+            btn.type = 'submit';
+            footer.replaceChild(btn, footer.lastChild);
+        });
 
         if (dropArea && window.File && window.FileReader && window.FileList && window.Blob) {
             dropArea.addEventListener('dragover', e => {
-                e.stopPropagation()
-                e.preventDefault()
-                dropArea.classList.remove('opacity-25')
-                e.dataTransfer.dropEffect = 'move'
-            })
+                e.stopPropagation();
+                e.preventDefault();
+                dropArea.classList.remove('opacity-25');
+                e.dataTransfer.dropEffect = 'move';
+            });
             dropArea.addEventListener('dragleave', e => {
-                e.stopPropagation()
-                e.preventDefault()
-                dropArea.classList.add('opacity-25')
-            })
-            window.addEventListener('drop', dropFiles)
+                e.stopPropagation();
+                e.preventDefault();
+                dropArea.classList.add('opacity-25');
+            });
+            window.addEventListener('drop', dropFiles);
         }
 
         function dropFiles(e) {
-            e.stopPropagation()
-            e.preventDefault()
-            dropArea.classList.add('opacity-25')
+            e.stopPropagation();
+            e.preventDefault();
+            dropArea.classList.add('opacity-25');
 
-            let files = e.dataTransfer.files
+            let files = e.dataTransfer.files;
+            console.log(files);
             if (files.length) {
-                let fileQueue = []
+                let fileQueue = [];
                 for (const file of files) {
                     if (['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
-                        let fr = new FileReader()
+                        let fr = new FileReader();
                         fr.onload = async _ => {
-                            file.id = fileId++
-                            fileQueue.push(file)
-                            await uploadFiles(fileQueue)
-                        }
-                        fr.readAsDataURL(file)
+                            file.id = fileId++;
+                            fileQueue.push(file);
+                            await uploadFiles(fileQueue);
+                        };
+                        fr.readAsDataURL(file);
                     }
                 }
             }
@@ -302,45 +303,45 @@
 
         async function uploadFiles(fileQueue) {
             while (fileQueue.length) {
-                let file = fileQueue.shift()
-                let formData = new FormData()
-                formData.append('file', file)
-                toggleRunning()
-                await post('{{ route('photo::admin::upload', ['id' => $photos->album_id]) }}', formData, {parse:false})
+                let file = fileQueue.shift();
+                let formData = new FormData();
+                formData.append('file', file);
+                toggleRunning();
+                await post('{{ route('photo::admin::upload', ['id' => $photos->album_id]) }}', formData, { parse: false })
                     .then(response => {
                         response.text().then(text => {
-                            document.getElementById('photo-view').innerHTML += text
-                            document.getElementById('error-bar').classList.add('d-none')
-                            document.querySelector('#error-bar ul').innerHTML = ''
-                            toggleRunning()
-                        })
+                            document.getElementById('photo-view').innerHTML += text;
+                            document.getElementById('error-bar').classList.add('d-none');
+                            document.querySelector('#error-bar ul').innerHTML = '';
+                            toggleRunning();
+                        });
                     })
                     .catch(err => {
-                        let errText
+                        let errText;
                         switch (err.status) {
                             case 413:
-                                errText = `Uploaded photo was bigger than limit of ${fileSizeLimit}.`
-                                break
+                                errText = `Uploaded photo was bigger than limit of ${fileSizeLimit}.`;
+                                break;
                             default:
-                                errText = `Error ${err.status}: ${err.statusText}`
-                                break
+                                errText = `Error ${err.status}: ${err.statusText}`;
+                                break;
                         }
-                        console.error(errText, err)
-                        uploadError(file, errText)
-                        toggleRunning()
-                    })
+                        console.error(errText, err);
+                        uploadError(file, errText);
+                        toggleRunning();
+                    });
             }
         }
 
         function toggleRunning() {
-            uploadRunning = !uploadRunning
-            const loader = document.getElementById('droparea-loader')
-            loader.classList.toggle('d-none')
+            uploadRunning = !uploadRunning;
+            const loader = document.getElementById('droparea-loader');
+            loader.classList.toggle('d-none');
         }
 
         function uploadError(file, err) {
-            document.getElementById('error-bar').classList.remove('d-none')
-            document.querySelector('#error-bar ul').innerHTML += `<li> ${file.name} <small><i>${err}</i></small> </li>`
+            document.getElementById('error-bar').classList.remove('d-none');
+            document.querySelector('#error-bar ul').innerHTML += `<li> ${file.name} <small><i>${err}</i></small> </li>`;
         }
     </script>
 
