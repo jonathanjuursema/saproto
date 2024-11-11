@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\MenuItem;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('website.navbar', static function ($view) {
-            $menuItems = MenuItem::query()->where('parent', null)->orderBy('order')->with('page')->with('children')->get();
+            $menuItems = Cache::rememberForever('website.navbar', static fn () => MenuItem::query()->whereNull('parent')->orderBy('order')->with('page')->with('children')->get());
             $view->with('menuItems', $menuItems);
         });
 

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Photo model.
@@ -49,6 +50,24 @@ class Photo extends Model
 
     protected $guarded = ['id'];
 
+    protected $with = ['file'];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('private', function (Builder $builder) {
+            $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)
+                ->whereHas('album', function ($query) {
+                    $query->where('private', false);
+                }));
+        });
+
+        static::addGlobalScope('published', function (Builder $builder) {
+            $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->whereHas('album', function ($query) {
+                $query->where('published', true);
+            }));
+        });
+    }
+
     public function album(): BelongsTo
     {
         return $this->belongsTo(PhotoAlbum::class, 'album_id');
@@ -67,19 +86,24 @@ class Photo extends Model
     private function getAdjacentPhoto(bool $next = true): ?Photo
     {
         if ($next) {
-            $ord = 'ASC';
-            $comp = '>';
-        } else {
             $ord = 'DESC';
             $comp = '<';
+        } else {
+            $ord = 'ASC';
+            $comp = '>';
         }
 
-        $result = self::query()->where('album_id', $this->album_id)->where('date_taken', $comp.'=', $this->date_taken)->orderBy('date_taken', $ord)->orderBy('id', $ord);
-        if ($result->count() > 1) {
-            return $result->where('id', $comp, $this->id)->first();
-        }
-
-        return $result->first();
+        return self::query()->where(function ($query) use ($comp) {
+            $query->where('date_taken', $comp, $this->date_taken)
+                ->orWhere(function ($query) use ($comp) {
+                    $query->where('date_taken', '=', $this->date_taken)
+                        ->where('id', $comp, $this->id);
+                });
+        })
+            ->where('album_id', $this->album_id)
+            ->orderBy('date_taken', $ord)
+            ->orderBy('id', $ord)
+            ->first();
     }
 
     public function getNextPhoto(): ?Photo
@@ -95,7 +119,9 @@ class Photo extends Model
     public function getAlbumPageNumber(int $paginateLimit): float|int
     {
         $photoIndex = 1;
-        $photos = self::query()->where('album_id', $this->album_id)->orderBy('date_taken', 'ASC')->orderBy('id', 'ASC')->get();
+        $photos = self::query()->where('album_id', $this->album_id)
+            ->orderBy('date_taken', 'desc')->orderBy('id', 'desc')
+            ->get();
         foreach ($photos as $photoItem) {
             if ($this->id == $photoItem->id) {
                 return ceil($photoIndex / $paginateLimit);

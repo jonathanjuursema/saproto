@@ -78,6 +78,7 @@
                 <div class="card-body overflow-hidden" style="max-height: calc(100vh - 250px)">
                     @if($weekly->featuredImage)
                         <img
+                            width="500px" height="300px"
                             src="{{ $weekly->featuredImage ? $weekly->featuredImage->generateImagePath(500,300) : null }}"
                             class="img-fluid img-thumbnail mb-3 w-50 mx-auto d-block" alt="Featured image">
                     @endif
@@ -127,7 +128,7 @@
 
 @section('right-column')
 
-    @include('website.home.cards.recentalbums', ['n' => 4])
+    @include('website.home.cards.recentalbums',['albums'=>$albums])
 
     @parent
 

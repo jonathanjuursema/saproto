@@ -10,6 +10,7 @@ use App\Models\Dinnerform;
 use App\Models\Event;
 use App\Models\HeaderImage;
 use App\Models\Newsitem;
+use App\Models\PhotoAlbum;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\WelcomeMessage;
@@ -19,9 +20,10 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    /** @return View Display the homepage. */
+    /** Display the homepage. */
     public function show()
     {
+
         $companies = Company::query()
             ->where('in_logo_bar', true)
             ->with('image')
@@ -30,8 +32,14 @@ class HomeController extends Controller
 
         $header = HeaderImage::query()->inRandomOrder()->first();
 
+        $albums = PhotoAlbum::query()->orderBy('date_taken', 'desc')
+            ->with('thumbPhoto')
+            ->where('published', true)
+            ->take(4)
+            ->get();
+
         if (! Auth::user()?->is_member) {
-            return view('website.home.external', ['companies' => $companies, 'header' => $header]);
+            return view('website.home.external', ['companies' => $companies, 'header' => $header, 'albums' => $albums]);
         }
 
         $weekly = Newsitem::query()
@@ -105,6 +113,7 @@ class HomeController extends Controller
             'dinnerforms' => $dinnerforms,
             'header' => $header,
             'videos' => $videos,
+            'albums' => $albums,
         ]);
     }
 

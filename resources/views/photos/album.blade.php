@@ -1,15 +1,15 @@
 @extends('website.layouts.redesign.generic')
 
 @section('page-title')
-    {{ $photos->album_title }} ({{ date('M j, Y', $photos->album_date) }})
+    {{ $album->name }} ({{ date('M j, Y', $album->date_taken) }})
 @endsection
 
 @section('container')
 
-    @if($photos->event !== null)
+    @if($album->event)
 
-        <a class="btn btn-info btn-block mb-3" href="{{ route('event::show', ['id'=>$photos->event->getPublicId()]) }}">
-            These photos were taken at the event {{ $photos->event->title }}, click here for more info.
+        <a class="btn btn-info btn-block mb-3" href="{{ route('event::show', ['id'=>$album->event->getPublicId()]) }}">
+            These photos were taken at the event {{ $album->event->title }}, click here for more info.
         </a>
 
     @endif
@@ -21,12 +21,13 @@
                 <i class="fas fa-list"></i> <span class="d-none d-sm-inline">Album overview</span>
             </a>
             @can('protography')
-                <a href="{{route("photo::admin::edit", ['id' => $photos->album_id])}}" class="btn btn-success float-start me-3">
+                <a href="{{route("photo::admin::edit", ['id' => $album->id])}}"
+                   class="btn btn-success float-start me-3">
                     <i class="fas fa-edit"></i> <span class="d-none d-sm-inline">Edit album</span>
                 </a>
             @endcan
             <div class="p-1 m-1 fw-bold">
-                {{ $photos->album_title }} ({{ date('M j, Y', $photos->album_date) }})
+                {{ $album->name }} ({{ date('M j, Y', $album->date_taken) }})
             </div>
         </div>
 
@@ -34,7 +35,7 @@
 
             <div class="row">
 
-                @foreach($photos->photos as $key => $photo)
+                @foreach($photos as $photo)
 
                     <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 
@@ -58,7 +59,7 @@
 
         </div>
         <div class="card-footer">
-            {{ $photos->photos->links() }}
+            {{ $photos->links() }}
         </div>
 
         <div class="card-footer text-center">

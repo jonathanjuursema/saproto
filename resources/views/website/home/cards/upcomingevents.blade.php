@@ -6,11 +6,11 @@
 
         @if(count($events) > 0)
 
-            @foreach($events as $key => $event)
+            @foreach($events as $counter => $event)
 
                 @if($event->mayViewEvent(Auth::user()) && $event->isPublished())
 
-                    @include('event.display_includes.event_block', ['event'=> $event])
+                    @include('event.display_includes.event_block', ['event'=> $event, 'lazyload'=> $counter > 4])
 
                     @php $week = date('W', $event->start); @endphp
 

@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-    @endif
+        @endif
     </div>
 
     @if($next_withdrawal > 0)
@@ -100,9 +100,9 @@
 </div>
 
 <script nonce="{{ csp_nonce() }}">
-    var outstanding = document.querySelector('[data-bs-target="#collapse-outstanding"]');
-    outstanding.addEventListener('click', (e) => {
-        var outstanding_caret = outstanding.querySelector('.fa-caret-down');
+    const outstanding = document.querySelector('[data-bs-target="#collapse-outstanding"]');
+    outstanding.addEventListener('click', () => {
+        const outstanding_caret = outstanding.querySelector('.fa-caret-down');
         outstanding_caret.classList.toggle('fa-rotate-180');
-    })
+    });
 </script>

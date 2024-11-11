@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a class="badge bg-info float-end" href="{{ route('short_url::edit', ['id' => 'new']) }}">
+                    <a class="badge bg-info float-end" href="{{ route('short_urls.create') }}">
                         Create Short URL</a>
                 </div>
 
@@ -40,9 +40,16 @@
                             <tr>
 
                                 <td class="ps-2">
-                                    <a href="{{ route('short_url::delete', ['id' => $url->id]) }}"
-                                       class="fa fa-trash-alt text-danger me-2"></a>
-                                    <a href="{{ route('short_url::edit', ['id' => $url->id]) }}"
+                                    @include('components.modals.confirm-modal', [
+                                       'action' => route("short_urls.destroy", ['short_url'=>$url]),
+                                       'method'=>'DELETE',
+                                       'classes' => 'fas fa-trash text-danger',
+                                       'text' => '',
+                                       'confirm' => 'Delete',
+                                       'title' => 'Confirm deleting the url '.$url->url,
+                                       'message' => 'Are you sure you want to delete '.$url->url.'?',
+                                   ])
+                                    <a href="{{ route('short_urls.edit', ['short_url' => $url]) }}"
                                        class="fa fa-pencil-alt text-success"></a>
                                 </td>
                                 <td style="overflow-wrap: break-word; max-width: 200px">
@@ -56,11 +63,11 @@
                                 </td>
                                 <td class="text-center">
                                     <button
-                                            data-bs-toggle="popover"
-                                            data-bs-placement="right"
-                                            data-bs-trigger="focus"
-                                            data-bs-content="{{ $url->target }}"
-                                            class="btn badge bg-info">
+                                        data-bs-toggle="popover"
+                                        data-bs-placement="right"
+                                        data-bs-trigger="focus"
+                                        data-bs-content="{{ $url->target }}"
+                                        class="btn badge bg-info">
                                         <i class="fas fa-link text-white"></i>
                                     </button>
                                 </td>
@@ -96,29 +103,29 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-      document.querySelectorAll('.qr-button').forEach(el => el.addEventListener('click', e => {
-        const modal = document.querySelector(el.getAttribute('data-bs-target'));
-        modal.querySelector('#qr-modal-url').src = "{{ route('short_url::qr_code', '') }}/" + el.getAttribute('data-url-id');
-        console.log(document.getElementById('qr-modal-url').src);
-      }));
+        document.querySelectorAll('.qr-button').forEach(el => el.addEventListener('click', e => {
+            const modal = document.querySelector(el.getAttribute('data-bs-target'));
+            modal.querySelector('#qr-modal-url').src = "{{ route('short_urls.qr_code', '') }}/" + el.getAttribute('data-url-id');
+            console.log(document.getElementById('qr-modal-url').src);
+        }));
 
-      document.querySelector('#qr-modal-copy').addEventListener('click', e => {
-        const image = document.getElementById('qr-modal-url');
-        const canvas = document.createElement('canvas');
-        const margin = 10;//the margin of the QR code in the image in percentage
-        const scale = 10;
-        canvas.width = image.width * scale;
-        canvas.height = image.height * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, (image.width * (margin / 100) * scale) / 2, (image.height * (margin / 100) * scale) / 2, (1 - margin / 100) * image.width * scale, (1 - margin / 100) * image.height * scale);
-        canvas.toBlob((blob) => {
-          navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob }),
-          ]);
-        }, 'image/png');
-      });
+        document.querySelector('#qr-modal-copy').addEventListener('click', e => {
+            const image = document.getElementById('qr-modal-url');
+            const canvas = document.createElement('canvas');
+            const margin = 10;//the margin of the QR code in the image in percentage
+            const scale = 10;
+            canvas.width = image.width * scale;
+            canvas.height = image.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, (image.width * (margin / 100) * scale) / 2, (image.height * (margin / 100) * scale) / 2, (1 - margin / 100) * image.width * scale, (1 - margin / 100) * image.height * scale);
+            canvas.toBlob((blob) => {
+                navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob }),
+                ]);
+            }, 'image/png');
+        });
     </script>
 @endpush
 

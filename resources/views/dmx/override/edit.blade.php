@@ -5,12 +5,11 @@
 @endsection
 
 @section('container')
-
-    <form method="post"
-          action="{{ ($override == null ? route("dmx::override::store") : route("dmx::override::update", ['id' => $override->id])) }}"
-          enctype="multipart/form-data">
-
-        {!! csrf_field() !!}
+    <form
+        action="{{ !empty($override) ? route('dmx.overrides.update', ['override' => $override->id]) : route("dmx.overrides.store") }}"
+        method="POST">
+        <input type="hidden" name="_method" value="{{ !empty($override) ? "PUT" : "POST" }}">
+        {{ csrf_field()}}
 
         <div class="row justify-content-center">
 
@@ -85,7 +84,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("dmx::override::index") }}" class="btn btn-default">
+                        <a href="{{ route("dmx.overrides.index") }}" class="btn btn-default">
                             Cancel
                         </a>
 

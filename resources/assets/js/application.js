@@ -263,10 +263,10 @@ if ('IntersectionObserver' in window) {
             });
         }
 
-        const headers = document.querySelectorAll('.bg-img');
+        const headers = document.querySelectorAll('div[data-bgimage]:not([data-bgimage=""])');
         const observer = new IntersectionObserver(
             handleIntersection,
-            { rootMargin: '100px' },
+            { rootMargin: '200px' },
         );
         headers.forEach(header => observer.observe(header));
     });

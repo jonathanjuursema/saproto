@@ -33,13 +33,18 @@
     </td>
     <td>
         <a class="btn btn-xs btn-default me-2"
-           href="{{ route('dmx::override::edit', ['id' => $override->id]) }}">
+           href="{{ route('dmx.overrides.edit', ['override' => $override->id]) }}">
             <i class="fas fa-edit"></i>
         </a>
-        <a class="btn btn-xs btn-danger"
-           href="{{ route('dmx::override::delete', ['id' => $override->id]) }}">
-            <i class="fas fa-trash"></i>
-        </a>
+        @include('components.modals.confirm-modal', [
+            'action' => route('dmx.overrides.destroy', ['override' => $override]),
+            'method'=>'DELETE',
+            'classes' => 'fas fa-trash text-danger',
+            'text' => '',
+            'confirm' => 'Delete',
+            'title' => 'Confirm deleting the override',
+            'message' => 'Are you sure you want to delete this override?',
+        ])
     </td>
 
 </tr>

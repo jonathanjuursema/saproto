@@ -31,7 +31,7 @@ it('shows a photoalbum on the search page', function () {
     /** @var Photo $photo */
     $photo = Photo::factory()->create();
 
-    $photo->album->update([
+    $photo->album()->withoutGlobalScopes()->update([
         'name' => 'TestAlbum',
         'thumb_id' => $photo->id,
         'private' => false,

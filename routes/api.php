@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['forcedomain'], 'as' => 'api::'], static function () {
     /* Routes related to the General APIs */
     Route::group(['middleware' => ['web']], static function () {
-        Route::get('dmx_values', ['as' => 'dmx_values', 'uses' => 'DmxController@valueApi']);
+        Route::get('dmx_values', ['as' => 'dmx_values', 'uses' => 'DmxFixtureController@valueApi']);
         Route::get('token', ['as' => 'token', 'uses' => 'ApiController@getToken']);
         Route::get('scan/{event}', ['as' => 'scan', 'middleware' => ['auth'], 'uses' => 'TicketController@scanApi']);
         Route::get('news', ['as' => 'news', 'uses' => 'NewsController@apiIndex']);
@@ -37,10 +37,6 @@ Route::group(['middleware' => ['forcedomain'], 'as' => 'api::'], static function
     /* Routes related to the Photos API */
     Route::group(['prefix' => 'photos', 'as' => 'photos::'], static function () {
         Route::get('random_photo', ['as' => 'randomPhoto', 'uses' => 'ApiController@randomPhoto']);
-        Route::group(['middleware' => ['auth:api']], static function () {
-            Route::get('photos', ['as' => 'albums', 'uses' => 'PhotoController@apiIndex']);
-            Route::get('photos/{id?}', ['as' => 'albumList', 'uses' => 'PhotoController@apiShow']);
-        });
     });
     Route::group(['prefix' => 'screen', 'as' => 'screen::', 'middleware' => 'api'], static function () {
         Route::get('bus', ['as' => 'bus', 'uses' => 'SmartXpScreenController@bus']);

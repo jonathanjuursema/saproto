@@ -44,7 +44,8 @@
             </div>
 
             <div class="col-lg-3 col-md-5 d-none d-md-block text-end">
-                <img src="{{ asset('images/logo/inverse.png') }}" height="120px" alt="inverse proto logo">
+                <img height="120px" width="472px" src="{{ asset('images/logo/inverse.png') }}"
+                     alt="inverse proto logo">
             </div>
 
         </div>

@@ -93,12 +93,11 @@ class OmNomController extends Controller
     }
 
     /**
-     * @param  string  $store_slug
      * @return string
      *
      * @throws Exception
      */
-    public function buy(Request $request, $store_slug)
+    public function buy(Request $request, string $store_slug)
     {
         $stores = config('omnomcom.stores');
         $result = new stdClass;

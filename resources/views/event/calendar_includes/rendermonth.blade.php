@@ -8,13 +8,11 @@
 
             @if(count($events) > 0)
 
-                @foreach($events as $i => $event)
-
+                @foreach($events??[] as $counter => $event)
                     @include('event.display_includes.event_block', [
                         'event'=> $event,
-                        'hide_photo' => isset($hide_photo) ? $hide_photo : false
+                        'lazyload' => $counter > 5
                     ])
-
                 @endforeach
 
             @else

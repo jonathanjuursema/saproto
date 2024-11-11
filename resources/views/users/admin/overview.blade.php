@@ -110,7 +110,7 @@
                                                 <i class="fas fa-user-lock fa-fw text-dark" aria-hidden="true"></i>
                                             </a>
                                         @else
-                                            <a href="{{ route('tempadmin::create', ['id'=>$user->id]) }}"
+                                            <a href="{{ route('tempadmins.create', ['id'=>$user->id]) }}"
                                                data-bs-toggle="tooltip" data-bs-placement="top"
                                                title="Grant temp admin till midnight" class="text-decoration-none">
                                                 <i class="fas fa-user-clock fa-fw text-dark" aria-hidden="true"></i>

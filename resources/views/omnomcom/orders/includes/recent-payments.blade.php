@@ -1,27 +1,29 @@
+@php use App\Models\Withdrawal; @endphp
 <div class="card mb-3">
 
     <div class="card-header bg-dark text-white">
         Recent withdrawals
     </div>
 
-    @if(count($user->withdrawals(1)) > 0)
+    @if($withdrawals->isNotEmpty())
 
         <ul class="list-group list-group-flush">
 
-            @foreach($user->withdrawals(6) as $withdrawal)
+            @foreach($withdrawals as $withdrawal)
+                @php /** @var Withdrawal $withdrawal */ @endphp
                 <div class="list-group-item d-flex justify-content-between">
                     <div>
-                    <a href="{{ route('omnomcom::mywithdrawal', ['id' => $withdrawal->id]) }}">
-                        {{ date('d-m-Y', strtotime($withdrawal->date)) }}
-                    </a>
+                        <a href="{{ route('omnomcom::mywithdrawal', ['id' => $withdrawal->id]) }}">
+                            {{ date('d-m-Y', strtotime($withdrawal->date)) }}
+                        </a>
                     </div>
-                    @if($withdrawal->getFailedWithdrawal($user) || $withdrawal->id == 'temp')
+                    @if($withdrawal->failedWithdrawals->contains('user_id', Auth::user()->id)|| $withdrawal->id == 'temp')
                         <i class="fas fa-times text-danger mt-1"></i>
                     @else
-                    <div>{{$withdrawal->closed?'Closed':'Pending'}}</div>
+                        <div>{{$withdrawal->closed ? 'Closed' : 'Pending'}}</div>
                     @endif
                     <div>
-                        &euro;{{ number_format($withdrawal->totalForUser($user), 2, '.', ',') }}
+                        &euro;{{ number_format($withdrawal->orderlines_sum_total_price, 2) }}
                     </div>
                 </div>
             @endforeach
@@ -44,7 +46,7 @@
 
 </div>
 
-@if(count($user->mollieTransactions) > 0)
+@if($molliePayments->isNotEmpty())
 
     <div class="card mb-3">
 
@@ -54,7 +56,7 @@
 
         <ul class="list-group list-group-flush">
 
-            @foreach($user->mollieTransactions->sortByDesc(['created_at']) as $transaction)
+            @foreach($molliePayments as $transaction)
                 <li class="list-group-item">
                     @if($transaction->mollie_id != 'temp')
                         @php
@@ -72,7 +74,7 @@
                     @else
                         <span>This payment is corrupt, please contact board</span>
                     @endif
-                    <span class="float-right">&euro;{{ number_format($transaction->amount, 2, '.', ',') }}</span>
+                    <span class="float-right">&euro;{{ number_format($transaction->amount, 2) }}</span>
                 </li>
             @endforeach
 

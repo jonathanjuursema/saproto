@@ -107,11 +107,11 @@
                                     @can('board')
                                         <a class="dropdown-item" href="{{ route("user::admin::index") }}">Users</a>
                                         <a class="dropdown-item" href="{{ route("tickets::index") }}">Tickets</a>
-                                        <a class="dropdown-item" href="{{ route("short_url::index") }}">Short URLs</a>
+                                        <a class="dropdown-item" href="{{ route("short_urls.index") }}">Short URLs</a>
                                         <a class="dropdown-item" href="{{ route("queries::index") }}">Queries</a>
 
                                         <li role="separator" class="dropdown-divider"></li>
-                                        <a class="dropdown-item" href="{{ route("tempadmin::index") }}">Temp ProTube
+                                        <a class="dropdown-item" href="{{ route("tempadmins.index") }}">Temp ProTube
                                             Admin</a>
                                         <a class="dropdown-item" href="{{ config('protube.remote_url') }}">ProTube
                                             Admin</a>
@@ -156,8 +156,8 @@
 
                                     @canany(['alfred', 'board'])
                                         <li role="separator" class="dropdown-divider"></li>
-                                        <a class="dropdown-item" href="{{ route("dmx::index") }}">Fixtures</a>
-                                        <a class="dropdown-item" href="{{ route("dmx::override::index") }}">Override</a>
+                                        <a class="dropdown-item" href="{{ route("dmx.fixtures.index") }}">Fixtures</a>
+                                        <a class="dropdown-item" href="{{ route("dmx.overrides.index") }}">Override</a>
                                     @endcanany
 
                                     @canany(['alfred', 'sysadmin'])

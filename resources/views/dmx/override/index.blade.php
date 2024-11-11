@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white">
                     @yield('page-title')
-                    <a href="{{ route('dmx::override::create') }}" class="badge bg-info float-end">
+                    <a href="{{ route('dmx.overrides.create') }}" class="badge bg-info float-end">
                         Create a new override.
                     </a>
                 </div>

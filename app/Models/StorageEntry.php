@@ -69,7 +69,7 @@ class StorageEntry extends Model
             Newsitem::query()->where('featured_image_id', $id)->count() == 0 &&
             SoundboardSound::query()->where('file_id', $id)->count() == 0 &&
             HeaderImage::query()->where('image_id', $id)->count() == 0 &&
-            Photo::query()->where('file_id', $id)->count() == 0 &&
+            Photo::query()->withoutGlobalScopes()->where('file_id', $id)->count() == 0 &&
             Member::query()->where('omnomcom_sound_id', $id)->count() == 0 &&
             WallstreetEvent::query()->where('image_id', $id)->count() == 0;
     }

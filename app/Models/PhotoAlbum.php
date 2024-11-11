@@ -31,7 +31,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Event|null $event
- * @property-read Photo $thumb_photo
+ * @property-read Photo $thumbPhoto
  * @property-read Collection|Photo[] $items
  *
  * @method static Builder|PhotoAlbum whereCreatedAt($value)
@@ -59,6 +59,8 @@ class PhotoAlbum extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    protected $with = ['thumbPhoto'];
+
     public function registerMediaConversions(Media|null $media = null): void
     {
         $this
@@ -67,12 +69,19 @@ class PhotoAlbum extends Model implements HasMedia
             ->nonQueued();
     }
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('published', fn (Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->where('published', true)));
+
+        static::addGlobalScope('private', fn (Builder $builder) => $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)));
+    }
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
 
-    private function thumbPhoto(): HasOne
+    public function thumbPhoto(): HasOne
     {
         return $this->hasOne(Photo::class, 'id', 'thumb_id');
     }
@@ -82,19 +91,15 @@ class PhotoAlbum extends Model implements HasMedia
         return $this->hasMany(Photo::class, 'album_id');
     }
 
-    public function scopeVisible($query)
+    public function scopeName($query, string $name): Builder
     {
-        if (!Auth::user()?->is_member) {
-            $query = $query->where('private', false);
-        }
-
-        return $query->where('published', true)->whereNotNull('thumb_id');
+        return $query->where('name', 'LIKE', '%'.$name.'%');
     }
 
     public function thumb(): ?string
     {
         if ($this->thumb_id) {
-            return $this->thumbPhoto()->first()->thumbnail();
+            return $this->thumbPhoto->thumbnail();
         }
 
         return null;

@@ -51,9 +51,10 @@
                         <i class="fas fa-calendar-alt"></i> Related Events
                     </div>
                     <div class="card-body">
-                        @foreach($events as $event)
+                        @foreach($events as $counter => $event)
                             @include('event.display_includes.event_block', [
-                             'event' => $event
+                             'event' => $event,
+                             'lazyload' => $counter > 12
                             ])
                         @endforeach
                     </div>

@@ -39,7 +39,7 @@
                 </i>
             </div>
             <a href="//{{ config('app-proto.primary-domain') }}{{ route('homepage', [], false) }}">
-                <img src="{{ asset('images/logo/inverse.png') }}" alt="Proto logo" height="120px">
+                <img src="{{ asset('images/logo/inverse.png') }}" alt="Proto logo" width="472px" height="120px">
             </a>
 
         </div>

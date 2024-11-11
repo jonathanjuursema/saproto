@@ -152,20 +152,18 @@ class Event extends Model
             ->orderBy('start')
             ->with('image')
             ->with('activity', static function ($e) {
-                $e->withCount([
+                $e->withExists(['backupUsers as user_has_backup_participation' => static function ($q) {
+                    $q->where('user_id', Auth::id());
+                }, 'helpingParticipations as user_has_helper_participation' => static function ($q) {
+                    $q->where('user_id', Auth::id());
+                }, 'participation as user_has_participation' => static function ($q) {
+                    $q->where('user_id', Auth::id())
+                        ->whereNull('committees_activities_id');
+                },
+                ])->withCount([
                     'users',
-                    'backupUsers as myBackupParticipationCount' => static function ($q) {
-                        $q->where('user_id', Auth::id());
-                    },
-                    'helpingParticipations as myHelperParticipationCount' => static function ($q) {
-                        $q->where('user_id', Auth::id());
-                    },
-                    'participation as myParticipationCount' => static function ($q) {
-                        $q->where('user_id', Auth::id())
-                            ->whereNull('committees_activities_id');
-                    },
                 ]);
-            })->withCount(['tickets as myTicketCount' => static function ($q) {
+            })->withExists(['tickets as user_has_tickets' => static function ($q) {
                 $q->whereHas('purchases', static function ($q) {
                     $q->where('user_id', Auth::id());
                 });

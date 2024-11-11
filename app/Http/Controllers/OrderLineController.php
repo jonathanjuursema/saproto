@@ -22,67 +22,60 @@ use Illuminate\View\View;
 
 class OrderLineController extends Controller
 {
-    /**
-     * @param  string  $date
-     * @return View
-     */
-    public function index($date = null)
+    public function index(?string $date = null)
     {
         $user = Auth::user();
 
+        $available_months = OrderLine::query()->where('user_id', $user->id)->select(
+            DB::raw('YEAR(created_at) year, MONTH(created_at) month'))
+            ->groupBy('year', 'month')
+            ->get()
+            ->groupBy('year')
+            ->map(static fn ($months) => $months->pluck('month')->sortDesc())->sortKeysDesc();
+
         $next_withdrawal = OrderLine::query()
             ->where('user_id', $user->id)
-            ->whereNull('payed_with_cash')
-            ->whereNull('payed_with_bank_card')
-            ->whereNull('payed_with_mollie')
-            ->whereNull('payed_with_withdrawal')
+            ->unpayed()
             ->sum('total_price');
 
         $orderlines = OrderLine::query()
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->with('product')
-            ->get()
-            ->groupBy(static fn ($date) => Carbon::parse($date->created_at)->format('Y-m'));
+            ->with('product:name,id', 'molliePayment:id,status')
+            ->where('created_at', '>', Carbon::parse($date)->startOfMonth())
+            ->where('created_at', '<=', Carbon::parse($date)->endOfMonth())
+            ->get();
 
         $selected_month = $date ?? date('Y-m');
 
-        $available_months = [];
-        foreach ($orderlines->keys() as $month) {
-            $month = Carbon::parse($month);
-            $available_months[$month->year][] = $month->month;
-        }
-
-        $total = 0;
-        if ($orderlines->has($selected_month)) {
-            $selected_orders = $orderlines[Carbon::parse($date)->format('Y-m')];
-            foreach ($selected_orders as $orderline) {
-                if ($orderline->total_price > 0) {
-                    $total += $orderline->total_price;
-                }
-            }
-        }
-
-        $outstanding = Activity::query()->whereHas('users', static function (Builder $query) {
-            $query->where('user_id', Auth::user()->id);
-        })->where('closed', false);
+        $outstanding = Activity::query()
+            ->whereHas('users', static function (Builder $query) {
+                $query->where('user_id', Auth::user()->id);
+            })->where('closed', false)
+            ->with('event')->where('price', '>', 0)
+            ->get();
 
         $outstandingAmount = $outstanding->sum('price');
-        $outstanding = $outstanding->select('event_id', 'price')->with('Event', static function ($q) {
-            $q->select('id', 'title');
-        })->where('price', '>', 0)->get();
 
+        $withdrawals = $user->withdrawals()->with('failedWithdrawals', function ($q) {
+            $q->where('user_id', Auth::user()->id);
+        })->withSum(['orderlines' => function ($q) {
+            $q->where('user_id', Auth::user()->id);
+        }], 'total_price')->take(6)->get();
+
+        $molliePayments = $user->mollieTransactions()->where('amount', '>', 0)->orderBy('created_at', 'desc')->take(6)->get();
         $payment_methods = MollieController::getPaymentMethods();
 
         return view('omnomcom.orders.myhistory', [
-            'user' => $user,
+            'withdrawals' => $withdrawals,
             'available_months' => $available_months,
             'selected_month' => $selected_month,
-            'orderlines' => $orderlines->has($selected_month) ? $orderlines[$selected_month] : [],
+            'orderlines' => $orderlines,
             'next_withdrawal' => $next_withdrawal,
-            'total' => $total,
+            'total' => $orderlines->sum('total_price'),
             'methods' => $payment_methods ?? [],
-            'use_fees' => config('omnomcom.mollie')['use_fees'],
+            'molliePayments' => $molliePayments,
+            'use_fees' => config('omnomcom.mollie.use_fees'),
             'outstandingAmount' => $outstandingAmount,
             'outstanding' => $outstanding,
         ]);
@@ -134,9 +127,11 @@ class OrderLineController extends Controller
         if (Auth::user()->can('alfred') && ! Auth::user()->hasRole('sysadmin')) {
             $orderlines = OrderLine::query()->whereHas('product', static function ($query) {
                 $query->where('account_id', '=', config('omnomcom.alfred-account'));
-            })->whereDate('created_at', Carbon::parse($date));
+            })->where('created_at', '>', Carbon::parse($date)->startOfDay())
+                ->where('created_at', '<', Carbon::parse($date)->endOfDay());
         } else {
-            $orderlines = OrderLine::query()->whereDate('created_at', Carbon::parse($date));
+            $orderlines = OrderLine::query()->where('created_at', '>', Carbon::parse($date)->startOfDay())
+                ->where('created_at', '<', Carbon::parse($date)->endOfDay());
         }
 
         $orderlines = $orderlines->with('user', 'product')

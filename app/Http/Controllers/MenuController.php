@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -17,7 +18,7 @@ class MenuController extends Controller
     /** @return View */
     public function index()
     {
-        $menuItems = MenuItem::query()->where('parent', null)->with('children', 'page')->orderBy('order')->get();
+        $menuItems = MenuItem::query()->whereNull('parent')->with('children', 'page')->orderBy('order')->get();
 
         return view('menu.list', ['menuItems' => $menuItems]);
     }
@@ -47,6 +48,8 @@ class MenuController extends Controller
         $menuItem->save();
 
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -91,6 +94,7 @@ class MenuController extends Controller
         }
 
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -111,6 +115,7 @@ class MenuController extends Controller
 
         $this->switchMenuItems($menuItem, $menuItemAbove);
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -131,15 +136,12 @@ class MenuController extends Controller
 
         $this->switchMenuItems($menuItem, $menuItemBelow);
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
 
-    /**
-     * @param  MenuItem  $item1
-     * @param  MenuItem  $item2
-     */
-    private function switchMenuItems($item1, $item2): void
+    private function switchMenuItems(MenuItem $item1, MenuItem $item2): void
     {
         $newOrderForItem1 = $item2->order;
         $newOrderForItem2 = $item1->order;
@@ -151,10 +153,9 @@ class MenuController extends Controller
         $item2->save();
     }
 
-    /** @param  int  $parent */
-    private function fixDuplicateMenuItemsOrder($parent): void
+    private function fixDuplicateMenuItemsOrder(int $parent): void
     {
-        $menuItems = MenuItem::query()->where('parent', $parent)->orderBy('order', 'asc')->get();
+        $menuItems = MenuItem::query()->where('parent', $parent)->orderBy('order')->get();
         $i = 0;
         foreach ($menuItems as $menuItem) {
             $menuItem->order = $i;
@@ -164,12 +165,11 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         /** @var MenuItem $menuItem */
         $menuItem = MenuItem::query()->findOrfail($id);
@@ -191,6 +191,7 @@ class MenuController extends Controller
 
         Session::flash('flash_message', 'Menu item has been removed.');
         $menuItem->delete();
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -200,9 +201,9 @@ class MenuController extends Controller
         $routes = $router->getRoutes()->getRoutesByMethod()['GET'];
 
         return array_filter($routes, static fn ($route): bool => $route->getName() &&
-        ! str_contains($route->uri(), '{') &&
-        ! str_contains($route->getName(), 'api::') &&
-        ! str_contains($route->getName(), 'login::') &&
-        ! str_contains($route->uri(), 'oauth'));
+            ! str_contains($route->uri(), '{') &&
+            ! str_contains($route->getName(), 'api::') &&
+            ! str_contains($route->getName(), 'login::') &&
+            ! str_contains($route->uri(), 'oauth'));
     }
 }

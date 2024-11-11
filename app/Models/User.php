@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -380,11 +381,11 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return $this->committees()->exists();
     }
 
-    public function withdrawals(int $limit = 0): Collection
+    public function withdrawals(): HasManyThrough
     {
-        return Withdrawal::query()->whereHas('orderlines', function ($query) {
-            $query->where('user_id', $this->id);
-        })->orderBy('date', 'desc')->limit($limit)->get();
+        return $this->hasManyThrough(Withdrawal::class, OrderLine::class, 'user_id', 'id', 'id', 'payed_with_withdrawal')
+            ->groupBy('withdrawals.id')
+            ->orderBy('withdrawals.created_at', 'desc');
     }
 
     public function websiteUrl(): ?string

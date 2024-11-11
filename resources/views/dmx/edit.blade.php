@@ -6,11 +6,11 @@
 
 @section('container')
 
-    <form method="post"
-          action="{{ ($fixture == null ? route("dmx::store") : route("dmx::update", ['id' => $fixture->id])) }}"
-          enctype="multipart/form-data">
-
-        {!! csrf_field() !!}
+    <form
+        action="{{ !empty($fixture) ? route('dmx.fixtures.update', ['fixture' => $fixture]) : route("dmx.fixtures.store") }}"
+        method="POST">
+        <input type="hidden" name="_method" value="{{ !empty($fixture) ? "PUT" : "POST" }}">
+        {{ csrf_field()}}
 
         <div class="row justify-content-center">
 
@@ -105,7 +105,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("dmx::index") }}" class="btn btn-default">
+                        <a href="{{ route("dmx.index") }}" class="btn btn-default">
                             Cancel
                         </a>
 
