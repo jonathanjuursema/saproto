@@ -5,9 +5,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IsAlfredThereController;
 use App\Http\Controllers\OmNomController;
 use App\Http\Controllers\SmartXpScreenController;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 
-$domains = config('proto.domains');
+$domains = Config::array('proto.domains');
 
 foreach ($domains['smartxp'] as $domain) {
     Route::group(['domain' => $domain], static function () {

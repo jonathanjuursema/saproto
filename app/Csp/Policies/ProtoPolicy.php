@@ -4,6 +4,7 @@ namespace App\Csp\Policies;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Spatie\Csp\Directive;
 use Spatie\Csp\Exceptions\InvalidDirective;
 use Spatie\Csp\Exceptions\InvalidValueSet;
@@ -19,7 +20,7 @@ class ProtoPolicy extends Policy
     {
         // Don't apply csp in debug mode to enable the whoops (standard laravel) error page to be displayed correctly.
         // see https://github.com/spatie/laravel-csp?tab=readme-ov-file#using-whoops
-        if (config('app.debug') && ($response->isClientError() || $response->isServerError())) {
+        if (Config::boolean('app.debug') && ($response->isClientError() || $response->isServerError())) {
             return false;
         }
 
@@ -36,7 +37,7 @@ class ProtoPolicy extends Policy
                     Keyword::SELF,
                     'https://www.mollie.com/checkout/',
                     'https://wrapped.omnomcom.nl',
-                    ...config('proto.domains.protube'),
+                    ...Config::array('proto.domains.protube'),
                     ...(App::environment('production') ? [] : ['http://localhost:*']),
                 ])
                 ->addDirective(Directive::OBJECT, Keyword::NONE)

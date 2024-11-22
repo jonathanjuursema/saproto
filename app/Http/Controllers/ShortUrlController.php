@@ -36,7 +36,6 @@ class ShortUrlController extends Controller
     }
 
     /**
-     * @param  ShortUrl  $url
      * @return View
      */
     public function edit(ShortUrl $short_url)
@@ -45,7 +44,6 @@ class ShortUrlController extends Controller
     }
 
     /**
-     * @param  ShortUrl  $url
      * @return RedirectResponse
      */
     public function update(Request $request, ShortUrl $short_url)

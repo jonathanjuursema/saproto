@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -194,7 +195,7 @@ class DinnerformController extends Controller
 
         $dinnerform = Dinnerform::query()->findOrFail($id);
         $dinnerformOrderlines = $dinnerform->orderlines()->where('closed', false)->get();
-        $product = Product::query()->findOrFail(config('omnomcom.dinnerform-product'));
+        $product = Product::query()->findOrFail(Config::integer('omnomcom.dinnerform-product'));
 
         if ($dinnerform->closed) {
             Session::flash('flash_message', 'This dinnerform has already been processed!');

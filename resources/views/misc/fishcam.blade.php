@@ -59,26 +59,26 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-      const fishcam = document.getElementById('fishcam');
-      const fishcamSrc = document.getElementById('fishcam-src');
-      const activate = document.getElementById('fishcam-activate');
-      const warning = document.getElementById('fishcam-warning');
-      const unavailable = document.getElementById('fishcam-unavailable');
+        const fishcam = document.getElementById('fishcam');
+        const fishcamSrc = document.getElementById('fishcam-src');
+        const activate = document.getElementById('fishcam-activate');
+        const warning = document.getElementById('fishcam-warning');
+        const unavailable = document.getElementById('fishcam-unavailable');
 
-      activate.addEventListener('click', () => {
-        fishcamSrc.src = '{{config('app-proto.fishcam-url')}}';
-        fishcamSrc.classList.remove('d-none');
-        warning.classList.add('d-none');
-      });
+        activate.addEventListener('click', () => {
+            fishcamSrc.src = '{{Config::string('app-proto.fishcam-url')}}';
+            fishcamSrc.classList.remove('d-none');
+            warning.classList.add('d-none');
+        });
 
-      fishcamSrc.addEventListener('error', () => {
-        unavailable.classList.remove('d-none');
-        fishcam.classList.add('d-none');
-      });
+        fishcamSrc.addEventListener('error', () => {
+            unavailable.classList.remove('d-none');
+            fishcam.classList.add('d-none');
+        });
 
-      fishcamSrc.addEventListener('load', () => {
-        fishcam.classList.remove('d-none');
-      });
+        fishcamSrc.addEventListener('load', () => {
+            fishcam.classList.remove('d-none');
+        });
     </script>
 
 @endpush

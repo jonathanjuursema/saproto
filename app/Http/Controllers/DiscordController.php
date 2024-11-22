@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -18,7 +19,7 @@ class DiscordController extends Controller
     {
         $authoriseURL = 'https://discord.com/api/oauth2/authorize?';
         $params = [
-            'client_id' => config('proto.discord_client_id'),
+            'client_id' => Config::string('proto.discord_client_id'),
             'redirect_uri' => route('api::discord::linked'),
             'response_type' => 'code',
             'scope' => 'identify',
@@ -32,8 +33,8 @@ class DiscordController extends Controller
         $tokenURL = 'https://discord.com/api/oauth2/token';
         $apiURLBase = 'https://discord.com/api/users/@me';
         $tokenData = [
-            'client_id' => config('proto.discord_client_id'),
-            'client_secret' => config('proto.discord_secret'),
+            'client_id' => Config::string('proto.discord_client_id'),
+            'client_secret' => Config::string('proto.discord_secret'),
             'grant_type' => 'authorization_code',
             'code' => $request->get('code'),
             'redirect_uri' => route('api::discord::linked'),

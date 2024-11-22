@@ -30,7 +30,7 @@
                 </tr>
                 <tr>
                     <th>Creditor identifier</th>
-                    <td>{{ config('proto.sepa_info')->creditor_id }}</td>
+                    <td>{{ Config::string('proto.sepa_info.creditor_id') }}</td>
                 </tr>
                 </tbody>
             </table>

@@ -19,7 +19,7 @@
                 </div>
 
                 <ul class="list-group list-group-flush">
-                    @foreach(config('omnomcom.stores') as $slug => $store)
+                    @foreach(Config::array('omnomcom.stores') as $slug => $store)
                         <a href="{{ route('omnomcom::store::show', ['store' => $slug]) }}" class="list-group-item">
                             {{ $store->name }}
                         </a>
@@ -29,7 +29,8 @@
                 <small href="/" class="card-footer text-muted text-center text-decoration-none">
                     @if(Auth::check())
                         Logged in as <strong>{{ Auth::user()->name }}</strong>.
-                        <a href="{{ route('login::logout::redirect', ['route' => 'omnomcom::store::show']) }}">Log out.</a>
+                        <a href="{{ route('login::logout::redirect', ['route' => 'omnomcom::store::show']) }}">Log
+                            out.</a>
                     @else
                         Nog logged in. <a href="{{ route('login::show') }}">Log in.</a>
                     @endif

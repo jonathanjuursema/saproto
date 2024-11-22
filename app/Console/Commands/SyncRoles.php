@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Permission;
 use Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -49,13 +50,13 @@ class SyncRoles extends Command
         $permissions = [];
 
         foreach (Permission::all() as $permission) {
-            if (! in_array($permission->name, array_keys(config('permission.permissions')))) {
+            if (! in_array($permission->name, array_keys(Config::array('permission.permissions')))) {
                 $permission->delete();
                 $this->warn("Removed '$permission->name' permission.");
             }
         }
 
-        foreach (config('permission.permissions') as $name => $permission) {
+        foreach (Config::array('permission.permissions') as $name => $permission) {
             $permissions[$name] = Permission::query()->updateOrCreate(
                 ['name' => $name],
                 [
@@ -73,13 +74,13 @@ class SyncRoles extends Command
         $roles = [];
 
         foreach (Role::all() as $role) {
-            if (! in_array($role->name, array_keys(config('permission.roles')))) {
+            if (! in_array($role->name, array_keys(Config::array('permission.roles')))) {
                 $role->delete();
                 $this->warn("Removed '$role->name' permission.");
             }
         }
 
-        foreach (config('permission.roles') as $name => $role) {
+        foreach (Config::array('permission.roles') as $name => $role) {
             $roles[$name] = Role::query()->updateOrCreate(
                 ['name' => $name],
                 [

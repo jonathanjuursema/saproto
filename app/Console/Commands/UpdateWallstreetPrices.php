@@ -108,7 +108,7 @@ class UpdateWallstreetPrices extends Command
             $randomEvent = $randomEventQuery->first();
             $this->info('Random event '.$randomEvent->name.' triggered');
             $currentDrink->events()->attach($randomEvent->id);
-            foreach ($randomEvent->products()->whereIn('id', $currentDrink->products->pluck('id'))->get() as $product) {
+            foreach ($randomEvent->products()->whereIn('products.id', $currentDrink->products->pluck('id'))->get() as $product) {
                 $latestPrice = WallstreetPrice::query()->where('product_id', $product->id)->where('wallstreet_drink_id', $currentDrink->id)->orderBy('id', 'desc')->first();
                 $delta = ($randomEvent->percentage / 100) * $product->price;
                 $newPriceObject = new WallstreetPrice([

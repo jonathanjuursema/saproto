@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
 class CalendarController extends Controller
 {
@@ -13,7 +14,7 @@ class CalendarController extends Controller
     public static function returnGoogleCalendarEvents(string $google_calendar_id, $start, $end): array
     {
         try {
-            $url = 'https://www.googleapis.com/calendar/v3/calendars/'.$google_calendar_id.'/events?singleEvents=true&orderBy=startTime&key='.config('app-proto.google-key-private').'&timeMin='.urlencode($start).'&timeMax='.urlencode($end).'';
+            $url = 'https://www.googleapis.com/calendar/v3/calendars/'.$google_calendar_id.'/events?singleEvents=true&orderBy=startTime&key='.Config::string('app-proto.google-key-private').'&timeMin='.urlencode($start).'&timeMax='.urlencode($end).'';
             $data = json_decode(str_replace('$', '', file_get_contents($url)));
         } catch (Exception) {
             return [];

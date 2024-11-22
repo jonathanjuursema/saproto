@@ -23,6 +23,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -304,7 +305,7 @@ class AuthController extends Controller
         $user->address_visible = false;
         $user->receive_sms = false;
 
-        $user->email = 'deleted-'.$user->id.'@deleted.'.config('proto.emaildomain');
+        $user->email = 'deleted-'.$user->id.'@deleted.'.Config::string('proto.emaildomain');
 
         // Save and softDelete.
         $user->save();
@@ -502,11 +503,11 @@ class AuthController extends Controller
 
         $remoteUser = Session::pull('surfconext_sso_user');
         $remoteData = [
-            'uid' => $remoteUser[config('saml2-attr.uid')][0],
-            'surname' => array_key_exists(config('saml2-attr.surname'), $remoteUser) ? $remoteUser[config('saml2-attr.surname')][0] : null,
-            'mail' => $remoteUser[config('saml2-attr.email')][0],
-            'givenname' => array_key_exists(config('saml2-attr.givenname'), $remoteUser) ? $remoteUser[config('saml2-attr.givenname')][0] : null,
-            'org' => isset($remoteUser[config('saml2-attr.institute')]) ? $remoteUser[config('saml2-attr.institute')][0] : 'utwente.nl',
+            'uid' => $remoteUser[Config::string('saml2-attr.uid')][0],
+            'surname' => array_key_exists(Config::string('saml2-attr.surname'), $remoteUser) ? $remoteUser[Config::string('saml2-attr.surname')][0] : null,
+            'mail' => $remoteUser[Config::string('saml2-attr.email')][0],
+            'givenname' => array_key_exists(Config::string('saml2-attr.givenname'), $remoteUser) ? $remoteUser[Config::string('saml2-attr.givenname')][0] : null,
+            'org' => isset($remoteUser[Config::string('saml2-attr.institute')]) ? $remoteUser[Config::string('saml2-attr.institute')][0] : 'utwente.nl',
         ];
         $remoteEduUsername = $remoteData['uid'].'@'.$remoteData['org'];
         $remoteFullName = 'User';
@@ -769,7 +770,7 @@ class AuthController extends Controller
         $authnRequest = new AuthnRequest;
         $authnRequest->deserialize($deserializationContext->getDocument()->firstChild, $deserializationContext);
 
-        if (! array_key_exists(base64_encode($authnRequest->getAssertionConsumerServiceURL()), config('saml-idp.sp'))) {
+        if (! array_key_exists(base64_encode($authnRequest->getAssertionConsumerServiceURL()), Config::array('saml-idp.sp'))) {
             Session::flash('flash_message', 'You are using an unknown Service Provider. Please contact the System Administrators to get your Service Provider whitelisted for Proto SSO.');
 
             return Redirect::route('login::show');
@@ -797,12 +798,12 @@ class AuthController extends Controller
     private static function buildSAMLResponse(User $user, AuthnRequest $authnRequest): Response
     {
         // LightSaml Magic. Taken from https://imbringingsyntaxback.com/implementing-a-saml-idp-with-laravel/
-        $audience = config('saml-idp.sp')[base64_encode($authnRequest->getAssertionConsumerServiceURL())]['audience'];
+        $audience = Config::array('saml-idp.sp')[base64_encode($authnRequest->getAssertionConsumerServiceURL())]['audience'];
         $destination = $authnRequest->getAssertionConsumerServiceURL();
-        $issuer = config('saml-idp.idp.issuer');
+        $issuer = Config::string('saml-idp.idp.issuer');
 
-        $certificate = X509Certificate::fromFile(base_path().config('saml-idp.idp.cert'));
-        $privateKey = KeyHelper::createPrivateKey(base_path().config('saml-idp.idp.key'), '', true);
+        $certificate = X509Certificate::fromFile(base_path().Config::string('saml-idp.idp.cert'));
+        $privateKey = KeyHelper::createPrivateKey(base_path().Config::string('saml-idp.idp.key'), '', true);
 
         $response = new Response;
         $response
@@ -833,7 +834,7 @@ class AuthController extends Controller
                                 (new SubjectConfirmationData)
                                     ->setInResponseTo($authnRequest->getId())
                                     ->setNotOnOrAfter(new DateTime('+1 MINUTE'))
-                                    ->setRecipient($authnRequest->getAssertionConsumerServiceURL())/* @phpstan-ignore-line */
+                                    ->setRecipient($authnRequest->getAssertionConsumerServiceURL())
                             )
                     )
             )

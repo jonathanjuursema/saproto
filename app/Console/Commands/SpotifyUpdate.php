@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Controllers\SpotifyController;
 use App\Models\PlayedVideo;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use SpotifyWebAPI\SpotifyWebAPIException;
 
@@ -45,7 +46,7 @@ class SpotifyUpdate extends Command
         $this->info('Testing if API key still works.');
 
         try {
-            if ($spotify->me()->id != config('app-proto.spotify-user')) {
+            if ($spotify->me()->id != Config::string('app-proto.spotify-user')) {
                 $this->error('API key is for the wrong user!');
 
                 return;

@@ -4,7 +4,7 @@ on: pull_request
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   phplint:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
     needs: phplint
     services:
       mysql:
-        image: mysql:5.7
+        image: mariadb:10
         env:
           MYSQL_ROOT_PASSWORD: secret
           MYSQL_DATABASE: testing
@@ -77,6 +77,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+
+      - name: Verify MariaDB connection
+        env:
+          PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
 
       - name: 🔍 Read .env
         run: (grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV && cp .env.ci .env)

@@ -9,6 +9,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class DevelopmentAccess
 {
@@ -42,11 +43,11 @@ class DevelopmentAccess
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (config('app-proto.debug-whitelist') == null) {
+        if (Config::get('app-proto.debug-whitelist') == null) {
             return $next($request);
         }
 
-        $this->ipWhitelist = explode(',', config('app-proto.debug-whitelist'));
+        $this->ipWhitelist = explode(',', Config::string('app-proto.debug-whitelist'));
 
         if ($this->clientNotAllowed()) {
             config(['app.debug' => false]);

@@ -122,7 +122,7 @@
 
                                     @if ($ticket->isAvailable(Auth::user()))
                                         <span class="badge bg-info float-end">
-                                        {{ $ticket->product->stock > config('proto.maxtickets') ? config('proto.maxtickets').'+' : $ticket->product->stock }}
+                                        {{ $ticket->product->stock > Config::integer('proto.maxtickets') ? Config::integer('proto.maxtickets').'+' : $ticket->product->stock }}
                                                 available
                                         </span>
                                     @endif
@@ -153,7 +153,7 @@
                                             data-prepaid="{{ $ticket->is_prepaid }}"
                                             data-previous-value="0">
                                         @php
-                                            $max = min(config('proto.maxtickets'), $ticket->product->stock);
+                                            $max = min(Config::integer('proto.maxtickets'), $ticket->product->stock);
                                             if($ticket->has_buy_limit){
                                                 $max = min($max, $ticket->BuyLimitForUser(Auth::user()));
                                             }
@@ -186,13 +186,13 @@
             @if(Auth::check() && $tickets_available > 0)
                 <div class="card-footer">
                     {{-- No fees of no prepaid (2,4,5) --}}
-                    @if (!config('omnomcom.mollie.use_fees') || !$has_prepay_tickets)
+                    @if (!Config::boolean('omnomcom.mollie.use_fees') || !$has_prepay_tickets)
                         <button type="submit" class="btn btn-success btn-block">
                             Total: <strong>&euro;<span id="ticket-total" class="mr-3">0.00</span></strong> Finish
                             purchase!
                         </button>
                         {{-- fees and only prepaid (3) --}}
-                    @elseif (config('omnomcom.mollie.use_fees') && $only_prepaid)
+                    @elseif (Config::boolean('omnomcom.mollie.use_fees') && $only_prepaid)
                         @include('event.display_includes.mollie-modal')
                         <a href="javascript:void();" class="btn btn-primary btn-block" data-bs-toggle="modal"
                            data-bs-target="#mollie-modal">
@@ -233,24 +233,24 @@
 
     @push('javascript')
         <script type="text/javascript" nonce="{{ csp_nonce() }}">
-            const directPayButton = document.getElementById("directpay");
-            const feesButton = document.getElementById("feesbutton");
-            const selectList = Array.from(document.getElementsByClassName("ticket-select"));
+            const directPayButton = document.getElementById('directpay');
+            const feesButton = document.getElementById('feesbutton');
+            const selectList = Array.from(document.getElementsByClassName('ticket-select'));
             let totalPrepaidSelected = 0;
-            selectList.forEach(ticket => ticket.addEventListener("change", _ => {
-                const total = selectList.reduce((agg, el) => agg + el.getAttribute("data-price") * el.value, 0);
-                document.getElementById("ticket-total").innerHTML = total.toFixed(2);
+            selectList.forEach(ticket => ticket.addEventListener('change', _ => {
+                const total = selectList.reduce((agg, el) => agg + el.getAttribute('data-price') * el.value, 0);
+                document.getElementById('ticket-total').innerHTML = total.toFixed(2);
 
-                if (ticket.getAttribute("data-prepaid") === true) {
-                    totalPrepaidSelected += ticket.value - ticket.getAttribute("previous-value");
-                    ticket.setAttribute("data-previous-value", ticket.value);
+                if (ticket.getAttribute('data-prepaid') === true) {
+                    totalPrepaidSelected += ticket.value - ticket.getAttribute('previous-value');
+                    ticket.setAttribute('data-previous-value', ticket.value);
                 }
                 if (totalPrepaidSelected === 0) {
-                    directPayButton?.setAttribute("hidden", "");
-                    feesButton?.removeAttribute("hidden");
+                    directPayButton?.setAttribute('hidden', '');
+                    feesButton?.removeAttribute('hidden');
                 } else if (totalPrepaidSelected > 0) {
-                    directPayButton?.removeAttribute("hidden");
-                    feesButton?.setAttribute("hidden", "");
+                    directPayButton?.removeAttribute('hidden');
+                    feesButton?.setAttribute('hidden', '');
                 }
             }));
         </script>

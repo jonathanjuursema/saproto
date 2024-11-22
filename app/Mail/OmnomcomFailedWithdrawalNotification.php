@@ -7,6 +7,7 @@ use App\Models\Withdrawal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class OmnomcomFailedWithdrawalNotification extends Mailable
 {
@@ -42,7 +43,7 @@ class OmnomcomFailedWithdrawalNotification extends Mailable
     public function build()
     {
         return $this
-            ->from('treasurer@'.config('proto.emaildomain'), config('proto.treasurer'))
+            ->from('treasurer@'.Config::string('proto.emaildomain'), Config::string('proto.treasurer'))
             ->subject('S.A. Proto Failed Withdrawal Notification')
             ->view('emails.omnomcom.failedwithdrawalnotification');
     }

@@ -33,7 +33,7 @@
         "cross-env": "^7.0.3",
         "easymde": "^2.18.0",
         "moment": "^2.29.2",
-        "quagga": "^0.12.1",
+        "quagga": "^0.6.16",
         "signature_pad": "^3.0.0-beta.4",
         "swiper": "^8.0.7",
         "util.promisify": "^1.0.1"
@@ -42,8 +42,8 @@
         "glob": "^7.1.6",
         "laravel-vite-plugin": "^0.7.8",
         "postcss": "^8.2.7",
-        "postcss-discard-comments": "^4.0.2",
-        "resolve-url-loader": "^3.1.2",
+        "postcss-discard-comments": "^7.0.3",
+        "resolve-url-loader": "^5.0.0",
         "sass": "1.38.2",
         "sass-loader": "^12.1.0",
         "vite": "^4.3.9"

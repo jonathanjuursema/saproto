@@ -5,6 +5,7 @@ use App\Models\Activity;
 use App\Models\Email;
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 it('sends a manual email to an event', function () {
@@ -16,7 +17,7 @@ it('sends a manual email to an event', function () {
 
     Mail::assertQueued(ManualEmail::class, function ($mail) use ($email): true {
         $mail->build();
-        $this->assertTrue($mail->hasFrom('board@'.config('proto.emaildomain')));
+        $this->assertTrue($mail->hasFrom('board@'.Config::string('proto.emaildomain')));
         $this->assertTrue($mail->hasTo($email->recipients()->first()->email));
 
         return true;

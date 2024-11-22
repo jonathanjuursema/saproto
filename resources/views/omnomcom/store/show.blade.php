@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-    <title>{{ config('app.env') != 'production' ? '['.strtoupper(config('app.env')).'] ' : '' }}OmNomCom Store</title>
+    <title>{{ !App::environment('production') ? '['.strtoupper(config('app.env')).'] ' : '' }}OmNomCom Store</title>
 
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -35,14 +35,14 @@
                 The second date is exclusive and should thus be the first day the monster should no longer be there.
              */
             @php($bg_image = 'images/omnomcom/cookiemonster.png')
-            @foreach(config('omnomcom.cookiemonsters') as $cookiemonster)
+            @foreach(Config::array('omnomcom.cookiemonsters') as $cookiemonster)
                 @if(date('U') > strtotime($cookiemonster->start) && date('U') < strtotime($cookiemonster->end))
                    @php($bg_image = "images/omnomcom/cookiemonster_seasonal/$cookiemonster->name.png")
                    @break
                 @endif
             @endforeach
 
-           background-image: url('{{ asset($bg_image) }}');
+              background-image: url('{{ asset($bg_image) }}');
             background-position: center 100%;
             background-repeat: no-repeat;
         }

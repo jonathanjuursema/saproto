@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 class LdapController extends Controller
 {
@@ -22,9 +23,9 @@ class LdapController extends Controller
         $client = new Client;
         try {
             // Make a POST request to the LDAP Proxy
-            $response = $client->post(config('ldap.proxy.utwente.post_url'), [
+            $response = $client->post(Config::string('ldap.proxy.utwente.post_url'), [
                 'form_params' => [
-                    'key' => config('ldap.proxy.utwente.key'),
+                    'key' => Config::string('ldap.proxy.utwente.key'),
                     'query' => $query,
                 ],
             ]);

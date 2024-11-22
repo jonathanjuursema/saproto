@@ -97,7 +97,7 @@ return [
 
     'env' => env('APP_ENV', 'local'),
     'ssl' => env('SSL', true),
-    'forcedomain' => env('FORCE_DOMAIN', null),
+    'forcedomain' => env('FORCE_DOMAIN'),
 
     /*
     |--------------------------------------------------------------------------

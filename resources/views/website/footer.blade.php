@@ -68,7 +68,8 @@
                 </a>.
                 <br>
                 This website has been created with <i class="fas fa-heart text-primary"></i> by the folks of the
-                <a href="{{ 'https://'.config('proto.domains.developers')[0] }}" target="_blank" class="text-white">
+                <a href="{{ 'https://'.Config::array('proto.domains.developers')[0] }}"
+                   target="_blank" class="text-white">
                     Have You Tried Turning It Off And On Again committee
                 </a>.
             </sub>

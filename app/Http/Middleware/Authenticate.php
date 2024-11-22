@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Support\Facades\Redirect;
 
 class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
@@ -13,8 +14,6 @@ class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
      * @var Factory
      */
     protected $auth;
-
-    /** @phpstan-ignore-line */
 
     /**
      * Handle an incoming request.

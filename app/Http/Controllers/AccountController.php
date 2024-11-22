@@ -7,6 +7,7 @@ use App\Models\Product;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -102,7 +103,7 @@ class AccountController extends Controller
     public function showOmnomcomStatistics(Request $request): View
     {
         if ($request->has('start') && $request->has('end')) {
-            $account = Account::query()->findOrFail(config('omnomcom.omnomcom-account'));
+            $account = Account::query()->findOrFail(Config::integer('omnomcom.omnomcom-account'));
 
             return view('omnomcom.accounts.aggregation', [
                 'aggregation' => $account->generatePeriodAggregation($request->start, $request->end),

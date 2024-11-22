@@ -19,6 +19,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
@@ -88,7 +89,7 @@ class EventController extends Controller
             ->firstOrFail();
 
         $methods = [];
-        if (config('omnomcom.mollie.use_fees')) {
+        if (Config::boolean('omnomcom.mollie.use_fees')) {
             $methods = MollieController::getPaymentMethods();
         }
 

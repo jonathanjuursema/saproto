@@ -210,6 +210,7 @@ class WallstreetController extends Controller
         $events = $drink->events()->with('products')->get();
         foreach ($events as $event) {
             /** @var WallstreetEvent $event */
+            /** @phpstan-ignore-next-line */
             $event->img = $event->image->generatePath();
         }
 

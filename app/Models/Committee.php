@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -96,7 +97,7 @@ class Committee extends Model
 
     public function getEmailAddressAttribute(): string
     {
-        return $this->slug.'@'.config('proto.emaildomain');
+        return $this->slug.'@'.Config::string('proto.emaildomain');
     }
 
     public function pastEvents(int $n): Collection

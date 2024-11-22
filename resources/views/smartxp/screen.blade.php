@@ -159,7 +159,7 @@
         }
 
         #protube.inactive {
-            background-image: url({{config('app-proto.fishcam-url')}}) !important;
+            background-image: url({{Config::string('app-proto.fishcam-url')}}) !important;
         }
 
         #protube-title {
@@ -329,171 +329,171 @@
 
 <script type="text/javascript" nonce="{{ csp_nonce() }}">
 
-  function updateClock() {
-    let now = moment();
-    document.getElementById('clock').innerHTML = '<i class="fas fa-clock fa-fw me-2"></i>' + now.format('HH:mm:ss');
-    document.getElementById('ticker').style.width = ((now.format('s.SSS') / 60) * 100) + '%';
-  }
+    function updateClock() {
+        let now = moment();
+        document.getElementById('clock').innerHTML = '<i class="fas fa-clock fa-fw me-2"></i>' + now.format('HH:mm:ss');
+        document.getElementById('ticker').style.width = ((now.format('s.SSS') / 60) * 100) + '%';
+    }
 
-  function updateTimetable() {
-    const timetable = document.getElementById('timetable');
+    function updateTimetable() {
+        const timetable = document.getElementById('timetable');
 
-    get('{{ route('api::screen::timetable') }}')
-      .then(data => {
-        if (data.length > 0) {
-          timetable.innerHTML = '';
-          let count = 0;
-          for (let i in data) {
-            if (count >= 4) return;
-            if (!data[i].over) {
-              let start = moment.unix(data[i].start);
-              let end = moment.unix(data[i].end);
-              let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
-              let title = data[i].title;
-              let displayTime = '<i class="fas fa-clock fa-fw me-1"></i>' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i>' + data[i].place + '</span>';
-              timetable.innerHTML +=
-                '<div class="activity">' +
-                (data[i].studyShort ? '<span class="float-end ms-2">' + '<i class="fas fa-graduation-cap fa-fw me-2"></i>' + data[i].studyShort + ' ' + (data[i].year ? 'Year ' + data[i].year : '') + '</span> ' : null) +
-                '<strong>' + data[i].type + '</strong><br>' +
-                '<span class="' + (data[i].current ? 'current' : '') + '">' + title + '</span><br>' +
-                displayTime +
-                '</div>';
-              count++;
-            }
-          }
-          if (count === 0) {
-            timetable.innerHTML = '<div class="notice">No more lectures today!</div>';
-          }
-        } else {
-          timetable.innerHTML = '<div class="notice">No lectures today!</div>';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        timetable.innerHTML = '<div class="notice">Lectures could not be found...</div>';
-      });
-  }
+        get('{{ route('api::screen::timetable') }}')
+            .then(data => {
+                if (data.length > 0) {
+                    timetable.innerHTML = '';
+                    let count = 0;
+                    for (let i in data) {
+                        if (count >= 4) return;
+                        if (!data[i].over) {
+                            let start = moment.unix(data[i].start);
+                            let end = moment.unix(data[i].end);
+                            let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
+                            let title = data[i].title;
+                            let displayTime = '<i class="fas fa-clock fa-fw me-1"></i>' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i>' + data[i].place + '</span>';
+                            timetable.innerHTML +=
+                                '<div class="activity">' +
+                                (data[i].studyShort ? '<span class="float-end ms-2">' + '<i class="fas fa-graduation-cap fa-fw me-2"></i>' + data[i].studyShort + ' ' + (data[i].year ? 'Year ' + data[i].year : '') + '</span> ' : null) +
+                                '<strong>' + data[i].type + '</strong><br>' +
+                                '<span class="' + (data[i].current ? 'current' : '') + '">' + title + '</span><br>' +
+                                displayTime +
+                                '</div>';
+                            count++;
+                        }
+                    }
+                    if (count === 0) {
+                        timetable.innerHTML = '<div class="notice">No more lectures today!</div>';
+                    }
+                } else {
+                    timetable.innerHTML = '<div class="notice">No lectures today!</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                timetable.innerHTML = '<div class="notice">Lectures could not be found...</div>';
+            });
+    }
 
-  function updateActivities() {
-    get('{{ route('api::events::upcoming', ['limit' => 3]) }}')
-      .then(data => {
-        if (data.length > 0) {
-          document.getElementById('activities').innerHTML = '';
-          for (let i in data) {
-            let start = moment.unix(data[i].start);
-            let end = moment.unix(data[i].end);
-            let time;
-            if (start.format('DD-MM') === end.format('DD-MM')) {
-              time = start.format('DD-MM, HH:mm') + ' - ' + end.format('HH:mm');
-            } else {
-              time = start.format('DD-MM, HH:mm') + ' - ' + end.format('DD-MM, HH:mm');
-            }
-            document.getElementById('activities').innerHTML += '<div class="activity ' + (data[i].current ? 'current' : (data[i].over ? 'past' : '')) + '"><strong>' + data[i].title + '</strong><br><i class="fas fa-clock fa-fw me-1"></i> ' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i> ' + data[i].location + '</span></div>';
-          }
-        } else {
-          document.getElementById('activities').innerHTML = '<div class="notice">No upcoming activities!</div>';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('activities').innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
-      });
-  }
+    function updateActivities() {
+        get('{{ route('api::events::upcoming', ['limit' => 3]) }}')
+            .then(data => {
+                if (data.length > 0) {
+                    document.getElementById('activities').innerHTML = '';
+                    for (let i in data) {
+                        let start = moment.unix(data[i].start);
+                        let end = moment.unix(data[i].end);
+                        let time;
+                        if (start.format('DD-MM') === end.format('DD-MM')) {
+                            time = start.format('DD-MM, HH:mm') + ' - ' + end.format('HH:mm');
+                        } else {
+                            time = start.format('DD-MM, HH:mm') + ' - ' + end.format('DD-MM, HH:mm');
+                        }
+                        document.getElementById('activities').innerHTML += '<div class="activity ' + (data[i].current ? 'current' : (data[i].over ? 'past' : '')) + '"><strong>' + data[i].title + '</strong><br><i class="fas fa-clock fa-fw me-1"></i> ' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i> ' + data[i].location + '</span></div>';
+                    }
+                } else {
+                    document.getElementById('activities').innerHTML = '<div class="notice">No upcoming activities!</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('activities').innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
+    }
 
-  function updateBuses() {
-    updateBus(43110270, 43110270, 'businfo-langen');
-    updateBus(43005640, 43005630, 'businfo-wester');
-  }
+    function updateBuses() {
+        updateBus(43110270, 43110270, 'businfo-langen');
+        updateBus(43005640, 43005630, 'businfo-wester');
+    }
 
-  function updateBus(stop, stop_other_side, id) {
-    const element = document.getElementById(id);
-    get("{{urldecode(route('api::screen::bus'))}}", { tpc_id: stop, tpc_id_other: stop_other_side })
-      .then(data => {
-        let combinedBusses = {};
-        for (const [key, value] of Object.entries(data)) {
-          Object.assign(combinedBusses, value.Passes);
-        }
-        if (Object.keys(combinedBusses).length > 0) {
-          element.innerHTML = '';
-          Object.entries(combinedBusses).sort(function(a, b) {
-            return ((new Date(a[1].ExpectedArrivalTime).valueOf()) - (new Date(b[1].ExpectedArrivalTime).valueOf()));
-          });
+    function updateBus(stop, stop_other_side, id) {
+        const element = document.getElementById(id);
+        get("{{urldecode(route('api::screen::bus'))}}", { tpc_id: stop, tpc_id_other: stop_other_side })
+            .then(data => {
+                let combinedBusses = {};
+                for (const [key, value] of Object.entries(data)) {
+                    Object.assign(combinedBusses, value.Passes);
+                }
+                if (Object.keys(combinedBusses).length > 0) {
+                    element.innerHTML = '';
+                    Object.entries(combinedBusses).sort(function(a, b) {
+                        return ((new Date(a[1].ExpectedArrivalTime).valueOf()) - (new Date(b[1].ExpectedArrivalTime).valueOf()));
+                    });
 
-          for (const [key, value] of Object.entries(combinedBusses).slice(0, 4)) {
-            let colorLate = (Math.abs(new Date(value.ExpectedArrivalTime) - new Date(value.TargetArrivalTime)) / 1000 * 60 > 1) ? '#ff0000' : '#c1ff00';
-            let drivingColor = value.TripStopStatus === 'DRIVING' ? '#c1ff00' : '#fff';
-            if (value.TripStopStatus !== 'ARRIVED') {
-              element.innerHTML += '<div class="busentry">' + `<span style=color:${colorLate}>` + new Date(value.ExpectedArrivalTime).toISOString().substr(11, 8).substr(0, 5) + '</span>' + ' ' + value.TransportType + ' ' + value.LinePublicNumber + ` ` + `<span style="color: ${drivingColor};">` + value.TripStopStatus + '</span><br>Towards ' + value.DestinationName50 + '</div>';
-            }
-          }
-        } else {
-          element.innerHTML = '<div class="notice">No buses!</div>';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        element.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
-      });
-  }
+                    for (const [key, value] of Object.entries(combinedBusses).slice(0, 4)) {
+                        let colorLate = (Math.abs(new Date(value.ExpectedArrivalTime) - new Date(value.TargetArrivalTime)) / 1000 * 60 > 1) ? '#ff0000' : '#c1ff00';
+                        let drivingColor = value.TripStopStatus === 'DRIVING' ? '#c1ff00' : '#fff';
+                        if (value.TripStopStatus !== 'ARRIVED') {
+                            element.innerHTML += '<div class="busentry">' + `<span style=color:${colorLate}>` + new Date(value.ExpectedArrivalTime).toISOString().substr(11, 8).substr(0, 5) + '</span>' + ' ' + value.TransportType + ' ' + value.LinePublicNumber + ` ` + `<span style="color: ${drivingColor};">` + value.TripStopStatus + '</span><br>Towards ' + value.DestinationName50 + '</div>';
+                        }
+                    }
+                } else {
+                    element.innerHTML = '<div class="notice">No buses!</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                element.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
+    }
 
-  function updateProtopeners() {
-    const timetable = document.getElementById('protopeners-timetable');
-    const protopolisFa = document.getElementById('protopolis-fa');
+    function updateProtopeners() {
+        const timetable = document.getElementById('protopeners-timetable');
+        const protopolisFa = document.getElementById('protopolis-fa');
 
-    get('{{ route('api::screen::timetable::protopeners') }}')
-      .then(data => {
-        if (data.length > 0) {
-          document.getElementById('protopeners-timetable').innerHTML = '';
-          let open = false, count = 0;
-          for (let i in data) {
-            if (data[i].over) continue;
-            else if (data[i].current) open = true;
-            let start = moment.unix(data[i].start);
-            let end = moment.unix(data[i].end);
-            let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
-            document.getElementById('protopeners-timetable').innerHTML +=
-              '<div class="activity ' + (data[i].current ? 'current' : '') + '">' +
-              '   <div class="float-start">' + time + '</div>' +
-              '   <div class="float-end"><strong>' + data[i].title + '</strong></div>' +
-              '</div>';
-            count++;
-          }
-          if (open) {
-            protopolisFa.classList.add('green');
-            protopolisFa.classList.replace('fa-door-closed', 'fa-door-open');
-          } else {
-            protopolisFa.classList.remove('green');
-            protopolisFa.classList.replace('fa-door-open', 'fa-door-closed');
-          }
-          if (count === 0) timetable.innerHTML = '<div class="notice">Protopolis closed for today!</div>';
-        } else {
-          timetable.innerHTML = '<div class="notice">Protopolis closed today!</div>';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        timetable.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
-      });
-  }
+        get('{{ route('api::screen::timetable::protopeners') }}')
+            .then(data => {
+                if (data.length > 0) {
+                    document.getElementById('protopeners-timetable').innerHTML = '';
+                    let open = false, count = 0;
+                    for (let i in data) {
+                        if (data[i].over) continue;
+                        else if (data[i].current) open = true;
+                        let start = moment.unix(data[i].start);
+                        let end = moment.unix(data[i].end);
+                        let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
+                        document.getElementById('protopeners-timetable').innerHTML +=
+                            '<div class="activity ' + (data[i].current ? 'current' : '') + '">' +
+                            '   <div class="float-start">' + time + '</div>' +
+                            '   <div class="float-end"><strong>' + data[i].title + '</strong></div>' +
+                            '</div>';
+                        count++;
+                    }
+                    if (open) {
+                        protopolisFa.classList.add('green');
+                        protopolisFa.classList.replace('fa-door-closed', 'fa-door-open');
+                    } else {
+                        protopolisFa.classList.remove('green');
+                        protopolisFa.classList.replace('fa-door-open', 'fa-door-closed');
+                    }
+                    if (count === 0) timetable.innerHTML = '<div class="notice">Protopolis closed for today!</div>';
+                } else {
+                    timetable.innerHTML = '<div class="notice">Protopolis closed today!</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                timetable.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
+    }
 
-  window.addEventListener('load', _ => {
+    window.addEventListener('load', _ => {
 
-    updateTimetable();
-    updateActivities();
-    updateProtopeners();
-    updateClock();
-    updateBuses();
-    updateProtopeners();
+        updateTimetable();
+        updateActivities();
+        updateProtopeners();
+        updateClock();
+        updateBuses();
+        updateProtopeners();
 
-    const everySecond = 1000;
-    const everyMinute = 60 * 1000;
-    const everyFiveMinutes = 5 * 60 * 1000;
-    setInterval(updateTimetable, everyFiveMinutes);
-    setInterval(updateActivities, everyFiveMinutes);
-    setInterval(updateProtopeners, everyMinute);
-    setInterval(updateClock, everySecond);
-    setInterval(updateBuses, everyFiveMinutes);
-  });
+        const everySecond = 1000;
+        const everyMinute = 60 * 1000;
+        const everyFiveMinutes = 5 * 60 * 1000;
+        setInterval(updateTimetable, everyFiveMinutes);
+        setInterval(updateActivities, everyFiveMinutes);
+        setInterval(updateProtopeners, everyMinute);
+        setInterval(updateClock, everySecond);
+        setInterval(updateBuses, everyFiveMinutes);
+    });
 </script>
 
 </body>

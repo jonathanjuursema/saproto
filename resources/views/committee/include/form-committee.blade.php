@@ -23,7 +23,8 @@
                 <div class="input-group">
                     <input type="text" class="form-control" id="slug" name="slug"
                            placeholder="awesome" value="{{ (!$new ? $committee->slug : "") }}">
-                    <span class="input-group-text">@ {{ config('proto.emaildomain') }}</span>
+                    <span
+                        class="input-group-text">@ {{ Config::string('proto.emaildomain') }}</span>
                 </div>
 
 

@@ -84,7 +84,7 @@
                                     </option>
                                     @foreach($routes as $route)
                                         @php
-                                            $domain = $route->domain() == null ? config('app-proto.primary-domain') : $route->domain();
+                                            $domain = $route->domain() == null ? Config::string('app-proto.primary-domain') : $route->domain();
                                             $uri = $route->uri() == '/' ? '' : $route->uri();
                                             $url = "https://$domain/$uri";
                                         @endphp

@@ -295,7 +295,7 @@ return [
     |
     */
 
-    'sepa_info' => (object) [
+    'sepa_info' => [
         'iban' => env('SEPA_IBAN'),
         'bic' => env('SEPA_BIC'),
         'creditor_id' => env('SEPA_CI'),

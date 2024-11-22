@@ -13,6 +13,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -99,16 +100,15 @@ class CommitteeController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request)
     {
         // Retrieve the committee
         $committee = Committee::query()->find($id);
 
         // Check if the committee is protected
-        if ($committee->slug == config('proto.rootcommittee') && $request->slug != $committee->slug) {
+        if ($committee->slug === Config::string('proto.rootcommittee') && $request->slug != $committee->slug) {
             Session::flash('flash_message', "This committee is protected. You cannot change it's e-mail alias.");
 
             return Redirect::back();

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Config;
 
 /**
  * App\Models\OrderLine.
@@ -111,7 +112,7 @@ class OrderLine extends Model
             ->where(function ($query) {
                 $query->whereDoesntHave('molliePayment')
                     ->orWhereHas('molliePayment', static function ($query) {
-                        $query->whereNotIn('status', config('omnomcom.mollie.paid_statuses'));
+                        $query->whereNotIn('status', Config::array('omnomcom.mollie.paid_statuses'));
                     });
             })
             ->where('total_price', '!=', 0);

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Event Model.
@@ -299,7 +300,7 @@ class Event extends Model
 
         $eroHelping = HelpingCommittee::query()
             ->where('activity_id', $this->activity->id)
-            ->where('committee_id', config('proto.committee')['ero'])->first();
+            ->where('committee_id', Config::integer('proto.committee.ero'))->first();
         if ($eroHelping) {
             return ActivityParticipation::query()
                 ->where('activity_id', $this->activity->id)

@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Product;
 use Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -19,7 +20,7 @@ class TIPCieController extends Controller
         $endDate = ($date ? Carbon::parse($date)->addHours(30)->format('Y-m-d H:i:s') : Carbon::today()->format('Y-m-d H:i:s'));
 
         /** @var Account $tipcieAccount */
-        $tipcieAccount = Account::query()->findOrFail(config('omnomcom.tipcie-account'));
+        $tipcieAccount = Account::query()->findOrFail(Config::integer('omnomcom.tipcie-account'));
 
         $products = Product::query()
             ->where('account_id', $tipcieAccount->id)

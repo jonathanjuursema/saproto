@@ -16,6 +16,7 @@ use App\Models\Video;
 use App\Models\WelcomeMessage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -120,7 +121,7 @@ class HomeController extends Controller
     /** @return View Display the most important page of the whole site. */
     public function developers()
     {
-        $committee = Committee::query()->where('slug', '=', config('proto.rootcommittee'))->first();
+        $committee = Committee::query()->where('slug', '=', Config::string('proto.rootcommittee'))->first();
         $developers = [
             'current' => CommitteeMembership::query()
                 ->where('committee_id', $committee->id)

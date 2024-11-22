@@ -118,7 +118,7 @@
 
                     <p>
                         Kind regards,<br>
-                        {{ config('proto.internal') }}<br>
+                        {{ Config::string('proto.internal') }}<br>
                         <em>Officer of Internal Affairs</em>
                     </p>
 

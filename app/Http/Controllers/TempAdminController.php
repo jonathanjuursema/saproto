@@ -38,7 +38,6 @@ class TempAdminController extends Controller
      */
     public function store(Request $request)
     {
-        /** @var $tempAdminUser User */
         $tempAdminUser = User::query()->findOrFail($request->user_id);
 
         $tempadmin = new Tempadmin;
@@ -80,7 +79,6 @@ class TempAdminController extends Controller
      */
     public function make(int $id)
     {
-        /** @var $user User */
         $user = User::query()->findOrFail($id);
 
         $tempAdmin = new Tempadmin;

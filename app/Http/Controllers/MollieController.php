@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -46,7 +47,7 @@ class MollieController extends Controller
         $total = 0;
         $requested_method = $request->input('method');
         $selected_method = null;
-        $use_fees = config('omnomcom.mollie')['use_fees'];
+        $use_fees = Config::boolean('omnomcom.mollie.use_fees');
         $available_methods = $use_fees ? self::getPaymentMethods() : null;
 
         $orderlines = [];
@@ -154,7 +155,7 @@ class MollieController extends Controller
             ->join('mollie_transactions', 'orderlines.payed_with_mollie', '=', 'mollie_transactions.id')
             ->selectRaw('DATE(DATE_ADD(orderlines.created_at, INTERVAL -6 HOUR)) as orderline_date')
             ->whereRaw('DATE(DATE_ADD(orderlines.created_at, INTERVAL -6 HOUR)) BETWEEN ? AND ?', [$start, $end])
-            ->whereIn('mollie_transactions.status', config('omnomcom.mollie.paid_statuses'))
+            ->whereIn('mollie_transactions.status', Config::array('omnomcom.mollie.paid_statuses'))
             ->groupByRaw('orderline_date')
             ->selectRaw('accounts.account_number, accounts.name as account_name, SUM(orderlines.total_price) as total')
             ->get()->groupBy('account_number')->sortByDesc('account_number')->map(fn ($account) => $account->groupBy('orderline_date'));
@@ -241,7 +242,7 @@ class MollieController extends Controller
     {
         $total = OrderLine::query()->whereIn('id', $orderlines)->sum('total_price');
 
-        if (config('omnomcom.mollie')['use_fees']) {
+        if (Config::boolean('omnomcom.mollie.use_fees')) {
             $fee = round(
                 $selected_method->pricing[0]->fixed->value +
                 $total * (floatval($selected_method->pricing[0]->variable) / 100),
@@ -249,7 +250,7 @@ class MollieController extends Controller
             );
             if ($fee > 0) {
                 /** @var OrderLine $orderline */
-                $orderline = OrderLine::query()->findOrFail(Product::query()->findOrFail(config('omnomcom.mollie')['fee_id'])->buyForUser(
+                $orderline = OrderLine::query()->findOrFail(Product::query()->findOrFail(Config::integer('omnomcom.mollie.fee_id'))->buyForUser(
                     Auth::user(),
                     1,
                     $fee,
@@ -277,12 +278,12 @@ class MollieController extends Controller
                 'currency' => 'EUR',
                 'value' => $total,
             ],
-            'method' => config('omnomcom.mollie')['use_fees'] ? $selected_method->id : null,
+            'method' => Config::boolean('omnomcom.mollie.use_fees') ? $selected_method->id : null,
             'description' => 'OmNomCom Settlement (€'.$total.')',
             'redirectUrl' => route('omnomcom::mollie::receive', ['id' => $transaction->id]),
         ];
 
-        if (config('omnomcom.mollie')['has_webhook']) {
+        if (Config::boolean('omnomcom.mollie.has_webhook')) {
             $properties['webhookUrl'] = route('webhook::mollie', ['id' => $transaction->id]);
         }
 
@@ -317,7 +318,7 @@ class MollieController extends Controller
         }
 
         return OrderLine::query()->whereHas('molliePayment', static function ($query) use ($start, $end) {
-            $query->whereIn('status', config('omnomcom.mollie.paid_statuses'))
+            $query->whereIn('status', Config::array('omnomcom.mollie.paid_statuses'))
                 ->whereBetween('created_at', [$start, $end]);
         })
             ->sum('total_price');
@@ -348,7 +349,7 @@ class MollieController extends Controller
                 unset($methodsList[$index]);
             }
 
-            if (in_array($method->id, config('omnomcom.mollie')['free_methods'])) {
+            if (in_array($method->id, Config::array('omnomcom.mollie.free_methods'))) {
                 $methodsList[$index]->pricing = null;
                 $methodsList[$index]->pricing[0] = (object) [
                     'description' => $method->description,

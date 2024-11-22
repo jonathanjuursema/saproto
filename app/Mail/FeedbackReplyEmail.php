@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class FeedbackReplyEmail extends Mailable
 {
@@ -26,7 +27,7 @@ class FeedbackReplyEmail extends Mailable
     public function build()
     {
         return $this
-            ->from('board@'.config('proto.emaildomain'), 'Board of S.A. Proto')
+            ->from('board@'.Config::string('proto.emaildomain'), 'Board of S.A. Proto')
             ->subject('Answer on your '.$this->feedback->category->title)
             ->view('emails.feedbackreply');
     }

@@ -19,6 +19,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use stdClass;
 
 class ApiController extends Controller
@@ -42,7 +43,7 @@ class ApiController extends Controller
 
     public function protubePlayed(Request $request): void
     {
-        if ($request->secret != config('protube.protube_to_laravel_secret')) {
+        if ($request->secret != Config::string('protube.protube_to_laravel_secret')) {
             abort(403);
         }
 

@@ -21,7 +21,7 @@
         @else
 
             <p class="card-text text-center mt-2 mb-4">
-                We have no events coming up soon, sorry! 😟
+                We have no events coming up this month, sorry! 😟
             </p>
 
         @endif

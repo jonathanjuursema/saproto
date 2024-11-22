@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -75,7 +76,7 @@ class NewsController extends Controller
 
         return view('emails.newsletter', [
             'user' => Auth::user(),
-            'list' => EmailList::query()->find(config('proto.weeklynewsletter')),
+            'list' => EmailList::query()->find(Config::integer('proto.weeklynewsletter')),
             'events' => $newsitem->events()->get(),
             'text' => $newsitem->content,
             'image_url' => $newsitem->featuredImage?->generateImagePath(600, 300),

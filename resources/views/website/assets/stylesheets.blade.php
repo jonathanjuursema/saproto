@@ -4,7 +4,7 @@
         <div class="snowflake"></div>
     @endfor
 @elseif(Auth::check() && Auth::user()->theme)
-    @vite("resources/assets/sass/".config('proto.themes')[Auth::user()->theme].".scss")
+    @vite("resources/assets/sass/".Config::array('proto.themes')[Auth::user()->theme].".scss")
 @else
     @vite('resources/assets/sass/light.scss')
 @endif

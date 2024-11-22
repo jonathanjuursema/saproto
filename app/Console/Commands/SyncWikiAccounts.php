@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Committee;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 
 class SyncWikiAccounts extends Command
 {
@@ -80,7 +81,7 @@ class SyncWikiAccounts extends Command
     private function constructWikiGroups($user): string
     {
         $rootCommittee = $this->convertCommitteeNameToGroup(
-            Committee::whereSlug(config('proto.rootcommittee'))->firstOrFail()->name
+            Committee::whereSlug(Config::string('proto.rootcommittee'))->firstOrFail()->name
         );
         $groups = ['user'];
         $groups = array_merge($groups, $this->convertCommitteesToGroups($user->committees));

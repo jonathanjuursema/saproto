@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
@@ -264,7 +265,7 @@ class WithdrawalController extends Controller
         }
 
         /** @var Product $product */
-        $product = Product::query()->findOrFail(config('omnomcom.failed-withdrawal'));
+        $product = Product::query()->findOrFail(Config::integer('omnomcom.failed-withdrawal'));
         $total = $withdrawal->totalForUser($user);
 
         /** @var OrderLine $failedOrderline */
@@ -351,9 +352,9 @@ class WithdrawalController extends Controller
             'lclInstrm' => SepaUtilities::LOCAL_INSTRUMENT_CORE_DIRECT_DEBIT,
             'seqTp' => SepaUtilities::SEQUENCE_TYPE_FIRST,
             'cdtr' => 'Study Association Proto',
-            'iban' => config('proto.sepa_info')->iban,
-            'bic' => config('proto.sepa_info')->bic,
-            'ci' => config('proto.sepa_info')->creditor_id,
+            'iban' => Config::string('proto.sepa_info.iban'),
+            'bic' => Config::string('proto.sepa_info.bic'),
+            'ci' => Config::string('proto.sepa_info.creditor_id'),
             'ccy' => 'EUR',
             'ultmtCdtr' => 'S.A. Proto',
             'reqdColltnDt' => $withdrawal->date,

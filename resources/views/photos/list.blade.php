@@ -44,8 +44,8 @@
         <div class="card-footer text-center">
             <i class="fas fa-shield-alt fa-fw me-3"></i>
             If there is a photo that you would like removed, please contact
-            <a href="mailto:photos&#64;{{ config('proto.emaildomain') }}">
-                photos&#64;{{ config('proto.emaildomain') }}.
+            <a href="mailto:photos&#64;{{ Config::string('proto.emaildomain') }}">
+                photos&#64;{{ Config::string('proto.emaildomain') }}.
             </a>
         </div>
 

@@ -18,6 +18,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductCategoryEntry;
 use App\Models\Ticket;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 use Permission;
 use Role;
 
@@ -59,7 +60,7 @@ class ExportController extends Controller
                 } else {
                     $data = Committee::query()
                         ->where('public', 1)
-                        ->orWhereIn('id', array_values(config('proto.committee')))
+                        ->orWhereIn('id', array_values(Config::array('proto.committee')))
                         ->get();
                 }
 

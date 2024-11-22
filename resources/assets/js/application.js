@@ -6,9 +6,10 @@ global.SignaturePad = SignaturePad;
 import moment from 'moment/moment.js';
 
 global.moment = moment;
-import quagga from 'quagga';
 
-global.Quagga = quagga;
+//Temporarily disabled due to an import error: Uncaught ReferenceError: glMatrixArrayType is not defined
+// import quagga from 'quagga';
+// global.Quagga = quagga;
 
 import './countdown-timer';
 import './utilities';

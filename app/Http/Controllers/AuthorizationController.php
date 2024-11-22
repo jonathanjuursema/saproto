@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\ProTubeApiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -29,7 +30,7 @@ class AuthorizationController extends Controller
      */
     public function grant(Request $request, $id)
     {
-        if ($id == config('proto.rootrole')) {
+        if ($id == Config::integer('proto.rootrole')) {
             Session::flash('flash_message', 'This role can only be manually added in the database.');
 
             return Redirect::back();
@@ -60,7 +61,7 @@ class AuthorizationController extends Controller
      */
     public function revoke(Request $request, $id, $userId)
     {
-        if ($id == config('proto.rootrole')) {
+        if ($id == Config::integer('proto.rootrole')) {
             Session::flash('flash_message', 'This role can only be manually removed in the database.');
 
             return Redirect::back();

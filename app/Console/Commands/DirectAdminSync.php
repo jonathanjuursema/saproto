@@ -7,6 +7,7 @@ use App\Models\Committee;
 use App\Models\CommitteeMembership;
 use App\Models\Member;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Solitweb\DirectAdmin\DirectAdmin;
 
@@ -42,12 +43,12 @@ class DirectAdminSync extends Command
     public function handle(): void
     {
         $da = new DirectAdmin;
-        $da->connect(config('directadmin.da-hostname'), config('directadmin.da-port'));
-        $da->set_login(config('directadmin.da-username'), config('directadmin.da-password'));
+        $da->connect(Config::string('directadmin.da-hostname'), Config::string('directadmin.da-port'));
+        $da->set_login(Config::string('directadmin.da-username'), Config::string('directadmin.da-password'));
 
         // Mail forwarders
         $da->query('/CMD_API_EMAIL_FORWARDERS', [
-            'domain' => config('directadmin.da-domain'),
+            'domain' => Config::string('directadmin.da-domain'),
         ]);
         $current = $da->fetch_parsed_body();
         $target = $this->constructForwarderList();
@@ -56,7 +57,7 @@ class DirectAdminSync extends Command
 
         // E-mail accounts
         $da->query('/CMD_API_POP', [
-            'domain' => config('directadmin.da-domain'),
+            'domain' => Config::string('directadmin.da-domain'),
             'action' => 'list',
         ]);
         $current = $da->fetch_parsed_body();
@@ -103,7 +104,7 @@ class DirectAdminSync extends Command
 
             if ($destinations !== []) {
                 $data[strtolower($committee->slug)] = $destinations;
-                $data['committees'][] = strtolower($committee->slug.'@'.config('proto.emaildomain'));
+                $data['committees'][] = strtolower($committee->slug.'@'.Config::string('proto.emaildomain'));
             }
         }
 
@@ -130,7 +131,7 @@ class DirectAdminSync extends Command
             }
         }
 
-        foreach (config('proto.additional_mailboxes') as $additional) {
+        foreach (Config::array('proto.additional_mailboxes') as $additional) {
             $data[] = $additional;
         }
 
@@ -144,7 +145,7 @@ class DirectAdminSync extends Command
      * @param  array  $target  The target list of forwarders
      * @return array A forwarders patch list containing an 'add', 'mod' and 'del' array
      */
-    private function constructForwarderPatchList($current, array $target): array
+    private function constructForwarderPatchList(array $current, array $target): array
     {
         $data = [
             'add' => [],
@@ -209,7 +210,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => config('directadmin.da-domain'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'create',
                     'user' => $alias,
                     'email' => implode(',', $destination),
@@ -221,7 +222,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => config('directadmin.da-domain'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'modify',
                     'user' => $alias,
                     'email' => implode(',', $destination),
@@ -233,7 +234,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => config('directadmin.da-domain'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'delete',
                     'select0' => $del,
                 ],
@@ -293,7 +294,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_POP',
                 'options' => [
-                    'domain' => config('directadmin.da-domain'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'create',
                     'user' => $account,
                     'passwd' => $password,
@@ -308,7 +309,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_POP',
                 'options' => [
-                    'domain' => config('directadmin.da-domain'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'delete',
                     'user' => $account,
                 ],

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Config;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Payment;
@@ -115,7 +116,7 @@ class MollieTransaction extends Model
 
         if ($new_status === 'failed') {
             foreach ($this->orderlines as $orderline) {
-                if ($orderline->product_id == config('omnomcom.mollie')['fee_id']) {
+                if ($orderline->product_id == Config::integer('omnomcom.mollie.fee_id')) {
                     $orderline->delete();
 
                     continue;

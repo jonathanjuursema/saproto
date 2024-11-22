@@ -40,7 +40,7 @@
                             <th>Member e-mail</th>
                             <td>
                                 {{ $user->member->proto_username }}<span class="text-muted">@</span><span
-                                    class="text-muted">{{ config('proto.emaildomain') }}</span><br>
+                                    class="text-muted">{{ Config::string('proto.emaildomain') }}</span><br>
                                 <sup class="text-muted">Forwards to {{ $user->email }}</sup>
                             </td>
                         </tr>

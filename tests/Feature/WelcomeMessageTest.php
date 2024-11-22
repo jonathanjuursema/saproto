@@ -18,7 +18,7 @@ it('does not lists the welcomeMessages for non board', function () {
     $member = Member::factory()->create();
     $response = $this->actingAs($member->user)
         ->get('/welcomeMessages');
-    $response->assertSee('You are not allowed to access this page');
+    $response->assertSee('You are not allowed to access this page.');
 });
 
 it('lets the senate create a new welcomeMessage', function () {
@@ -47,6 +47,7 @@ it('lets the senate update a welcomeMessage', function () {
 
     $response = $this->actingAs($member->user)
         ->get('/welcomeMessages/');
+
     $response->assertSee($oldWelcomeMessage->message);
     $response->assertStatus(200);
 

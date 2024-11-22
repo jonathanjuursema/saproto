@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -82,7 +83,7 @@ class EmailListController extends Controller
      */
     public static function autoSubscribeToLists(string $type, $user): void
     {
-        $lists = config('proto.'.$type);
+        $lists = Config::array('proto.'.$type);
         foreach ($lists as $list) {
             $list = EmailList::query()->find($list);
             if ($list) {

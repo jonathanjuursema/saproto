@@ -7,6 +7,7 @@ use App\Models\DmxFixture;
 use App\Models\DmxOverride;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -92,7 +93,7 @@ class DmxFixtureController extends Controller
     public function valueApi(): array
     {
         // Get the events.
-        $events = CalendarController::returnGoogleCalendarEvents(config('proto.google-calendar.smartxp-id'), date('c', strtotime('last week')), date('c', strtotime('next week')));
+        $events = CalendarController::returnGoogleCalendarEvents(Config::string('proto.google-calendar.smartxp-id'), date('c', strtotime('last week')), date('c', strtotime('next week')));
 
         // Determine if any event is currently going on.
         $current_event = null;
@@ -105,13 +106,13 @@ class DmxFixtureController extends Controller
         // Determine what preset to use.
         $preset = 'free';
         if ($current_event !== null) {
-            $preset = in_array($current_event['type'], config('dmx.lecture_types')) ? 'lecture' : 'tutorial';
+            $preset = in_array($current_event['type'], Config::array('dmx.lecture_types')) ? 'lecture' : 'tutorial';
         }
 
         $channel_values = [];
 
         // Now we fill the preset channels.
-        $preset_colors = (date('G') > 6 && date('G') < 20 ? array_merge(config('dmx.colors')[$preset], [50]) : [0, 0, 0, 0]);
+        $preset_colors = (date('G') > 6 && date('G') < 20 ? Config::array(Config::array('dmx.colors')[$preset], [50]) : [0, 0, 0, 0]);
         foreach (DmxFixture::query()->where('follow_timetable', true)->get() as $fixture) {
             $channel_values = self::setFixtureChannels($fixture, $channel_values, $preset_colors);
         }

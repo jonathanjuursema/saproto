@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\SpotifyController;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use SpotifyWebAPI\SpotifyWebAPIException;
 
@@ -46,7 +47,7 @@ class SpotifySync extends Command
         $this->info('Testing if API key still works.');
 
         try {
-            if ($spotify->me()->id != config('app-proto.spotify-user')) {
+            if ($spotify->me()->id != Config::string('app-proto.spotify-user')) {
                 $this->error('API key is for the wrong user!');
 
                 return;
@@ -82,7 +83,7 @@ class SpotifySync extends Command
             ->pluck('spotify_id')
             ->toArray();
 
-        $this->updatePlaylist($spotify, config('app-proto.spotify-alltime-playlist'), $alltime);
+        $this->updatePlaylist($spotify, Config::string('app-proto.spotify-alltime-playlist'), $alltime);
 
         // Last year
         $pastYear = DB::table('playedvideos')
@@ -96,7 +97,7 @@ class SpotifySync extends Command
             ->pluck('spotify_id')
             ->toArray();
 
-        $this->updatePlaylist($spotify, config('app-proto.spotify-pastyears-playlist'), $pastYear);
+        $this->updatePlaylist($spotify, Config::string('app-proto.spotify-pastyears-playlist'), $pastYear);
 
         // Last month
         $recent = DB::table('playedvideos')
@@ -110,7 +111,7 @@ class SpotifySync extends Command
             ->pluck('spotify_id')
             ->toArray();
 
-        $this->updatePlaylist($spotify, config('app-proto.spotify-recent-playlist'), $recent);
+        $this->updatePlaylist($spotify, Config::string('app-proto.spotify-recent-playlist'), $recent);
 
         $this->info('Done!');
     }

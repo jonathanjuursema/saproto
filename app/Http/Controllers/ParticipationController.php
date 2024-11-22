@@ -22,10 +22,9 @@ use Illuminate\Support\Facades\Session;
 class ParticipationController extends Controller
 {
     /**
-     * @param  int  $id
      * @return RedirectResponse|JsonResponse
      */
-    public function create($id, Request $request)
+    public function create(int $id, Request $request)
     {
         /** @var Event $event */
         $event = Event::query()->findOrFail($id);
@@ -188,7 +187,7 @@ class ParticipationController extends Controller
 
             $participation->activity->event->updateUniqueUsersCount();
 
-            if ($participation->backup == false && $participation->activity->users()->count() < $participation->activity->participants) {
+            if (! $participation->backup && $participation->activity->users()->count() < $participation->activity->participants) {
                 self::transferOneBackupUser($participation->activity);
             }
         } else {
@@ -210,14 +209,14 @@ class ParticipationController extends Controller
             'message' => $message,
         ]));
 
+        /**@phpstan-ignore-next-line */
         return null;
     }
 
     /**
-     * @param  int  $participation_id
      * @return JsonResponse
      */
-    public function togglePresence($participation_id, Request $request)
+    public function togglePresence(int $participation_id)
     {
         /** @var ActivityParticipation $participation */
         $participation = ActivityParticipation::query()->findOrFail($participation_id);

@@ -6,6 +6,7 @@ use App\Mail\Newsletter as NewsletterMail;
 use App\Models\EmailList;
 use App\Models\Newsitem;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class NewsletterCron extends Command
@@ -39,7 +40,7 @@ class NewsletterCron extends Command
      */
     public function handle(): void
     {
-        $newsletterlist = EmailList::query()->findOrFail(config('proto.weeklynewsletter'));
+        $newsletterlist = EmailList::query()->findOrFail(Config::integer('proto.weeklynewsletter'));
 
         $newsitem = Newsitem::query()->findOrFail($this->argument('id'));
 

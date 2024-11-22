@@ -273,7 +273,7 @@
                             Choose a theme
                         </label>
                         <select class="form-control" id="theme" name="theme">
-                            @foreach(config('proto.themes') as $i => $name)
+                            @foreach(Config::array('proto.themes') as $i => $name)
                                 <option value="{{ $i }}" @selected($user->theme == $i)>{{ ucwords($name) }}</option>
                             @endforeach
                         </select>

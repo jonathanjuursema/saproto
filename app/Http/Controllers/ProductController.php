@@ -13,6 +13,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -245,14 +246,13 @@ class ProductController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, int $id)
     {
-        if ($id == config('omnomcom.dinnerform-product') || $id == config('omnomcom.failed-withdrawal')) {
+        if ($id == Config::integer('omnomcom.dinnerform-product') || $id == Config::integer('omnomcom.failed-withdrawal')) {
             Session::flash('flash_message', 'You cannot delete this product because it is used in the source code of the website');
 
             return Redirect::back();
