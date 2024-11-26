@@ -1,4 +1,4 @@
-name: 🚀 Deploy
+name: 🚅 Deploy
 
 on:
   push:
@@ -16,8 +16,6 @@ jobs:
     env:
       BUILD_SOURCE_DIR: .
       BUILD_ARTIFACT_STAGING_DIR: build/
-      BUILD_ARTIFACT_DESTINATION_DIR: /domains/proto.utwente.nl/deployment/uploads/
-      HOST_SERVER: s176.webhostingserver.nl
       SENTRY_ORG: sa-proto
       SENTRY_PROJECT: sa-proto-website
     steps:
@@ -54,7 +52,7 @@ jobs:
       - name: 📝 Create Sentry release
         uses: getsentry/action-release@v1
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.VIMEXX_SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ env.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
         with:
@@ -77,8 +75,8 @@ jobs:
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ env.HOST_SERVER }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.VIMEXX_DOMAIN }}
+          username: ${{ secrets.VIMEXX_FTP_USER }}
+          password: ${{ secrets.VIMEXX_FTP_PASSWORD }}
           local-dir: ${{ env.BUILD_ARTIFACT_STAGING_DIR }}
-          server-dir: ${{ env.BUILD_ARTIFACT_DESTINATION_DIR }}
+          server-dir: "/"
