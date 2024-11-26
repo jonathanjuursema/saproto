@@ -316,7 +316,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         $this->save();
 
         // Update DirectAdmin Password
-        if ($this->is_member && !App::environment('local')) {
+        if ($this->is_member && ! App::environment('local')) {
             $da = new DirectAdmin;
             $da->connect(Config::string('directadmin.da-hostname'), Config::string('directadmin.da-port'));
             $da->set_login(Config::string('directadmin.da-username'), Config::string('directadmin.da-password'));
