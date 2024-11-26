@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -315,7 +316,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         $this->save();
 
         // Update DirectAdmin Password
-        if ($this->is_member) {
+        if ($this->is_member && ! App::environment('local')) {
             $da = new DirectAdmin;
             $da->connect(Config::string('directadmin.da-hostname'), Config::string('directadmin.da-port'));
             $da->set_login(Config::string('directadmin.da-username'), Config::string('directadmin.da-password'));
