@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class PhotoAdminController extends Controller
 {
@@ -76,7 +78,7 @@ class PhotoAdminController extends Controller
         $album = PhotoAlbum::query()->findOrFail($id);
         $album->name = $request->input('album');
         $album->date_taken = strtotime($request->input('date'));
-        $album->private = (bool) $request->input('private');
+        $album->private = (bool)$request->input('private');
         $album->save();
 
         return Redirect::route('photo::admin::edit', ['id' => $id]);
@@ -101,8 +103,6 @@ class PhotoAdminController extends Controller
         }
 
         try {
-            $album->addMedia($request->file('file'))->toMediaCollection();
-
             $uploadFile = $request->file('file');
 
             $photo = $this->createPhotoFromUpload($uploadFile, $id);
@@ -184,7 +184,7 @@ class PhotoAdminController extends Controller
     {
         $album = PhotoAlbum::query()->where('id', $id)->first();
 
-        if (! $album->items()->exists() || $album->thumb_id === null) {
+        if (!$album->items()->exists() || $album->thumb_id === null) {
             Session::flash('flash_message', 'Albums need at least one photo and a thumbnail to be published.');
 
             return Redirect::back();
@@ -211,20 +211,28 @@ class PhotoAdminController extends Controller
     /**
      * @throws FileNotFoundException
      */
-    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id): Photo
+    private function createPhotoFromUpload(UploadedFile $uploaded_photo, int $album_id)
     {
-        $path = 'photos/' . $album_id . '/';
+        $album = PhotoAlbum::query()->findOrFail($album_id);
+        try {
+            $photo = Photo::create([
+                'date_taken' => $uploaded_photo->getCTime(),
+                'album_id' => $album_id,
+            ]);
+            $photo->addMedia($uploaded_photo)
+                ->withResponsiveImages()
+                ->toMediaCollection();
+        } catch (FileDoesNotExist|FileIsTooBig $e) {
+            abort(500, 'Failed to upload photo.' . $e->getMessage());
+        }
+//        $path = 'photos/' . $album_id . '/';
+//
+//        $file = new StorageEntry;
+//        $file->createFromFile($uploaded_photo, $path);
+//        $file->save();
+//
 
-        $file = new StorageEntry;
-        $file->createFromFile($uploaded_photo, $path);
-        $file->save();
-
-        $photo = new Photo;
-        $photo->date_taken = $uploaded_photo->getCTime();
-        $photo->album_id = $album_id;
-        $photo->file_id = $file->id;
-        $photo->save();
-
-        return $photo;
+//
+//        return $photo;
     }
 }

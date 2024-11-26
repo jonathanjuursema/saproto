@@ -50,10 +50,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  *
  * @mixin Eloquent
  */
-class PhotoAlbum extends Model implements HasMedia
+class PhotoAlbum extends Model
 {
     use HasFactory;
-    use InteractsWithMedia;
+
 
     protected $table = 'photo_albums';
 
@@ -61,19 +61,11 @@ class PhotoAlbum extends Model implements HasMedia
 
     protected $with = ['thumbPhoto'];
 
-    public function registerMediaConversions(Media|null $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
-    }
-
     protected static function booted(): void
     {
-        static::addGlobalScope('published', fn (Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->where('published', true)));
+        static::addGlobalScope('published', fn(Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn($builder) => $builder->where('published', true)));
 
-        static::addGlobalScope('private', fn (Builder $builder) => $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)));
+        static::addGlobalScope('private', fn(Builder $builder) => $builder->unless(Auth::user()?->is_member, fn($builder) => $builder->where('private', false)));
     }
 
     public function event(): BelongsTo
@@ -93,7 +85,7 @@ class PhotoAlbum extends Model implements HasMedia
 
     public function scopeName($query, string $name): Builder
     {
-        return $query->where('name', 'LIKE', '%'.$name.'%');
+        return $query->where('name', 'LIKE', '%' . $name . '%');
     }
 
     public function thumb(): ?string

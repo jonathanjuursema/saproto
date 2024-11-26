@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -181,7 +182,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
      */
     public function isStale(): bool
     {
-        return ! (
+        return !(
             $this->password ||
             $this->edu_username ||
             strtotime($this->created_at) > strtotime('-1 hour') ||
@@ -315,7 +316,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         $this->save();
 
         // Update DirectAdmin Password
-        if ($this->is_member) {
+        if ($this->is_member && !App::environment('local')) {
             $da = new DirectAdmin;
             $da->connect(Config::string('directadmin.da-hostname'), Config::string('directadmin.da-port'));
             $da->set_login(Config::string('directadmin.da-username'), Config::string('directadmin.da-password'));
@@ -395,7 +396,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
             return $this->website;
         }
 
-        return 'https://'.$this->website;
+        return 'https://' . $this->website;
     }
 
     public function websiteDisplay(): ?string
@@ -503,7 +504,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
 
     public function toggleCalendarRelevantSetting(): void
     {
-        $this->pref_calendar_relevant_only = ! $this->pref_calendar_relevant_only;
+        $this->pref_calendar_relevant_only = !$this->pref_calendar_relevant_only;
         $this->save();
     }
 
