@@ -4,10 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-//migration taken from https://gist.github.com/hrsa/7a45420329e745315ee02a08ddbf3d41 which itself is forked from https://gist.github.com/NBZ4live/04d5981eaf0244b57d0296b381e04195
-//this migration is used to change the charset of the database from utf8 to utf8mb4 which allows for emojis and other special characters to be stored in the database
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::table('dmx_channels', function ($table) {
