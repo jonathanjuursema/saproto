@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enums;
+
 enum EmailDestination: int
 {
     case NO_DESTINATION = 0;

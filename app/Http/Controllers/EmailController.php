@@ -77,8 +77,10 @@ class EmailController extends Controller
 
         if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
             Session::flash('flash_message', 'Please select a destination for the email.');
+
             return Redirect::back();
         }
+
         $email = Email::query()->create([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
@@ -94,8 +96,8 @@ class EmailController extends Controller
     }
 
     /**
-     * @param int $id
      * @return View
+     *
      * @throws Exception
      */
     public function show(Request $request, int $id)
@@ -114,7 +116,6 @@ class EmailController extends Controller
     }
 
     /**
-     * @param int $id
      * @return View|RedirectResponse
      */
     public function edit(int $id)
@@ -131,8 +132,6 @@ class EmailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param int $id
      * @return RedirectResponse
      */
     public function update(Request $request, int $id)
@@ -154,6 +153,7 @@ class EmailController extends Controller
 
         if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
             Session::flash('flash_message', 'Please select a destination for the email.');
+
             return Redirect::back();
         }
 
@@ -174,7 +174,6 @@ class EmailController extends Controller
     }
 
     /**
-     * @param int $id
      * @return RedirectResponse
      */
     public function toggleReady(Request $request, int $id)
@@ -208,8 +207,6 @@ class EmailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param int $id
      * @return RedirectResponse
      *
      * @throws FileNotFoundException
@@ -242,8 +239,6 @@ class EmailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param int $file_id
      * @return RedirectResponse
      */
     public function deleteAttachment(int $id, int $file_id)
@@ -267,9 +262,7 @@ class EmailController extends Controller
     }
 
     /**
-     * @param string $hash
      * @return RedirectResponse
-     *
      */
     public function unsubscribeLink(Request $request, string $hash)
     {
@@ -291,9 +284,7 @@ class EmailController extends Controller
     }
 
     /**
-     * @param int $id
      * @return RedirectResponse
-     *
      */
     public function destroy(Request $request, int $id)
     {
@@ -311,24 +302,15 @@ class EmailController extends Controller
         return Redirect::route('email::index');
     }
 
-    /**
-     * @param Email $email
-     * @param EmailDestination $type
-     * @param array $lists
-     * @param array $events
-     * @param array $users
-     */
-    private function updateEmailDestination(Email $email, EmailDestination $type, array $lists = [], array $events = [], array $users = [])
+    private function updateEmailDestination(Email $email, EmailDestination $type, array $lists = [], array $events = [], array $users = []): void
     {
-
-        $email->to_user = false;
         switch ($type) {
             case EmailDestination::EVENT_WITH_BACKUP:
             case EmailDestination::EVENT:
                 $email->destination = $type;
                 $email->specificUsers()->sync([]);
                 $email->lists()->sync([]);
-                if (!empty($events)) {
+                if ($events !== []) {
                     $email->events()->sync($events);
                 }
 
@@ -337,25 +319,26 @@ class EmailController extends Controller
                 $email->destination = $type;
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
-                if (!empty($users)) {
+                if ($users !== []) {
                     $email->specificUsers()->sync($users);
                 }
+
                 break;
             case EmailDestination::EMAIL_LISTS:
                 $email->destination = $type;
                 $email->events()->sync([]);
                 $email->specificUsers()->sync([]);
-                if (!empty($lists)) {
+                if ($lists !== []) {
                     $email->lists()->sync($lists);
                 }
+
                 break;
             default:
-            {
                 $email->destination = $type;
                 $email->specificUsers()->sync([]);
                 $email->lists()->sync([]);
                 $email->events()->sync([]);
-            }
+
         }
 
         $email->save();

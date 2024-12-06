@@ -15,7 +15,6 @@ use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 /**
- *
  * @property int $id
  * @property string $description
  * @property string $subject
@@ -67,20 +66,20 @@ class Email extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'ready' => 'boolean',
-        'sent' => 'boolean',
-        'destination' => EmailDestination::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'ready' => 'boolean',
+            'sent' => 'boolean',
+            'destination' => EmailDestination::class,
+        ];
+    }
 
-
-    /** @return BelongsToMany */
     public function lists(): BelongsToMany
     {
         return $this->belongsToMany(EmailList::class, 'emails_lists', 'email_id', 'list_id');
     }
 
-    /** @return BelongsToMany */
     public function events(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'emails_events', 'email_id', 'event_id');
@@ -91,7 +90,6 @@ class Email extends Model
         return $this->belongsToMany(User::class, 'emails_users', 'email_id', 'user_id');
     }
 
-    /** @return BelongsToMany */
     public function attachments(): BelongsToMany
     {
         return $this->belongsToMany(StorageEntry::class, 'emails_files', 'email_id', 'file_id');
@@ -101,29 +99,24 @@ class Email extends Model
     public function recipients(): array|SupportCollection
     {
         return match ($this->destination) {
-            EmailDestination::ALL_USERS => User::orderBy('name')->get(),
-            EmailDestination::ALL_MEMBERS => User::whereHas('member', fn($q) => $q->whereNot('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
-            EmailDestination::PENDING_MEMBERS => User::whereHas('member', fn($q) => $q->where('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
-            EmailDestination::ACTIVE_MEMBERS => User::whereHas('committees')->orderBy('name')->get(),
-            EmailDestination::EMAIL_LISTS => User::whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
-            EmailDestination::EVENT => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),
-            EmailDestination::EVENT_WITH_BACKUP => User::whereIn('id', array_merge($this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray(), $this->events->map(fn($event) => $event->backupUsers()->pluck('id'))))->orderBy('name')->get(),
+            EmailDestination::ALL_USERS => User::query()->orderBy('name')->get(),
+            EmailDestination::ALL_MEMBERS => User::query()->whereHas('member', fn($q) => $q->whereNot('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
+            EmailDestination::PENDING_MEMBERS => User::query()->whereHas('member', fn($q) => $q->where('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
+            EmailDestination::ACTIVE_MEMBERS => User::query()->whereHas('committees')->orderBy('name')->get(),
+            EmailDestination::EMAIL_LISTS => User::query()->whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
+            EmailDestination::EVENT => User::query()->whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),
+            EmailDestination::EVENT_WITH_BACKUP => User::query()->whereIn('id', array_merge($this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray(), $this->events->map(fn($event) => $event->backupUsers()->pluck('id'))))->orderBy('name')->get(),
             EmailDestination::NO_DESTINATION => collect(),
             EmailDestination::SPECIFIC_USERS => $this->specificUsers()->get(),
         };
     }
 
-    /**
-     * @param EmailList $list
-     * @return bool
-     */
     public function hasRecipientList(EmailList $list): bool
     {
         return DB::table('emails_lists')->where('email_id', $this->id)->where('list_id', $list->id)->exists();
     }
 
     /**
-     * @param User $user
      * @return string Email body with variables parsed.
      */
     public function parseBodyFor(User $user): string
@@ -134,7 +127,6 @@ class Email extends Model
         return str_replace($variable_from, $variable_to, $this->body);
     }
 
-    /** @return string */
     public function getConcatLists(): string
     {
         return match ($this->destination) {
@@ -145,12 +137,9 @@ class Email extends Model
         };
     }
 
-    /** @return string */
-    public static function getListUnsubscribeFooter(int $user_id, int $email_id): string
+    public function getListUnsubscribeFooter(int $user_id): string
     {
-        $footer = [];
-        $lists = self::whereId($email_id)->firstOrFail()->lists;
-        foreach ($lists as $list) {
+        foreach ($this->lists as $list) {
             $footer[] = sprintf('%s (<a href="%s" style="color: #00aac0;">unsubscribe</a>)', $list->name, route('unsubscribefromlist', ['hash' => EmailList::generateUnsubscribeHash($user_id, $list->id)]));
         }
 

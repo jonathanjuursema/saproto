@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -22,21 +23,22 @@ return new class extends Migration {
             foreach ($mails as $mail) {
                 if ($mail->to_user) {
                     $mail->destination = EmailDestination::ALL_USERS;
-                } else if ($mail->to_member) {
+                } elseif ($mail->to_member) {
                     $mail->destination = EmailDestination::ALL_MEMBERS;
-                } else if ($mail->to_pending) {
+                } elseif ($mail->to_pending) {
                     $mail->destination = EmailDestination::PENDING_MEMBERS;
-                } else if ($mail->to_active) {
+                } elseif ($mail->to_active) {
                     $mail->destination = EmailDestination::ACTIVE_MEMBERS;
-                } else if ($mail->to_list) {
+                } elseif ($mail->to_list) {
                     $mail->destination = EmailDestination::EMAIL_LISTS;
-                } else if ($mail->to_event) {
+                } elseif ($mail->to_event) {
                     $mail->destination = EmailDestination::EVENT;
-                } else if ($mail->to_backup) {
+                } elseif ($mail->to_backup) {
                     $mail->destination = EmailDestination::EVENT_WITH_BACKUP;
                 } else {
                     $mail->destination = EmailDestination::NO_DESTINATION;
                 }
+
                 $mail->save();
             }
         });
@@ -73,23 +75,24 @@ return new class extends Migration {
             foreach ($mails as $mail) {
                 if ($mail->destination === EmailDestination::ALL_USERS) {
                     $mail->to_user = true;
-                } else if ($mail->destination === EmailDestination::ALL_MEMBERS) {
+                } elseif ($mail->destination === EmailDestination::ALL_MEMBERS) {
                     $mail->to_member = true;
-                } else if ($mail->destination === EmailDestination::PENDING_MEMBERS) {
+                } elseif ($mail->destination === EmailDestination::PENDING_MEMBERS) {
                     $mail->to_pending = true;
-                } else if ($mail->destination === EmailDestination::ACTIVE_MEMBERS) {
+                } elseif ($mail->destination === EmailDestination::ACTIVE_MEMBERS) {
                     $mail->to_active = true;
-                } else if ($mail->destination === EmailDestination::EMAIL_LISTS) {
+                } elseif ($mail->destination === EmailDestination::EMAIL_LISTS) {
                     $mail->to_list = true;
-                } else if ($mail->destination === EmailDestination::EVENT) {
+                } elseif ($mail->destination === EmailDestination::EVENT) {
                     $mail->to_event = true;
-                } else if ($mail->destination === EmailDestination::EVENT_WITH_BACKUP) {
+                } elseif ($mail->destination === EmailDestination::EVENT_WITH_BACKUP) {
                     $mail->to_backup = true;
                 }
+
                 $mail->save();
             }
         });
-        
+
         Schema::table('emails', function (Blueprint $table) {
             $table->dropColumn('destination');
             $table->dropColumn('job_batch_id');

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MembershipTypeEnum;
+use App\Mail\NewManualEmail;
 use App\Models\Committee;
 use App\Models\CommitteeMembership;
 use App\Models\Company;
 use App\Models\Dinnerform;
+use App\Models\Email;
 use App\Models\Event;
 use App\Models\HeaderImage;
 use App\Models\Newsitem;
@@ -24,7 +26,7 @@ class HomeController extends Controller
     /** Display the homepage. */
     public function show()
     {
-
+        return new NewManualEmail(Email::firstOrFail(), Auth::user());
         $companies = Company::query()
             ->where('in_logo_bar', true)
             ->with('image')
@@ -39,7 +41,7 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        if (! Auth::user()?->is_member) {
+        if (!Auth::user()?->is_member) {
             return view('website.home.external', ['companies' => $companies, 'header' => $header, 'albums' => $albums]);
         }
 

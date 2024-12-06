@@ -37,14 +37,12 @@ class EmailList extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsToMany */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'users_mailinglists', 'list_id', 'user_id');
     }
 
     /**
-     * @param User $user
      * @return bool Whether user is subscribed to mailing list.
      */
     public function isSubscribed(User $user): bool
@@ -53,13 +51,12 @@ class EmailList extends Model
     }
 
     /**
-     * @param User $user
      * @return bool Whether user is successfully subscribed to mailing list.
      */
     public function subscribe(User $user): bool
     {
-        if (!$this->isSubscribed($user)) {
-            EmailListSubscription::create([
+        if (! $this->isSubscribed($user)) {
+            EmailListSubscription::query()->create([
                 'user_id' => $user->id,
                 'list_id' => $this->id,
             ]);
@@ -71,7 +68,6 @@ class EmailList extends Model
     }
 
     /**
-     * @param User $user
      * @return bool Whether user is successfully unsubscribed from mailing list.
      *
      * @throws Exception
@@ -88,11 +84,6 @@ class EmailList extends Model
         return true;
     }
 
-    /**
-     * @param int $user_id
-     * @param int $list_id
-     * @return string
-     */
     public static function generateUnsubscribeHash(int $user_id, int $list_id): string
     {
         return base64_encode(Crypt::encrypt(json_encode(['user' => $user_id, 'list' => $list_id])));

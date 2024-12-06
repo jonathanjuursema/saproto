@@ -86,28 +86,36 @@
                         <div class="form-group">
                             <label for="destination">Recipients:</label>
                             <select name="destination" id="destination" class="form-select">
-                                <option value="{{\App\Enums\EmailDestination::NO_DESTINATION}}" @selected(empty($email->destination))>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::NO_DESTINATION}}" @selected(empty($email->destination))>
                                     Choose a destination
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::ALL_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ALL_MEMBERS)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::ALL_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ALL_MEMBERS)>
                                     All Members
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::PENDING_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::PENDING_MEMBERS)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::PENDING_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::PENDING_MEMBERS)>
                                     Pending members
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::ACTIVE_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ACTIVE_MEMBERS)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::ACTIVE_MEMBERS}}" @selected($email?->destination == \App\Enums\EmailDestination::ACTIVE_MEMBERS)>
                                     Active members
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::EVENT}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::EVENT}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT)>
                                     Event participants
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::EVENT_WITH_BACKUP}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::EVENT_WITH_BACKUP}}" @selected($email?->destination == \App\Enums\EmailDestination::EVENT_WITH_BACKUP)>
                                     Events participants with backup users
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::EMAIL_LISTS}}" @selected($email?->destination == \App\Enums\EmailDestination::EMAIL_LISTS)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::EMAIL_LISTS}}" @selected($email?->destination == \App\Enums\EmailDestination::EMAIL_LISTS)>
                                     Email lists
                                 </option>
-                                <option value="{{\App\Enums\EmailDestination::SPECIFIC_USERS}}" @selected($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)>
+                                <option
+                                    value="{{\App\Enums\EmailDestination::SPECIFIC_USERS}}" @selected($email?->destination == \App\Enums\EmailDestination::SPECIFIC_USERS)>
                                     Specific users
                                 </option>
                             </select>
@@ -196,7 +204,7 @@
 
                 <button type="submit" class="btn btn-success float-end">Save</button>
 
-                <a href="{{ route("email::admin") }}" class="btn btn-default">Cancel</a>
+                <a href="{{ route("email::index") }}" class="btn btn-default">Cancel</a>
 
             </div>
 
@@ -206,30 +214,30 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-      const selectList = document.getElementById('destination');
-      const eventGroup = document.getElementById('eventGroup');
-      const userGroup = document.getElementById('userGroup');
-      const emailListSelect = document.getElementById('emailListGroup');
+        const selectList = document.getElementById('destination');
+        const eventGroup = document.getElementById('eventGroup');
+        const userGroup = document.getElementById('userGroup');
+        const emailListSelect = document.getElementById('emailListGroup');
 
-      selectList.addEventListener('change', function() {
-        if (selectList.value === '{{ \App\Enums\EmailDestination::EVENT }}' || selectList.value === '{{ \App\Enums\EmailDestination::EVENT_WITH_BACKUP }}') {
-          eventGroup.classList.remove('d-none');
-        } else {
-          eventGroup.classList.add('d-none');
-        }
+        selectList.addEventListener('change', function () {
+            if (selectList.value === '{{ \App\Enums\EmailDestination::EVENT }}' || selectList.value === '{{ \App\Enums\EmailDestination::EVENT_WITH_BACKUP }}') {
+                eventGroup.classList.remove('d-none');
+            } else {
+                eventGroup.classList.add('d-none');
+            }
 
-        if (selectList.value === '{{ \App\Enums\EmailDestination::SPECIFIC_USERS }}') {
-          userGroup.classList.remove('d-none');
-        } else {
-          userGroup.classList.add('d-none');
-        }
+            if (selectList.value === '{{ \App\Enums\EmailDestination::SPECIFIC_USERS }}') {
+                userGroup.classList.remove('d-none');
+            } else {
+                userGroup.classList.add('d-none');
+            }
 
-        if (selectList.value === '{{ \App\Enums\EmailDestination::EMAIL_LISTS }}') {
-          emailListSelect.classList.remove('d-none');
-        } else {
-          emailListSelect.classList.add('d-none');
-        }
-      });
+            if (selectList.value === '{{ \App\Enums\EmailDestination::EMAIL_LISTS }}') {
+                emailListSelect.classList.remove('d-none');
+            } else {
+                emailListSelect.classList.add('d-none');
+            }
+        });
     </script>
 
 @endpush
