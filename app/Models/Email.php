@@ -97,32 +97,13 @@ class Email extends Model
         return $this->belongsToMany(StorageEntry::class, 'emails_files', 'email_id', 'file_id');
     }
 
-    /**
-     * @return string
-     *
-     */
-    public function destinationForBody(): string
-    {
-        return match ($this->destination) {
-            EmailDestination::ALL_USERS => 'all users',
-            EmailDestination::ALL_MEMBERS => 'all members',
-            EmailDestination::PENDING_MEMBERS => 'all pending members',
-            EmailDestination::ACTIVE_MEMBERS => 'all active members',
-            EmailDestination::EMAIL_LISTS => 'list(s)',
-            EmailDestination::EVENT => 'event(s)',
-            EmailDestination::EVENT_WITH_BACKUP => 'event(s) with backup',
-            EmailDestination::NO_DESTINATION => 'no destination',
-            EmailDestination::SPECIFIC_USERS => 'specific users',
-        };
-    }
-
     /** @return SupportCollection|User[] */
     public function recipients(): array|SupportCollection
     {
         return match ($this->destination) {
             EmailDestination::ALL_USERS => User::orderBy('name')->get(),
-            EmailDestination::ALL_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', false))->orderBy('name')->get(),
-            EmailDestination::PENDING_MEMBERS => User::whereHas('member', fn($q) => $q->where('is_pending', true))->orderBy('name')->get(),
+            EmailDestination::ALL_MEMBERS => User::whereHas('member', fn($q) => $q->whereNot('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
+            EmailDestination::PENDING_MEMBERS => User::whereHas('member', fn($q) => $q->where('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
             EmailDestination::ACTIVE_MEMBERS => User::whereHas('committees')->orderBy('name')->get(),
             EmailDestination::EMAIL_LISTS => User::whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
             EmailDestination::EVENT => User::whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),

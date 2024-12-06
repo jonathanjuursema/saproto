@@ -13,4 +13,19 @@ enum EmailDestination: int
     case EVENT = 6;
     case EVENT_WITH_BACKUP = 7;
     case SPECIFIC_USERS = 8;
+
+    public function text(): string
+    {
+        return match ($this) {
+            EmailDestination::ALL_USERS => 'all users',
+            EmailDestination::ALL_MEMBERS => 'all members',
+            EmailDestination::PENDING_MEMBERS => 'all pending members',
+            EmailDestination::ACTIVE_MEMBERS => 'all active members',
+            EmailDestination::EMAIL_LISTS => 'list(s)',
+            EmailDestination::EVENT => 'event(s)',
+            EmailDestination::EVENT_WITH_BACKUP => 'event(s) with backup',
+            EmailDestination::NO_DESTINATION => 'no destination',
+            EmailDestination::SPECIFIC_USERS => 'specific users',
+        };
+    }
 }

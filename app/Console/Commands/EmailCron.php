@@ -46,6 +46,7 @@ class EmailCron extends Command
         $this->info('There are ' . $emails->count() . ' queued e-mails.');
 
         foreach ($emails as $email) {
+            /** @var Email $email */
             $this->info('Sending e-mail <' . $email->subject . '>');
 
             $email->ready = false;
@@ -61,7 +62,7 @@ class EmailCron extends Command
                         $email->subject,
                         $email->parseBodyFor($recipient),
                         $email->attachments,
-                        $email->destinationForBody(),
+                        $email->destination->text(),
                         $recipient->id,
                         $email->events()->get(),
                         $email->id

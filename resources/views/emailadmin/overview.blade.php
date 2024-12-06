@@ -133,7 +133,7 @@
                                 @endif
                                 <br>
                                 via
-                                {{$email->destinationForBody()}}
+                                {{$email->destination->text()}}
                                 {{ $email->getConcatLists() }}
                             </td>
                             <td>

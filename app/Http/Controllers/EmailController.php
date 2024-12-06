@@ -20,7 +20,7 @@ use Illuminate\View\View;
 class EmailController extends Controller
 {
     /** @return View */
-    public function index(Request $request)
+    public function index()
     {
         return view('emailadmin.overview', [
             'lists' => EmailList::query()->withCount('users')->get(),
@@ -106,7 +106,7 @@ class EmailController extends Controller
         return view('emails.manualemail', [
             'body' => $email->parseBodyFor(Auth::user()),
             'attachments' => $email->attachments,
-            'destination' => $email->destinationForBody(),
+            'destination' => $email->destination->text(),
             'user_id' => Auth::user()->id,
             'events' => $email->events()->get(),
             'email_id' => $email->id,
@@ -117,7 +117,7 @@ class EmailController extends Controller
      * @param int $id
      * @return View|RedirectResponse
      */
-    public function edit(Request $request, int $id)
+    public function edit(int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
@@ -156,7 +156,7 @@ class EmailController extends Controller
             Session::flash('flash_message', 'Please select a destination for the email.');
             return Redirect::back();
         }
-        
+
         $email->fill([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
