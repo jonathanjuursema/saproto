@@ -100,12 +100,12 @@ class Email extends Model
     {
         return match ($this->destination) {
             EmailDestination::ALL_USERS => User::query()->orderBy('name')->get(),
-            EmailDestination::ALL_MEMBERS => User::query()->whereHas('member', fn($q) => $q->whereNot('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
-            EmailDestination::PENDING_MEMBERS => User::query()->whereHas('member', fn($q) => $q->where('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
+            EmailDestination::ALL_MEMBERS => User::query()->whereHas('member', fn ($q) => $q->whereNot('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
+            EmailDestination::PENDING_MEMBERS => User::query()->whereHas('member', fn ($q) => $q->where('membership_type', MembershipTypeEnum::PENDING))->orderBy('name')->get(),
             EmailDestination::ACTIVE_MEMBERS => User::query()->whereHas('committees')->orderBy('name')->get(),
-            EmailDestination::EMAIL_LISTS => User::query()->whereHas('lists', fn($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
-            EmailDestination::EVENT => User::query()->whereIn('id', $this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),
-            EmailDestination::EVENT_WITH_BACKUP => User::query()->whereIn('id', array_merge($this->events->map(fn($event) => $event->allUsers()->pluck('id'))->flatten()->toArray(), $this->events->map(fn($event) => $event->backupUsers()->pluck('id'))))->orderBy('name')->get(),
+            EmailDestination::EMAIL_LISTS => User::query()->whereHas('lists', fn ($q) => $q->whereIn('users_mailinglists.list_id', $this->lists->pluck('id')->toArray()))->orderBy('name')->get(),
+            EmailDestination::EVENT => User::query()->whereIn('id', $this->events->map(fn ($event) => $event->allUsers()->pluck('id'))->flatten()->toArray())->orderBy('name')->get(),
+            EmailDestination::EVENT_WITH_BACKUP => User::query()->whereIn('id', array_merge($this->events->map(fn ($event) => $event->allUsers()->pluck('id'))->flatten()->toArray(), $this->events->map(fn ($event) => $event->backupUsers()->pluck('id'))))->orderBy('name')->get(),
             EmailDestination::NO_DESTINATION => collect(),
             EmailDestination::SPECIFIC_USERS => $this->specificUsers()->get(),
         };

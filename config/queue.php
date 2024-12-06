@@ -69,8 +69,7 @@ return [
 
     'failed' => [
         'driver' => 'database-uuids',
-        'database' => env('DB_CONNECTION'),
+        'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
     ],
-
 ];

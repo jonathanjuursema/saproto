@@ -2,10 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\ManualEmail;
+use App\Jobs\SendManualEmail;
 use App\Models\Email;
 use Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Mail;
 
 class EmailCron extends Command
@@ -36,40 +37,30 @@ class EmailCron extends Command
 
     /**
      * Execute the console command.
+     * @throws \Throwable
      */
     public function handle(): void
     {
-
-        // Send admin created e-mails.
-        $emails = Email::query()->where('sent', false)->where('ready', true)->where('time', '<', Carbon::now()->getTimestamp())->get();
+        // Send the emails from the email tool
+        $emails = Email::query()->where('sent', false)->where('ready', true)->where('time', '<', Carbon::now()->timestamp)->get();
         $this->info('There are ' . $emails->count() . ' queued e-mails.');
 
         foreach ($emails as $email) {
             /** @var Email $email */
             $this->info('Sending e-mail <' . $email->subject . '>');
 
-            $email->ready = false;
-            $email->sent = true;
-            $email->sent_to = $email->recipients()->count();
-            $email->save();
+            $batch = Bus::batch($email->recipients()->map(
+                fn($recipient) => new SendManualEmail($email, $recipient)
+            ))->onConnection('medium')->dispatch();
 
-            foreach ($email->recipients() as $recipient) {
-                Mail::to($recipient)
-                    ->queue((new ManualEmail(
-                        $email->sender_address . '@' . config('proto.emaildomain'),
-                        $email->sender_name,
-                        $email->subject,
-                        $email->parseBodyFor($recipient),
-                        $email->attachments,
-                        $email->destination->text(),
-                        $recipient->id,
-                        $email->events()->get(),
-                        $email->id
-                    )
-                    )->onQueue('medium'));
-            }
+            $email->update([
+                'job_batch_id' => $batch->id,
+                'ready' => false,
+                'sent' => true,
+                'sent_to' => $email->recipients()->count()
+            ]);
 
-            $this->info('Sent to ' . $email->recipients()->count() . ' people.');
+            $this->info('Sending email to ' . $email->recipients()->count() . ' people.');
         }
 
         $this->info(($emails->count() > 0 ? 'All e-mails sent.' : 'No e-mails to be sent.'));

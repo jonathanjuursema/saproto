@@ -6,6 +6,7 @@ use App\Models\Email;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -30,6 +31,7 @@ class NewManualEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address($this->email->sender_address.'@'.config('proto.emaildomain'), $this->email->sender_name),
             subject: $this->email->subject,
         );
     }
@@ -53,6 +55,6 @@ class NewManualEmail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return $this->email->attachments->map(fn ($attachment) => Attachment::fromPath($attachment->generateLocalPath())->as($attachment->original_filename)->withMime($attachment->mime))->toArray();
     }
 }

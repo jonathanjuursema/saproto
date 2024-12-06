@@ -16,7 +16,7 @@
         <sup style="line-height: 1.5;">
             @if($email->destination === App\Enums\EmailDestination::EMAIL_LISTS)
                 You receive this e-mail because you are subscribed to one or more of the following e-mail lists:
-                {!! App\Models\Email::getListUnsubscribeFooter($user_id) !!}.
+                {!! App\Models\Email::getListUnsubscribeFooter($user->id) !!}.
             @elseif($email->destination === App\Enums\EmailDestination::EVENT || $email->destination==App\Enums\EmailDestination::EVENT_WITH_BACKUP)
                 You receive this e-mail because you signed up for any of the following events as a participant, helper
                 or by buying a

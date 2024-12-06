@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\EmailDestination;
+use App\Mail\NewManualEmail;
 use App\Models\Email;
 use App\Models\EmailList;
 use App\Models\EmailListSubscription;
@@ -96,23 +97,16 @@ class EmailController extends Controller
     }
 
     /**
-     * @return View
+     * @return NewManualEmail
      *
      * @throws Exception
      */
-    public function show(Request $request, int $id)
+    public function show(int $id)
     {
         /** @var Email $email */
         $email = Email::query()->findOrFail($id);
-
-        return view('emails.manualemail', [
-            'body' => $email->parseBodyFor(Auth::user()),
-            'attachments' => $email->attachments,
-            'destination' => $email->destination->text(),
-            'user_id' => Auth::user()->id,
-            'events' => $email->events()->get(),
-            'email_id' => $email->id,
-        ]);
+        
+        return new NewManualEmail($email, Auth::user());
     }
 
     /**
@@ -192,8 +186,8 @@ class EmailController extends Controller
             $email->save();
             Session::flash('flash_message', 'The e-mail has been put on hold.');
         } else {
-            if ($email->time - date('U') < 5 * 60) {
-                Session::flash('flash_message', 'An e-mail can only be queued for delivery if the delivery time is at least 5 minutes in the future.');
+            if ($email->time - date('U') < 0) {
+                Session::flash('flash_message', 'An e-mail can only be queued for delivery if the delivery time is in the future!');
 
                 return Redirect::route('email::index');
             }
