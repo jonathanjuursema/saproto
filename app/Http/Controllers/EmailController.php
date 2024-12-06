@@ -201,7 +201,7 @@ class EmailController extends Controller
 
             $email->ready = true;
             $email->save();
-            Session::flash('flash_message', 'The e-mail has been queued for deliver at the specified time.');
+            Session::flash('flash_message', 'The e-mail has been queued for delivery at the specified time.');
         }
 
         return Redirect::route('email::index');
