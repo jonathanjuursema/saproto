@@ -25,8 +25,12 @@
 
             <p>
                 You have been charged the regular membership fee of &euro;{{ number_format($fee_amount, 2) }} because we
-                have determined, using information provided to us by the University of Twente, you are currently
-                studying Creative Technology or Interaction Technology at the University of Twente.
+                have determined, using information provided to us by the University of Twente, that you are currently
+                studying at the University of Twente,
+                and have studied or are studying Creative Technology or Interaction Technology. You also have not
+                indicated to
+                be a
+                primary member at another study association.
             </p>
 
         @else
@@ -34,7 +38,9 @@
             <p>
                 You have been charged the reduced membership fee of &euro;{{ number_format($fee_amount, 2) }} because we
                 have determined, using information provided to us by the University of Twente, you are not a student of
-                the Creative Technology or Interaction Technology programmes at the University of Twente.
+                the Creative Technology or Interaction Technology programmes at the University of Twente. Or you have
+                indicated
+                to be a primary member at another study association.
             </p>
 
         @endif
@@ -52,7 +58,7 @@
 
     <p>
         Kind regards,<br>
-        {{ config('proto.treasurer') }}<br>
+        {{ Config::string('proto.treasurer') }}<br>
         <i>On behalf of the board of Study Association Proto</i>
     </p>
 

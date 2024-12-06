@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use App\Models\StorageEntry;
-use Auth;
 use Exception;
 use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Session;
 
 class PageController extends Controller
 {
@@ -26,7 +26,7 @@ class PageController extends Controller
     /** @return View */
     public function index()
     {
-        $pages = Page::orderBy('created_at', 'desc')->paginate(20);
+        $pages = Page::query()->orderBy('created_at', 'desc')->paginate(20);
 
         return view('pages.list', ['pages' => $pages]);
     }
@@ -44,26 +44,18 @@ class PageController extends Controller
     {
         $page = new Page($request->all());
 
-        if ($request->has('is_member_only')) {
-            $page->is_member_only = true;
-        } else {
-            $page->is_member_only = false;
-        }
+        $page->is_member_only = $request->has('is_member_only');
 
-        if ($request->has('show_attachments')) {
-            $page->show_attachments = true;
-        } else {
-            $page->show_attachments = false;
-        }
+        $page->show_attachments = $request->has('show_attachments');
 
         if (in_array($request->slug, $this->reservedSlugs)) {
-            Session::flash('flash_message', 'This URL has been reserved and can\'t be used. Please choose a different URL.');
+            Session::flash('flash_message', "This URL has been reserved and can't be used. Please choose a different URL.");
 
             return view('pages.edit', ['item' => $page, 'new' => true]);
         }
 
-        if (Page::where('slug', $page->slug)->exists()) {
-            Session::flash('flash_message', 'This URL has already been used and can\'t be used again. Please choose a different URL.');
+        if (Page::query()->where('slug', $page->slug)->exists()) {
+            Session::flash('flash_message', "This URL has already been used and can't be used again. Please choose a different URL.");
 
             return view('pages.edit', ['item' => $page, 'new' => true]);
         }
@@ -81,7 +73,7 @@ class PageController extends Controller
      */
     public function show($slug)
     {
-        $page = Page::where('slug', '=', $slug)->first();
+        $page = Page::query()->where('slug', '=', $slug)->first();
 
         if ($page == null) {
             abort(404, 'Page not found.');
@@ -100,7 +92,7 @@ class PageController extends Controller
      */
     public function edit($id)
     {
-        $page = Page::findOrFail($id);
+        $page = Page::query()->findOrFail($id);
 
         return view('pages.edit', ['item' => $page, 'new' => false]);
     }
@@ -112,30 +104,22 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         /** @var Page $page */
-        $page = Page::findOrFail($id);
+        $page = Page::query()->findOrFail($id);
 
-        if (($request->slug != $page->slug) && Page::where('slug', $page->slug)->exists()) {
-            Session::flash('flash_message', 'This URL has been reserved and can\'t be used. Please choose a different URL.');
+        if (($request->slug != $page->slug) && Page::query()->where('slug', $page->slug)->exists()) {
+            Session::flash('flash_message', "This URL has been reserved and can't be used. Please choose a different URL.");
 
             return view('pages.edit', ['item' => $request, 'new' => false]);
         }
 
         $page->fill($request->all());
 
-        if ($request->has('is_member_only')) {
-            $page->is_member_only = true;
-        } else {
-            $page->is_member_only = false;
-        }
+        $page->is_member_only = $request->has('is_member_only');
 
-        if ($request->has('show_attachments')) {
-            $page->show_attachments = true;
-        } else {
-            $page->show_attachments = false;
-        }
+        $page->show_attachments = $request->has('show_attachments');
 
         if (in_array($request->slug, $this->reservedSlugs)) {
-            Session::flash('flash_message', 'This URL has been reserved and can\'t be used. Please choose a different URL.');
+            Session::flash('flash_message', "This URL has been reserved and can't be used. Please choose a different URL.");
 
             return view('pages.edit', ['item' => $page, 'new' => false]);
         }
@@ -156,7 +140,7 @@ class PageController extends Controller
     public function destroy($id)
     {
         /** @var Page $page */
-        $page = Page::findOrfail($id);
+        $page = Page::query()->findOrfail($id);
 
         Session::flash('flash_message', 'Page '.$page->title.' has been removed.');
 
@@ -173,16 +157,17 @@ class PageController extends Controller
      */
     public function featuredImage(Request $request, $id)
     {
-        $page = Page::find($id);
+        $page = Page::query()->find($id);
 
         $image = $request->file('image');
         if ($image) {
-            $file = new StorageEntry();
+            $file = new StorageEntry;
             $file->createFromFile($image);
             $page->featuredImage()->associate($file);
         } else {
             $page->featuredImage()->dissociate();
         }
+
         $page->save();
 
         return Redirect::route('page::edit', ['id' => $id]);
@@ -202,10 +187,10 @@ class PageController extends Controller
             return Redirect::back();
         }
 
-        $page = Page::find($id);
+        $page = Page::query()->find($id);
 
         foreach ($request->file('files') as $file) {
-            $newFile = new StorageEntry();
+            $newFile = new StorageEntry;
             $newFile->createFromFile($file);
 
             $page->files()->attach($newFile);
@@ -222,7 +207,7 @@ class PageController extends Controller
      */
     public function deleteFile($id, $file_id)
     {
-        $page = Page::find($id);
+        $page = Page::query()->find($id);
 
         $page->files()->detach($file_id);
         $page->save();

@@ -8,10 +8,8 @@ class MoveSettingsToUsersTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('pref_calendar_alarm')->after('keep_protube_history')->nullable(true)->default(null);
@@ -21,10 +19,8 @@ class MoveSettingsToUsersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('pref_calendar_alarm');

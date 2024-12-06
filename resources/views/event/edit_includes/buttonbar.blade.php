@@ -15,7 +15,7 @@
     <button type="submit" class="btn btn-success float-end ms-2">
         Create
     </button>
-    <a href="{{ route('event::list') }}" class="btn btn-default float-end">
+    <a href="{{ route('event::index') }}" class="btn btn-default float-end">
         Back to calendar
     </a>
 @endif

@@ -8,10 +8,8 @@ class CreateDinnerformsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('dinnerforms', function (Blueprint $table) {
             $table->increments('id');
@@ -26,10 +24,8 @@ class CreateDinnerformsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('dinnerforms');
     }

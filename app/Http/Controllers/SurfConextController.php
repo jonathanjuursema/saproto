@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Redirect;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class SurfConextController extends Controller
 {
@@ -44,6 +44,6 @@ class SurfConextController extends Controller
 
         Session::flash('flash_message', 'The link with your university account has been deleted.');
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 }

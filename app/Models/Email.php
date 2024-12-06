@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Enums\EmailDestination;
+use App\Enums\MembershipTypeEnum;
 use Carbon;
-use DB;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
@@ -59,6 +61,8 @@ use Illuminate\Support\Collection as SupportCollection;
  */
 class Email extends Model
 {
+    use HasFactory;
+
     protected $table = 'emails';
 
     protected $guarded = ['id'];
@@ -134,7 +138,7 @@ class Email extends Model
      */
     public function hasRecipientList(EmailList $list): bool
     {
-        return DB::table('emails_lists')->where('email_id', $this->id)->where('list_id', $list->id)->count() > 0;
+        return DB::table('emails_lists')->where('email_id', $this->id)->where('list_id', $list->id)->exists();
     }
 
     /**

@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\MembershipTypeEnum;
 use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 /**
@@ -17,20 +20,19 @@ use Illuminate\Support\Str;
  *
  * @property int $id
  * @property int $user_id
+ * @property User $user
  * @property string|null $proto_username
  * @property string|null $membership_form_id
  * @property string|null $card_printed_on
- * @property bool $is_lifelong
- * @property bool $is_honorary
- * @property bool $is_donor
- * @property bool $is_pending
- * @property bool $is_pet
+ * @property MembershipTypeEnum $membership_type
+ * @property bool $is_primary_at_another_association
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read User $user
+ * @property Carbon|null $until
  * @property-read StorageEntry|null $membershipForm
  * @property StorageEntry|null $customOmnomcomSound
+ * @property UtAccount|null $UtAccount
  *
  * @method static bool|null forceDelete()
  * @method static bool|null restore()
@@ -53,7 +55,9 @@ use Illuminate\Support\Str;
  * @method static Builder|Member whereIsPet($value)
  * @method static Builder|Member newModelQuery()
  * @method static Builder|Member newQuery()
- * @method static Builder|Member query()
+ * @method static Builder|static query()
+ * @method Builder|static primary()
+ * @method Builder|static type(MembershipTypeEnum $type)
  *
  * @mixin Eloquent
  */
@@ -66,80 +70,88 @@ class Member extends Model
 
     protected $guarded = ['id', 'user_id'];
 
-    protected $casts = [
-        'deleted_at' => 'datetime',
-    ];
-
-    /** @return BelongsTo */
-    public function user()
+    protected function casts(): array
     {
-        return $this->belongsTo(\App\Models\User::class)->withTrashed();
+        return [
+            'deleted_at' => 'datetime',
+            'membership_type' => MembershipTypeEnum::class,
+        ];
     }
 
-    /** @return BelongsTo */
-    public function membershipForm()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'membership_form_id');
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
-    /** @return BelongsTo */
-    public function customOmnomcomSound()
+    public function membershipForm(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'omnomcom_sound_id');
+        return $this->belongsTo(StorageEntry::class, 'membership_form_id');
     }
 
-    /** @return int */
-    public static function countActiveMembers()
+    public function customOmnomcomSound(): BelongsTo
     {
-        return User::whereHas('committees')->count();
+        return $this->belongsTo(StorageEntry::class, 'omnomcom_sound_id');
     }
 
-    public static function countPendingMembers()
+    public function UtAccount(): HasOne
     {
-        return User::whereHas('member', function ($query) {
-            $query->where('is_pending', true);
+        return $this->hasOne(UtAccount::class);
+    }
+
+    public function scopePrimary(Builder $query): Builder
+    {
+        /** @phpstan-ignore-next-line */
+        return $query->type(MembershipTypeEnum::REGULAR)
+            ->where('is_primary_at_another_association', false)
+            ->whereHas('UtAccount');
+    }
+
+    public function scopeType(Builder $query, MembershipTypeEnum $type): Builder
+    {
+        return $query->where('membership_type', $type);
+    }
+
+    public static function countActiveMembers(): int
+    {
+        return User::query()->whereHas('committees')->count();
+    }
+
+    public static function countPendingMembers(): int
+    {
+        return User::query()->whereHas('member', static function ($query) {
+            $query->type(MembershipTypeEnum::PENDING);
         })->count();
     }
 
-    public static function countValidMembers()
+    public static function countValidMembers(): int
     {
-        return User::whereHas('member', function ($query) {
-            $query->where('is_pending', false);
+        return User::query()->whereHas('member', static function ($query) {
+            $query->whereNot('membership_type', MembershipTypeEnum::PENDING);
         })->count();
     }
 
-    /** @return OrderLine|null */
-    public function getMembershipOrderline()
+    public function getMembershipOrderline(): ?OrderLine
     {
-        if (intval(date('n')) >= 9) {
-            $year_start = intval(date('Y'));
-        } else {
-            $year_start = intval(date('Y')) - 1;
-        }
+        $year_start = intval(date('n')) >= 9 ? intval(date('Y')) : intval(date('Y')) - 1;
 
         return OrderLine::query()
-            ->whereIn('product_id', array_values(config('omnomcom.fee')))
+            ->whereIn('product_id', array_values(Config::array('omnomcom.fee')))
             ->where('created_at', '>=', $year_start.'-09-01 00:00:01')
             ->where('user_id', '=', $this->user->id)
             ->first();
     }
 
-    /** @return string|null */
-    public function getMemberType()
+    public function getMemberType(): ?string
     {
         $membershipOrderline = $this->getMembershipOrderline();
 
-        if ($membershipOrderline) {
-            switch ($this->getMembershipOrderline()->product->id) {
-                case config('omnomcom.fee')['regular']:
-                    return 'primary';
-                case config('omnomcom.fee')['reduced']:
-                    return 'secondary';
-                case config('omnomcom.fee')['remitted']:
-                    return 'non-paying';
-                default:
-                    return 'unknown';
-            }
+        if ($membershipOrderline != null) {
+            return match ($this->getMembershipOrderline()->product->id) {
+                Config::integer('omnomcom.fee.regular') => 'primary',
+                Config::integer('omnomcom.fee.reduced') => 'secondary',
+                Config::integer('omnomcom.fee.remitted') => 'non-paying',
+                default => 'unknown',
+            };
         }
 
         return null;
@@ -149,9 +161,8 @@ class Member extends Model
      * Create an email alias friendly username from a full name.
      *
      * @param  $name  string
-     * @return string
      */
-    public static function createProtoUsername($name)
+    public static function createProtoUsername(string $name): string
     {
         $name = explode(' ', $name);
         if (count($name) > 1) {
@@ -170,9 +181,9 @@ class Member extends Model
         $usernameBase = substr($usernameBase, 0, 17);
 
         $username = $usernameBase;
-        $i = Member::where('proto_username', $username)->withTrashed()->count();
+        $i = Member::query()->where('proto_username', $username)->withTrashed()->count();
         if ($i > 0) {
-            return "$usernameBase-$i";
+            return "{$usernameBase}-{$i}";
         }
 
         return $username;

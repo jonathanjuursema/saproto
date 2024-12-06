@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Carbon;
-use Cookie;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -64,8 +64,7 @@ class Announcement extends Model
 
     protected $guarded = ['id'];
 
-    /** @return string */
-    public function getBootstrapStyleAttribute()
+    public function getBootstrapStyleAttribute(): string
     {
         $map = [
             'primary',
@@ -78,27 +77,20 @@ class Announcement extends Model
         return $map[$this->show_style];
     }
 
-    /** @return string */
-    public function getIsVisibleAttribute()
+    public function getIsVisibleAttribute(): string
     {
         $flags = [];
 
-        if ($this->show_only_homepage) {
-            $flags[] = 'Homepage only';
-        } else {
-            $flags[] = 'Entire site';
-        }
+        $flags[] = $this->show_only_homepage ? 'Homepage only' : 'Entire site';
 
         if ($this->show_guests) {
             $flags[] = 'All guests';
         }
+
         if ($this->show_users) {
-            if ($this->show_only_new) {
-                $flags[] = 'New users';
-            } else {
-                $flags[] = 'All users';
-            }
+            $flags[] = $this->show_only_new ? 'New users' : 'All users';
         }
+
         if ($this->show_members) {
             if ($this->show_only_firstyear && $this->show_only_active) {
                 $flags[] = 'First-year and active members';
@@ -115,11 +107,7 @@ class Announcement extends Model
             $flags[] = 'Pop-up';
         } else {
             $flags[] = 'Banner';
-            if ($this->is_dismissable) {
-                $flags[] = 'Dismissable';
-            } else {
-                $flags[] = 'Persistent';
-            }
+            $flags[] = $this->is_dismissable ? 'Dismissable' : 'Persistent';
         }
 
         $flags[] = sprintf('Style: %s', $this->bootstrap_style);
@@ -127,29 +115,25 @@ class Announcement extends Model
         return implode(', ', $flags);
     }
 
-    /** @return string */
-    public function getHashMapIdAttribute()
+    public function getHashMapIdAttribute(): string
     {
         return sprintf('dismiss-announcement-%s', $this->id);
     }
 
-    /** @return string */
-    public function getModalIdAttribute()
+    public function getModalIdAttribute(): string
     {
         return sprintf('modal-announcement-%s', $this->id);
     }
 
-    /** @return bool */
-    public function getShowByTimeAttribute()
+    public function getShowByTimeAttribute(): bool
     {
         return strtotime($this->display_from) < date('U') && strtotime($this->display_till) > date('U');
     }
 
     /**
      * @param  null|User  $user
-     * @return bool
      */
-    public function showForUser($user = null)
+    public function showForUser($user = null): bool
     {
         // Check for homepage.
         if ($this->show_only_homepage && Route::current()->getName() != 'homepage') {
@@ -184,25 +168,28 @@ class Announcement extends Model
         if ($this->show_only_active && $user != null && $user->is_member && ! $user->isActiveMember()) {
             return false;
         }
+
         // Check if not already dismissed.
         if ($this->is_dismissable && Cookie::get($this->hash_map_id)) {
             return false;
         }
 
-        if ($user != null &&
-        $this->is_dismissable &&
-        HashMapItem::where('key', $this->hash_map_id)->where('subkey', $user->id)->count() > 0) {
-            return false;
+        if ($user == null) {
+            return true;
         }
 
-        return true;
+        if (! $this->is_dismissable) {
+            return true;
+        }
+
+        return HashMapItem::query()->where('key', $this->hash_map_id)->where('subkey', $user->id)->count() <= 0;
     }
 
     /** @param  User|null  $user */
-    public function dismissForUser($user = null)
+    public function dismissForUser($user = null): void
     {
         if ($user) {
-            HashMapItem::create(['key' => $this->hash_map_id, 'subkey' => $user->id]);
+            HashMapItem::query()->create(['key' => $this->hash_map_id, 'subkey' => $user->id]);
         } else {
             Cookie::queue($this->hash_map_id, true, 525600);
         }

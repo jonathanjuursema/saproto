@@ -8,10 +8,8 @@ class AddDiscountToDinnerforms extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('dinnerforms', function (Blueprint $table) {
             $table->renameColumn('discount', 'helper_discount');
@@ -23,10 +21,8 @@ class AddDiscountToDinnerforms extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('dinnerforms', function (Blueprint $table) {
             $table->dropColumn('regular_discount');

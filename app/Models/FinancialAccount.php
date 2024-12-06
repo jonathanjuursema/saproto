@@ -39,6 +39,6 @@ class FinancialAccount extends Model
     /** @return HasMany */
     public function products()
     {
-        return $this->hasMany(\App\Models\Product::class, 'account_id');
+        return $this->hasMany(Product::class, 'account_id');
     }
 }

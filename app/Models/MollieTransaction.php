@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Config;
 use Mollie;
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Resources\Payment;
 
 /**
  * Mollie Transaction Model.
@@ -46,78 +49,74 @@ class MollieTransaction extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class)->withTrashed();
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
-    /** @return HasMany */
-    public function orderlines()
+    public function orderlines(): HasMany
     {
-        return $this->hasMany(\App\Models\OrderLine::class, 'payed_with_mollie');
-    }
-
-    /** @return MollieTransaction */
-    public function transaction()
-    {
-        return Mollie::api()
-            ->payments()
-            ->get($this->mollie_id);
+        return $this->hasMany(OrderLine::class, 'payed_with_mollie');
     }
 
     /**
-     * @param  string  $status
-     * @return string
+     * @throws ApiException
      */
-    public static function translateStatus($status)
+    public function transaction(): Payment
     {
-        if ($status == 'open' || $status == 'pending' || $status == 'draft') {
+        return Mollie::api()
+            ->payments
+            ->get($this->mollie_id);
+    }
+
+    public static function translateStatus(string $status): string
+    {
+        if ($status === 'open' || $status === 'pending' || $status === 'draft') {
             return 'open';
         }
-        if ($status == 'expired' ||
-        $status == 'canceled' ||
-        $status == 'failed' ||
-        $status == 'charged_back' ||
-        $status == 'refunded') {
+
+        if ($status === 'expired' ||
+            $status === 'canceled' ||
+            $status === 'failed' ||
+            $status === 'charged_back' ||
+            $status === 'refunded') {
             return 'failed';
         }
-        if ($status == 'paid' || $status == 'paidout') {
+
+        if (in_array($status, config('omnomcom.mollie.paid_statuses'))) {
             return 'paid';
         }
 
         return 'unknown';
     }
 
-    /** @return string */
-    public function translatedStatus()
+    public function translatedStatus(): string
     {
         return self::translateStatus($this->status);
     }
 
     /**
-     * @return MollieTransaction
-     *
      * @throws Exception
      */
-    public function updateFromWebhook()
+    public function updateFromWebhook(): static
     {
         $mollie = Mollie::api()
-            ->payments()
+            ->payments
             ->get($this->mollie_id);
 
         $new_status = self::translateStatus($mollie->status);
 
         $this->status = $mollie->status;
-        if ($new_status != 'open') {
+
+        if ($new_status !== 'open') {
             $this->payment_url = $mollie->getCheckoutUrl();
         }
 
         $this->save();
 
-        if ($new_status == 'failed') {
+        if ($new_status === 'failed') {
             foreach ($this->orderlines as $orderline) {
-                if ($orderline->product_id == config('omnomcom.mollie')['fee_id']) {
+                if ($orderline->product_id == Config::integer('omnomcom.mollie.fee_id')) {
                     $orderline->delete();
 
                     continue;
@@ -135,11 +134,10 @@ class MollieTransaction extends Model
                     ! $orderline->ticketPurchase->payment_complete &&
                     ($orderline->product->ticket->is_prepaid || ! $orderline->user->is_member)
                 ) {
-                    if ($orderline->ticketPurchase) {
-                        $orderline->ticketPurchase->delete();
-                    }
+
+                    $orderline->ticketPurchase?->delete();
                     $orderline->product->ticket->event->updateUniqueUsersCount();
-                    $orderline->product->stock += 1;
+                    $orderline->product->stock++;
                     $orderline->product->save();
                     $orderline->delete();
 
@@ -149,12 +147,15 @@ class MollieTransaction extends Model
                 $orderline->payed_with_mollie = null;
                 $orderline->save();
             }
-        } elseif ($new_status == 'paid') {
+
+            return $this;
+        }
+
+        if ($new_status === 'paid') {
             foreach ($this->orderlines as $orderline) {
-                if ($orderline->ticketPurchase && ! $orderline->ticketPurchase->payment_complete) {
-                    $orderline->ticketPurchase->payment_complete = true;
-                    $orderline->ticketPurchase->save();
-                }
+                $orderline->ticketPurchase?->update([
+                    'payment_complete' => true,
+                ]);
             }
         }
 

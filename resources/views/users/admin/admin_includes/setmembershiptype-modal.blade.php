@@ -10,12 +10,24 @@
                 <div class="modal-body">
                     <p>Are you sure you want to change the membership type of {{ $user->name }}?</p>
                     <span class="me-1">Membership type:</span>
-                        <select class="form-select px-2 py-1" aria-label="Membership types" name="type">
+                    <select class="form-select px-2 py-1" aria-label="Membership types" name="type">
                         <option>Regular member</option>
-                        <option @selected($user->member->is_honorary) value="honorary">Honorary member</option>
-                        <option @selected($user->member->is_lifelong) value="lifelong">Lifelong member</option>
-                        <option @selected($user->member->is_donor) value="donor">Donor</option>
-                        <option @selected($user->member->is_pet) value="pet">Pet member</option>
+                        <option
+                            @selected($user->member->membership_type===\App\Enums\MembershipTypeEnum::HONORARY) value="honorary">
+                            Honorary member
+                        </option>
+                        <option
+                            @selected($user->member->membership_type===\App\Enums\MembershipTypeEnum::LIFELONG) value="lifelong">
+                            Lifelong member
+                        </option>
+                        <option
+                            @selected($user->member->membership_type===\App\Enums\MembershipTypeEnum::DONOR) value="donor">
+                            Donor
+                        </option>
+                        <option
+                            @selected($user->member->membership_type===\App\Enums\MembershipTypeEnum::PET) value="pet">
+                            Pet member
+                        </option>
                     </select>
                 </div>
                 <div class="modal-footer">

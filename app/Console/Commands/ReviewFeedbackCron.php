@@ -4,8 +4,9 @@ namespace App\Console\Commands;
 
 use App\Mail\ReviewFeedbackMail;
 use App\Models\FeedbackCategory;
+use Carbon;
 use Illuminate\Console\Command;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class ReviewFeedbackCron extends Command
 {
@@ -35,10 +36,8 @@ class ReviewFeedbackCron extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $categories = FeedbackCategory::query()
             ->where('review', true)
@@ -48,10 +47,10 @@ class ReviewFeedbackCron extends Command
         foreach ($categories as $category) {
             $unreviewed = $category->feedback()
                 ->where('reviewed', false)
-                ->where('updated_at', '>=', \Carbon::now()->subDay()->timestamp)
+                ->where('updated_at', '>=', Carbon::now()->subDay()->timestamp)
                 ->get();
 
-            if (count($unreviewed)) {
+            if (count($unreviewed) > 0) {
                 $this->info("Sending a review reminder mail for $category->title");
                 Mail::queue((new ReviewFeedbackMail($category, $unreviewed))->onQueue('low'));
             } else {

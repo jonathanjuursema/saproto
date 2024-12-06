@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use AbcAeffchen\SepaUtilities\SepaUtilities;
 use App\Models\Bank;
 use App\Models\User;
-use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class BankController extends Controller
 {
     /**
      * @return RedirectResponse|View
      */
-    public function add(Request $request)
+    public function create(Request $request)
     {
         $user = Auth::user();
 
@@ -41,6 +42,24 @@ class BankController extends Controller
     {
         $user = Auth::user();
 
+        if (! SepaUtilities::checkIBAN($request->input('iban'))) {
+            Session::flash('flash_message', 'Your IBAN is not valid.');
+
+            return Redirect::back();
+        }
+
+        if (! SepaUtilities::checkBIC($request->input('bic'))) {
+            Session::flash('flash_message', 'Your BIC is not valid.');
+
+            return Redirect::back();
+        }
+
+        if (! SepaUtilities::crossCheckIbanBic($request->input('iban'), $request->input('bic'))) {
+            Session::flash('flash_message', 'Your IBAN and BIC do not match.');
+
+            return Redirect::back();
+        }
+
         $bankdata = self::doVerifyIban($request->input('iban'), $request->input('bic'));
         if ($bankdata->status == false) {
             Session::flash('flash_message', $bankdata->message);
@@ -48,7 +67,7 @@ class BankController extends Controller
             return Redirect::back();
         }
 
-        $bank = Bank::create([
+        $bank = Bank::query()->create([
             'iban' => $bankdata->iban,
             'bic' => $bankdata->bic,
             'machtigingid' => self::generateAuthorizationId($user),
@@ -64,7 +83,7 @@ class BankController extends Controller
             return Redirect::route('becomeamember');
         }
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 
     /** @return RedirectResponse|View */
@@ -73,7 +92,7 @@ class BankController extends Controller
         $user = Auth::user();
 
         if ($user->bank == null) {
-            return Redirect::route('user::bank::add');
+            return Redirect::route('user::bank::create');
         }
 
         return view('users.bankaccounts.addbank', ['user' => $user, 'new' => false]);
@@ -89,7 +108,7 @@ class BankController extends Controller
         $user = Auth::user();
 
         if ($user->bank == null) {
-            return Redirect::route('user::bank::add');
+            return Redirect::route('user::bank::create');
         }
 
         $bankdata = self::doVerifyIban($request->input('iban'), $request->input('bic'));
@@ -99,7 +118,7 @@ class BankController extends Controller
             return Redirect::back();
         }
 
-        $bank = Bank::create([
+        $bank = Bank::query()->create([
             'iban' => $bankdata->iban,
             'bic' => $bankdata->bic,
             'machtigingid' => self::generateAuthorizationId($user),
@@ -111,7 +130,7 @@ class BankController extends Controller
 
         Session::flash('flash_message', 'New withdrawal authorization added.');
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 
     /**
@@ -126,23 +145,26 @@ class BankController extends Controller
         if ($user->bank == null) {
             Session::flash('flash_message', "You don't have a bank authorization to revoke.");
 
-            return Redirect::route('user::dashboard');
+            return Redirect::route('user::dashboard::show');
         }
+
         if ($user->is_member) {
             Session::flash('flash_message', 'As a member you cannot revoke your bank authorization. You can update it, though.');
 
             return Redirect::back();
         }
+
         if ($user->hasUnpaidOrderlines()) {
             Session::flash('flash_message', 'You cannot revoke your bank authorization while you still have unpaid orderlines.');
 
             return Redirect::back();
         }
+
         $user->bank->delete();
 
         Session::flash('flash_message', 'Deleted bank account.');
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 
     /**
@@ -178,7 +200,7 @@ class BankController extends Controller
 
         if (! iban_country_is_sepa(iban_get_country_part($response->iban))) {
             $response->status = false;
-            $response->message = 'Your bank is not a member of SEPA (Single Euro Payments Area) so you can\'t use this bank account here. Please try another one.';
+            $response->message = "Your bank is not a member of SEPA (Single Euro Payments Area) so you can't use this bank account here. Please try another one.";
 
             return $response;
         }
@@ -186,7 +208,7 @@ class BankController extends Controller
         try {
             $country = substr($iban, 0, 2);
 
-            if ($country == 'NL') {
+            if ($country === 'NL') {
                 $response->bic = self::getNlBicFromIban($iban);
             }
 
@@ -196,7 +218,7 @@ class BankController extends Controller
 
                 return $response;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             if (! self::verifyBicIsValid($response->bic)) {
                 $response->status = false;
                 $response->message = 'Something went wrong retrieving your BIC.';
@@ -210,9 +232,8 @@ class BankController extends Controller
 
     /**
      * @param  string  $bic
-     * @return bool
      */
-    public static function verifyBicIsValid($bic)
+    public static function verifyBicIsValid($bic): bool
     {
         if (($bic == '')) {
             return false;
@@ -223,18 +244,13 @@ class BankController extends Controller
 
     /**
      * @param  User  $user
-     * @return string
      */
-    public static function generateAuthorizationId($user)
+    public static function generateAuthorizationId($user): string
     {
         return 'PROTOX'.str_pad(strval($user->id), 5, '0', STR_PAD_LEFT).'X'.str_pad(strval(mt_rand(0, 99999)), 5, '0');
     }
 
-    /**
-     * @param  string  $iban
-     * @return string|null
-     */
-    private static function getNlBicFromIban($iban)
+    private static function getNlBicFromIban(string $iban): ?string
     {
         $data = [ // Data from: https://www.betaalvereniging.nl/wp-content/uploads/BIC-lijst-NL.xlsx
             'ABNA' => 'ABNANL2A',
@@ -321,6 +337,6 @@ class BankController extends Controller
 
         $bank = substr($iban, 4, 4);
 
-        return array_key_exists($bank, $data) ? $data[$bank] : null;
+        return $data[$bank] ?? null;
     }
 }

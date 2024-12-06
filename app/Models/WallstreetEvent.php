@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * Class WallstreetEvent.
  *
- * @property int id
- * @property string name
- * @property string description
- * @property int percentage
- * @property int image_id
- * @property bool active
- * @property StorageEntry image
- * @property Product[] products
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property int $percentage
+ * @property int $image_id
+ * @property bool $active
+ * @property StorageEntry $image
+ * @property Product[] $products
  **/
 class WallstreetEvent extends Model
 {

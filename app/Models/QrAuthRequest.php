@@ -40,8 +40,7 @@ class QrAuthRequest extends Model
 
     protected $guarded = ['id'];
 
-    /** @return bool */
-    public function isApproved()
+    public function isApproved(): bool
     {
         return $this->approved_at !== null;
     }
@@ -55,7 +54,7 @@ class QrAuthRequest extends Model
     {
         if ($this->approved_at) {
             /** @var User $user */
-            $user = User::findOrFail($this->user_id);
+            $user = User::query()->findOrFail($this->user_id);
             $this->delete();
 
             return $user;

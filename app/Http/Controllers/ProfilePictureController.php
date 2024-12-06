@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\StorageEntry;
-use Auth;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Redirect;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class ProfilePictureController extends Controller
 {
@@ -23,8 +23,8 @@ class ProfilePictureController extends Controller
 
         $image = $request->file('image');
         if ($image) {
-            if (substr($image->getMimeType(), 0, 5) == 'image') {
-                $file = new StorageEntry();
+            if (str_starts_with($image->getMimeType(), 'image')) {
+                $file = new StorageEntry;
                 $file->createFromFile($image);
 
                 $user->photo()->associate($file);
@@ -39,6 +39,7 @@ class ProfilePictureController extends Controller
 
             return Redirect::back();
         }
+
         Session::flash('flash_message', 'Your profile picture has been updated!');
 
         return Redirect::back();

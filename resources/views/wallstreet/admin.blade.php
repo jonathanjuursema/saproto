@@ -7,7 +7,7 @@
 @section('container')
     <div class="row">
         <div class="col-xl-4">
-            <a href="{{ route("wallstreet::events::list") }}" class="btn btn-block btn-info mb-3">
+            <a href="{{ route("wallstreet::events::index") }}" class="btn btn-block btn-info mb-3">
                 Manage wallstreet drink events
             </a>
             @include('wallstreet.admin_includes.wallstreetdrink-details')

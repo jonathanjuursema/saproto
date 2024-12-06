@@ -12,6 +12,9 @@ class ActivitySubscribedTo extends Mailable
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var array<'help'|'id'|'name'|'title', mixed>
+     */
     public $activity;
 
     /**

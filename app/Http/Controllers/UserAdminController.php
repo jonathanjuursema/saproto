@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MembershipTypeEnum;
 use App\Http\Requests\MP3Request;
 use App\Mail\MembershipEnded;
 use App\Mail\MembershipEndSet;
@@ -10,17 +11,17 @@ use App\Models\HashMapItem;
 use App\Models\Member;
 use App\Models\StorageEntry;
 use App\Models\User;
-use Auth;
 use Carbon;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Mail;
 use PDF;
-use Redirect;
-use Session;
 use Spatie\Permission\Models\Permission;
+use Spipu\Html2Pdf\Exception\Html2PdfException;
 
 class UserAdminController extends Controller
 {
@@ -30,32 +31,25 @@ class UserAdminController extends Controller
         $filter = $request->input('filter');
 
         $userQuery = User::withTrashed()->with('tempadmin');
-        switch ($filter) {
-            case 'pending':
-                $users = $userQuery->whereHas('member', function ($q) {
-                    $q->where('is_pending', '=', true)->where('deleted_at', '=', null);
-                });
-                break;
-            case 'members':
-                $users = $userQuery->whereHas('member', function ($q) {
-                    $q->where('is_pending', '=', false)->where('deleted_at', '=', null);
-                });
-                break;
-            case 'users':
-                $users = $userQuery->doesntHave('member');
-                break;
-            default:
-                $users = $userQuery;
-        }
+        $users = match ($filter) {
+            'pending' => $userQuery->whereHas('member', static function ($q) {
+                $q->type(MembershipTypeEnum::PENDING)->where('deleted_at', '=', null);
+            }),
+            'members' => $userQuery->whereHas('member', static function ($q) {
+                $q->whereNot('membership_type', MembershipTypeEnum::PENDING)->where('deleted_at', '=', null);
+            }),
+            'users' => $userQuery->doesntHave('member'),
+            default => $userQuery,
+        };
 
         if ($search) {
-            $users = $users->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%$search%")
-                    ->orWhere('calling_name', 'LIKE', "%$search%")
-                    ->orWhere('email', 'LIKE', "%$search%")
-                    ->orWhere('utwente_username', 'LIKE', "%$search%")
-                    ->orWhereHas('member', function ($q) use ($search) {
-                        $q->where('proto_username', 'LIKE', "%$search%");
+            $users = $users->where(static function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('calling_name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('utwente_username', 'LIKE', "%{$search}%")
+                    ->orWhereHas('member', static function ($q) use ($search) {
+                        $q->where('proto_username', 'LIKE', "%{$search}%");
                     });
             });
         }
@@ -66,32 +60,25 @@ class UserAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return View
      */
-    public function details($id)
+    public function details(int $id)
     {
-        $user = User::findOrFail($id);
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
         $memberships = $user->getMemberships();
 
         return view('users.admin.details', ['user' => $user, 'memberships' => $memberships]);
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->name = $request->name;
         $user->calling_name = $request->calling_name;
-        if (strtotime($request->birthdate) !== false) {
-            $user->birthdate = date('Y-m-d', strtotime($request->birthdate));
-        } else {
-            $user->birthdate = null;
-        }
+        $user->birthdate = strtotime($request->birthdate) !== false ? date('Y-m-d', strtotime($request->birthdate)) : null;
+
         $user->save();
 
         Session::flash('flash_message', 'User updated!');
@@ -99,14 +86,10 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function impersonate($id)
+    public function impersonate(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
 
         if (! Auth::user()->can('sysadmin')) {
             foreach ($user->roles as $role) {
@@ -125,13 +108,12 @@ class UserAdminController extends Controller
         return Redirect::route('homepage');
     }
 
-    /** @return RedirectResponse */
-    public function quitImpersonating()
+    public function quitImpersonating(): RedirectResponse
     {
         if (Session::has('impersonator')) {
             $redirect_user = Auth::id();
 
-            $impersonator = User::findOrFail(Session::get('impersonator'));
+            $impersonator = User::query()->findOrFail(Session::get('impersonator'));
             Session::pull('impersonator');
 
             Auth::login($impersonator);
@@ -142,14 +124,10 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function addMembership($id, Request $request)
+    public function addMembership(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
 
         if ($user->is_member) {
             Session::flash('flash_message', 'This user is already a member!');
@@ -164,13 +142,14 @@ class UserAdminController extends Controller
         }
 
         if ($user->member == null) {
-            $member = Member::create();
+            /** @var Member $member */
+            $member = Member::query()->create();
             $member->user()->associate($user);
         }
 
         $member = $user->member;
         $member->created_at = Carbon::now();
-        $member->is_pending = false;
+        $member->membership_type = MembershipTypeEnum::REGULAR;
         $member->proto_username = Member::createProtoUsername($user->name);
         $member->save();
 
@@ -178,7 +157,7 @@ class UserAdminController extends Controller
 
         EmailListController::autoSubscribeToLists('autoSubscribeMember', $user);
 
-        HashMapItem::create([
+        HashMapItem::query()->create([
             'key' => 'wizard',
             'subkey' => $user->id,
             'value' => 1,
@@ -195,15 +174,11 @@ class UserAdminController extends Controller
     /**
      * Adds membership end date to member object.
      * Member object will be removed by cron job on end date.
-     *
-     * @param  int  $id
-     *
-     * @throws Exception
      */
-    public function endMembership($id): RedirectResponse
+    public function endMembership(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->member()->delete();
         $user->clearMemberProfile();
 
@@ -214,16 +189,17 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    public function EndMembershipInSeptember($id): RedirectResponse
+    public function EndMembershipInSeptember(int $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
         if (! $user->is_member) {
             Session::flash('flash_message', 'The user needs to be a member for its membership to receive an end date!');
 
             return Redirect::back();
         }
 
-        $user->member->until = Carbon::create('Last day of September')->endOfDay()->subDay()->timestamp;
+        $user->member->until = Carbon::parse('Last day of September')->endOfDay()->subDay()->timestamp;
         $user->member->save();
         Mail::to($user)->queue((new MemberShipEndSet($user))->onQueue('high'));
         Session::flash('flash_message', "End date for membership of $user->name set to the end of september!");
@@ -231,14 +207,16 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    public function removeMembershipEnd($id): RedirectResponse
+    public function removeMembershipEnd(int $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
         if (! $user->is_member) {
             Session::flash('flash_message', 'The user needs to be a member for its membership to receive an end date!');
 
             return Redirect::back();
         }
+
         $user->member->until = null;
         $user->member->save();
         Session::flash('flash_message', "End date for membership of $user->name removed!");
@@ -246,23 +224,25 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     */
-    public function setMembershipType(Request $request, $id): RedirectResponse
+    public function setMembershipType(Request $request, int $id): RedirectResponse
     {
         if (! Auth::user()->can('board')) {
             abort(403, 'Only board members can do this.');
         }
 
-        $user = User::findOrFail($id);
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
         $member = $user->member;
         $type = $request->input('type');
 
-        $member->is_honorary = $type == 'honorary';
-        $member->is_lifelong = $type == 'lifelong';
-        $member->is_donor = $type == 'donor';
-        $member->is_pet = $type == 'pet';
+        match ($type) {
+            'honorary' => $member->membership_type = MembershipTypeEnum::HONORARY,
+            'lifelong' => $member->membership_type = MembershipTypeEnum::LIFELONG,
+            'donor' => $member->membership_type = MembershipTypeEnum::DONOR,
+            'pet' => $member->membership_type = MembershipTypeEnum::PET,
+            default => $member->membership_type = MembershipTypeEnum::REGULAR,
+        };
+
         $member->save();
 
         Session::flash('flash_message', $user->name.' is now a '.$type.' member.');
@@ -270,17 +250,14 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     */
-    public function toggleNda($id): RedirectResponse
+    public function toggleNda(int $id): RedirectResponse
     {
         if (! Auth::user()->can('board')) {
             abort(403, 'Only board members can do this.');
         }
 
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->signed_nda = ! $user->signed_nda;
         $user->save();
 
@@ -289,13 +266,10 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     */
-    public function unblockOmnomcom($id): RedirectResponse
+    public function unblockOmnomcom(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->disable_omnomcom = false;
         $user->save();
 
@@ -304,13 +278,10 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     */
-    public function toggleStudiedCreate($id): RedirectResponse
+    public function toggleStudiedCreate(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->did_study_create = ! $user->did_study_create;
         $user->save();
 
@@ -319,13 +290,10 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     */
-    public function toggleStudiedITech($id): RedirectResponse
+    public function toggleStudiedITech(int $id): RedirectResponse
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->did_study_itech = ! $user->did_study_itech;
         $user->save();
 
@@ -334,16 +302,34 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
+    public function togglePrimaryAtAnotherAssociation(int $id): RedirectResponse
+    {
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
+        if (! $user->is_member) {
+            Session::flash('flash_message', 'The user needs to be a member for its status can be toggled!');
+
+            return Redirect::back();
+        }
+
+        $user->member->is_primary_at_another_association = ! $user->member->is_primary_at_another_association;
+        $user->member->save();
+
+        Session::flash('flash_message', 'Toggled that '.$user->name.'is a primary member at another association.');
+
+        return Redirect::back();
+    }
+
     public function uploadOmnomcomSound(MP3Request $request, int $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         if ($user->member->customOmnomcomSound) {
             $user->member->customOmnomcomSound()->delete();
             $user->member->omnomcom_sound_id = null;
             $user->member->save();
         }
 
-        $file = new StorageEntry();
+        $file = new StorageEntry;
         $file->createFromFile($request->file('sound'));
 
         $user->member->customOmnomcomSound()->associate($file);
@@ -355,12 +341,14 @@ class UserAdminController extends Controller
 
     public function deleteOmnomcomSound(int $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        /** @var User $user */
+        $user = User::query()->findOrFail($id);
         if ($user->member->customOmnomcomSound) {
             $user->member->customOmnomcomSound()->delete();
             $user->member->omnomcom_sound_id = null;
             $user->member->save();
         }
+
         Session::flash('flash_message', 'Sound deleted');
 
         return Redirect::back();
@@ -381,13 +369,12 @@ class UserAdminController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @return string
+     * @throws Html2PdfException
      */
-    public function getNewMemberForm($id)
+    public function getNewMemberForm(int $id): string
     {
         /** @var User $user */
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
 
         if ($user->address === null) {
             Session::flash('flash_message', 'This user has no address!');
@@ -408,17 +395,13 @@ class UserAdminController extends Controller
         return $form->output();
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function destroyMemberForm($id)
+    public function destroyMemberForm(int $id): RedirectResponse
     {
         if ((! Auth::check() || ! Auth::user()->can('board'))) {
             abort(403);
         }
 
-        $member = Member::where('membership_form_id', '=', $id)->first();
+        $member = Member::query()->where('membership_form_id', '=', $id)->first();
         $user = $member->user;
 
         $member->forceDelete();
@@ -428,24 +411,20 @@ class UserAdminController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     * @return string
-     */
-    public function printMemberForm($id)
+    public function printMemberForm(int $id): string
     {
-        $user = User::find($id);
-
+        /** @var User|null $user */
+        $user = User::query()->find($id);
         if (! $user) {
             return 'This user could not be found!';
         }
 
-        if ($user->address->count() === 0) {
+        if (! $user->address->exists()) {
             return 'This user has no address!';
         }
 
         $result = FileController::requestPrint('document', route('memberform::download', ['id' => $user->id]));
 
-        return "The printer service responded: $result";
+        return "The printer service responded: {$result}";
     }
 }

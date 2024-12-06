@@ -40,25 +40,25 @@ class DmxOverride extends Model
     /** @return Collection|DmxOverride[] */
     public static function getActiveSorted()
     {
-        return self::where('start', '<', date('U'))->where('end', '>', date('U'))->get()->sortBy('window_size');
+        return self::query()->where('start', '<', date('U'))->where('end', '>', date('U'))->get()->sortBy('window_size');
     }
 
     /** @return Collection|DmxOverride[] */
     public static function getUpcomingSorted()
     {
-        return self::where('start', '>', date('U'))->get()->sortByDesc('start');
+        return self::query()->where('start', '>', date('U'))->get()->sortByDesc('start');
     }
 
     /** @return Collection|DmxOverride[] */
     public static function getPastSorted()
     {
-        return self::where('end', '<', date('U'))->get()->sortByDesc('start');
+        return self::query()->where('end', '<', date('U'))->get()->sortByDesc('start');
     }
 
     /** @return array<int, int> */
-    public function colorArray()
+    public function colorArray(): array
     {
-        return array_map('intval', explode(',', $this->color));
+        return array_map(intval(...), explode(',', $this->color));
     }
 
     /** @return int */
@@ -85,20 +85,17 @@ class DmxOverride extends Model
         return $this->colorArray()[3];
     }
 
-    /** @return bool */
-    public function active()
+    public function active(): bool
     {
         return $this->start < date('U') && date('U') < $this->end;
     }
 
-    /** @return bool */
-    public function justOver()
+    public function justOver(): bool
     {
         return date('U') > $this->end && date('U') < $this->end. 600;
     }
 
-    /** @return false|string[] */
-    public function getFixtureIds()
+    public function getFixtureIds(): array
     {
         return explode(',', $this->fixtures);
     }
@@ -106,17 +103,15 @@ class DmxOverride extends Model
     /** @return Collection */
     public function getFixtures()
     {
-        return DmxFixture::whereIn('id', $this->getFixtureIds())->get();
+        return DmxFixture::query()->whereIn('id', $this->getFixtureIds())->get();
     }
 
-    /** @return bool */
-    public function getIsActiveAttribute()
+    public function getIsActiveAttribute(): bool
     {
         return $this->active();
     }
 
-    /** @return int */
-    public function getWindowSizeAttribute()
+    public function getWindowSizeAttribute(): int
     {
         return (int) $this->end - (int) $this->start;
     }

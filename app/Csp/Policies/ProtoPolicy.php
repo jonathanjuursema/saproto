@@ -2,18 +2,32 @@
 
 namespace App\Csp\Policies;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Spatie\Csp\Directive;
 use Spatie\Csp\Exceptions\InvalidDirective;
 use Spatie\Csp\Exceptions\InvalidValueSet;
 use Spatie\Csp\Keyword;
 use Spatie\Csp\Policies\Policy;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Sentry\captureException;
 
 class ProtoPolicy extends Policy
 {
-    /** @return void */
-    public function configure()
+    public function shouldBeApplied(Request $request, Response $response): bool
+    {
+        // Don't apply csp in debug mode to enable the whoops (standard laravel) error page to be displayed correctly.
+        // see https://github.com/spatie/laravel-csp?tab=readme-ov-file#using-whoops
+        if (Config::boolean('app.debug') && ($response->isClientError() || $response->isServerError())) {
+            return false;
+        }
+
+        return parent::shouldBeApplied($request, $response);
+    }
+
+    public function configure(): void
     {
         try {
             $this
@@ -23,8 +37,8 @@ class ProtoPolicy extends Policy
                     Keyword::SELF,
                     'https://www.mollie.com/checkout/',
                     'https://wrapped.omnomcom.nl',
-                    ...config('proto.domains.protube'),
-                    ...(getenv('APP_ENV') != 'production' ? ['http://localhost:*'] : []),
+                    ...Config::array('proto.domains.protube'),
+                    ...(App::environment('production') ? [] : ['http://localhost:*']),
                 ])
                 ->addDirective(Directive::OBJECT, Keyword::NONE)
                 ->addDirective(Directive::SCRIPT, [
@@ -32,21 +46,18 @@ class ProtoPolicy extends Policy
                     'https://discordapp.com/api/guilds/600338792766767289/widget.json',
                     'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff',
                     'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic',
-                    'https://analytics.saproto.nl/matomo.js',
                     'https://www.youtube.com/iframe_api',
                     'https://s.ytimg.com',
                     'https://www.google.com/recaptcha/api.js',
-                    'https://kit.fontawesome.com/63e98a7060.js',
-                    'https://ka-f.fontawesome.com/',
                     'blob:',
-                    ...(getenv('APP_ENV') != 'production' ? ['http://localhost:*'] : []),
+                    ...(App::environment('production') ? [] : ['http://localhost:*']),
                 ])
                 ->addNonceForDirective(Directive::SCRIPT)
                 ->addDirective(Directive::STYLE, [
                     Keyword::SELF,
                     Keyword::UNSAFE_INLINE,
-                    'https://fonts.googleapis.com/css',
-                    ...(getenv('APP_ENV') != 'production' ? ['http://localhost:*'] : []),
+                    'https://fonts.googleapis.com/css2',
+                    ...(App::environment('production') ? [] : ['http://localhost:*']),
                 ])
                 ->addDirective(Directive::IMG, [
                     Keyword::SELF,
@@ -68,12 +79,13 @@ class ProtoPolicy extends Policy
                     Keyword::SELF,
                     'data:',
                     'https://fonts.gstatic.com',
-                    'https://ka-f.fontawesome.com/',
+                    ...(App::environment('production') ? [] : ['http://localhost:*']),
                 ])
                 ->addDirective(Directive::CONNECT, [
                     Keyword::SELF,
                     'https://proto.utwente.nl',
                     'https://www.proto.utwente.nl',
+                    'https://www.staging.proto.utwente.nl',
                     'https://static.saproto.com',
                     'https://metis.proto.utwente.nl:3001',
                     'wss://metis.proto.utwente.nl:3001',
@@ -82,9 +94,8 @@ class ProtoPolicy extends Policy
                     'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff',
                     'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic',
                     'https://cdn.jsdelivr.net/npm/chart.js',
-                    'https://ka-f.fontawesome.com/',
                     'https://api.fontawesome.com/',
-                    ...(getenv('APP_ENV') != 'production' ? ['ws://localhost:*'] : []),
+                    ...(App::environment('production') ? [] : ['ws://localhost:*']),
                 ]);
         } catch (InvalidValueSet|InvalidDirective $e) {
             captureException($e);

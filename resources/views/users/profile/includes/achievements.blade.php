@@ -3,7 +3,7 @@
     <div class="card mb-3">
 
         <div class="card-header bg-dark text-white">
-            Unlocked achievements
+            Unlocked achievements ({{$user->achievements->count()}})
         </div>
 
         <div class="card-body">

@@ -2,8 +2,6 @@
 
 namespace App\Exceptions;
 
-use App;
-use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -12,9 +10,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
-use Intervention\Image\Exception\NotReadableException;
-use Redirect;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -34,7 +33,6 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         TokenMismatchException::class,
         HttpExceptionInterface::class,
-        NotReadableException::class,
         ValidationException::class,
         AuthorizationException::class,
     ];
@@ -44,11 +42,10 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @return void
      *
      * @throws Throwable
      */
-    public function report(Throwable $e)
+    public function report(Throwable $e): void
     {
         if ($this->shouldReport($e) && app()->bound('sentry') && App::environment('production')) {
             app('sentry')->captureException($e);
@@ -93,6 +90,8 @@ class Handler extends ExceptionHandler
      * Render the given HttpException.
      *
      * @return SymfonyResponse
+     *
+     * @throws Throwable
      */
     protected function renderHttpException(HttpExceptionInterface $e)
     {

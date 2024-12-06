@@ -7,14 +7,21 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class MembershipEnded extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var User
+     */
     public $user;
 
+    /**
+     * @var string
+     */
     public $lists;
 
     /** @return void */
@@ -28,13 +35,12 @@ class MembershipEnded extends Mailable
     public function build()
     {
         return $this
-            ->from('secretary@proto.utwente.nl', config('proto.secretary').' (Secretary)')
+            ->from('secretary@proto.utwente.nl', Config::string('proto.secretary').' (Secretary)')
             ->subject('Termination of your membership of Study Association Proto')
             ->view('emails.membershipend');
     }
 
-    /** @return string */
-    public function getSubscriptionList()
+    public function getSubscriptionList(): string
     {
         $footer = [];
         $lists = $this->user->lists;

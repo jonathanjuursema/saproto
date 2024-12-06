@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\MembershipTypeEnum;
 use App\Models\Achievement;
 use App\Models\AchievementOwnership;
 use App\Models\Activity;
@@ -44,13 +45,13 @@ class AchievementsCron extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Automatically granting achievements to users...');
 
         // Get data that will be the same for every user.
         $first = [];
-        foreach (Product::where('is_visible')->get() as $product) {
+        foreach (Product::query()->where('is_visible')->get() as $product) {
             /** @var OrderLine $orderline */
             $orderline = $product->orderlines()->first();
             $first[] = $orderline->user_id;
@@ -70,74 +71,32 @@ class AchievementsCron extends Command
 
         // Define the automatic achievements and their conditions.
         $achievements = [
-            19 => function ($user) {
-                return $this->achievementBeast($user);
-            }, // Achievement Beast
-            20 => function ($user) {
-                return $this->nThProducts($user, [2], 5);
-            }, // Hangry
-            21 => function ($user) {
-                return $this->nThProducts($user, [487], 15);
-            }, // Cry Baby
-            22 => function ($user) {
-                //weizen outside, grolsch weizen, weizen small, weizen big
-                return $this->nThProducts($user, [805, 211, 758, 1039], 20);
-            }, // True German
-            23 => function ($user) {
-                return $this->oldFart($user);
-            }, // Old Fart
+            19 => fn ($user): bool => $this->achievementBeast($user), // Achievement Beast
+            20 => fn ($user): bool => $this->nThProducts($user, [2], 5), // Hangry
+            21 => fn ($user): bool => $this->nThProducts($user, [487], 15), // Cry Baby
+            22 => fn ($user): bool => //weizen outside, grolsch weizen, weizen small, weizen big
+            $this->nThProducts($user, [805, 211, 758, 1039], 20), // True German
+            23 => fn ($user): bool => $this->oldFart($user), // Old Fart
             24 => function ($user) {
                 $this->nThProducts($user, [22, 219, 419], 100);
             }, // I Am Bread
-            25 => function ($user) {
-                return $this->gottaCatchEmAll($user);
-            }, // Gotta Catch em All
-            26 => function ($user) use ($youDandy) {
-                return $this->nThProducts($user, $youDandy, 3);
-            }, // You Dandy
-            27 => function ($user) {
-                return $this->nThProducts($user, [180], 1) && ! $user->did_study_create;
-            }, // Fristi Member
-            28 => function ($user) {
-                return $this->bigSpender($user);
-            }, // Big Spender
-            29 => function ($user) use ($fourOClock) {
-                return $this->percentageProducts($user, $fourOClock, 0.25);
-            }, // Four 'O Clock
+            25 => fn ($user): bool => $this->gottaCatchEmAll($user), // Gotta Catch em All
+            26 => fn ($user): bool => $this->nThProducts($user, $youDandy, 3), // You Dandy
+            27 => fn ($user): bool => $this->nThProducts($user, [180], 1) && ! $user->did_study_create, // Fristi Member
+            28 => fn ($user): bool => $this->bigSpender($user), // Big Spender
+            29 => fn ($user): bool => $this->percentageProducts($user, $fourOClock, 0.25), // Four 'O Clock
             // 30 => function($user) { return $this->percentageProducts($user, $this->categoriesProductIds([11, 15, 18, 19]), 0.25); }, # You're Special
-            32 => function ($user) use ($bigKid) {
-                return $this->percentageProducts($user, $bigKid, 0.25);
-            }, // Big Kid
-            38 => function ($user) {
-                return $this->foreverMember($user);
-            }, // Forever Member
-            51 => function ($user) use ($first) {
-                return $this->first($user, $first);
-            }, // First
-            52 => function ($user) {
-                return $this->nThProducts($user, [987], 777);
-            }, // No Life
-            53 => function ($user) use ($goodHuman) {
-                return $this->nThProducts($user, $goodHuman, 1);
-            }, // Good Human
-            54 => function ($user) {
-                return $this->nThProducts($user, [39], 100);
-            }, // I Am Noodle
-            63 => function ($user) {
-                return $this->nThActivity($user, 1);
-            }, // First Activity
-            64 => function ($user) {
-                return $this->nThActivity($user, 100);
-            }, // Hundredth Activity
-            66 => function ($user) use ($AmountOfSignupsThisMonth) {
-                return $this->percentageParticipation($user, 25, $AmountOfSignupsThisMonth);
-            }, // 25% Participation Trophee
-            67 => function ($user) use ($AmountOfSignupsThisMonth) {
-                return $this->percentageParticipation($user, 50, $AmountOfSignupsThisMonth);
-            }, // 50% Participation Trophee
-            68 => function ($user) use ($AmountOfSignupsThisMonth) {
-                return $this->percentageParticipation($user, 75, $AmountOfSignupsThisMonth);
-            }, // 75% Participation Trophee
+            32 => fn ($user): bool => $this->percentageProducts($user, $bigKid, 0.25), // Big Kid
+            38 => fn ($user): bool => $this->foreverMember($user), // Forever Member
+            51 => fn ($user): bool => $this->first($user, $first), // First
+            52 => fn ($user): bool => $this->nThProducts($user, [987], 777), // No Life
+            53 => fn ($user): bool => $this->nThProducts($user, $goodHuman, 1), // Good Human
+            54 => fn ($user): bool => $this->nThProducts($user, [39], 100), // I Am Noodle
+            63 => fn ($user): bool => $this->nThActivity($user, 1), // First Activity
+            64 => fn ($user): bool => $this->nThActivity($user, 100), // Hundredth Activity
+            66 => fn ($user): bool => $this->percentageParticipation($user, 25, $AmountOfSignupsThisMonth), // 25% Participation Trophee
+            67 => fn ($user): bool => $this->percentageParticipation($user, 50, $AmountOfSignupsThisMonth), // 50% Participation Trophee
+            68 => fn ($user): bool => $this->percentageParticipation($user, 75, $AmountOfSignupsThisMonth), // 75% Participation Trophee
         ];
 
         // Check if the specified achievements actually exist.
@@ -145,14 +104,14 @@ class AchievementsCron extends Command
         foreach (array_keys($achievements) as $id) {
             if (! in_array($id, $existing)) {
                 unset($achievements[$id]);
-                $this->error("Achievement #$id does not exist, not granting this achievement.");
+                $this->error("Achievement #{$id} does not exist, not granting this achievement.");
             }
         }
 
         // Loop over all current members and check if they should earn any new achievements.
         $users = User::withoutTrashed()
-            ->whereHas('member', function ($query) {
-                $query->where('is_pending', false);
+            ->whereHas('member', static function ($query) {
+                $query->whereNot('membership_type', MembershipTypeEnum::PENDING);
             })
             ->get();
         $totalUsers = $users->count();
@@ -161,9 +120,15 @@ class AchievementsCron extends Command
             $this->line(($index + 1).'/'.$totalUsers.' #'.$user->id);
             $alreadyAchieved = $user->achievements->pluck('id')->toArray();
             foreach ($achievements as $id => $check) {
-                if (! in_array($id, $alreadyAchieved) && $check($user)) {
-                    $this->giveAchievement($user, $id);
+                if (in_array($id, $alreadyAchieved)) {
+                    continue;
                 }
+
+                if (! $check($user)) {
+                    continue;
+                }
+
+                $this->giveAchievement($user, $id);
             }
         }
 
@@ -174,13 +139,12 @@ class AchievementsCron extends Command
      * Give an achievement to a user.
      *
      * @param  User  $user
-     * @param  int  $id
      */
-    private function giveAchievement($user, $id)
+    private function giveAchievement($user, int $id): void
     {
-        $achievement = Achievement::find($id);
+        $achievement = Achievement::query()->find($id);
 
-        AchievementOwnership::updateOrCreate([
+        AchievementOwnership::query()->updateOrCreate([
             'user_id' => $user->id,
             'achievement_id' => $id,
         ]);
@@ -190,10 +154,8 @@ class AchievementsCron extends Command
 
     /**
      * Check if it is NOT the first of the month.
-     *
-     * @return bool
      */
-    private function notFirstOfMonth()
+    private function notFirstOfMonth(): bool
     {
         return Carbon::now()->day != 1;
     }
@@ -202,9 +164,8 @@ class AchievementsCron extends Command
      * Achievement beast = earned 10 achievements or more.
      *
      * @param  User  $user
-     * @return bool
      */
-    private function achievementBeast($user)
+    private function achievementBeast($user): bool
     {
         return $user->achievements->count() >= 10;
     }
@@ -213,9 +174,8 @@ class AchievementsCron extends Command
      * Old Fart = member for more than 5 years.
      *
      * @param  User  $user
-     * @return bool
      */
-    private function oldFart($user)
+    private function oldFart($user): bool
     {
         return $user->is_member && $user->member->created_at < Carbon::now()->subYears(5);
     }
@@ -224,9 +184,8 @@ class AchievementsCron extends Command
      * Gotta catch 'em all! = be a member of at least 10 different committees.
      *
      * @param  User  $user
-     * @return bool
      */
-    private function gottaCatchEmAll($user)
+    private function gottaCatchEmAll($user): bool
     {
         return $user->committees()->count() >= 10;
     }
@@ -235,9 +194,8 @@ class AchievementsCron extends Command
      * Big spender = paid more than the max. amount of money in a month (=€250).
      *
      * @param  User  $user
-     * @return bool
      */
-    private function bigSpender($user)
+    private function bigSpender($user): bool
     {
         if ($this->notFirstOfMonth()) {
             return false;
@@ -254,9 +212,8 @@ class AchievementsCron extends Command
      * 4ever committee member = has been a committee member for more than three years.
      *
      * @param  User  $user
-     * @return bool
      */
-    private function foreverMember($user)
+    private function foreverMember($user): bool
     {
         foreach ($user->committees as $committee) {
             $memberships = CommitteeMembership::withTrashed()
@@ -271,8 +228,10 @@ class AchievementsCron extends Command
                 } else {
                     $diff = Carbon::now()->diff($membership->created_at);
                 }
+
                 $days += $diff->days;
             }
+
             if ($days >= 1095) {
                 return true;
             }
@@ -286,9 +245,8 @@ class AchievementsCron extends Command
      *
      * @param  User  $user
      * @param  int[]  $firsts
-     * @return bool
      */
-    private function first($user, $firsts)
+    private function first($user, array $firsts): bool
     {
         return in_array($user->id, $firsts);
     }
@@ -297,14 +255,12 @@ class AchievementsCron extends Command
      * Attended a certain number of activities.
      *
      * @param  User  $user
-     * @param  int  $n
-     * @return bool
      */
-    private function nThActivity($user, $n)
+    private function nThActivity($user, int $n): bool
     {
-        $participated = ActivityParticipation::where('user_id', $user->id)->pluck('activity_id');
-        $activities = Activity::WhereIn('id', $participated)->pluck('event_id');
-        $events = Event::whereIn('id', $activities)->where('end', '<', Carbon::now()->timestamp);
+        $participated = ActivityParticipation::query()->where('user_id', $user->id)->pluck('activity_id');
+        $activities = Activity::query()->WhereIn('id', $participated)->pluck('event_id');
+        $events = Event::query()->whereIn('id', $activities)->where('end', '<', Carbon::now()->timestamp);
 
         return $events->count() >= $n;
     }
@@ -313,21 +269,20 @@ class AchievementsCron extends Command
      * Attended a certain percentage of signups in the last month.
      *
      * @param  User  $user
-     * @param  int  $percentage
      * @param  int  $possibleSignups
-     * @return bool
      */
-    private function percentageParticipation($user, $percentage, $possibleSignups)
+    private function percentageParticipation($user, int $percentage, $possibleSignups): bool
     {
         if ($this->notFirstOfMonth()) {
             return false;
         }
+
         if ($possibleSignups < 5) {
             return false;
         }
 
-        $participated = ActivityParticipation::where('user_id', $user->id)->pluck('activity_id');
-        $activities = Activity::WhereIn('id', $participated)->pluck('event_id');
+        $participated = ActivityParticipation::query()->where('user_id', $user->id)->pluck('activity_id');
+        $activities = Activity::query()->WhereIn('id', $participated)->pluck('event_id');
         $EventsParticipated = Event::query()
             ->whereHas('activity')
             ->where('secret', false)
@@ -344,10 +299,8 @@ class AchievementsCron extends Command
      *
      * @param  User  $user
      * @param  int[]  $products
-     * @param  int  $n
-     * @return bool
      */
-    private function nThProducts($user, $products, $n)
+    private function nThProducts($user, array $products, int $n): bool
     {
         return $user->orderlines()->whereIn('product_id', $products)->sum('units') > $n;
     }
@@ -357,10 +310,8 @@ class AchievementsCron extends Command
      *
      * @param  User  $user
      * @param  int[]  $products
-     * @param  float  $p
-     * @return bool
      */
-    private function percentageProducts($user, $products, $p)
+    private function percentageProducts($user, array $products, float $p): bool
     {
         $orders = OrderLine::query()
             ->where('updated_at', '>', Carbon::now()->subMonths())
@@ -381,11 +332,11 @@ class AchievementsCron extends Command
      * @param  int[]  $categories
      * @return int[]
      */
-    private function categoryProducts($categories)
+    private function categoryProducts(array $categories): array
     {
         $products = [];
         foreach ($categories as $category) {
-            $products = array_merge($products, ProductCategory::find($category)->sortedProducts()->pluck('id')->toArray());
+            $products = array_merge($products, ProductCategory::query()->find($category)->sortedProducts()->pluck('id')->toArray());
         }
 
         return $products;

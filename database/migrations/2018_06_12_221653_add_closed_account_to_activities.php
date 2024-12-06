@@ -8,10 +8,8 @@ class AddClosedAccountToActivities extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('activities', function (Blueprint $table) {
             $table->integer('closed_account')->nullable(true)->default(null)->after('closed');
@@ -20,10 +18,8 @@ class AddClosedAccountToActivities extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('activities', function (Blueprint $table) {
             $table->dropColumn('closed_account');

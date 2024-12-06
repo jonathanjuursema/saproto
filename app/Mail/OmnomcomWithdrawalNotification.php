@@ -7,14 +7,21 @@ use App\Models\Withdrawal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class OmnomcomWithdrawalNotification extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var User
+     */
     public $user;
 
+    /**
+     * @var Withdrawal
+     */
     public $withdrawal;
 
     /**
@@ -36,7 +43,7 @@ class OmnomcomWithdrawalNotification extends Mailable
     public function build()
     {
         return $this
-            ->from('treasurer@'.config('proto.emaildomain'), config('proto.treasurer'))
+            ->from('treasurer@'.Config::string('proto.emaildomain'), Config::string('proto.treasurer'))
             ->subject('S.A. Proto Withdrawal Announcement for '.date('d-m-Y', strtotime($this->withdrawal->date)))
             ->view('emails.omnomcom.withdrawalnotification');
     }

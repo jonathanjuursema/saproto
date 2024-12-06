@@ -54,7 +54,7 @@
 
 </form>
 
-<form class="form-horizontal" method="post" action="{{ route("user::dashboard") }}">
+<form class="form-horizontal" method="post" action="{{ route("user::dashboard::show") }}">
 
     {!! csrf_field() !!}
 
@@ -79,15 +79,17 @@
                     <tr>
                         <th>Studies attended</th>
                         <td>
-                        <span class="badge rounded-pill bg-{{ $user->did_study_create ? 'primary' : 'dark' }} text-white"
-                              data-bs-toggle="tooltip" data-bs-placement="bottom"
-                              title="Is this incorrect? Let the board know.">
+                        <span
+                            class="badge rounded-pill bg-{{ $user->did_study_create ? 'primary' : 'dark' }} text-white"
+                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            title="Is this incorrect? Let the board know.">
                             <i class="fas fa-{{ $user->did_study_create ? 'check-' : null }}square fa-fw"></i>
                             Creative Technology
                         </span>
-                            <span class="badge rounded-pill bg-{{ $user->did_study_itech ? 'primary' : 'dark' }} text-white"
-                                  data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                  title="Is this incorrect? Let the board know.">
+                            <span
+                                class="badge rounded-pill bg-{{ $user->did_study_itech ? 'primary' : 'dark' }} text-white"
+                                data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                title="Is this incorrect? Let the board know.">
                             <i class="fas fa-{{ $user->did_study_itech ? 'check-' : null }}square fa-fw"></i>
                             Interaction Technology
                         </span>
@@ -122,7 +124,7 @@
                             </a>
                         @else
                             Not linked
-                            <a class="badge rounded-pill bg-primary float-end" href="{{ route('user::edu::add') }}">
+                            <a class="badge rounded-pill bg-primary float-end" href="{{ route('user::edu::create') }}">
                                 <i class="fas fa-user-plus fa-fw"></i>
                             </a>
                         @endif
@@ -171,7 +173,7 @@
                                 </a>
                             </p>
                         @else
-                            <a href="{{ route('user::address::add') }}">
+                            <a href="{{ route('user::address::create') }}">
                                 Let us know your address
                             </a>
                         @endif
@@ -271,7 +273,7 @@
                             Choose a theme
                         </label>
                         <select class="form-control" id="theme" name="theme">
-                            @foreach(config('proto.themes') as $i => $name)
+                            @foreach(Config::array('proto.themes') as $i => $name)
                                 <option value="{{ $i }}" @selected($user->theme == $i)>{{ ucwords($name) }}</option>
                             @endforeach
                         </select>
@@ -333,13 +335,13 @@
             </button>
 
             @if($user->completed_profile && !$user->member)
-                <a href="{{ route('user::memberprofile::clear') }}" class="btn btn-outline-danger btn-block mt-3">
+                <a href="{{ route('user::memberprofile::showclear') }}" class="btn btn-outline-danger btn-block mt-3">
                     Clear information required only for members
                 </a>
             @endif
 
             @if(!$user->completed_profile)
-                <a href="{{ route('user::memberprofile::complete') }}" class="btn btn-outline-info btn-block mt-3">
+                <a href="{{ route('user::memberprofile::show') }}" class="btn btn-outline-info btn-block mt-3">
                     Complete profile for membership
                 </a>
             @endif

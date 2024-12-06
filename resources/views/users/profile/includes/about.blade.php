@@ -10,7 +10,8 @@
 
             <div class="text-center">
 
-                <img src="{{ $user->generatePhotoPath(170, 170) }}" class="rounded-circle mt-2 border border-5 border-white bg-dark"
+                <img src="{{ $user->generatePhotoPath(170, 170) }}"
+                     class="rounded-circle mt-2 border border-5 border-white bg-dark"
                      width="170px" height="170px">
 
             </div>
@@ -22,12 +23,12 @@
     <div class="card-body">
 
         @if($user->is_member)
-            @if($user->member->is_honorary)
+            @if($user->member->membership_type === \App\Enums\MembershipTypeEnum::HONORARY)
                 <p class="card-text ellipsis">
                     <i class="fas fa-trophy fa-fw me-3 text-primary" aria-hidden="true"></i>
                     <strong>{{ $user->calling_name }} is an honorary member.</strong>
                 </p>
-            @elseif($user->member->is_pet)
+            @elseif($user->member->membership_type === \App\Enums\MembershipTypeEnum::PET)
                 <p class="card-text ellipsis">
                     <i class="fas fa-paw fa-fw me-3 text-primary" aria-hidden="true"></i>
                     <strong>{{ $user->calling_name }} is a pet.</strong>

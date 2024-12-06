@@ -8,16 +8,17 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Session;
 
 class MenuController extends Controller
 {
     /** @return View */
     public function index()
     {
-        $menuItems = MenuItem::where('parent', null)->with('children', 'page')->orderBy('order')->get();
+        $menuItems = MenuItem::query()->whereNull('parent')->with('children', 'page')->orderBy('order')->get();
 
         return view('menu.list', ['menuItems' => $menuItems]);
     }
@@ -26,7 +27,7 @@ class MenuController extends Controller
     public function create(Router $router)
     {
         $pages = Page::all();
-        $topMenuItems = MenuItem::where('parent')->orderBy('order')->get();
+        $topMenuItems = MenuItem::query()->where('parent')->orderBy('order')->get();
 
         return view('menu.edit', ['item' => null, 'pages' => $pages, 'topMenuItems' => $topMenuItems, 'routes' => $this->getAllRoutes($router)]);
     }
@@ -36,17 +37,19 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        $menuItem = new MenuItem();
+        $menuItem = new MenuItem;
         $menuItem->menuname = $request->input('name');
         $menuItem->parent = $request->input('parent') ?: null;
         $menuItem->is_member_only = $request->has('is_member_only');
         $menuItem->page_id = $request->input('page_id') ?: null;
-        $menuItem->url = $menuItem->page_id ? Page::find($menuItem->page_id)->getUrl() : $request->input('url');
-        $maxOrder = MenuItem::where('parent', $menuItem->parent)->orderBy('order', 'DESC')->first();
+        $menuItem->url = $menuItem->page_id ? Page::query()->find($menuItem->page_id)->getUrl() : $request->input('url');
+        $maxOrder = MenuItem::query()->where('parent', $menuItem->parent)->orderBy('order', 'DESC')->first();
         $menuItem->order = $maxOrder ? $maxOrder->order + 1 : 0;
         $menuItem->save();
 
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -57,9 +60,9 @@ class MenuController extends Controller
      */
     public function edit(Router $router, $id)
     {
-        $menuItem = MenuItem::findOrFail($id);
+        $menuItem = MenuItem::query()->findOrFail($id);
         $pages = Page::all();
-        $topMenuItems = MenuItem::where('parent', null)->orderBy('order')->get();
+        $topMenuItems = MenuItem::query()->where('parent', null)->orderBy('order')->get();
 
         return view('menu.edit', ['item' => $menuItem, 'pages' => $pages, 'topMenuItems' => $topMenuItems, 'routes' => $this->getAllRoutes($router)]);
     }
@@ -71,7 +74,7 @@ class MenuController extends Controller
     public function update(Request $request, $id)
     {
         /** @var MenuItem $menuItem */
-        $menuItem = MenuItem::findOrFail($id);
+        $menuItem = MenuItem::query()->findOrFail($id);
 
         if ($request->input('parent') != $menuItem->parent) {
             $oldparent = $menuItem->parent;
@@ -81,8 +84,8 @@ class MenuController extends Controller
         $menuItem->parent = $request->input('parent') ?: null;
         $menuItem->is_member_only = $request->has('is_member_only');
         $menuItem->page_id = $request->input('page_id') ?: null;
-        $menuItem->url = $menuItem->page_id ? Page::find($menuItem->page_id)->getUrl() : $request->input('url');
-        $maxOrder = MenuItem::where('parent', $menuItem->parent)->orderBy('order', 'DESC')->first();
+        $menuItem->url = $menuItem->page_id ? Page::query()->find($menuItem->page_id)->getUrl() : $request->input('url');
+        $maxOrder = MenuItem::query()->where('parent', $menuItem->parent)->orderBy('order', 'DESC')->first();
         $menuItem->order = $maxOrder ? $maxOrder->order + 1 : 0;
         $menuItem->save();
 
@@ -91,6 +94,7 @@ class MenuController extends Controller
         }
 
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -102,8 +106,8 @@ class MenuController extends Controller
     public function orderUp($id)
     {
         /** @var MenuItem $menuItem */
-        $menuItem = MenuItem::findOrFail($id);
-        $menuItemAbove = MenuItem::where('parent', $menuItem->parent)->where('order', '<', $menuItem->order)->orderBy('order', 'desc')->first();
+        $menuItem = MenuItem::query()->findOrFail($id);
+        $menuItemAbove = MenuItem::query()->where('parent', $menuItem->parent)->where('order', '<', $menuItem->order)->orderBy('order', 'desc')->first();
 
         if (! $menuItemAbove) {
             abort(400, 'Item is already top item.');
@@ -111,6 +115,7 @@ class MenuController extends Controller
 
         $this->switchMenuItems($menuItem, $menuItemAbove);
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
@@ -122,8 +127,8 @@ class MenuController extends Controller
     public function orderDown($id)
     {
         /** @var MenuItem $menuItem */
-        $menuItem = MenuItem::findOrFail($id);
-        $menuItemBelow = MenuItem::where('parent', $menuItem->parent)->where('order', '>', $menuItem->order)->orderBy('order', 'asc')->first();
+        $menuItem = MenuItem::query()->findOrFail($id);
+        $menuItemBelow = MenuItem::query()->where('parent', $menuItem->parent)->where('order', '>', $menuItem->order)->orderBy('order', 'asc')->first();
 
         if (! $menuItemBelow) {
             abort(400, 'Item is already bottom item.');
@@ -131,15 +136,12 @@ class MenuController extends Controller
 
         $this->switchMenuItems($menuItem, $menuItemBelow);
         $this->fixDuplicateMenuItemsOrder($menuItem->parent);
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
 
-    /**
-     * @param  MenuItem  $item1
-     * @param  MenuItem  $item2
-     */
-    private function switchMenuItems($item1, $item2)
+    private function switchMenuItems(MenuItem $item1, MenuItem $item2): void
     {
         $newOrderForItem1 = $item2->order;
         $newOrderForItem2 = $item1->order;
@@ -151,10 +153,9 @@ class MenuController extends Controller
         $item2->save();
     }
 
-    /** @param  int  $parent */
-    private function fixDuplicateMenuItemsOrder($parent)
+    private function fixDuplicateMenuItemsOrder(int $parent): void
     {
-        $menuItems = MenuItem::where('parent', $parent)->orderBy('order', 'asc')->get();
+        $menuItems = MenuItem::query()->where('parent', $parent)->orderBy('order')->get();
         $i = 0;
         foreach ($menuItems as $menuItem) {
             $menuItem->order = $i;
@@ -164,48 +165,45 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         /** @var MenuItem $menuItem */
-        $menuItem = MenuItem::findOrfail($id);
+        $menuItem = MenuItem::query()->findOrfail($id);
 
         if ($menuItem->children->count() > 0) {
-            Session::flash('flash_message', 'A menu item with children can\'t be removed.');
+            Session::flash('flash_message', "A menu item with children can't be removed.");
 
             return Redirect::route('menu::list');
         }
 
-        $change = MenuItem::where('parent', '=', $menuItem->parent)->get();
+        $change = MenuItem::query()->where('parent', '=', $menuItem->parent)->get();
 
         foreach ($change as $item) {
             if ($item->order > $menuItem->order && $item->id != $menuItem->id) {
-                $item->order = $item->order - 1;
+                $item->order--;
                 $item->save();
             }
         }
 
         Session::flash('flash_message', 'Menu item has been removed.');
         $menuItem->delete();
+        Cache::forget('website.navbar');
 
         return Redirect::route('menu::list');
     }
 
-    private function getAllRoutes($router)
+    private function getAllRoutes(Router $router): ?array
     {
         $routes = $router->getRoutes()->getRoutesByMethod()['GET'];
 
-        return array_filter($routes, function ($route) {
-            return
-                $route->getName() &&
-                strpos($route->uri(), '{') === false &&
-                strpos($route->getName(), 'api::') === false &&
-                strpos($route->getName(), 'login::') === false &&
-                strpos($route->uri(), 'oauth') === false;
-        });
+        return array_filter($routes, static fn ($route): bool => $route->getName() &&
+            ! str_contains($route->uri(), '{') &&
+            ! str_contains($route->getName(), 'api::') &&
+            ! str_contains($route->getName(), 'login::') &&
+            ! str_contains($route->uri(), 'oauth'));
     }
 }

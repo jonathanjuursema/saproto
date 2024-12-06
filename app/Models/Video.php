@@ -51,47 +51,46 @@ class Video extends Model
     /** @return BelongsTo */
     public function event()
     {
-        return $this->belongsTo(\App\Models\Event::class, 'event_id');
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
-    /** @return string */
-    public function getYouTubeUrl()
+    public function getYouTubeUrl(): string
     {
         return sprintf('https://www.youtube.com/watch?v=%s', $this->youtube_id);
     }
 
-    /** @return string */
-    public function getYouTubeChannelUrl()
+    public function getYouTubeChannelUrl(): string
     {
         return sprintf('https://www.youtube.com/channel/%s', $this->youtube_user_id);
     }
 
-    /** @return string */
-    public function getYouTubeEmbedUrl()
+    public function getYouTubeEmbedUrl(): string
     {
         return sprintf('https://www.youtube.com/embed/%s?rel=0', $this->youtube_id);
     }
 
     /**
-     * @return string
-     *
      * @throws Exception
      */
-    public function getHumanDuration()
+    public function getHumanDuration(): string
     {
         $interval = new DateInterval($this->youtube_length);
         if ($interval->y > 0) {
             return sprintf('%s years', $interval->y);
         }
+
         if ($interval->m > 0) {
             return sprintf('%s months', $interval->m);
         }
+
         if ($interval->d > 0) {
             return sprintf('%s days', $interval->d);
         }
+
         if ($interval->h > 0) {
             return sprintf('%s:%s:%s ', $interval->h, str_pad(strval($interval->i), 2, '0', STR_PAD_LEFT), str_pad(strval($interval->s), 2, '0', STR_PAD_LEFT));
         }
+
         if ($interval->i > 0) {
             return sprintf('%s:%s ', $interval->i, str_pad(strval($interval->s), 2, '0', STR_PAD_LEFT));
         }
@@ -99,14 +98,12 @@ class Video extends Model
         return sprintf('%s seconds', $interval->s);
     }
 
-    /** @return string|false */
-    public function getUnixTimeStamp()
+    public function getUnixTimeStamp(): string
     {
         return date('U', strtotime($this->video_date));
     }
 
-    /** @return string|false */
-    public function getFormDate()
+    public function getFormDate(): string
     {
         return date('d-m-Y', strtotime($this->video_date));
     }

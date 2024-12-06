@@ -2,14 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\LdapController;
+use App\Enums\MembershipTypeEnum;
 use App\Mail\FeeEmail;
 use App\Mail\FeeEmailForBoard;
 use App\Models\Member;
-use App\Models\OrderLine;
 use App\Models\Product;
+use App\Models\User;
+use Exception;
 use Illuminate\Console\Command;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class FeeCron extends Command
 {
@@ -40,28 +41,23 @@ class FeeCron extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @throws Exception
      */
-    public function handle()
+    public function handle(): int
     {
         if (intval(date('n')) == 8 || intval(date('n')) == 9) {
-            $this->info('We don\'t charge membership fees in August or September.');
+            $this->info("We don't charge membership fees in August or September.");
 
             return 0;
         }
 
-        if (intval(date('n')) >= 9) {
-            $yearstart = intval(date('Y'));
-        } else {
-            $yearstart = intval(date('Y')) - 1;
-        }
+        $yearstart = intval(date('n')) >= 9 ? intval(date('Y')) : intval(date('Y')) - 1;
 
-        $students = LdapController::searchStudents();
-        $names = $students['names'];
-        $emails = $students['emails'];
-        $usernames = $students['usernames'];
-
-        $already_paid = OrderLine::whereIn('product_id', array_values(config('omnomcom.fee')))->where('created_at', '>=', $yearstart.'-09-01 00:00:01')->get()->pluck('user_id')->toArray();
+        $usersToCharge = User::query()->whereHas('member', function ($q) {
+            $q->whereNot('membership_type', MembershipTypeEnum::PENDING);
+        })->whereDoesntHave('orderlines', function ($q) use ($yearstart) {
+            $q->whereIn('product_id', array_values(Config::array('omnomcom.fee')))->where('created_at', '>=', $yearstart.'-09-01 00:00:01');
+        })->with('member.UtAccount');
 
         $charged = (object) [
             'count' => 0,
@@ -70,54 +66,75 @@ class FeeCron extends Command
             'remitted' => [],
         ];
 
-        foreach (Member::all() as $member) {
-            if (in_array($member->user->id, $already_paid) || $member->is_pending) {
-                continue;
-            }
+        $feeProducts = [
+            'regular' => Product::query()->findOrFail(Config::integer('omnomcom.fee.regular')),
+            'reduced' => Product::query()->findOrFail(Config::integer('omnomcom.fee.reduced')),
+            'remitted' => Product::query()->findOrFail(Config::integer('omnomcom.fee.remitted')),
+        ];
+        $usersToCharge->chunkById(100, function ($users) use ($feeProducts, $charged) {
+            /** @var User $user */
+            foreach ($users as $user) {
+                $product = null;
+                $fee_type = null;
+                $email_remittance_reason = null;
 
-            $reason = null;
-            $email_remittance_reason = null;
+                switch ($user->member->membership_type) {
+                    case MembershipTypeEnum::DONOR:
+                        $fee_type = 'remitted';
+                        $email_remittance_reason = 'you are a donor of the association, and your donation is not handled via the membership fee system';
+                        $charged->remitted[] = $user->name.' (#'.$user->id.') - Donor';
+                        break;
+                    case MembershipTypeEnum::HONORARY:
+                        $fee_type = 'remitted';
+                        $email_remittance_reason = 'you are an honorary member';
+                        $charged->remitted[] = $user->name.' (#'.$user->id.') - Honorary Member';
+                        break;
+                    case MembershipTypeEnum::LIFELONG:
+                        $fee_type = 'remitted';
+                        $email_remittance_reason = 'you signed up for life-long membership when you became a member';
+                        $charged->remitted[] = $user->name.' (#'.$user->id.') - Lifelong Member';
+                        break;
+                    case MembershipTypeEnum::PET:
+                        $fee_type = 'remitted';
+                        $email_remittance_reason = 'you are a pet and therefore do not possess any money';
+                        $charged->remitted[] = $user->name.' (#'.$user->id.') - Pet Member';
+                        break;
+                    case MembershipTypeEnum::REGULAR:
+                        if ($user->member->UtAccount && ! $user->member->is_primary_at_another_association) {
+                            $fee_type = 'regular';
+                            $charged->regular[] = $user->name.' (#'.$user->id.')';
+                        } else {
+                            $fee_type = 'reduced';
+                            $charged->reduced[] = $user->name.' (#'.$user->id.')';
+                        }
 
-            if ($member->is_lifelong || $member->is_honorary || $member->is_donor || $member->is_pet) {
-                $fee = config('omnomcom.fee')['remitted'];
-                $email_fee = 'remitted';
-                if ($member->is_honorary) {
-                    $reason = 'Honorary Member';
-                    $email_remittance_reason = 'you are an honorary member';
-                } elseif ($member->is_lifelong) {
-                    $reason = 'Lifelong Member';
-                    $email_remittance_reason = 'you signed up for life-long membership when you became a member';
-                } elseif ($member->is_pet) {
-                    $reason = 'Pet member';
-                    $email_remittance_reason = 'you are a pet and therefore do not possess any money';
-                } elseif ($member->is_donor) {
-                    $reason = 'Donor';
-                    $email_remittance_reason = 'you are a donor of the association, and your donation is not handled via the membership fee system';
+                        break;
+                    case MembershipTypeEnum::PENDING:
+                        throw new Exception('This should not happen as we filter out pending members.');
                 }
-                $charged->remitted[] = $member->user->name.' (#'.$member->user->id.") - $reason";
-            } elseif (in_array(strtolower($member->user->email), $emails) || in_array($member->user->utwente_username, $usernames) || in_array(strtolower($member->user->name), $names)) {
-                $fee = config('omnomcom.fee')['regular'];
-                $email_fee = 'regular';
-                $charged->regular[] = $member->user->name.' (#'.$member->user->id.')';
-            } else {
-                $fee = config('omnomcom.fee')['reduced'];
-                $email_fee = 'reduced';
-                $charged->reduced[] = $member->user->name.' (#'.$member->user->id.')';
+
+                $charged->count++;
+
+                $product = $feeProducts[$fee_type];
+                /**@phpstan-ignore-next-line */
+                if (! $product) {
+                    $this->error('No product found for user '.$user->id);
+
+                    continue;
+                }
+
+                $product->buyForUser($user, 1, null, null, null, null, 'membership_fee_cron');
+
+                Mail::to($user)->queue((new FeeEmail($user, $fee_type, $product->price, $email_remittance_reason))->onQueue('high'));
             }
 
-            $charged->count++;
+            $this->info('Charged '.$charged->count.' of '.Member::query()->whereNot('membership_type', MembershipTypeEnum::PENDING)->count().' members their fee.');
+        });
 
-            $product = Product::findOrFail($fee);
-            $product->buyForUser($member->user, 1, null, null, null, null, 'membership_fee_cron');
-
-            Mail::to($member->user)->queue((new FeeEmail($member->user, $email_fee, $product->price, $email_remittance_reason))->onQueue('high'));
-        }
-
+        /** @phpstan-ignore-next-line */
         if ($charged->count > 0) {
             Mail::queue((new FeeEmailForBoard($charged))->onQueue('high'));
         }
-
-        $this->info('Charged '.$charged->count.' of '.Member::count().' members their fee.');
 
         return 0;
     }

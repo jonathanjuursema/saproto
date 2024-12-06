@@ -4,23 +4,23 @@
         WallstreetDrink Product overview
     </div>
     @if(!$currentDrink->is_active)
-    <form method="post" action="{{ route('wallstreet::products::add', ['id'=>$currentDrink->id]) }}">
+        <form method="post" action="{{ route('wallstreet::products::create', ['id'=>$currentDrink->id]) }}">
 
-        {!! csrf_field() !!}
-        <div class="row mx-2 mb-3">
-            <label for="product">Product(s):</label>
-        <div class="col-9">
-            <div class="form-group autocomplete">
-                <input class="form-control product-search" id="product" name="product[]" multiple required>
+            {!! csrf_field() !!}
+            <div class="row mx-2 mb-3">
+                <label for="product">Product(s):</label>
+                <div class="col-9">
+                    <div class="form-group autocomplete">
+                        <input class="form-control product-search" id="product" name="product[]" multiple required>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-outline-primary btn-block" type="submit">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="col-3">
-            <button class="btn btn-outline-primary btn-block" type="submit">
-                <i class="fas fa-plus-circle"></i>
-            </button>
-        </div>
-        </div>
-    </form>
+        </form>
     @endif
 
     @if(count($currentDrink->products) > 0)

@@ -6,7 +6,7 @@
 
 @section('login-body')
 
-    <form method="POST" action="{{ route("login::resetpass::send") }}">
+    <form method="POST" action="{{ route("login::password::reset::send") }}">
 
         {!! csrf_field() !!}
 
@@ -23,7 +23,8 @@
 
         <hr>
 
-        <a class="btn btn-outline-secondary btn-block" href="https://tap.utwente.nl/tap/pwman/index.php" target="_blank">
+        <a class="btn btn-outline-secondary btn-block" href="https://tap.utwente.nl/tap/pwman/index.php"
+           target="_blank">
             Reset UTwente password
         </a>
 

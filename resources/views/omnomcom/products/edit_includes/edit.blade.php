@@ -1,7 +1,7 @@
 <div class="card">
 
     <form method="post"
-          action="{{ ($product == null ? route("omnomcom::products::add") : route("omnomcom::products::edit", ['id' => $product->id])) }}"
+          action="{{ ($product == null ? route("omnomcom::products::store") : route("omnomcom::products::update", ['id' => $product->id])) }}"
           enctype="multipart/form-data">
 
         <div class="card-header bg-dark text-white">
@@ -84,7 +84,9 @@
 
                 <div class="col-md-3">
 
-                    <label for="stock">Shelf stock:<i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="right" title="This is the amount of the product before you stock the shelves. This amount is for checking the stock for theft. If you are only reporting theft, make sure that the final stock is set to the same value."></i></label>
+                    <label for="stock">Shelf stock:<i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip"
+                                                      data-bs-placement="right"
+                                                      title="This is the amount of the product before you stock the shelves. This amount is for checking the stock for theft. If you are only reporting theft, make sure that the final stock is set to the same value."></i></label>
                     <input type="number" class="form-control" id="prev_stock" name="prev_stock"
                            placeholder="0" value="{{ $product->stock ?? '' }}">
 
@@ -92,7 +94,9 @@
 
                 <div class="col-md-3">
 
-                    <label for="stock">Final stock:<i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="right" title="This is the updated amount, put your new stock amounts here."></i></label>
+                    <label for="stock">Final stock:<i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip"
+                                                      data-bs-placement="right"
+                                                      title="This is the updated amount, put your new stock amounts here."></i></label>
                     <input type="number" class="form-control" id="stock" name="stock"
                            placeholder="0" value="{{ $product->stock ?? '' }}">
 
@@ -157,7 +161,8 @@
 
                         @foreach($categories as $catogory)
 
-                            <option value="{{ $catogory->id }}" @selected($product != null && $product->categories->contains($catogory))>
+                            <option
+                                value="{{ $catogory->id }}" @selected($product != null && $product->categories->contains($catogory))>
                                 {{ $catogory->name }}
                             </option>
 
@@ -175,7 +180,8 @@
 
                         @foreach($accounts as $account)
 
-                            <option value="{{ $account?->id }}" @selected(old('account_id', $account && $product && $account->id == $product->account_id))>
+                            <option
+                                value="{{ $account?->id }}" @selected(old('account_id', $account && $product && $account->id == $product->account_id))>
                                 {{ $account->name }} ({{ $account->account_number }})
                             </option>
 
@@ -211,7 +217,7 @@
 
             <button type="submit" class="btn btn-success float-end ms-3">Submit</button>
 
-            <a href="{{ route("omnomcom::products::list") }}" class="btn btn-default float-end">Cancel</a>
+            <a href="{{ route("omnomcom::products::index") }}" class="btn btn-default float-end">Cancel</a>
 
             @if ($product?->ticket)
                 <a href="{{ route('tickets::edit', ['id' => $product->ticket->id]) }}"

@@ -18,7 +18,7 @@
 
                 <div class="card-header">
 
-                    <form id="product-search-form" method="get" action="{{ route("omnomcom::products::list") }}">
+                    <form id="product-search-form" method="get" action="{{ route("omnomcom::products::index") }}">
 
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search" name="search">
@@ -33,7 +33,7 @@
 
                 <div class="card-body">
 
-                    <a href="{{ route('omnomcom::products::add') }}" class="btn btn-success btn-block mb-3">
+                    <a href="{{ route('omnomcom::products::create') }}" class="btn btn-success btn-block mb-3">
                         Create a new product
                     </a>
 

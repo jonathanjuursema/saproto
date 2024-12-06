@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddPrepaidOptionToTickets extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('tickets', function ($table) {
             $table->boolean('is_prepaid')->nullable(false)->default(false);
@@ -21,10 +20,8 @@ class AddPrepaidOptionToTickets extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('tickets', function ($table) {
             $table->dropColumn('is_prepaid');

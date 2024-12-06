@@ -36,18 +36,18 @@ class OmNomComCleanup extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Starting clean-up.');
 
-        $users = User::where('keep_omnomcom_history', false)->pluck('id')->toArray();
-        $orderlinesTable = (new OrderLine())->getTable();
+        $users = User::query()->where('keep_omnomcom_history', false)->pluck('id')->toArray();
+        $orderlinesTable = (new OrderLine)->getTable();
 
         $affected = DB::table($orderlinesTable)
             ->whereIn('user_id', $users)
             ->where('created_at', '<', date('Y-m-d', strtotime('-7 years')))
             ->update(['user_id' => null]);
 
-        $this->info("Found and anonymised $affected orderlines.");
+        $this->info("Found and anonymised {$affected} orderlines.");
     }
 }

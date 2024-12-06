@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class EditActivityTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('activities', function ($table) {
             $table->integer('deregistration_end')->after('registration_end');
@@ -25,10 +24,8 @@ class EditActivityTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('activities', function ($table) {
             $table->dropColumn('deregistration_end');

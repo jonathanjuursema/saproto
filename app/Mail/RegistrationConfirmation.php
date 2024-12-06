@@ -16,9 +16,7 @@ class RegistrationConfirmation extends Mailable
      *
      * @return void
      */
-    public function __construct(public $user)
-    {
-    }
+    public function __construct(public $user) {}
 
     /**
      * Build the message.

@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\SpotifyController;
 use App\Models\PlayedVideo;
-use DB;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use SpotifyWebAPI\SpotifyWebAPIException;
 
 class SpotifyUpdate extends Command
 {
@@ -35,10 +37,8 @@ class SpotifyUpdate extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $spotify = SpotifyController::getApi();
         $session = SpotifyController::getSession();
@@ -46,13 +46,13 @@ class SpotifyUpdate extends Command
         $this->info('Testing if API key still works.');
 
         try {
-            if ($spotify->me()->id != config('app-proto.spotify-user')) {
+            if ($spotify->me()->id != Config::string('app-proto.spotify-user')) {
                 $this->error('API key is for the wrong user!');
 
                 return;
             }
-        } catch (\SpotifyWebAPI\SpotifyWebAPIException $e) {
-            if ($e->getMessage() == 'The access token expired') {
+        } catch (SpotifyWebAPIException $spotifyWebAPIException) {
+            if ($spotifyWebAPIException->getMessage() === 'The access token expired') {
                 $this->info('Access token expired. Trying to renew.');
 
                 $refreshToken = $session->getRefreshToken();
@@ -71,7 +71,7 @@ class SpotifyUpdate extends Command
 
         $this->info('Constructing ProTube hitlist.');
 
-        $videos = PlayedVideo::whereNull('spotify_id')->orderBy('id', 'desc')->limit(1000)->get();
+        $videos = PlayedVideo::query()->whereNull('spotify_id')->orderBy('id', 'desc')->limit(1000)->get();
 
         $videos_to_search = [];
 
@@ -87,25 +87,31 @@ class SpotifyUpdate extends Command
         ];
 
         foreach ($videos as $video) {
-            if (! in_array($video->video_title, array_keys($videos_to_search)) && strlen($video->video_title) > 0) {
-                $videos_to_search[$video->video_title] = (object) [
-                    'title' => $video->video_title,
-                    'video_id' => $video->video_id,
-                    'spotify_id' => $video->spotify_id,
-                    'title_formatted' => preg_replace(
-                        '/(\(.*|[^\S{2,}\s])/',
-                        '',
-                        str_replace($strip, ' ', strtolower($video->video_title))
-                    ),
-                ];
+            if (in_array($video->video_title, array_keys($videos_to_search))) {
+                continue;
             }
+
+            if (strlen($video->video_title) <= 0) {
+                continue;
+            }
+
+            $videos_to_search[$video->video_title] = (object) [
+                'title' => $video->video_title,
+                'video_id' => $video->video_id,
+                'spotify_id' => $video->spotify_id,
+                'title_formatted' => preg_replace(
+                    '/(\(.*|[^\S{2,}\s])/',
+                    '',
+                    str_replace($strip, ' ', strtolower($video->video_title))
+                ),
+            ];
         }
 
         $this->info("Matching to Spotify music.\n---");
 
         foreach ($videos_to_search as $video) {
             if (! $video->spotify_id) {
-                $sameVideo = PlayedVideo::where('video_id', $video->video_id)->whereNotNull('spotify_id')->first();
+                $sameVideo = PlayedVideo::query()->where('video_id', $video->video_id)->whereNotNull('spotify_id')->first();
 
                 if ($sameVideo) {
                     DB::table('playedvideos')->where('video_id', $video->video_id)->update(['spotify_id' => $sameVideo->spotify_id, 'spotify_name' => $sameVideo->spotify_name]);
@@ -121,10 +127,10 @@ class SpotifyUpdate extends Command
                         DB::table('playedvideos')->where('video_id', $video->video_id)->update(['spotify_id' => '', 'spotify_name' => 'Unknown on Spotify']);
                     } else {
                         $name = $song[0]->artists[0]->name.' - '.$song[0]->name;
-                        $this->info("Matched { $video->title } to Spotify track { $name }.");
+                        $this->info("Matched { $video->title } to Spotify track { {$name} }.");
                         DB::table('playedvideos')->where('video_id', $video->video_id)->update(['spotify_id' => $song[0]->uri, 'spotify_name' => $name]);
                     }
-                } catch (\SpotifyWebAPI\SpotifyWebAPIException $e) {
+                } catch (SpotifyWebAPIException $e) {
                     $err = $e->getCode().' error during search ('.$video->title_formatted.') for track ('.$video->title.').';
                     $this->error($err);
                 }

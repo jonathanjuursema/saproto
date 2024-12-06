@@ -11,7 +11,7 @@
         <div class="col-md-3">
 
             <form method="post"
-                  action="{{ ($category == null ? route("omnomcom::categories::add") : route("omnomcom::categories::edit", ['id' => $category->id])) }}"
+                  action="{{ ($category == null ? route("omnomcom::categories::store") : route("omnomcom::categories::update", ['id' => $category->id])) }}"
                   enctype="multipart/form-data">
 
                 {!! csrf_field() !!}
@@ -42,7 +42,7 @@
 
                         <button type="submit" class="btn btn-success float-end ms-3">Submit</button>
 
-                        <a href="{{ route("omnomcom::categories::list") }}"
+                        <a href="{{ route("omnomcom::categories::index") }}"
                            class="btn btn-default float-end">Cancel</a>
 
                     </div>

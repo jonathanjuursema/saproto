@@ -6,7 +6,7 @@
 
 @section('login-body')
 
-    <form method="POST" action="{{ route('passwordstore::auth') }}">
+    <form method="POST" action="{{ route('passwordstore::postAuth') }}">
 
         {!! csrf_field() !!}
 

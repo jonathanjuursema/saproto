@@ -8,10 +8,8 @@ class CreateLeaderboardsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('leaderboards', function (Blueprint $table) {
             $table->increments('id');
@@ -34,10 +32,8 @@ class CreateLeaderboardsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('leaderboards');
         Schema::dropIfExists('leaderboards_entries');

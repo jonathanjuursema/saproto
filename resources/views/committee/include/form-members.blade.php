@@ -1,6 +1,6 @@
 @if(!$new)
 
-    <form class="form-horizontal" action="{{ route('committee::membership::add') }}" method="post">
+    <form class="form-horizontal" action="{{ route('committee::membership::store') }}" method="post">
 
         {!! csrf_field() !!}
 
@@ -15,7 +15,7 @@
                 <div class="form-group">
                     <div class="form-group autocomplete">
                         <label for="member">Member</label>
-                        <input id="member" class="form-control user-search" name="user_id" required/>
+                        <input id="member" class="form-control user-search" name="user_id" required />
                     </div>
                     <input type="hidden" name="committee_id" value="{{ $committee->id }}">
                 </div>

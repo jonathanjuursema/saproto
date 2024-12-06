@@ -8,10 +8,8 @@ class AddUserHasStudiedItech extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('did_study_itech')->after('did_study_create')->default(false);
@@ -20,10 +18,8 @@ class AddUserHasStudiedItech extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('did_study_itech');

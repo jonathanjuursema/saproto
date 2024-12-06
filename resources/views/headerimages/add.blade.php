@@ -12,7 +12,7 @@
 
             <div class="card mb-3">
 
-                <form method="post" action="{{ route("headerimage::add") }}" enctype="multipart/form-data">
+                <form method="post" action="{{ route("headerimages.store") }}" enctype="multipart/form-data">
 
                     {!! csrf_field() !!}
 
@@ -30,7 +30,7 @@
 
                         <div class="form-group autocomplete">
                             <label for="user">Credits:</label>
-                            <input class="form-control user-search" id="user" name="user"/>
+                            <input class="form-control user-search" id="user" name="user" />
                         </div>
 
                         <div class="form-group">
@@ -49,7 +49,7 @@
                             Submit
                         </button>
 
-                        <a href="{{ route("headerimage::index") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("headerimages.index") }}" class="btn btn-default">Cancel</a>
 
                     </div>
 

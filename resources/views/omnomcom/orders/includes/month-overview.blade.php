@@ -12,9 +12,10 @@
                 data-bs-target="#omnomcom-years-{{ $year }}">
                 <strong>{{ $year }}</strong>
             </li>
-            <div id="omnomcom-years-{{ $year }}" class="collapse {{ $year == date('Y') ? 'show' : null }}" data-parent="#omnomcom-years-accordion">
+            <div id="omnomcom-years-{{ $year }}" class="collapse {{ $year == date('Y') ? 'show' : null }}"
+                 data-parent="#omnomcom-years-accordion">
                 @foreach($months as $month)
-                    <a href="{{ route("omnomcom::orders::list", ['date' => $year.'-'. \Carbon\Carbon::create()->month($month)->format('m')]) }}"
+                    <a href="{{ route("omnomcom::orders::index", ['date' => $year.'-'. \Carbon\Carbon::create()->month($month)->format('m')]) }}"
                        class="list-group-item">
                         {{ \Carbon\Carbon::create()->month($month)->format('F').' '.$year }}
                     </a>

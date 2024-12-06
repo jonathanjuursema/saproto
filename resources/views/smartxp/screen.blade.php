@@ -5,11 +5,11 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta http-equiv="refresh" content="3600">
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
+    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}" />
 
     <title>SmartXP Screen v3</title>
 
@@ -159,7 +159,7 @@
         }
 
         #protube.inactive {
-            background-image: url({{env("FISHCAM_URL")}}) !important;
+            background-image: url({{Config::string('app-proto.fishcam-url')}}) !important;
         }
 
         #protube-title {
@@ -224,7 +224,7 @@
 
             <br>
 
-            <img src="{{ asset('images/logo/inverse.png') }}" class="h-75"/>
+            <img src="{{ asset('images/logo/inverse.png') }}" class="h-75" />
 
         </div>
 
@@ -330,74 +330,74 @@
 <script type="text/javascript" nonce="{{ csp_nonce() }}">
 
     function updateClock() {
-        let now = moment()
-        document.getElementById("clock").innerHTML = '<i class="fas fa-clock fa-fw me-2"></i>' + now.format('HH:mm:ss')
-        document.getElementById("ticker").style.width = ((now.format('s.SSS') / 60) * 100) + "%"
+        let now = moment();
+        document.getElementById('clock').innerHTML = '<i class="fas fa-clock fa-fw me-2"></i>' + now.format('HH:mm:ss');
+        document.getElementById('ticker').style.width = ((now.format('s.SSS') / 60) * 100) + '%';
     }
 
     function updateTimetable() {
-        const timetable = document.getElementById("timetable")
+        const timetable = document.getElementById('timetable');
 
         get('{{ route('api::screen::timetable') }}')
             .then(data => {
                 if (data.length > 0) {
-                    timetable.innerHTML = ''
-                    let count = 0
+                    timetable.innerHTML = '';
+                    let count = 0;
                     for (let i in data) {
-                        if (count >= 4) return
+                        if (count >= 4) return;
                         if (!data[i].over) {
-                            let start = moment.unix(data[i].start)
-                            let end = moment.unix(data[i].end)
-                            let time = start.format("HH:mm") + ' - ' + end.format("HH:mm")
-                            let title = data[i].title
-                            let displayTime = '<i class="fas fa-clock fa-fw me-1"></i>' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i>' + data[i].place + '</span>'
+                            let start = moment.unix(data[i].start);
+                            let end = moment.unix(data[i].end);
+                            let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
+                            let title = data[i].title;
+                            let displayTime = '<i class="fas fa-clock fa-fw me-1"></i>' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i>' + data[i].place + '</span>';
                             timetable.innerHTML +=
                                 '<div class="activity">' +
                                 (data[i].studyShort ? '<span class="float-end ms-2">' + '<i class="fas fa-graduation-cap fa-fw me-2"></i>' + data[i].studyShort + ' ' + (data[i].year ? 'Year ' + data[i].year : '') + '</span> ' : null) +
                                 '<strong>' + data[i].type + '</strong><br>' +
-                                '<span class="' + (data[i].current ? "current" : "") + '">' + title + '</span><br>' +
+                                '<span class="' + (data[i].current ? 'current' : '') + '">' + title + '</span><br>' +
                                 displayTime +
-                                '</div>'
-                            count++
+                                '</div>';
+                            count++;
                         }
                     }
                     if (count === 0) {
-                        timetable.innerHTML = '<div class="notice">No more lectures today!</div>'
+                        timetable.innerHTML = '<div class="notice">No more lectures today!</div>';
                     }
                 } else {
-                    timetable.innerHTML = '<div class="notice">No lectures today!</div>'
+                    timetable.innerHTML = '<div class="notice">No lectures today!</div>';
                 }
             })
             .catch(err => {
-                console.error(err)
-                timetable.innerHTML = '<div class="notice">Lectures could not be found...</div>'
-            })
+                console.error(err);
+                timetable.innerHTML = '<div class="notice">Lectures could not be found...</div>';
+            });
     }
 
     function updateActivities() {
         get('{{ route('api::events::upcoming', ['limit' => 3]) }}')
             .then(data => {
                 if (data.length > 0) {
-                    document.getElementById("activities").innerHTML = '';
+                    document.getElementById('activities').innerHTML = '';
                     for (let i in data) {
-                        let start = moment.unix(data[i].start)
-                        let end = moment.unix(data[i].end)
-                        let time
+                        let start = moment.unix(data[i].start);
+                        let end = moment.unix(data[i].end);
+                        let time;
                         if (start.format('DD-MM') === end.format('DD-MM')) {
-                            time = start.format("DD-MM, HH:mm") + ' - ' + end.format("HH:mm")
+                            time = start.format('DD-MM, HH:mm') + ' - ' + end.format('HH:mm');
                         } else {
-                            time = start.format("DD-MM, HH:mm") + ' - ' + end.format("DD-MM, HH:mm")
+                            time = start.format('DD-MM, HH:mm') + ' - ' + end.format('DD-MM, HH:mm');
                         }
-                        document.getElementById("activities").innerHTML += '<div class="activity ' + (data[i].current ? "current" : (data[i].over ? "past" : "")) + '"><strong>' + data[i].title + '</strong><br><i class="fas fa-clock fa-fw me-1"></i> ' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i> ' + data[i].location + '</span></div>'
+                        document.getElementById('activities').innerHTML += '<div class="activity ' + (data[i].current ? 'current' : (data[i].over ? 'past' : '')) + '"><strong>' + data[i].title + '</strong><br><i class="fas fa-clock fa-fw me-1"></i> ' + time + ' <span class="float-end"><i class="fas fa-map-marker-alt fa-fw me-1"></i> ' + data[i].location + '</span></div>';
                     }
                 } else {
-                    document.getElementById("activities").innerHTML = '<div class="notice">No upcoming activities!</div>'
+                    document.getElementById('activities').innerHTML = '<div class="notice">No upcoming activities!</div>';
                 }
             })
             .catch(err => {
-                console.error(err)
-                document.getElementById("activities").innerHTML = '<div class="notice">Something went wrong during retrieval...</div>'
-            })
+                console.error(err);
+                document.getElementById('activities').innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
     }
 
     function updateBuses() {
@@ -406,74 +406,74 @@
     }
 
     function updateBus(stop, stop_other_side, id) {
-        const element = document.getElementById(id)
-        get("{{urldecode(route('api::screen::bus'))}}", {tpc_id: stop, tpc_id_other: stop_other_side})
+        const element = document.getElementById(id);
+        get("{{urldecode(route('api::screen::bus'))}}", { tpc_id: stop, tpc_id_other: stop_other_side })
             .then(data => {
-                let combinedBusses = {}
+                let combinedBusses = {};
                 for (const [key, value] of Object.entries(data)) {
-                    Object.assign(combinedBusses, value.Passes)
+                    Object.assign(combinedBusses, value.Passes);
                 }
                 if (Object.keys(combinedBusses).length > 0) {
-                    element.innerHTML = ''
-                    Object.entries(combinedBusses).sort(function (a, b) {
+                    element.innerHTML = '';
+                    Object.entries(combinedBusses).sort(function(a, b) {
                         return ((new Date(a[1].ExpectedArrivalTime).valueOf()) - (new Date(b[1].ExpectedArrivalTime).valueOf()));
                     });
 
                     for (const [key, value] of Object.entries(combinedBusses).slice(0, 4)) {
                         let colorLate = (Math.abs(new Date(value.ExpectedArrivalTime) - new Date(value.TargetArrivalTime)) / 1000 * 60 > 1) ? '#ff0000' : '#c1ff00';
-                        let drivingColor = value.TripStopStatus === "DRIVING" ? '#c1ff00' : '#fff'
-                        if (value.TripStopStatus !== "ARRIVED") {
-                            element.innerHTML += '<div class="busentry">' + `<span style=color:${colorLate}>` + new Date(value.ExpectedArrivalTime).toISOString().substr(11, 8).substr(0, 5) + '</span>' + ' ' + value.TransportType + ' ' + value.LinePublicNumber + ` ` + `<span style="color: ${drivingColor};">` + value.TripStopStatus + '</span><br>Towards ' + value.DestinationName50 + '</div>'
+                        let drivingColor = value.TripStopStatus === 'DRIVING' ? '#c1ff00' : '#fff';
+                        if (value.TripStopStatus !== 'ARRIVED') {
+                            element.innerHTML += '<div class="busentry">' + `<span style=color:${colorLate}>` + new Date(value.ExpectedArrivalTime).toISOString().substr(11, 8).substr(0, 5) + '</span>' + ' ' + value.TransportType + ' ' + value.LinePublicNumber + ` ` + `<span style="color: ${drivingColor};">` + value.TripStopStatus + '</span><br>Towards ' + value.DestinationName50 + '</div>';
                         }
                     }
                 } else {
-                    element.innerHTML = '<div class="notice">No buses!</div>'
+                    element.innerHTML = '<div class="notice">No buses!</div>';
                 }
             })
             .catch(err => {
-                console.error(err)
-                element.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>'
-            })
+                console.error(err);
+                element.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
     }
 
     function updateProtopeners() {
-        const timetable = document.getElementById("protopeners-timetable")
-        const protopolisFa = document.getElementById('protopolis-fa')
+        const timetable = document.getElementById('protopeners-timetable');
+        const protopolisFa = document.getElementById('protopolis-fa');
 
         get('{{ route('api::screen::timetable::protopeners') }}')
             .then(data => {
                 if (data.length > 0) {
-                    document.getElementById("protopeners-timetable").innerHTML = ''
-                    let open = false, count = 0
+                    document.getElementById('protopeners-timetable').innerHTML = '';
+                    let open = false, count = 0;
                     for (let i in data) {
-                        if (data[i].over) continue
-                        else if (data[i].current) open = true
+                        if (data[i].over) continue;
+                        else if (data[i].current) open = true;
                         let start = moment.unix(data[i].start);
                         let end = moment.unix(data[i].end);
-                        let time = start.format("HH:mm") + ' - ' + end.format("HH:mm");
-                        document.getElementById("protopeners-timetable").innerHTML +=
-                            '<div class="activity ' + (data[i].current ? "current" : "") + '">' +
+                        let time = start.format('HH:mm') + ' - ' + end.format('HH:mm');
+                        document.getElementById('protopeners-timetable').innerHTML +=
+                            '<div class="activity ' + (data[i].current ? 'current' : '') + '">' +
                             '   <div class="float-start">' + time + '</div>' +
                             '   <div class="float-end"><strong>' + data[i].title + '</strong></div>' +
-                            '</div>'
-                        count++
+                            '</div>';
+                        count++;
                     }
                     if (open) {
-                        protopolisFa.classList.add('green')
-                        protopolisFa.classList.replace('fa-door-closed', 'fa-door-open')
+                        protopolisFa.classList.add('green');
+                        protopolisFa.classList.replace('fa-door-closed', 'fa-door-open');
                     } else {
-                        protopolisFa.classList.remove('green')
-                        protopolisFa.classList.replace('fa-door-open', 'fa-door-closed')
+                        protopolisFa.classList.remove('green');
+                        protopolisFa.classList.replace('fa-door-open', 'fa-door-closed');
                     }
-                    if (count === 0) timetable.innerHTML = '<div class="notice">Protopolis closed for today!</div>'
+                    if (count === 0) timetable.innerHTML = '<div class="notice">Protopolis closed for today!</div>';
                 } else {
-                    timetable.innerHTML = '<div class="notice">Protopolis closed today!</div>'
+                    timetable.innerHTML = '<div class="notice">Protopolis closed today!</div>';
                 }
             })
             .catch(err => {
-                console.error(err)
-                timetable.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>'
-            })
+                console.error(err);
+                timetable.innerHTML = '<div class="notice">Something went wrong during retrieval...</div>';
+            });
     }
 
     window.addEventListener('load', _ => {
@@ -493,7 +493,7 @@
         setInterval(updateProtopeners, everyMinute);
         setInterval(updateClock, everySecond);
         setInterval(updateBuses, everyFiveMinutes);
-    })
+    });
 </script>
 
 </body>

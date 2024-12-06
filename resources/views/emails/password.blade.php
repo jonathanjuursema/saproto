@@ -13,7 +13,7 @@
     </p>
 
     <p class="text-break">
-        <a href="{{ route("login::resetpass::token",['token' => $token]) }}">{{ route("login::resetpass::token",['token' => $token]) }}</a>
+        <a href="{{ route("login::password::reset::token",['token' => $token]) }}">{{ route("login::password::reset::token",['token' => $token]) }}</a>
     </p>
 
     <p>

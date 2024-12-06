@@ -8,10 +8,8 @@ class AddStudyFieldsToUser extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->text('utwente_department')->after('edu_username')->nullable(true)->default(null);
@@ -21,10 +19,8 @@ class AddStudyFieldsToUser extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('utwente_department');

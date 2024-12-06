@@ -8,10 +8,8 @@ class CreateDmxManager extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('dmx_fixtures', function (Blueprint $table) {
             $table->increments('id');
@@ -27,10 +25,8 @@ class CreateDmxManager extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('dmx_fixtures');
         Schema::drop('dmx_channel_names');

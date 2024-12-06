@@ -19,10 +19,8 @@ class AuthServiceProvider extends ServiceProvider
 
     /**
      * Register any application authentication / authorization services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Passport::tokensExpireIn(Carbon::now()->addDays(7));
         Passport::refreshTokensExpireIn(Carbon::now()->addDays(14));

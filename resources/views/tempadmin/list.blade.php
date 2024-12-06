@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a href="{{ route('tempadmin::add') }}" class="float-end bg-info badge">
+                    <a href="{{ route('tempadmins.create') }}" class="float-end bg-info badge">
                         Add new temporary admin.
                     </a>
                 </div>
@@ -47,7 +47,7 @@
                             <td class="{{ Carbon::parse($tempadmin->start_at)->isPast() ? 'opacity-50' : '' }}">{{ $tempadmin->start_at }}</td>
                             <td>{{ $tempadmin->end_at }}</td>
                             <td>
-                                <a href="{{ route("tempadmin::edit", ['id' => $tempadmin->id]) }}">
+                                <a href="{{ route("tempadmins.edit", ['tempadmin' => $tempadmin]) }}">
                                     <i class="fas fa-edit fa-fw me-2"></i>
                                 </a>
 

@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ( $new ? route("committee::add") : route("committee::edit", ["id" => $committee->id]) ) }}">
+      action="{{ ( $new ? route("committee::store") : route("committee::update", ["id" => $committee->id]) ) }}">
 
     {!! csrf_field() !!}
 
@@ -23,7 +23,8 @@
                 <div class="input-group">
                     <input type="text" class="form-control" id="slug" name="slug"
                            placeholder="awesome" value="{{ (!$new ? $committee->slug : "") }}">
-                    <span class="input-group-text">@ {{ config('proto.emaildomain') }}</span>
+                    <span
+                        class="input-group-text">@ {{ Config::string('proto.emaildomain') }}</span>
                 </div>
 
 
@@ -122,20 +123,20 @@
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         // Update the is active checkbox when the committee type is changed
-        document.getElementById('is_society').addEventListener("change", function () {
+        document.getElementById('is_society').addEventListener('change', function() {
             updateIsSociety(this.value === '1');
         });
 
         // Update the is active checkbox when the committee type is changed
         function updateIsSociety(isSociety) {
             // Update the checkbox text
-            document.getElementById('isActiveInput').firstElementChild.lastElementChild.innerText = "Set " + (isSociety ? 'society' : 'committee') + " as inactive";
+            document.getElementById('isActiveInput').firstElementChild.lastElementChild.innerText = 'Set ' + (isSociety ? 'society' : 'committee') + ' as inactive';
 
             // Update the labels
-            document.getElementById('committee_header_label').innerText = (isSociety ? 'Society' : 'Committee') + " information";
-            document.getElementById('committee_name_label').innerText = (isSociety ? 'Society' : 'Committee') + " name";
-            document.getElementById('committee_slug_label').innerText = (isSociety ? 'Society' : 'Committee') + " e-mail alias";
-            document.getElementById('committee_type_label').innerText = (isSociety ? 'Society' : 'Committee') + " visibility";
+            document.getElementById('committee_header_label').innerText = (isSociety ? 'Society' : 'Committee') + ' information';
+            document.getElementById('committee_name_label').innerText = (isSociety ? 'Society' : 'Committee') + ' name';
+            document.getElementById('committee_slug_label').innerText = (isSociety ? 'Society' : 'Committee') + ' e-mail alias';
+            document.getElementById('committee_type_label').innerText = (isSociety ? 'Society' : 'Committee') + ' visibility';
         }
 
         // Set the initial state of the is active checkbox

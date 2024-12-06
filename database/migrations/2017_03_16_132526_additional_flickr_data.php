@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AdditionalFlickrData extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('flickr_items', function ($table) {
             $table->string('id');
@@ -24,10 +23,8 @@ class AdditionalFlickrData extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('flickr_items', function ($table) {
             $table->dropColumn('id');

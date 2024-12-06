@@ -8,10 +8,8 @@ class AddProviderColumnToOauthClientsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         if (! Schema::hasColumn('oauth_clients', 'provider')) {
             Schema::table('oauth_clients', function (Blueprint $table) {
@@ -22,10 +20,8 @@ class AddProviderColumnToOauthClientsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('oauth_clients', function (Blueprint $table) {
             $table->dropColumn('provider');

@@ -8,10 +8,8 @@ class ArchiveAchievements extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('achievement', function (Blueprint $table) {
             $table->boolean('is_archived')->after('tier')->default(false);
@@ -21,10 +19,8 @@ class ArchiveAchievements extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('achievement', function (Blueprint $table) {
             $table->boolean('excludeFromAllAchievements')->nullable(false)->default(false);

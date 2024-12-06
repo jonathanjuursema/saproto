@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MembershipTypeEnum;
 use App\Models\User;
 use Carbon;
 use Illuminate\Http\Request;
@@ -18,18 +19,18 @@ class RegistrationHelperController extends Controller
     {
         $search = $request->input('query');
 
-        $users = User::whereHas('member', function ($q) {
-            $q->where('is_pending', true);
+        $users = User::query()->whereHas('member', static function ($q) {
+            $q->type(MembershipTypeEnum::PENDING);
         });
 
         if ($search) {
-            $users = $users->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%$search%")
-                    ->orWhere('calling_name', 'LIKE', "%$search%")
-                    ->orWhere('email', 'LIKE', "%$search%")
-                    ->orWhere('utwente_username', 'LIKE', "%$search%")
-                    ->orWhereHas('member', function ($q) use ($search) {
-                        $q->where('proto_username', 'LIKE', "%$search%");
+            $users = $users->where(static function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('calling_name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('utwente_username', 'LIKE', "%{$search}%")
+                    ->orWhereHas('member', static function ($q) use ($search) {
+                        $q->where('proto_username', 'LIKE', "%{$search}%");
                     });
             });
         }
@@ -42,13 +43,12 @@ class RegistrationHelperController extends Controller
     /**
      * Show the user details for registration helper.
      *
-     * @param  int  $id
      * @return View
      */
-    public function details($id)
+    public function details(int $id)
     {
-        $user = User::whereHas('member', function ($q) {
-            $q->where('is_pending', true)->orWhere('updated_at', '>', Carbon::now()->subDay());
+        $user = User::query()->whereHas('member', static function ($q) {
+            $q->type(MembershipTypeEnum::PENDING)->orWhere('updated_at', '>', Carbon::now()->subDay());
         })->findOrFail($id);
         $memberships = $user->getMemberships();
 

@@ -11,7 +11,7 @@
         <div class="col-md-4">
 
             <form method="post"
-                  action="{{ ($list == null ? route("email::list::add") : route("email::list::edit", ['id' => $list->id])) }}"
+                  action="{{ ($list == null ? route("email::list::store") : route("email::list::update", ['id' => $list->id])) }}"
                   enctype="multipart/form-data">
 
                 {!! csrf_field() !!}
@@ -52,7 +52,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("email::admin") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("email::index") }}" class="btn btn-default">Cancel</a>
 
                     </div>
 

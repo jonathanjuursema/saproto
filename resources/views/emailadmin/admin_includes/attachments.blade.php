@@ -53,7 +53,7 @@
         <div class="card-footer">
 
             <form id="add_attachment" method="post" enctype="multipart/form-data"
-                  action="{{ route('email::attachment::add', ['id'=>$email->id]) }}">
+                  action="{{ route('email::attachment::create', ['id'=>$email->id]) }}">
                 @csrf
 
                 <div class="custom-file mb-3">

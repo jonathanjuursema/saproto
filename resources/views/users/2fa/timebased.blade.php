@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form method="post" action="{{ route('user::2fa::add') }}"
+            <form method="post" action="{{ route('user::2fa::create') }}"
                   class="form-horizontal">
 
                 <div class="modal-header">
@@ -18,7 +18,7 @@
 
                     {!! csrf_field() !!}
 
-                    <img src="{{ $tfa_qrcode }}">
+                    {!! $tfa_qrcode !!}
 
                     <p class="py-5">
                         <input class="form-control" name="2facode" placeholder="Your six digit code.">

@@ -12,7 +12,7 @@ class PDF_TOC extends AlphaPDF
 
     protected $_numPageNum = 1;
 
-    public function AddPage($orientation = '', $size = '', $rotation = 0)
+    public function AddPage($orientation = '', $size = '', $rotation = 0): void
     {
         parent::AddPage($orientation, $size, $rotation);
         if ($this->_numbering) {
@@ -20,13 +20,13 @@ class PDF_TOC extends AlphaPDF
         }
     }
 
-    public function startPageNums()
+    public function startPageNums(): void
     {
         $this->_numbering = true;
         $this->_numberingFooter = true;
     }
 
-    public function stopPageNums()
+    public function stopPageNums(): void
     {
         $this->_numbering = false;
     }
@@ -36,7 +36,7 @@ class PDF_TOC extends AlphaPDF
         return $this->_numPageNum;
     }
 
-    public function TOC_Entry($txt, $level = 0)
+    public function TOC_Entry($txt, $level = 0): void
     {
         $this->_toc[] = ['t' => $txt, 'l' => $level, 'p' => $this->numPageNo()];
     }
@@ -46,7 +46,7 @@ class PDF_TOC extends AlphaPDF
         $entrySize = 10,
         $tocfont = 'Times',
         $label = 'Table of Contents'
-    ) {
+    ): void {
         //make toc at end
         $this->stopPageNums();
         $this->AddPage();
@@ -63,11 +63,13 @@ class PDF_TOC extends AlphaPDF
             if ($level > 0) {
                 $this->Cell($level * 8);
             }
+
             $weight = '';
             if ($level == 0) {
                 $weight = 'B';
                 $this->Ln(1);
             }
+
             $str = $t['t'];
             $this->SetFont($tocfont, $weight, $entrySize);
             $strsize = $this->GetStringWidth($str);
@@ -104,11 +106,12 @@ class PDF_TOC extends AlphaPDF
         }
     }
 
-    public function Footer()
+    public function Footer(): void
     {
         if (! $this->_numberingFooter) {
             return;
         }
+
         //Go to 1.5 cm from bottom
         $this->SetY(-15);
         //Select Arial italic 8

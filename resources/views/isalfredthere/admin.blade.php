@@ -10,7 +10,7 @@
 
         <div class="col-md-6 col-lg-4">
 
-            <form method="post" action="{{ route("minisites::isalfredthere::admin") }}">
+            <form method="post" action="{{ route("minisites::isalfredthere::update") }}">
 
                 {!! csrf_field() !!}
 
@@ -27,6 +27,8 @@
                                 You are there!
                             @elseif($status->status == 'away')
                                 You'll be back at {{ $status->back }}.
+                            @elseif($status->status == 'jur')
+                                You do not seem to be Alfred. Do you happen to feel like a Jur today?
                             @else
                                 Your whereabouts are currently not known.
                             @endif
@@ -39,6 +41,14 @@
                                    value="there" required {{ $status->status == 'there' ? 'checked' : '' }}>
                             <label class="form-check-label" for="where_is_alfred_1">
                                 I'm there!
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="where_is_alfred" id="where_is_jur"
+                                   value="jur" required {{ $status->status == 'jur' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="where_is_jur">
+                                I'm not Alfred, I'm Jur!
                             </label>
                         </div>
 
@@ -98,31 +108,31 @@
     </div>
 
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        const dateSelect = document.getElementById('datetimepicker-back-form')
-        const dateBack = document.getElementById('datetimepicker-back')
-        const alfredText = document.getElementById('alfred-text')
+        const dateSelect = document.getElementById('datetimepicker-back-form');
+        const dateBack = document.getElementById('datetimepicker-back');
+        const alfredText = document.getElementById('alfred-text');
 
-        const radioList = Array.from(document.querySelectorAll('.where_is_alfred input[type="radio"]'))
+        const radioList = Array.from(document.querySelectorAll('.where_is_alfred input[type="radio"]'));
         radioList.forEach(el => {
             el.addEventListener('change', _ => {
 
                 if (el.checked && el.value === 'away') {
-                    dateSelect.classList.remove('d-none')
-                    alfredText.classList.remove('d-none')
-                    alfredText.querySelector('input').placeholder = "Additional message"
-                    dateBack.required = true
+                    dateSelect.classList.remove('d-none');
+                    alfredText.classList.remove('d-none');
+                    alfredText.querySelector('input').placeholder = 'Additional message';
+                    dateBack.required = true;
                 } else if (el.checked && el.value === 'text_only') {
-                    alfredText.classList.remove('d-none')
-                    dateSelect.classList.add('d-none')
-                    alfredText.querySelector('input').placeholder = "Message!"
-                    alfredText.required = true
+                    alfredText.classList.remove('d-none');
+                    dateSelect.classList.add('d-none');
+                    alfredText.querySelector('input').placeholder = 'Message!';
+                    alfredText.required = true;
                 } else {
-                    dateSelect.classList.add('d-none')
-                    alfredText.classList.add('d-none')
-                    dateBack.required = false
+                    dateSelect.classList.add('d-none');
+                    alfredText.classList.add('d-none');
+                    dateBack.required = false;
                 }
-            })
-        })
+            });
+        });
     </script>
 
 @endsection

@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddDietToUser extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function ($table) {
             $table->text('diet')->after('phone')->nullable()->default(null);
@@ -21,10 +20,8 @@ class AddDietToUser extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function ($table) {
             $table->dropColumn('diet');

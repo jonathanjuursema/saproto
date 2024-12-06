@@ -1,4 +1,4 @@
-name,primary,email,ut_number
-@foreach($export as $line)
-{{ $line->name }},{{ $line->primary }},{{ $line->email }},{{ $line->ut_number }}
+name,primary,email,ut_number,department
+@foreach($users as $user)
+    {{ $user->name }},{{ true }},{{ $user->member->UtAccount->mail }},{{ $user->member->UtAccount->number }}, {{ $user->member->UtAccount->department }}
 @endforeach

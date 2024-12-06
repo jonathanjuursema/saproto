@@ -8,10 +8,8 @@ class AddPKCESupportToOauthClients extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('oauth_clients', function (Blueprint $table) {
             $table->string('secret', 100)->nullable()->change();
@@ -20,10 +18,8 @@ class AddPKCESupportToOauthClients extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('oauth_clients', function (Blueprint $table) {
             $table->string('secret', 100)->change();

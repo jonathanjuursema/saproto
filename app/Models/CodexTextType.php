@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Codex text type model.
+ *
+ * @property int $id
+ * @property string $type
+ * @property CodexText[] $texts
+ */
 class CodexTextType extends Model
 {
     use HasFactory;
@@ -19,7 +26,7 @@ class CodexTextType extends Model
 
     protected static function booted()
     {
-        static::deleting(function ($type) {
+        static::deleting(static function ($type) {
             $type->texts()->delete();
         });
     }

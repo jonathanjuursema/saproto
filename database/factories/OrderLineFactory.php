@@ -6,6 +6,7 @@ use App\Models\Committee;
 use App\Models\OrderLine;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Config;
 
 /**
  * @extends Factory<OrderLine>
@@ -17,15 +18,15 @@ class OrderLineFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         /** @var Product $product */
-        $product = Product::inRandomOrder()->first();
+        $product = Product::query()->inRandomOrder()->first();
         $date = fake()->dateTimeBetween('-1 year')->format('Y-m-d H:i:s');
         $nbUnits = fake()->randomDigitNotNull();
         $paidCash = fake()->boolean(5);
         if ($paidCash) {
-            $tipcie = Committee::find(config('proto.committee')['tipcie']);
+            $tipcie = Committee::query()->find(Config::integer('proto.committee.tipcie'));
             $cashierId = $tipcie->users()->inRandomOrder()->first()->id;
         }
 

@@ -6,8 +6,8 @@ use App\Models\ActivityParticipation;
 use App\Models\CommitteeMembership;
 use App\Models\OrderLine;
 use App\Models\User;
-use Auth;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class UserProfileController extends Controller
@@ -36,10 +36,9 @@ class UserProfileController extends Controller
 
     /**
      * @param  User  $user
-     * @param  bool  $with_societies
      * @return Collection|CommitteeMembership[]
      */
-    private function getPastMemberships($user, $with_societies)
+    private function getPastMemberships($user, bool $with_societies)
     {
         return CommitteeMembership::onlyTrashed()
             ->with('committee')
@@ -50,16 +49,16 @@ class UserProfileController extends Controller
 
     private function getSpentMoney($user)
     {
-        return OrderLine::where('user_id', $user->id)->pluck('total_price')->sum();
+        return OrderLine::query()->where('user_id', $user->id)->pluck('total_price')->sum();
     }
 
     private function getProductsPurchased($user)
     {
-        return OrderLine::where('user_id', $user->id)->pluck('units')->sum();
+        return OrderLine::query()->where('user_id', $user->id)->pluck('units')->sum();
     }
 
-    private function getTotalSignups($user)
+    private function getTotalSignups($user): int
     {
-        return ActivityParticipation::where('user_id', $user->id)->count();
+        return ActivityParticipation::query()->where('user_id', $user->id)->count();
     }
 }

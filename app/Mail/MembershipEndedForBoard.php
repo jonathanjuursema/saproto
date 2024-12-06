@@ -16,9 +16,7 @@ class MembershipEndedForBoard extends Mailable
      *
      * @return void
      */
-    public function __construct(public $deleted_memberships)
-    {
-    }
+    public function __construct(public $deleted_memberships) {}
 
     /**
      * Build the message.

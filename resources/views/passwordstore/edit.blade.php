@@ -15,7 +15,7 @@
         <div class="col-md-4">
 
             <form method="post"
-                  action="{{ $password ? route('passwordstore::edit', ['id'=>$password->id]) : route('passwordstore::add') }}">
+                  action="{{ $password ? route('passwordstore::update', ['id'=>$password->id]) : route('passwordstore::store') }}">
 
                 {!! csrf_field() !!}
 
@@ -33,7 +33,8 @@
                         <select name="permission_id" class="form-control mb-3" required>
                             @foreach(Permission::all() as $permission)
                                 @can($permission->name)
-                                    <option value="{{ $permission->id }}" @selected($password && $permission->id == $password->permission_id)>
+                                    <option
+                                        value="{{ $permission->id }}" @selected($password && $permission->id == $password->permission_id)>
                                         {{ $permission->display_name }}
                                     </option>
                                 @endcan

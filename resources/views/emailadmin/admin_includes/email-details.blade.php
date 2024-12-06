@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ($email == null ? route("email::add") : route("email::edit", ['id' => $email->id])) }}"
+      action="{{ ($email == null ? route("email::store") : route("email::update", ['id' => $email->id])) }}"
       enctype="multipart/form-data">
 
     {!! csrf_field() !!}
@@ -58,7 +58,8 @@
                         <div class="input-group mb-3">
                             <input name="sender_address" type="text" class="form-control" placeholder="board"
                                    value="{{ $email->sender_address ?? '' }}" required>
-                            <span class="input-group-text" id="basic-addon2">@ {{ config('proto.emaildomain') }}</span>
+                            <span class="input-group-text"
+                                  id="basic-addon2">@ {{ Config::string('proto.emaildomain') }}</span>
                         </div>
                     </div>
 

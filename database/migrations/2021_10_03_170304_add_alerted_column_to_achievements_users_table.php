@@ -9,24 +9,20 @@ class AddAlertedColumnToAchievementsUsersTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('achievements_users', function (Blueprint $table) {
             $table->boolean('alerted')->default(false);
         });
 
-        AchievementOwnership::where('alerted', false)->update(['alerted' => true]);
+        AchievementOwnership::query()->where('alerted', false)->update(['alerted' => true]);
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('achievements_users', function (Blueprint $table) {
             $table->dropColumn('alerted');

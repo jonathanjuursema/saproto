@@ -1,9 +1,9 @@
-<form class="form-horizontal" method="post" action="{{ route("welcomeMessages::add") }}" id="addmessage">
+<form class="form-horizontal" method="post" action="{{ route("welcomeMessages.store") }}" id="addmessage">
     {{ csrf_field() }}
     <div class="row">
         <div class="col-md-4">
             <div id="user-select" class="form-group autocomplete">
-                <input class="form-control user-search" name="user_id" required/>
+                <input class="form-control user-search" name="user_id" required />
             </div>
         </div>
         <div class="col-md-6">

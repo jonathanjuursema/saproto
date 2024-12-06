@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ (!$achievement ? route("achievement::add") : route("achievement::update", ['id' => $achievement->id])) }}">
+      action="{{ (!$achievement ? route("achievement::store") : route("achievement::update", ['id' => $achievement->id])) }}">
 
     {!! csrf_field() !!}
 
@@ -96,7 +96,7 @@
 
             <button type="submit" class="btn btn-success float-end">Submit</button>
 
-            <a href="{{ route("achievement::list") }}" class="btn btn-default">Cancel</a>
+            <a href="{{ route("achievement::index") }}" class="btn btn-default">Cancel</a>
 
         </div>
 
@@ -106,15 +106,15 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        let pageBlock = document.getElementById('achieve_page_block')
+        let pageBlock = document.getElementById('achieve_page_block');
         document.getElementById('has_page').addEventListener('click', e => {
             if (e.target.checked) {
-                pageBlock.classList.remove('d-none')
-                pageBlock.querySelector('input').required = true
+                pageBlock.classList.remove('d-none');
+                pageBlock.querySelector('input').required = true;
             } else {
-                pageBlock.classList.add('d-none')
-                pageBlock.querySelector('input').required = false
+                pageBlock.classList.add('d-none');
+                pageBlock.querySelector('input').required = false;
             }
-        })
+        });
     </script>
 @endpush

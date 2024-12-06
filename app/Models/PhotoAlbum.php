@@ -6,10 +6,12 @@ use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * App\Models\PhotoAlbum.
@@ -25,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Event|null $event
- * @property-read Photo $thumb_photo
+ * @property-read Photo $thumbPhoto
  * @property-read Collection|Photo[] $items
  *
  * @method static Builder|PhotoAlbum whereCreatedAt($value)
@@ -46,33 +48,45 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class PhotoAlbum extends Model
 {
+    use HasFactory;
+
     protected $table = 'photo_albums';
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function event()
+    protected $with = ['thumbPhoto'];
+
+    protected static function booted(): void
     {
-        return $this->belongsTo(\App\Models\Event::class, 'event_id');
+        static::addGlobalScope('published', fn (Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->where('published', true)));
+
+        static::addGlobalScope('private', fn (Builder $builder) => $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)));
     }
 
-    /** @return HasOne */
-    private function thumbPhoto()
+    public function event(): BelongsTo
     {
-        return $this->hasOne(\App\Models\Photo::class, 'id', 'thumb_id');
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
-    /** @return HasMany */
-    public function items()
+    public function thumbPhoto(): HasOne
     {
-        return $this->hasMany(\App\Models\Photo::class, 'album_id');
+        return $this->hasOne(Photo::class, 'id', 'thumb_id');
     }
 
-    /** @return string|null */
-    public function thumb()
+    public function items(): HasMany
+    {
+        return $this->hasMany(Photo::class, 'album_id');
+    }
+
+    public function scopeName($query, string $name): Builder
+    {
+        return $query->where('name', 'LIKE', '%'.$name.'%');
+    }
+
+    public function thumb(): ?string
     {
         if ($this->thumb_id) {
-            return $this->thumbPhoto()->first()->thumbnail();
+            return $this->thumbPhoto->thumbnail();
         }
 
         return null;

@@ -2,10 +2,21 @@
 
 namespace App\Models;
 
+use Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Codex model.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $export
+ * @property string $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class Codex extends Model
 {
     use HasFactory;
@@ -20,10 +31,5 @@ class Codex extends Model
     public function texts(): BelongsToMany
     {
         return $this->belongsToMany(CodexText::class, 'codex_codex_text', 'codex', 'text_id');
-    }
-
-    public function shuffles(): BelongsToMany
-    {
-        return $this->belongsToMany(SongCategory::class, 'codex_codexshuffle', 'codex', 'category');
     }
 }

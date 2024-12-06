@@ -1,0 +1,3 @@
+<?php
+
+pest()->presets()->php();

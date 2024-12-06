@@ -2,15 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class OmnomcomMigration extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->increments('id');
@@ -69,10 +68,8 @@ class OmnomcomMigration extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('product_categories');
         Schema::drop('products_categories');

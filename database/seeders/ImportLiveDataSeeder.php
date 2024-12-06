@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -16,11 +17,10 @@ class ImportLiveDataSeeder extends Seeder
     /**
      * This seeder imports some non-sensitive data from the live environment to make your development environment more 'real'.
      *
-     * @return void
      *
      * @throws Exception
      */
-    public function run($password, $output)
+    public function run(string $password, $output): void
     {
         // First let's create our admin user.
         $output->task('creating admin user.', fn () => self::createAdminUser($password));
@@ -62,8 +62,8 @@ class ImportLiveDataSeeder extends Seeder
      */
     public static function getDataFromExportApi($tableName)
     {
-        $local_url = route('api::user::dev_export', ['personal_key' => config('app-proto.personal-proto-key'), 'table' => $tableName]);
-        $remote_url = str_replace(config('app-proto.app-url'), 'https://www.proto.utwente.nl', $local_url);
+        $local_url = route('api::user::dev_export', ['personal_key' => Config::string('app-proto.personal-proto-key'), 'table' => $tableName]);
+        $remote_url = str_replace(Config::string('app-proto.app-url'), 'https://www.proto.utwente.nl', $local_url);
         $response = Http::get($remote_url);
         if ($response->failed()) {
             return null;
@@ -75,9 +75,8 @@ class ImportLiveDataSeeder extends Seeder
     /**
      * @param  $entries  mixed
      * @param  $table  array
-     * @return void
      */
-    public static function createEntries($entries, $table)
+    public static function createEntries($entries, array $table): void
     {
         foreach ($entries as $entry) {
             $entry = (array) $entry;
@@ -93,17 +92,14 @@ class ImportLiveDataSeeder extends Seeder
     }
 
     /**
-     * @param  string  $password
-     * @return void
-     *
      * @throws Exception
      */
-    public static function createAdminUser($password)
+    public static function createAdminUser(string $password): void
     {
         $userData = (array) self::getDataFromExportApi('user');
         if ($userData == null) {
             /** @var User $adminUser */
-            $adminUser = User::factory()->member()->create(['id' => 1]);
+            $adminUser = User::factory()->has(Member::factory())->create(['id' => 1]);
             $adminUser->setPassword($password);
 
             // Stop the import dataseeder from here as the user does not have enough rights.
@@ -112,39 +108,37 @@ class ImportLiveDataSeeder extends Seeder
                 'Make sure you are a member of the HYTTIOAOAc and have signed an NDA.'.PHP_EOL.
                 'Otherwise you can continue without seeding the database.'
             );
-        } else {
-            $memberData = (array) (array_key_exists('member', $userData) ? $userData['member'] : null);
-            unset($userData['member']);
-            unset($userData['photo']);
-            unset($userData['roles']);
-            unset($userData['is_member']);
-            unset($userData['photo_preview']);
-            unset($userData['welcome_message']);
-            unset($userData['is_protube_admin']);
-            unset($userData['use_dark_theme']);
-            unset($userData['created_at']);
-            unset($userData['permissions']);
-            unset($memberData['created_at']);
-            $userData['id'] = 1;
-
-            $adminUser = User::create($userData);
-            $adminUser->save();
-
-            if ($memberData) {
-                $newMember = Member::create($memberData);
-                $newMember->user_id = 1;
-                $newMember->save();
-            }
-
-            $adminUser->setPassword($password);
         }
+
+        $memberData = (array) ($userData['member'] ?? null);
+        unset($userData['member']);
+        unset($userData['photo']);
+        unset($userData['roles']);
+        unset($userData['is_member']);
+        unset($userData['photo_preview']);
+        unset($userData['welcome_message']);
+        unset($userData['is_protube_admin']);
+        unset($userData['use_dark_theme']);
+        unset($userData['created_at']);
+        unset($userData['permissions']);
+        unset($memberData['created_at']);
+        $userData['id'] = 1;
+        $adminUser = User::query()->create($userData);
+        $adminUser->save();
+        if ($memberData !== []) {
+            $newMember = Member::query()->create($memberData);
+            $newMember->user_id = 1;
+            $newMember->save();
+        }
+
+        $adminUser->setPassword($password);
     }
 
-    public static function assignAdminRole()
+    public static function assignAdminRole(): void
     {
-        $adminUser = User::find(1);
-        $root = Committee::where('slug', config('proto.rootcommittee'))->first();
-        CommitteeMembership::create([
+        $adminUser = User::query()->find(1);
+        $root = Committee::query()->where('slug', Config::string('proto.rootcommittee'))->first();
+        CommitteeMembership::query()->create([
             'user_id' => $adminUser->id,
             'committee_id' => $root->id,
             'role' => 'Automatically Added',

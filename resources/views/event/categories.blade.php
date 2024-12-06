@@ -15,7 +15,7 @@
                 </div>
                 <div class="card-body">
                     <form method="post"
-                          action="{{ ($cur_category == null ? route('event::category::add') : route('event::category::edit', ['id' => $cur_category])) }}"
+                          action="{{ ($cur_category == null ? route('event::category::store') : route('event::category::update', ['id' => $cur_category])) }}"
                           enctype="multipart/form-data">
                         {!! csrf_field() !!}
 
@@ -49,7 +49,8 @@
                         @if(count($categories) > 0)
                             @foreach($categories as $category)
                                 <div class="col-5 row m-1">
-                                    <div class="px-4 py-2 my-2 w-75 rounded-start overflow-hidden ellipsis {{ $category == $cur_category ? 'bg-warning' : 'bg-info' }}">
+                                    <div
+                                        class="px-4 py-2 my-2 w-75 rounded-start overflow-hidden ellipsis {{ $category == $cur_category ? 'bg-warning' : 'bg-info' }}">
                                         <i class="{{ $category->icon }} me-2"></i>
                                         {{ $category->name }}
                                     </div>
@@ -100,8 +101,8 @@
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         document.getElementById('delete-category-modal').addEventListener('show.bs.modal', e => {
-            let categoryId = e.relatedTarget.getAttribute('data-id')
-            document.getElementById('delete-category').href = '{{ route('event::category::delete', ['id' => ':id']) }}'.replace(':id', categoryId)
-        })
+            let categoryId = e.relatedTarget.getAttribute('data-id');
+            document.getElementById('delete-category').href = '{{ route('event::category::delete', ['id' => ':id']) }}'.replace(':id', categoryId);
+        });
     </script>
 @endpush

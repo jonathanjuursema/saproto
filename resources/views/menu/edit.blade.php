@@ -7,7 +7,7 @@
 @section('container')
 
     <form method="post"
-          action="{{ isset($item) ? route("menu::edit", ['id' => $item->id]) : route("menu::add") }}"
+          action="{{ !isset($item) ? route("menu::create") : route("menu::update", ['id' => $item->id]) }}"
           enctype="multipart/form-data">
 
         {!! csrf_field() !!}
@@ -36,8 +36,8 @@
                                 <option @selected(!isset($item) || $item->parent == null) value>No parent</option>
                                 @foreach($topMenuItems as $topMenuItem)
                                     <option value="{{ $topMenuItem->id }}"
-                                            @selected(isset($item) && $topMenuItem->id == $item->parent)
-                                            @disabled(isset($item) && $topMenuItem->id == $item->id)>
+                                        @selected(isset($item) && $topMenuItem->id == $item->parent)
+                                        @disabled(isset($item) && $topMenuItem->id == $item->id)>
                                         {{ $topMenuItem->menuname }}
                                     </option>
                                 @endforeach
@@ -55,17 +55,21 @@
                             <select class="form-control" name="page_id" id="page_id">
                                 <option disabled @selected(!isset($item))>Select a page...</option>
                                 <option disabled>---</option>
-                                <option id="other-url-option" @selected(isset($item) && $item->page_id) value>Other URL</option>
+                                <option id="other-url-option" @selected(isset($item) && $item->page_id) value>Other
+                                    URL
+                                </option>
                                 <option disabled>---</option>
                                 @foreach($pages as $page)
-                                    <option @selected(isset($item) && $page->id == $item->page_id) value="{{ $page->id }}">
+                                    <option
+                                        @selected(isset($item) && $page->id == $item->page_id) value="{{ $page->id }}">
                                         {{ $page->title }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div id="other-url-fields" class="{{ ! isset($item) || isset($item->page_id) ? 'd-none' : '' }}">
+                        <div id="other-url-fields"
+                             class="{{ ! isset($item) || isset($item->page_id) ? 'd-none' : '' }}">
 
                             <div class="form-group">
                                 <label for="url">Other URL:</label>
@@ -76,14 +80,16 @@
                             <div class="form-group">
                                 <label for="route">Existing Route:</label>
                                 <select class="form-control" id="route">
-                                    <option disabled @selected(!isset($item) || $item->url == null)>Select a route...</option>
+                                    <option disabled @selected(!isset($item) || $item->url == null)>Select a route...
+                                    </option>
                                     @foreach($routes as $route)
                                         @php
-                                            $domain = $route->domain() == null ? config('app-proto.primary-domain') : $route->domain();
+                                            $domain = $route->domain() == null ? Config::string('app-proto.primary-domain') : $route->domain();
                                             $uri = $route->uri() == '/' ? '' : $route->uri();
                                             $url = "https://$domain/$uri";
                                         @endphp
-                                        <option value="{{ $url }}" @selected(isset($item) && $item->url == '(route) '.$route->getName())>
+                                        <option
+                                            value="{{ $url }}" @selected(isset($item) && $item->url == '(route) '.$route->getName())>
                                             [{{ $route->getName() }}] -> {{ $route->domain() }}/{{ $route->uri }}
                                         </option>
                                     @endforeach
@@ -114,15 +120,15 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        const otherUrlOption = document.getElementById('other-url-option')
-        const otherUrlFields = document.getElementById('other-url-fields')
+        const otherUrlOption = document.getElementById('other-url-option');
+        const otherUrlFields = document.getElementById('other-url-fields');
         document.getElementById('page_id').addEventListener('change', e => {
-            if (otherUrlOption.selected) otherUrlFields.classList.remove('d-none')
-            else otherUrlFields.classList.add('d-none')
-        })
+            if (otherUrlOption.selected) otherUrlFields.classList.remove('d-none');
+            else otherUrlFields.classList.add('d-none');
+        });
 
         document.getElementById('route').addEventListener('change', e => {
-            document.getElementById('url').value = e.target.value
-        })
+            document.getElementById('url').value = e.target.value;
+        });
     </script>
 @endpush

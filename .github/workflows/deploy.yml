@@ -1,4 +1,4 @@
-name: 🚀 Deploy
+name: 🚅 Deploy
 
 on:
   push:
@@ -16,13 +16,11 @@ jobs:
     env:
       BUILD_SOURCE_DIR: .
       BUILD_ARTIFACT_STAGING_DIR: build/
-      BUILD_ARTIFACT_DESTINATION_DIR: /domains/proto.utwente.nl/deployment/uploads/
-      HOST_SERVER: s176.webhostingserver.nl
       SENTRY_ORG: sa-proto
       SENTRY_PROJECT: sa-proto-website
     steps:
       - name: 🛎️ Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🔍 Read .env
         run: grep -E 'PHP_VERSION|NODE_VERSION' .env.prod >> $GITHUB_ENV
@@ -37,7 +35,7 @@ jobs:
           composer-options: "--ignore-platform-reqs --optimize-autoloader --prefer-dist --no-dev"
 
       - name: 🖱️ Set Node v${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -54,7 +52,7 @@ jobs:
       - name: 📝 Create Sentry release
         uses: getsentry/action-release@v1
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.VIMEXX_SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ env.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
         with:
@@ -64,8 +62,9 @@ jobs:
         run: mkdir ${{ env.BUILD_ARTIFACT_STAGING_DIR }}
 
       - name: 🗄️ ZIP Build
-        uses: TheDoctor0/zip-release@0.6.1
+        uses: TheDoctor0/zip-release@0.7.5
         with:
+          type: 'zip'
           filename: ${{ env.BUILD_ARTIFACT_STAGING_DIR }}build.zip
           path: ${{ env.BUILD_SOURCE_DIR }}
           exclusions: 'storage/* build/* node_modules/*'
@@ -74,10 +73,10 @@ jobs:
         run: openssl md5 ${{ env.BUILD_ARTIFACT_STAGING_DIR }}build.zip | cut -d" " -f2 > ${{ env.BUILD_ARTIFACT_STAGING_DIR }}checksum.txt
 
       - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ env.HOST_SERVER }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.VIMEXX_DOMAIN }}
+          username: ${{ secrets.VIMEXX_FTP_USER }}
+          password: ${{ secrets.VIMEXX_FTP_PASSWORD }}
           local-dir: ${{ env.BUILD_ARTIFACT_STAGING_DIR }}
-          server-dir: ${{ env.BUILD_ARTIFACT_DESTINATION_DIR }}
+          server-dir: "/"

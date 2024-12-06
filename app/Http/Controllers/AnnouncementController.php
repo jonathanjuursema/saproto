@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
-use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -16,7 +16,7 @@ class AnnouncementController extends Controller
     /** @return View */
     public function index()
     {
-        return view('announcements.list', ['announcements' => Announcement::orderBy('display_from', 'asc')->get()]);
+        return view('announcements.list', ['announcements' => Announcement::query()->orderBy('display_from', 'asc')->get()]);
     }
 
     /** @return View */
@@ -30,7 +30,7 @@ class AnnouncementController extends Controller
      */
     public function store(Request $request)
     {
-        $announcement = Announcement::create([
+        $announcement = Announcement::query()->create([
             'description' => $request->input('description'),
             'content' => $request->input('content'),
             'display_from' => date('Y-m-d H:i:s', strtotime($request->input('display_from'))),
@@ -58,7 +58,7 @@ class AnnouncementController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        return view('announcements.edit', ['announcement' => Announcement::findOrFail($id)]);
+        return view('announcements.edit', ['announcement' => Announcement::query()->findOrFail($id)]);
     }
 
     /**
@@ -68,7 +68,7 @@ class AnnouncementController extends Controller
     public function update(Request $request, $id)
     {
         /** @var Announcement $announcement */
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Announcement::query()->findOrFail($id);
 
         $announcement->update([
             'description' => $request->input('description'),
@@ -101,7 +101,7 @@ class AnnouncementController extends Controller
     public function destroy($id)
     {
         /** @var Announcement $announcement */
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Announcement::query()->findOrFail($id);
         $announcement->delete();
 
         Session::flash('flash_message', 'Announcement deleted.');
@@ -116,7 +116,7 @@ class AnnouncementController extends Controller
      */
     public function clear()
     {
-        Announcement::where('display_till', '<', date('Y-m-d'))->delete();
+        Announcement::query()->where('display_till', '<', date('Y-m-d'))->delete();
 
         Session::flash('flash_message', 'Announcements cleared.');
 
@@ -130,7 +130,7 @@ class AnnouncementController extends Controller
     public function dismiss($id)
     {
         /** @var Announcement $announcement */
-        $announcement = Announcement::find($id);
+        $announcement = Announcement::query()->find($id);
 
         if ($announcement == null || ! $announcement->is_dismissable) {
             return Redirect::back();

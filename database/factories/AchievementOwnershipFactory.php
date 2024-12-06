@@ -16,12 +16,12 @@ class AchievementOwnershipFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         $date = fake()->dateTimeBetween('-1 year')->format('Y-m-d H:i:s');
 
         return [
-            'achievement_id' => Achievement::inRandomOrder()->first()->id,
+            'achievement_id' => Achievement::query()->inRandomOrder()->first()->id,
             'created_at' => $date,
             'updated_at' => $date,
             'alerted' => fake()->boolean(),

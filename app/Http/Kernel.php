@@ -20,20 +20,21 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Spatie\Csp\AddCspHeaders;
-use Spatie\Permission\Middlewares\PermissionMiddleware;
-use Spatie\Permission\Middlewares\RoleMiddleware;
-use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
      *
-     * @var array
+     * @var array<int, class-string|string>
      */
     protected $middleware = [
         HandleCors::class,
@@ -54,6 +55,7 @@ class Kernel extends HttpKernel
             EnforceWizard::class,
             ApiMiddleware::class,
             AddCspHeaders::class,
+            SubstituteBindings::class,
         ],
         'api' => [
             'throttle:60,1',
@@ -63,7 +65,7 @@ class Kernel extends HttpKernel
     /**
      * The application's route middleware.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $middlewareAliases = [
         'auth' => Authenticate::class,

@@ -17,7 +17,7 @@
         @endif
         We would like to ask you to verify that your personal information is up to date. Below you will find a summary
         of the most important personal information. To view all information about you we process, please visit your <a
-                href="{{ route('user::dashboard') }}" target="_blank">dashboard</a> on the website. There you can also
+            href="{{ route('user::dashboard::show') }}" target="_blank">dashboard</a> on the website. There you can also
         update most of the information.
     </p>
 

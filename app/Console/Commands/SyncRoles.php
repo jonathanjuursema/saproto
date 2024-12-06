@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Permission;
 use Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -38,9 +39,9 @@ class SyncRoles extends Command
     /**
      * @throws Exception
      */
-    public function handle()
+    public function handle(): int
     {
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
         Artisan::call('config:cache');
 
         $this->line('Syncing permissions.');
@@ -49,14 +50,14 @@ class SyncRoles extends Command
         $permissions = [];
 
         foreach (Permission::all() as $permission) {
-            if (! in_array($permission->name, array_keys(config('permission.permissions')))) {
+            if (! in_array($permission->name, array_keys(Config::array('permission.permissions')))) {
                 $permission->delete();
                 $this->warn("Removed '$permission->name' permission.");
             }
         }
 
-        foreach (config('permission.permissions') as $name => $permission) {
-            $permissions[$name] = Permission::updateOrCreate(
+        foreach (Config::array('permission.permissions') as $name => $permission) {
+            $permissions[$name] = Permission::query()->updateOrCreate(
                 ['name' => $name],
                 [
                     'display_name' => $permission->display_name,
@@ -64,7 +65,7 @@ class SyncRoles extends Command
                     'guard_name' => $permission->guard_name ?? 'web',
                 ]
             );
-            $this->info("Added/Updated '$name' permission.");
+            $this->info("Added/Updated '{$name}' permission.");
         }
 
         $this->line('Syncing roles.');
@@ -73,14 +74,14 @@ class SyncRoles extends Command
         $roles = [];
 
         foreach (Role::all() as $role) {
-            if (! in_array($role->name, array_keys(config('permission.roles')))) {
+            if (! in_array($role->name, array_keys(Config::array('permission.roles')))) {
                 $role->delete();
                 $this->warn("Removed '$role->name' permission.");
             }
         }
 
-        foreach (config('permission.roles') as $name => $role) {
-            $roles[$name] = Role::updateOrCreate(
+        foreach (Config::array('permission.roles') as $name => $role) {
+            $roles[$name] = Role::query()->updateOrCreate(
                 ['name' => $name],
                 [
                     'display_name' => $role->display_name,
@@ -88,10 +89,10 @@ class SyncRoles extends Command
                     'guard_name' => $role->guard_name ?? 'web',
                 ]
             );
-            $this->info("Added/Updated '$name' role.");
+            $this->info("Added/Updated '{$name}' role.");
 
             $roles[$name]->syncPermissions($role->permissions == '*' ? array_keys($permissions) : $role->permissions);
-            $this->info("Synced permissions for '$name' role.");
+            $this->info("Synced permissions for '{$name}' role.");
         }
 
         $this->line('Finished syncing permissions and roles.');

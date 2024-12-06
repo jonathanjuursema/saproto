@@ -10,7 +10,8 @@
 
             <p class="card-text text-center">
                 You have issued us an authorisation for:<br>
-                <strong class="me-5">{{ iban_to_human_format($user->bank->iban) }}</strong>{{ iban_to_human_format($user->bank->bic) }}
+                <strong
+                    class="me-5">{{ iban_to_human_format($user->bank->iban) }}</strong>{{ iban_to_human_format($user->bank->bic) }}
             </p>
 
             <table class="table table-borderless table-sm text-muted mb-0">
@@ -29,7 +30,7 @@
                 </tr>
                 <tr>
                     <th>Creditor identifier</th>
-                    <td>{{ config('proto.sepa_info')->creditor_id }}</td>
+                    <td>{{ Config::string('proto.sepa_info.creditor_id') }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -43,7 +44,7 @@
                 @if(!$user->is_member)
 
                     <a class="btn btn-outline-danger w-50" data-bs-toggle="modal"
-                            data-bs-target="#bank-modal-cancel">
+                       data-bs-target="#bank-modal-cancel">
                         Cancel authorization
                     </a>
 
@@ -61,7 +62,7 @@
 
 @else
 
-    <a type="submit" class="btn btn-outline-info btn-block mb-3" href="{{ route("user::bank::add") }}">
+    <a type="submit" class="btn btn-outline-info btn-block mb-3" href="{{ route("user::bank::create") }}">
         Issue SEPA direct withdrawal authorisation
     </a>
 
@@ -81,7 +82,8 @@
                         <p class="text-danger">
                             You have unpaid orderlines. You cannot revoke your authorization until you have settled all
                             your purchases with Proto. You can await the next withdrawal, or head over to your
-                            <a href="{{ route("omnomcom::orders::list") }}">purchase history</a> to pay manually via iDeal.
+                            <a href="{{ route("omnomcom::orders::index") }}">purchase history</a> to pay manually via
+                            iDeal.
                         </p>
                         <hr>
                     @endif
@@ -101,18 +103,19 @@
                 </div>
                 <form method="POST" action="{{ route('user::bank::delete') }}">
                     {!! csrf_field() !!}
-                <div class="modal-footer">
+                    <div class="modal-footer">
 
-                    <div class="btn-group btn-block">
-                    <button type="submit" class="btn btn-danger w-50" @disabled($user->hasUnpaidOrderlines()) }}>
-                        Cancel my authorization
-                    </button>
-                        <button type="button" class="btn btn-default w-50" data-bs-dismiss="modal">
-                            Keep my authorization active
-                        </button>
+                        <div class="btn-group btn-block">
+                            <button type="submit" class="btn btn-danger w-50"
+                                    @disabled($user->hasUnpaidOrderlines()) }}>
+                                Cancel my authorization
+                            </button>
+                            <button type="button" class="btn btn-default w-50" data-bs-dismiss="modal">
+                                Keep my authorization active
+                            </button>
+                        </div>
+
                     </div>
-
-                </div>
                 </form>
             </div>
         </div>

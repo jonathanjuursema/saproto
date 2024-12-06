@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddMembercardAttributesToCompanies extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('companies', function ($table) {
             $table->boolean('on_membercard')->default(false);
@@ -20,10 +19,8 @@ class AddMembercardAttributesToCompanies extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('companies', function ($table) {
             $table->dropColumn('on_membercard');

@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddSoftdeletesToPages extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('pages', function ($table) {
             $table->softDeletes();
@@ -18,10 +17,8 @@ class AddSoftdeletesToPages extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('pages', function ($table) {
             $table->dropColumn('deleted_at');

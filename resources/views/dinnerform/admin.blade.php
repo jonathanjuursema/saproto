@@ -8,7 +8,7 @@
 
         <div class="card-header bg-dark text-white mb-1">
             <span>Dinnerform orderline overview for <strong>{{$dinnerform->restaurant}}</strong> ordered on <strong>{{$dinnerform->end->format('Y m-d') }}</strong></span>
-            <a href="{{ route('dinnerform::add') }}" class="btn btn-info badge float-end ms-2">
+            <a href="{{ route('dinnerform::create') }}" class="btn btn-info badge float-end ms-2">
                 <i class="fas fa-hand-point-left me-1"></i> Return to overview
             </a>
             @if($dinnerform->isCurrent())

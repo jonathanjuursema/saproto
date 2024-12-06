@@ -8,17 +8,18 @@ return [
 
     'primary-domain' => env('PRIMARY_DOMAIN'),
     'app-url' => config('app.url'),
-    'assets-domain' => env('REDIRECT_ASSETS_DOMAIN', null),
+    'assets-domain' => env('REDIRECT_ASSETS_DOMAIN'),
 
+    'fishcam-url' => env('FISHCAM_URL'),
     /*
      * Whitelist for debug environment
      */
-    'debug-whitelist' => env('DEV_ALLOWED', null),
+    'debug-whitelist' => env('DEV_ALLOWED'),
 
     /*
      * Personal Proto key
      */
-    'personal-proto-key' => env('PERSONAL_PROTO_KEY', null),
+    'personal-proto-key' => env('PERSONAL_PROTO_KEY'),
 
     /*
      * Printer server settings
@@ -46,11 +47,11 @@ return [
     /*
      * Sentry config
      */
-    'sentry-dsn' => env('SENTRY_PUBLIC_DSN', null),
+    'sentry-dsn' => env('SENTRY_PUBLIC_DSN'),
 
     /*
      * ProBoto config
      */
-    'proboto-secret' => env('PROBOTO_SECRET', null),
+    'proboto-secret' => env('PROBOTO_SECRET'),
 
 ];

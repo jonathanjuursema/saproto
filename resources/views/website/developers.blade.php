@@ -62,7 +62,8 @@
 
                     <p class="card-text">
                         If you find any security flaw on our website, please <a
-                                href="mailto:{{ $committee->slug . "@" . config('proto.emaildomain') }}">e-mail the
+                            href="mailto:{{ $committee->slug . "@" . Config::string('proto.emaildomain') }}">e-mail
+                            the
                             developers</a> immediately. We will make sure the security hole gets fixed as soon as
                         possible.
                     </p>
@@ -71,7 +72,7 @@
 
                     <p class="card-text">
                         If you have a problem with the content of the website, please contact <a
-                                href="mailto:board@proto.utwente.nl">the board of the association</a>. They generally
+                            href="mailto:board@proto.utwente.nl">the board of the association</a>. They generally
                         decide what gets published and are able to make general changes to user accounts, committees,
                         activities and other association-related content.
                     </p>
@@ -93,7 +94,8 @@
                         If you feel the desire to contribute to the website directly, do not hestitate to fork our
                         repository and make a pull request with your changes. We welcome all input and be happy to help
                         you get your idea integrated in the website! Just want to ask something? <a
-                                href="mailto:{{ $committee->slug . "@" . config('proto.emaildomain') }}">Shoot us an
+                            href="mailto:{{ $committee->slug . "@" . Config::string('proto.emaildomain') }}">Shoot
+                            us an
                             e-mail!</a>
                     </p>
 
@@ -102,10 +104,11 @@
                 <div class="card-footer text-center">
                     <strong>Previous contributors</strong> -
                     @foreach($developers['old'] as $i => $dev)
-                        @if($dev->user->isMember) <a
+                        @if($dev->user->isMember)
+                            <a
                                 href="{{ route('user::profile', ['id' => $dev->user->getPublicId()]) }}">
-                            {{ $dev->user->name }}
-                        </a>
+                                {{ $dev->user->name }}
+                            </a>
                         @else
                             {{ $dev->user->name }}
                         @endif

@@ -1,151 +1,157 @@
 {
-  "name": "saproto/saproto",
-  "description": "S.A. Proto Web Application",
-  "homepage": "https://www.proto.utwente.nl",
-  "keywords": [
-    "proto",
-    "utwente",
-    "association"
-  ],
-  "authors": [
-    {
-      "name": "Jonathan Juursema",
-      "email": "jonathan@proto.utwente.nl",
-      "homepage": "https://www.jonathanj.nl",
-      "role": "developer"
+    "name": "saproto/saproto",
+    "description": "S.A. Proto Web Application",
+    "homepage": "https://www.proto.utwente.nl",
+    "keywords": [
+        "proto",
+        "utwente",
+        "association"
+    ],
+    "authors": [
+        {
+            "name": "Jonathan Juursema",
+            "email": "jonathan@proto.utwente.nl",
+            "homepage": "https://www.jonathanj.nl",
+            "role": "developer"
+        },
+        {
+            "name": "Thijs Dortmann",
+            "email": "thzd@proto.utwente.nl",
+            "homepage": "http://www.thzd.nl",
+            "role": "developer"
+        },
+        {
+            "name": "Jonathan Matarazzi",
+            "email": "j.matarazzi@proto.utwente.nl",
+            "homepage": "https://jonathanm.nl/",
+            "role": "developer"
+        },
+        {
+            "name": "Jesse Visser",
+            "email": "j.visser-1@proto.utwente.nl",
+            "homepage": "https://jesse-visser.nl",
+            "role": "developer"
+        }
+    ],
+    "support": {
+        "email": "haveyoutriedturningitoffandonagain@proto.utwente.nl",
+        "issues": "https://github.com/saproto/saproto/issues",
+        "source": "https://github.com/saproto/saproto"
     },
-    {
-      "name": "Thijs Dortmann",
-      "email": "thzd@proto.utwente.nl",
-      "homepage": "http://www.thzd.nl",
-      "role": "developer"
+    "type": "project",
+    "minimum-stability": "stable",
+    "require": {
+        "aacotroneo/laravel-saml2": "^2.1.0",
+        "abcaeffchen/sephpa": "^2.1.2",
+        "alaouy/youtube": "2.2.5",
+        "biscolab/laravel-recaptcha": "^6",
+        "ext-calendar": "*",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "globalcitizen/php-iban": "4.2.3",
+        "graham-campbell/markdown": "^15.2",
+        "guzzlehttp/guzzle": "^7.5",
+        "jwilsson/spotify-web-api-php": "^6.0",
+        "laravel/framework": "^11.31.0",
+        "laravel/helpers": "^1.7.0",
+        "laravel/passport": "^12.3.0",
+        "league/commonmark": "^2.3",
+        "league/oauth1-client": "^1.7",
+        "milon/barcode": "^11.0",
+        "mollie/laravel-mollie": "^3.0",
+        "nesbot/carbon": "^2.62",
+        "nickurt/laravel-pwned-passwords": "^1.11",
+        "pragmarx/google2fa": "^8.0",
+        "sentry/sentry-laravel": "^4.4.1",
+        "solitweb/directadmin": "^3.0",
+        "spatie/laravel-csp": "^2.9",
+        "spatie/laravel-permission": "^6",
+        "spipu/html2pdf": "^5.2",
+        "vinkla/hashids": "^12.0",
+        "willvincent/feeds": "^2.4",
+        "setasign/tfpdf": "^1.33",
+        "ext-iconv": "*",
+        "litesaml/lightsaml": "^4.2",
+        "ext-zlib": "*",
+        "intervention/image-laravel": "^1.3",
+        "google/apiclient": "^2.15.0"
     },
-    {
-      "name": "Jonathan Matarazzi",
-      "email": "j.matarazzi@proto.utwente.nl",
-      "homepage": "https://jonathanm.nl/",
-      "role": "developer"
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.0",
+        "fakerphp/faker": "^1.13",
+        "itsgoingd/clockwork": "^5.1",
+        "laravel/tinker": "^2.6",
+        "larastan/larastan": "^2.7.0",
+        "symfony/css-selector": "~4.0",
+        "symfony/dom-crawler": "~4.0",
+        "laravel/sail": "^1.16",
+        "laravel/pint": "^1.10",
+        "driftingly/rector-laravel": "^1.2",
+        "pestphp/pest": "^3.0",
+        "mockery/mockery": "^1.6",
+        "pestphp/pest-plugin-laravel": "^3.0"
     },
-    {
-      "name": "Jesse Visser",
-      "email": "j.visser-1@proto.utwente.nl",
-      "homepage": "https://jesse-visser.nl",
-      "role": "developer"
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Database\\Factories\\": "database/factories/",
+            "Google\\": "vendor/google/apiclient/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "fix": [
+            "./vendor/bin/rector process && ./vendor/bin/pint"
+        ],
+        "pint": [
+            "./vendor/bin/pint"
+        ],
+        "test": [
+            "php artisan test --parallel"
+        ],
+        "rector": [
+            "vendor/bin/rector process"
+        ],
+        "ide-helper": [
+            "php artisan cache:clear",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta"
+        ],
+        "analyse": [
+            "vendor/bin/phpstan analyse"
+        ],
+        "post-install-cmd": [
+            "php artisan clear-compiled"
+        ],
+        "pre-update-cmd": [
+            "php artisan clear-compiled"
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta"
+        ],
+        "post-root-package-install": [
+            "php -r \"copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "php artisan key:generate"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "php artisan package:discover"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "pestphp/pest-plugin": true
+        }
     }
-  ],
-  "support": {
-    "email": "haveyoutriedturningitoffandonagain@proto.utwente.nl",
-    "issues": "https://github.com/saproto/saproto/issues",
-    "source": "https://github.com/saproto/saproto"
-  },
-  "type": "project",
-  "minimum-stability": "stable",
-  "require": {
-    "aacotroneo/laravel-saml2": "^2.1.0",
-    "abcaeffchen/sephpa": "2.0.0-beta1",
-    "alaouy/youtube": "^2.1",
-    "biscolab/laravel-recaptcha": "^6",
-    "doctrine/dbal": "^3.2",
-    "ext-calendar": "*",
-    "ext-curl": "*",
-    "ext-json": "*",
-    "globalcitizen/php-iban": "^2.6",
-    "graham-campbell/markdown": "^15.0",
-    "guzzlehttp/guzzle": "^7.5",
-    "intervention/image": "^2.7",
-    "intervention/imagecache": "^2.5",
-    "jwilsson/spotify-web-api-php": "^6.0",
-    "laravel/framework": "^10.0",
-    "laravel/helpers": "^1.5",
-    "laravel/passport": "^11.5",
-    "laravelcollective/html": "^6.3",
-    "league/commonmark": "^2.3",
-    "league/oauth1-client": "^1.7",
-    "milon/barcode": "^10.0",
-    "mollie/laravel-mollie": "^2.15",
-    "nesbot/carbon": "^2.62",
-    "nickurt/laravel-pwned-passwords": "1.10",
-    "nickurt/laravel-postcodeapi": "^1.18",
-    "pragmarx/google2fa": "^0.7",
-    "sentry/sentry-laravel": "3.2",
-    "solitweb/directadmin": "^3.0",
-    "spatie/laravel-csp": "^2.6",
-    "spatie/laravel-permission": "^5.5",
-    "spipu/html2pdf": "^5.2",
-    "vinkla/hashids": "^11.0",
-    "willvincent/feeds": "^2.4",
-    "laravel/legacy-factories": "^1.3",
-    "setasign/tfpdf": "^1.33"
-  },
-  "require-dev": {
-    "barryvdh/laravel-ide-helper": "^2.8.2",
-    "fakerphp/faker": "^1.13",
-    "itsgoingd/clockwork": "^5.1",
-    "laravel/tinker": "^2.6",
-    "nunomaduro/larastan": "^2.4",
-    "symfony/css-selector": "~4.0",
-    "symfony/dom-crawler": "~4.0",
-    "laravel/sail": "^1.16",
-    "laravel/pint": "^1.10",
-    "rector/rector": "^1.0.0",
-    "phpunit/phpunit": "^10.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\": "app/",
-      "Database\\Seeders\\": "database/seeders/",
-      "Database\\Factories\\": "database/factories/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "fix": [
-      "./vendor/bin/pint"
-    ],
-    "test": [
-      "phpunit"
-    ],
-    "rector": [
-      "vendor/bin/rector process"
-    ],
-    "ide-helper": [
-      "php artisan cache:clear",
-      "php artisan ide-helper:generate",
-      "php artisan ide-helper:meta"
-    ],
-    "analyse": [
-      "vendor/bin/phpstan analyse"
-    ],
-    "post-install-cmd": [
-      "php artisan clear-compiled"
-    ],
-    "pre-update-cmd": [
-      "php artisan clear-compiled"
-    ],
-    "post-update-cmd": [
-      "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "php artisan ide-helper:generate",
-      "php artisan ide-helper:meta"
-    ],
-    "post-root-package-install": [
-      "php -r \"copy('.env.example', '.env');\""
-    ],
-    "post-create-project-cmd": [
-      "php artisan key:generate"
-    ],
-    "post-autoload-dump": [
-      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "php artisan package:discover"
-    ]
-  },
-  "config": {
-    "preferred-install": "dist",
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  }
 }

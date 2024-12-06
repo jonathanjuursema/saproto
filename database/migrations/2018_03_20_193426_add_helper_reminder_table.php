@@ -8,10 +8,8 @@ class AddHelperReminderTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('committees_helper_reminders', function (Blueprint $table) {
             $table->increments('id');
@@ -22,10 +20,8 @@ class AddHelperReminderTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('committees_helper_reminders');
     }

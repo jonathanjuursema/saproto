@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\PasswordEntry;
-use Auth;
-use Crypt;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use Permission;
-use Redirect;
-use Session;
 
 class PasswordController extends Controller
 {
@@ -34,6 +34,7 @@ class PasswordController extends Controller
 
             return Redirect::route('passwordstore::index');
         }
+
         Session::flash('flash_message', 'Wrong password.');
 
         return Redirect::route('passwordstore::auth');
@@ -48,7 +49,7 @@ class PasswordController extends Controller
             return $this->forwardToAuth();
         }
 
-        return view('passwordstore.index', ['passwords' => PasswordEntry::orderBy('permission_id', 'asc')->orderBy('description', 'asc')->get()]);
+        return view('passwordstore.index', ['passwords' => PasswordEntry::query()->orderBy('permission_id', 'asc')->orderBy('description', 'asc')->get()]);
     }
 
     /**
@@ -79,8 +80,9 @@ class PasswordController extends Controller
 
             return Redirect::back();
         }
+
         if ($request->get('type') == 'password') {
-            PasswordEntry::create([
+            PasswordEntry::query()->create([
                 'permission_id' => $permission->id,
                 'description' => $request->get('description'),
                 'username' => Crypt::encrypt($request->get('username')),
@@ -94,7 +96,7 @@ class PasswordController extends Controller
         }
 
         if ($request->get('type') == 'note') {
-            PasswordEntry::create([
+            PasswordEntry::query()->create([
                 'permission_id' => $permission->id,
                 'description' => $request->get('description'),
                 'username' => null,
@@ -123,7 +125,7 @@ class PasswordController extends Controller
         }
 
         /** @var PasswordEntry $password */
-        $password = PasswordEntry::findOrFail($id);
+        $password = PasswordEntry::query()->findOrFail($id);
         if (! $password->canAccess(Auth::user())) {
             Session::flash('flash_message', 'You are not allowed to edit this entry.');
 
@@ -144,7 +146,7 @@ class PasswordController extends Controller
         }
 
         /** @var PasswordEntry $password */
-        $password = PasswordEntry::findOrFail($id);
+        $password = PasswordEntry::query()->findOrFail($id);
 
         if (! $password->canAccess(Auth::user())) {
             Session::flash('flash_message', 'You are not allowed to edit this entry.');
@@ -159,6 +161,7 @@ class PasswordController extends Controller
 
             return Redirect::back();
         }
+
         if ($request->get('type') == 'password') {
             $password->fill([
                 'permission_id' => $permission->id,
@@ -206,12 +209,13 @@ class PasswordController extends Controller
             return $this->forwardToAuth();
         }
 
-        $password = PasswordEntry::findOrFail($id);
+        $password = PasswordEntry::query()->findOrFail($id);
         if (! $password->canAccess(Auth::user())) {
             Session::flash('flash_message', 'You are not allowed to delete this entry.');
 
             return Redirect::route('passwordstore::index');
         }
+
         $password->delete();
 
         Session::flash('flash_message', 'Password entry deleted.');
@@ -219,14 +223,12 @@ class PasswordController extends Controller
         return Redirect::route('passwordstore::index');
     }
 
-    /**
-     * @return bool
-     */
-    private function extraVerification(Request $request)
+    private function extraVerification(Request $request): bool
     {
         if (! $request->session()->has('passwordstore-verify')) {
             return false;
         }
+
         $verify = $request->session()->get('passwordstore-verify');
         if ($verify < date('U')) {
             $request->session()->forget('passwordstore-verify');

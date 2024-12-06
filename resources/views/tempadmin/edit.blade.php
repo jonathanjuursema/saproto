@@ -13,12 +13,11 @@
     <div class="row justify-content-center">
 
         <div class="col-md-4">
-
-            <form method="post"
-                  action="{{ ($new ? route("tempadmin::add") : route("tempadmin::edit", ['id' => $item->id])) }}"
-                  enctype="multipart/form-data">
-
-                {!! csrf_field() !!}
+            <form
+                action="{{ !empty($item) ? route('tempadmins.update', ['tempadmin' => $item]) : route("tempadmins.store") }}"
+                method="POST">
+                <input type="hidden" name="_method" value="{{ !empty($item) ? "PUT" : "POST" }}">
+                {{ csrf_field()}}
 
                 <div class="card mb-3">
 
@@ -31,7 +30,7 @@
                         @if($new)
                             <div class="form-group autocomplete">
                                 <label for="user-id">User:</label>
-                                <input id="user-id" class="form-control user-search" name="user_id" required/>
+                                <input id="user-id" class="form-control user-search" name="user_id" required />
                             </div>
                         @else
                             <div class="input-group">
@@ -56,7 +55,7 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-success float-end">Submit</button>
-                        <a href="{{ route("tempadmin::index") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("tempadmins.index") }}" class="btn btn-default">Cancel</a>
                     </div>
 
                 </div>

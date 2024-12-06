@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\PlayedVideo;
 use App\Models\User;
-use Auth;
-use DB;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Session;
 
 class ProtubeController extends Controller
 {
@@ -28,7 +28,7 @@ class ProtubeController extends Controller
     /** @return View */
     public function dashboard()
     {
-        $user_count = PlayedVideo::where('user_id', Auth::user()->id)->count();
+        $user_count = PlayedVideo::query()->where('user_id', Auth::user()->id)->count();
 
         return view('protube.dashboard', [
             'history' => $this->getHistory(),
@@ -58,12 +58,10 @@ class ProtubeController extends Controller
     }
 
     /**
-     * @param  int  $limit
-     * @param  string|null  $since
      * @param  User|null  $user
      * @return array
      */
-    private function getTopVideos($limit = 10, $since = '2011-04-20', $user = null)
+    private function getTopVideos(int $limit = 10, ?string $since = '2011-04-20', $user = null)
     {
         $query = DB::table('playedvideos')
             ->select(DB::raw('video_id, video_title, spotify_id, spotify_name, count(*) as played_count'))
@@ -95,7 +93,7 @@ class ProtubeController extends Controller
     public function clearHistory()
     {
         $user = Auth::user();
-        PlayedVideo::where('user_id', $user->id)->update(['user_id' => null]);
+        PlayedVideo::query()->where('user_id', $user->id)->update(['user_id' => null]);
 
         Session::flash('flash_message', 'History cleared.');
 

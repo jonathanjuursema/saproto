@@ -1,12 +1,15 @@
 <?php
 
+use App\Csp\Policies\ProtoPolicy;
+use App\Support\LaravelViteNonceGenerator;
+
 return [
 
     /*
      * A policy will determine which CSP headers will be set. A valid CSP policy is
      * any class that extends `Spatie\Csp\Policies\Policy`
      */
-    'policy' => App\Csp\Policies\ProtoPolicy::class,
+    'policy' => ProtoPolicy::class,
 
     /*
      * This policy which will be put in report only mode. This is great for testing out
@@ -30,5 +33,5 @@ return [
     /*
      * The class responsible for generating the number only used once used in inline tags and headers.
      */
-    'nonce_generator' => App\Support\LaravelViteNonceGenerator::class,
+    'nonce_generator' => LaravelViteNonceGenerator::class,
 ];

@@ -6,12 +6,16 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class BirthdayEmail extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var User
+     */
     public $user;
 
     /**
@@ -32,7 +36,7 @@ class BirthdayEmail extends Mailable
     public function build()
     {
         return $this
-            ->from('internal@'.config('proto.emaildomain'), config('proto.internal'))
+            ->from('internal@'.Config::string('proto.emaildomain'), Config::string('proto.internal'))
             ->subject('Happy birthday!')
             ->view('emails.users.birthdayemail');
     }

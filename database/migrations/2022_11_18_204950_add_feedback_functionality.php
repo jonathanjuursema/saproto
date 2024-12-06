@@ -5,16 +5,15 @@ use App\Models\FeedbackCategory;
 use App\Models\FeedbackVote;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddFeedbackFunctionality extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('feedback_votes', function (Blueprint $table) {
             $table->id();
@@ -74,6 +73,7 @@ class AddFeedbackFunctionality extends Migration
                     $newLike->save();
                 }
             }
+
             Schema::drop('good_ideas');
             Schema::drop('good_idea_votes');
         }
@@ -106,6 +106,7 @@ class AddFeedbackFunctionality extends Migration
                     $newLike->save();
                 }
             }
+
             Schema::drop('quotes');
             Schema::drop('quotes_users');
         }
@@ -113,10 +114,8 @@ class AddFeedbackFunctionality extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
@@ -132,7 +131,7 @@ class AddFeedbackFunctionality extends Migration
             $table->timestamps();
         });
 
-        $quotes = Feedback::whereHas('category', function ($q) {
+        $quotes = Feedback::query()->whereHas('category', function ($q) {
             $q->where('url', 'quotes');
         })->get();
         foreach ($quotes as $quote) {
@@ -164,7 +163,7 @@ class AddFeedbackFunctionality extends Migration
             $table->timestamps();
         });
 
-        $goodIdeas = Feedback::whereHas('category', function ($q) {
+        $goodIdeas = Feedback::query()->whereHas('category', function ($q) {
             $q->where('url', 'goodideas');
         })->get();
         foreach ($goodIdeas as $goodIdea) {

@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Mail\MembershipRenew;
 use App\Models\Member;
 use Illuminate\Console\Command;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class MemberRenewCron extends Command
 {
@@ -36,7 +36,7 @@ class MemberRenewCron extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         foreach (Member::all() as $member) {
             Mail::to($member->user)->queue((new MembershipRenew($member->user))->onQueue('low'));

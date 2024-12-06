@@ -7,9 +7,12 @@ use Eloquent;
 use File;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Photo model.
@@ -41,103 +44,115 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Photo extends Model
 {
+    use HasFactory;
+
     protected $table = 'photos';
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function album()
+    protected $with = ['file'];
+
+    protected static function booted(): void
     {
-        return $this->belongsTo(\App\Models\PhotoAlbum::class, 'album_id');
+        static::addGlobalScope('private', function (Builder $builder) {
+            $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)
+                ->whereHas('album', function ($query) {
+                    $query->where('private', false);
+                }));
+        });
+
+        static::addGlobalScope('published', function (Builder $builder) {
+            $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->whereHas('album', function ($query) {
+                $query->where('published', true);
+            }));
+        });
     }
 
-    /** @return HasMany */
-    public function likes()
+    public function album(): BelongsTo
     {
-        return $this->hasMany(\App\Models\PhotoLikes::class);
+        return $this->belongsTo(PhotoAlbum::class, 'album_id');
     }
 
-    /** @return hasOne */
-    public function file()
+    public function likes(): HasMany
     {
-        return $this->hasOne(\App\Models\StorageEntry::class, 'id', 'file_id');
+        return $this->hasMany(PhotoLikes::class);
     }
 
-    /**
-     * @param  bool  $next
-     * @return Photo
-     */
-    private function getAdjacentPhoto($next = true)
+    public function file(): HasOne
+    {
+        return $this->hasOne(StorageEntry::class, 'id', 'file_id');
+    }
+
+    private function getAdjacentPhoto(bool $next = true): ?Photo
     {
         if ($next) {
-            $ord = 'ASC';
-            $comp = '>';
-        } else {
             $ord = 'DESC';
             $comp = '<';
+        } else {
+            $ord = 'ASC';
+            $comp = '>';
         }
 
-        $result = self::where('album_id', $this->album_id)->where('date_taken', $comp.'=', $this->date_taken)->orderBy('date_taken', $ord)->orderBy('id', $ord);
-        if ($result->count() > 1) {
-            return $result->where('id', $comp, $this->id)->first();
-        }
-
-        return $result->first();
+        return self::query()->where(function ($query) use ($comp) {
+            $query->where('date_taken', $comp, $this->date_taken)
+                ->orWhere(function ($query) use ($comp) {
+                    $query->where('date_taken', '=', $this->date_taken)
+                        ->where('id', $comp, $this->id);
+                });
+        })
+            ->where('album_id', $this->album_id)
+            ->orderBy('date_taken', $ord)
+            ->orderBy('id', $ord)
+            ->first();
     }
 
-    /** @return Photo */
-    public function getNextPhoto()
+    public function getNextPhoto(): ?Photo
     {
         return $this->getAdjacentPhoto();
     }
 
-    /** @return Photo */
-    public function getPreviousPhoto()
+    public function getPreviousPhoto(): ?Photo
     {
         return $this->getAdjacentPhoto(false);
     }
 
-    /**
-     * @param  int  $paginateLimit
-     * @return false|float|int
-     */
-    public function getAlbumPageNumber($paginateLimit)
+    public function getAlbumPageNumber(int $paginateLimit): float|int
     {
         $photoIndex = 1;
-        $photos = self::where('album_id', $this->album_id)->orderBy('date_taken', 'ASC')->orderBy('id', 'ASC')->get();
+        $photos = self::query()->where('album_id', $this->album_id)
+            ->orderBy('date_taken', 'desc')->orderBy('id', 'desc')
+            ->get();
         foreach ($photos as $photoItem) {
             if ($this->id == $photoItem->id) {
                 return ceil($photoIndex / $paginateLimit);
             }
+
             $photoIndex++;
         }
 
         return 1;
     }
 
-    /** @return int */
-    public function getLikes()
+    public function getLikes(): int
     {
         return $this->likes()->count();
     }
 
-    /** @return string */
-    public function thumbnail()
+    public function thumbnail(): string
     {
         return $this->file->generateImagePath(400, 400);
     }
 
-    /** @return string */
-    public function getUrlAttribute()
+    public function getUrlAttribute(): string
     {
         return $this->file->generatePath();
     }
 
-    public static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::deleting(function ($photo) {
+        static::deleting(static function ($photo) {
             /* @var Photo $photo */
             $photo->file->delete();
             if ($photo->id == $photo->album->thumb_id) {

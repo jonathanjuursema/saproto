@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     E-mail lists
-                    <a href="{{ route('email::list::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('email::list::create') }}" class="badge bg-info float-end">
                         Create new list.
                     </a>
                 </div>
@@ -101,7 +101,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     Emails
-                    <a href="{{ route('email::add') }}" class="badge bg-info float-end">Compose email.</a>
+                    <a href="{{ route('email::create') }}" class="badge bg-info float-end">Compose email.</a>
                 </div>
 
                 <table class="table table-sm table-hover">

@@ -8,10 +8,8 @@ class AddIsPendingRowToEmailsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('emails', function (Blueprint $table) {
             $table->boolean('to_pending')->default(false)->after('to_member');
@@ -20,10 +18,8 @@ class AddIsPendingRowToEmailsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('emails', function (Blueprint $table) {
             $table->dropColumn('to_pending');

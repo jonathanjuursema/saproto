@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a href="{{ route('leaderboards::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('leaderboards::create') }}" class="badge bg-info float-end">
                         Create a new leaderboard.
                     </a>
                 </div>

@@ -16,7 +16,7 @@
         </p>
 
         <p>
-            <a class="btn btn-default btn-block" href="{{ route('login::resetpass') }}">
+            <a class="btn btn-default btn-block" href="{{ route('login::password::reset') }}">
                 Forgot your password?
             </a>
         </p>

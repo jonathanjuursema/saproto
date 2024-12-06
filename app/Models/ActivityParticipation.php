@@ -55,10 +55,6 @@ class ActivityParticipation extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'deleted_at' => 'datetime',
-    ];
-
     /** @return BelongsTo */
     public function user()
     {
@@ -75,5 +71,12 @@ class ActivityParticipation extends Model
     public function help()
     {
         return $this->belongsTo(HelpingCommittee::class, 'committees_activities_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'deleted_at' => 'datetime',
+        ];
     }
 }

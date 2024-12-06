@@ -10,7 +10,8 @@
 
         <div class="col-md-6 col-sm-8 col-xs-12">
 
-            <form method="post" action="{{ route("committee::anonymousmail", ["id" => $committee->getPublicId()]) }}">
+            <form method="post"
+                  action="{{ route("committee::sendanonymousmail", ["id" => $committee->getPublicId()]) }}">
 
                 {!! csrf_field() !!}
 
@@ -70,7 +71,7 @@
                         receiving committee <strong>together</strong> can infer who sent the e-mail, the receiving
                         committee alone can't infer anything and the webmasters can only infer who have been using the
                         system, but not what they sent. Please note that all webmasters have signed a <a
-                                href="https://wiki.proto.utwente.nl/_media/ict/privacy/nda.pdf" target="_blank">non-disclosure
+                            href="https://wiki.proto.utwente.nl/_media/ict/privacy/nda.pdf" target="_blank">non-disclosure
                             agreement</a>.
                     </p>
 

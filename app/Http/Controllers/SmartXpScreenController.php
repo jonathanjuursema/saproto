@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Illuminate\View\View;
 
 class SmartXpScreenController extends Controller
@@ -13,7 +14,7 @@ class SmartXpScreenController extends Controller
     /**
      * @return View
      */
-    public function show(Request $request)
+    public function show()
     {
         return view('smartxp.screen');
     }
@@ -21,26 +22,24 @@ class SmartXpScreenController extends Controller
     /**
      * @return View
      */
-    public function showProtopolis(Request $request)
+    public function showProtopolis()
     {
         return view('smartxp.protopolis_screen');
     }
 
-    /** @return array */
-    public function timetable()
+    public function timetable(): array
     {
         return CalendarController::returnGoogleCalendarEvents(
-            config('proto.google-timetable-id'),
+            Config::string('proto.google-calendar.timetable-id'),
             date('c', strtotime('today')),
             date('c', strtotime('tomorrow'))
         );
     }
 
-    /** @return array */
-    public function protopenersTimetable()
+    public function protopenersTimetable(): array
     {
         return CalendarController::returnGoogleCalendarEvents(
-            config('proto.protopeners-google-timetable-id'),
+            Config::string('proto.google-calendar.protopeners-id'),
             date('c', strtotime('today')),
             date('c', strtotime('tomorrow'))
         );
@@ -53,7 +52,7 @@ class SmartXpScreenController extends Controller
     {
         try {
             return response(file_get_contents("http://v0.ovapi.nl/tpc/$request->tpc_id,$request->tpc_id_other"), 200)->header('Content-Type', 'application/json');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return response()->json([
                 'message' => 'OV_API not available',
             ], 503);
@@ -72,11 +71,11 @@ class SmartXpScreenController extends Controller
             'weekend' => [],
         ];
         $occupied = false;
-        $url = 'https://www.googleapis.com/calendar/v3/calendars/'.config('proto.smartxp-google-timetable-id').'/events?singleEvents=true&orderBy=startTime&key='.config('app-proto.google-key-private').'&timeMin='.urlencode(date('c', strtotime('last monday', strtotime('tomorrow')))).'&timeMax='.urlencode(date('c', strtotime('next monday')));
+        $url = 'https://www.googleapis.com/calendar/v3/calendars/'.Config::string('proto.google-calendar.smartxp-id').'/events?singleEvents=true&orderBy=startTime&key='.Config::string('app-proto.google-key-private').'&timeMin='.urlencode(date('c', strtotime('last monday', strtotime('tomorrow')))).'&timeMax='.urlencode(date('c', strtotime('next monday')));
 
         try {
             $data = json_decode(str_replace('$', '', file_get_contents($url)));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return (object) ['roster' => $roster, 'occupied' => $occupied];
         }
 
@@ -84,25 +83,25 @@ class SmartXpScreenController extends Controller
             $end_time = ($entry->end->date ?? $entry->end->dateTime);
             $start_time = (isset($entry->start->date) ? $entry->end->date : $entry->start->dateTime);
             $name = $entry->summary;
-            $name_exp = explode(' ', $name);
-            if (is_numeric($name_exp[0])) {
-                $name_exp[0] = '';
+            preg_match('/Course\/Description:\s*([^\.]+)\./', $entry->summary, $name);
+            $name = $name[1] ?? 'unknown';
+
+            preg_match('/Hall: ZI A138, (.*)/', $entry->summary, $type);
+            foreach (Config::array('proto.timetable-translations') as $key => $value) {
+                $type = str_replace($key, $value, $type);
             }
-            $name = '';
-            foreach ($name_exp as $val) {
-                $name .= $val.' ';
-            }
-            preg_match('/Type: (.*)/', $entry->description, $type);
+
             $current = strtotime($start_time) < time() && strtotime($end_time) > time();
             if ($current) {
                 $occupied = true;
             }
+
             $day = strtolower(str_replace(['Saturday', 'Sunday'], ['weekend', 'weekend'], date('l', strtotime($start_time))));
             $roster[$day][] = (object) [
                 'title' => $name,
                 'start' => strtotime($start_time),
                 'end' => strtotime($end_time),
-                'type' => $type[1],
+                'type' => $type[1] ?? 'Other',
                 'over' => strtotime($end_time) < time(),
                 'current' => $current,
             ];

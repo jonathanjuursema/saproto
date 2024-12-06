@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white">
                     @yield('page-title')
-                    <a href="{{ route('dmx::override::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('dmx.overrides.create') }}" class="badge bg-info float-end">
                         Create a new override.
                     </a>
                 </div>
@@ -22,61 +22,62 @@
                 @if (count($overrides) > 0)
 
                     <div class="table-responsive">
-                    <table class="table table-hover">
+                        <table class="table table-hover">
 
-                        <thead>
+                            <thead>
 
-                        <tr>
+                            <tr>
 
-                            <th>Fixtures</th>
-                            <th colspan="4">Color</th>
-                            <th>When</th>
-                            <th></th>
+                                <th>Fixtures</th>
+                                <th colspan="4">Color</th>
+                                <th>When</th>
+                                <th></th>
 
-                        </tr>
+                            </tr>
 
-                        </thead>
+                            </thead>
 
-                        <tr>
-                            <th>
-                                <i>Active overrides</i>
-                            </th>
-                            <th colspan="6">
-                                <i>Overrides are applied from the bottom of this list to the top. The top most override is applied last.</i>
-                            </th>
-                        </tr>
+                            <tr>
+                                <th>
+                                    <i>Active overrides</i>
+                                </th>
+                                <th colspan="6">
+                                    <i>Overrides are applied from the bottom of this list to the top. The top most
+                                        override is applied last.</i>
+                                </th>
+                            </tr>
 
-                        @foreach($overrides as $override)
-                            @include('dmx.override.override_macro', [
-                                'override' => $override
-                            ])
-                        @endforeach
+                            @foreach($overrides as $override)
+                                @include('dmx.override.override_macro', [
+                                    'override' => $override
+                                ])
+                            @endforeach
 
-                        <tr>
-                            <th colspan="7">
-                                <i>Upcoming overrides</i>
-                            </th>
-                        </tr>
+                            <tr>
+                                <th colspan="7">
+                                    <i>Upcoming overrides</i>
+                                </th>
+                            </tr>
 
-                        @foreach($upcoming_overrides as $override)
-                            @include('dmx.override.override_macro', [
-                                'override' => $override
-                            ])
-                        @endforeach
+                            @foreach($upcoming_overrides as $override)
+                                @include('dmx.override.override_macro', [
+                                    'override' => $override
+                                ])
+                            @endforeach
 
-                        <tr>
-                            <th colspan="7">
-                                <i>Previous overrides</i>
-                            </th>
-                        </tr>
+                            <tr>
+                                <th colspan="7">
+                                    <i>Previous overrides</i>
+                                </th>
+                            </tr>
 
-                        @foreach($past_overrides as $override)
-                            @include('dmx.override.override_macro', [
-                                'override' => $override
-                            ])
-                        @endforeach
+                            @foreach($past_overrides as $override)
+                                @include('dmx.override.override_macro', [
+                                    'override' => $override
+                                ])
+                            @endforeach
 
-                    </table>
+                        </table>
                     </div>
 
                 @else

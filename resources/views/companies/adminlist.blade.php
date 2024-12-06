@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a href="{{ route('companies::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('companies::create') }}" class="badge bg-info float-end">
                         Create a new company.
                     </a>
                 </div>

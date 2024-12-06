@@ -6,13 +6,13 @@
 
 @section('container')
     <div class="row justify-content-end">
-    <div class="col">
+        <div class="col">
 
             <div class="card mb-3">
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a href="{{ route('achievement::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('achievement::create') }}" class="badge bg-info float-end">
                         Create a new achievement.
                     </a>
                 </div>
@@ -50,7 +50,7 @@
                             <td>{{ $achievement->desc }}</td>
                             <td>{{ $achievement->tier }}</td>
                             <td class="text-end">
-                                <a href="{{ route('achievement::manage', ['id' => $achievement->id]) }}">
+                                <a href="{{ route('achievement::edit', ['id' => $achievement->id]) }}">
                                     <i class="fas fa-edit me-2"></i>
                                 </a>
                                 <a href="{{ route('achievement::delete', ['id' => $achievement->id]) }}">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="col-md-auto">
-    @include('achievement.admin_includes.awards-addone')
+            @include('achievement.admin_includes.awards-addone')
         </div>
     </div>
 @endsection

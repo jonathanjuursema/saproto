@@ -12,9 +12,11 @@
 
             <div class="card mb-3">
 
-                <form method="post" action="{{ route("short_url::edit", ['id' => $url ? $url->id : 'new' ]) }}">
-
-                    {!! csrf_field() !!}
+                <form
+                    action="{{ !empty($url) ? route('short_urls.update', ['short_url' => $url]) : route("short_urls.store") }}"
+                    method="POST">
+                    <input type="hidden" name="_method" value="{{ !empty($url) ? "PUT" : "POST" }}">
+                    {{ csrf_field()}}
 
                     <div class="card-header bg-dark text-white">
                         @yield('page-title')
@@ -25,14 +27,16 @@
                         <div class="form-group">
                             <label for="description">Description</label>
                             <input type="text" class="form-control" id="description" name="description"
-                                   placeholder="I don't want to type long URLs..." value="{{ $url ? $url->description : '' }}" required>
+                                   placeholder="I don't want to type long URLs..."
+                                   value="{{ $url ? $url->description : '' }}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="url">Short URL</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">{{ route('short_url::go', ['short' => null]) }}/</span>
+                                    <span
+                                        class="input-group-text">{{ route('short_urls.go', ['short' => null]) }}/</span>
                                 </div>
                                 <input type="text" class="form-control" id="url" name="url"
                                        placeholder="awesome-music" required="" value="{{ $url ? $url->url : '' }}">
@@ -59,7 +63,7 @@
                             Submit
                         </button>
 
-                        <a href="{{ route("short_url::index") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("short_urls.index") }}" class="btn btn-default">Cancel</a>
 
                     </div>
 

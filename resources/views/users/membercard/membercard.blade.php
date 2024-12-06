@@ -61,7 +61,7 @@
             </div>
 
             @if($user->photo)
-                <img id="photo" src="data:{{ $user->photo->mime }};base64,{{ $user->photo->getBase64(450,450) }}">
+                <img id="photo" src="data:image/webp;base64,{{ $user->photo->getBase64(450,450) }}">
             @else
                 <img id="photo" src="{{ public_path('images/default-avatars/other.png') }}">
             @endif

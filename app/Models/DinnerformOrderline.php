@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon;
 use Eloquent;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,24 +28,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  **/
 class DinnerformOrderline extends Model
 {
+    use HasFactory;
+
     protected $table = 'dinnerform_orderline';
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class)->withTrashed();
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
-    /** @return BelongsTo */
-    public function dinnerform()
+    public function dinnerform(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Dinnerform::class);
+        return $this->belongsTo(Dinnerform::class);
     }
 
     /** @return float Price of orderline reduced by possible discounts. */
-    public function getPriceWithDiscountAttribute()
+    public function getPriceWithDiscountAttribute(): float
     {
         $with_regular_discount = $this->price * $this->dinnerform->regular_discount;
         $price = round($with_regular_discount, 2, PHP_ROUND_HALF_DOWN);

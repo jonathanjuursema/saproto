@@ -56,15 +56,13 @@ class Company extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function image()
+    public function image(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'image_id');
+        return $this->belongsTo(StorageEntry::class, 'image_id');
     }
 
-    /** @return HasMany */
-    public function joboffers()
+    public function joboffers(): HasMany
     {
-        return $this->hasMany(\App\Models\Joboffer::class, 'company_id');
+        return $this->hasMany(Joboffer::class, 'company_id');
     }
 }

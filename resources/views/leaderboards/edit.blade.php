@@ -11,7 +11,7 @@
         <div class="col-md-5 mb-3">
 
             <form method="post"
-                  action="{{ ($leaderboard == null ? route("leaderboards::add") : route("leaderboards::edit", ['id' => $leaderboard->id])) }}"
+                  action="{{ ($leaderboard == null ? route("leaderboards::store") : route("leaderboards::update", ['id' => $leaderboard->id])) }}"
                   enctype="multipart/form-data">
 
                 {!! csrf_field() !!}
@@ -94,7 +94,7 @@
             <div class="col-md-5 mb-3">
 
                 <form method="post"
-                      action="{{ route("leaderboards::entries::add")}}"
+                      action="{{ route("leaderboards::entries::create")}}"
                       enctype="multipart/form-data">
 
                     {!! csrf_field() !!}
@@ -120,7 +120,7 @@
                                                 <th></th>
                                                 <th>Name</th>
                                                 <th>{{ $leaderboard->points_name }} <i
-                                                            class="ms-1 {{ $leaderboard->icon }}"></i></th>
+                                                        class="ms-1 {{ $leaderboard->icon }}"></i></th>
                                                 <th></th>
                                                 <th></th>
                                             </tr>
@@ -136,8 +136,10 @@
                                                                class="le-points-input">
                                                     </td>
                                                     <td class="cursor-pointer" style="min-width: 60px;">
-                                                        <span class="fa fas fa-lg fa-caret-up ms-2 le-points-increase"></span>
-                                                        <span class="fa fas fa-lg fa-caret-down ms-1 le-points-decrease"></span>
+                                                        <span
+                                                            class="fa fas fa-lg fa-caret-up ms-2 le-points-increase"></span>
+                                                        <span
+                                                            class="fa fas fa-lg fa-caret-down ms-1 le-points-decrease"></span>
                                                     </td>
                                                     <td>
                                                         <a href="{{ route('leaderboards::entries::delete', ['id' => $entry->id]) }}">
@@ -165,7 +167,7 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="form-group autocomplete">
-                                            <input class="form-control user-search" name="user_id" required/>
+                                            <input class="form-control user-search" name="user_id" required />
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -194,24 +196,24 @@
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         Array.from(document.getElementsByClassName('le-points')).forEach(el => {
             ['click', 'keyup'].forEach(e => el.addEventListener(e, e => {
-                    const id = el.getAttribute('data-id')
-                    const input = el.querySelector('.le-points-input')
-                    let points = input.value
-                    if (e.target.classList.contains('le-points-increase')) points++
-                    else if (e.target.classList.contains('le-points-decrease')) points--
-                    input.value = points
-                    updatePoints(id, points)
-                })
-            )
-        })
+                    const id = el.getAttribute('data-id');
+                    const input = el.querySelector('.le-points-input');
+                    let points = input.value;
+                    if (e.target.classList.contains('le-points-increase')) points++;
+                    else if (e.target.classList.contains('le-points-decrease')) points--;
+                    input.value = points;
+                    updatePoints(id, points);
+                }),
+            );
+        });
 
 
         function updatePoints(id, points) {
-            post('{{ route('leaderboards::entries::update') }}', {id: id, points: points})
+            post('{{ route('leaderboards::entries::update') }}', { id: id, points: points })
                 .catch(err => {
-                    console.error(err)
-                    window.alert('Something went wrong while updating the points. Please try again.')
-                })
+                    console.error(err);
+                    window.alert('Something went wrong while updating the points. Please try again.');
+                });
         }
     </script>
 

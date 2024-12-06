@@ -9,10 +9,8 @@ class AddEmailEventPivot extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('emails_events', function (Blueprint $table) {
             $table->increments('id');
@@ -20,7 +18,7 @@ class AddEmailEventPivot extends Migration
             $table->integer('event_id')->nullable(false);
         });
 
-        foreach (Email::where('to_event', '!=', false)->get() as $email) {
+        foreach (Email::query()->where('to_event', '!=', false)->get() as $email) {
             $email->events()->sync([$email->to_event]);
             $email->to_event = true;
         }
@@ -32,10 +30,8 @@ class AddEmailEventPivot extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('emails_events');
     }

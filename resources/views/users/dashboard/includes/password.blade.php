@@ -6,11 +6,12 @@
 
     <div class="card-body">
 
-        <a href="{{ route('login::password::change') }}" class="btn btn-outline-info btn-block">
+        <a href="{{ route('login::password::change::index') }}" class="btn btn-outline-info btn-block">
             Change Proto password
         </a>
 
-        <a href="https://tap.utwente.nl/protected/chpw1.php" target="_blank" class="btn btn-outline-secondary btn-block">
+        <a href="https://tap.utwente.nl/protected/chpw1.php" target="_blank"
+           class="btn btn-outline-secondary btn-block">
             Change UTwente password
         </a>
 
@@ -21,7 +22,7 @@
             wiki.
         </p>
 
-        <a href="{{ route('login::password::sync') }}" class="btn btn-outline-info btn-block">
+        <a href="{{ route('login::password::sync::index') }}" class="btn btn-outline-info btn-block">
             Synchronize passwords
         </a>
 

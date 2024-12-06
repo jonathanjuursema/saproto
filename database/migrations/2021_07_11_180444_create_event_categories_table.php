@@ -8,10 +8,8 @@ class CreateEventCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('event_categories', function (Blueprint $table) {
             $table->increments('id');
@@ -23,10 +21,8 @@ class CreateEventCategoriesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('event_categories');
     }

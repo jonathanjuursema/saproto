@@ -17,23 +17,21 @@ class ActivityParticipationFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'created_at' => fn ($attributes) => self::createAt($attributes),
-            'deleted_at' => fn ($attributes) => fake()->boolean(30) ? self::deletedAt($attributes) : null,
-            'backup' => fn ($attributes) => self::Backup($attributes),
+            'created_at' => fn ($attributes): string => self::createAt($attributes),
+            'deleted_at' => fn ($attributes): ?string => fake()->boolean(30) ? self::deletedAt($attributes) : null,
+            'backup' => fn ($attributes): bool => self::Backup($attributes),
         ];
     }
 
     /**
      * Set created at based on activity dates.
-     *
-     * @return string
      */
-    public function createAt(array $attributes)
+    public function createAt(array $attributes): string
     {
-        $activity = Activity::find($attributes['activity_id']);
+        $activity = Activity::query()->find($attributes['activity_id']);
 
         $start = Carbon::parse($activity->registration_start);
         $end = Carbon::parse($activity->event->start);
@@ -45,12 +43,10 @@ class ActivityParticipationFactory extends Factory
 
     /**
      * Set deleted at based on activity dates.
-     *
-     * @return string
      */
-    public function deletedAt(array $attributes)
+    public function deletedAt(array $attributes): string
     {
-        $activity = Activity::find($attributes['activity_id']);
+        $activity = Activity::query()->find($attributes['activity_id']);
 
         $start = Carbon::parse($attributes['created_at']);
         $end = Carbon::parse($activity->event->start);
@@ -62,12 +58,10 @@ class ActivityParticipationFactory extends Factory
 
     /**
      * Set backup state based on available activity spots.
-     *
-     * @return bool
      */
-    public function backup(array $attributes)
+    public function backup(array $attributes): bool
     {
-        $activity = Activity::find($attributes['activity_id']);
+        $activity = Activity::query()->find($attributes['activity_id']);
 
         return $activity->freeSpots() == 0;
     }

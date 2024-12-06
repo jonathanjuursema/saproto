@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Auth;
 use Carbon;
-use DB;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use LaravelIdea\Helper\App\Models\_IH_Event_C;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Committee Model.
@@ -27,7 +28,7 @@ use LaravelIdea\Helper\App\Models\_IH_Event_C;
  * @property int $allow_anonymous_email
  * @property int $is_society
  * @property int $is_active
- * @property-read string $email_address
+ * @property-read string $email
  * @property-read StorageEntry|null $image
  * @property-read Collection|Event[] $organizedEvents
  * @property-read Collection|User[] $users
@@ -50,6 +51,8 @@ use LaravelIdea\Helper\App\Models\_IH_Event_C;
  */
 class Committee extends Model
 {
+    use HasFactory;
+
     protected $table = 'committees';
 
     protected $guarded = ['id'];
@@ -58,23 +61,20 @@ class Committee extends Model
 
     protected $with = ['image'];
 
-    /** @return string */
-    public function getPublicId()
+    public function getPublicId(): string
     {
         return $this->slug;
     }
 
-    /** @return Committee */
-    public static function fromPublicId($public_id)
+    public static function fromPublicId($public_id): Committee
     {
-        return self::where('slug', $public_id)->firstOrFail();
+        return self::query()->where('slug', $public_id)->firstOrFail();
     }
 
-    /** @return BelongsToMany */
-    public function users()
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\User::class, 'committees_users')
-            ->where(function ($query) {
+        return $this->belongsToMany(User::class, 'committees_users')
+            ->where(static function ($query) {
                 $query
                     ->whereNull('committees_users.deleted_at')
                     ->orWhere('committees_users.deleted_at', '>', Carbon::now());
@@ -82,32 +82,28 @@ class Committee extends Model
             ->where('committees_users.created_at', '<', Carbon::now())
             ->withPivot(['id', 'role', 'edition', 'created_at', 'deleted_at'])
             ->withTimestamps()
-            ->orderBy('pivot_created_at', 'desc');
+            ->orderByPivot('created_at', 'desc');
     }
 
-    /** @return BelongsTo */
-    public function image()
+    public function image(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'image_id');
+        return $this->belongsTo(StorageEntry::class, 'image_id');
     }
 
-    /** @return Builder|\LaravelIdea\Helper\App\Models\_IH_Event_QB */
-    public function organizedEvents()
+    public function organizedEvents(): Builder
     {
         return Event::getEventBlockQuery()->where('committee_id', $this->id);
     }
 
-    /** @return string */
-    public function getEmailAddressAttribute()
+    public function getEmailAttribute(): string
     {
-        return $this->slug.'@'.config('proto.emaildomain');
+        return $this->slug.'@'.Config::string('proto.emaildomain');
     }
 
     /**
      * @param  int  $n  the number of events to return
-     * @return Event[]|Collection|_IH_Event_C
      */
-    public function pastEvents(int $n)
+    public function pastEvents(int $n): Collection|array
     {
         $events = $this->organizedEvents()->where('end', '<', time())->orderBy('start', 'desc')->take($n);
 
@@ -118,8 +114,7 @@ class Committee extends Model
         return $events->where('secret', '=', 0)->get();
     }
 
-    /** @return Collection|Event[] */
-    public function upcomingEvents()
+    public function upcomingEvents(): Collection|array
     {
         $events = $this->organizedEvents()->where('end', '>', time());
 
@@ -130,35 +125,15 @@ class Committee extends Model
         return $events->where('secret', '=', 0)->get();
     }
 
-    /**
-     * @param  bool  $includeSecret
-     * @return Event[]
-     */
-    public function helpedEvents($includeSecret = false)
+    public function pastHelpedEvents($n): Collection|array
     {
-        /** @var Activity[] $activities */
-        $activities = $this->belongsToMany(\App\Models\Activity::class, 'committees_activities')->orderBy('created_at', 'desc')->get();
-
-        $events = [];
-        foreach ($activities as $activity) {
-            $event = $activity->event;
-            if ($event?->isPublished() || (! $event->secret || $includeSecret)) {
-                $events[] = $event;
-            }
-        }
-
-        return $events;
-    }
-
-    public function pastHelpedEvents($n)
-    {
-        return Event::whereHas('activity', function ($q) {
+        return Event::query()->whereHas('activity', function ($q) {
             $q->whereHas('helpingCommittees', function ($q) {
                 $q->where('committee_id', $this->id);
             });
         })
             ->where('secret', false)
-            ->where(function ($q) {
+            ->where(static function ($q) {
                 $q->where('publication', '<', time())
                     ->orWhereNull('publication');
             })
@@ -169,7 +144,7 @@ class Committee extends Model
     }
 
     /** @return array<string, array<string, array<int, CommitteeMembership>>> */
-    public function allMembers()
+    public function allMembers(): array
     {
         $members = ['editions' => [], 'members' => ['current' => [], 'past' => [], 'future' => []]];
         $memberships = CommitteeMembership::withTrashed()->where('committee_id', $this->id)
@@ -181,17 +156,13 @@ class Committee extends Model
         foreach ($memberships as $membership) {
             if ($membership->edition) {
                 $members['editions'][$membership->edition][] = $membership;
+            } elseif (strtotime($membership->created_at) < date('U') &&
+                (! $membership->deleted_at || strtotime($membership->deleted_at) > date('U'))) {
+                $members['members']['current'][] = $membership;
+            } elseif (strtotime($membership->created_at) > date('U')) {
+                $members['members']['future'][] = $membership;
             } else {
-                if (
-                    strtotime($membership->created_at) < date('U') &&
-                    (! $membership->deleted_at || strtotime($membership->deleted_at) > date('U'))
-                ) {
-                    $members['members']['current'][] = $membership;
-                } elseif (strtotime($membership->created_at) > date('U')) {
-                    $members['members']['future'][] = $membership;
-                } else {
-                    $members['members']['past'][] = $membership;
-                }
+                $members['members']['past'][] = $membership;
             }
         }
 
@@ -199,10 +170,9 @@ class Committee extends Model
     }
 
     /**
-     * @param  User  $user
      * @return bool Whether the use is a member of the committee.
      */
-    public function isMember($user)
+    public function isMember(User $user): bool
     {
         return $user->isInCommittee($this);
     }

@@ -30,11 +30,9 @@ class HashMapItemFactory extends Factory
      */
     public function text()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'value' => fake()->realText(800),
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'value' => fake()->realText(800),
+        ]);
     }
 
     /**
@@ -44,10 +42,8 @@ class HashMapItemFactory extends Factory
      */
     public function date()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'value' => date('U'),
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'value' => date('U'),
+        ]);
     }
 }

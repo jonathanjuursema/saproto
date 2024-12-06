@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         // Set all hidden committees to inactive
-        Committee::where('public', 0)->update(['is_active' => false]);
+        Committee::query()->where('public', 0)->update(['is_active' => false]);
     }
 
     /**

@@ -1,7 +1,7 @@
 @foreach($participants as $user)
 
-    <?php $pid = (get_class($user) == \App\Models\User::class && $event ? $user->pivot->id : $user->id) ?>
-    <?php $u = (get_class($user) == \App\Models\User::class ? $user : $user->user) ?>
+    <?php $pid = ($user::class == \App\Models\User::class && $event ? $user->pivot->id : $user->id) ?>
+    <?php $u = ($user::class == \App\Models\User::class ? $user : $user->user) ?>
 
     <div class="btn-group btn-group-sm mb-1">
         <a href="{{ route("user::profile", ['id' => $u->getPublicId()]) }}"

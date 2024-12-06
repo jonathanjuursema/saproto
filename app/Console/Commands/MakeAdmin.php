@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 
 class MakeAdmin extends Command
 {
@@ -34,13 +35,13 @@ class MakeAdmin extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        if (getenv('APP_ENV') == 'production') {
+        if (App::environment('production')) {
             $this->error('Cannot do this on production.');
         }
 
-        $user = User::where('email', $this->argument('email'))->firstOrFail();
+        $user = User::query()->where('email', $this->argument('email'))->firstOrFail();
 
         if (! $user->hasRole('sysadmin')) {
             $user->assignRole('sysadmin');

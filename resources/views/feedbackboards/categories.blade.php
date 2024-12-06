@@ -15,7 +15,7 @@
                 </div>
                 <div class="card-body">
                     <form method="POST"
-                          action="{{ ($cur_category == null ? route('feedback::category::add') : route('feedback::category::edit', ['id' => $cur_category])) }}"
+                          action="{{ ($cur_category == null ? route('feedback::category::store') : route('feedback::category::update', ['id' => $cur_category])) }}"
                           enctype="multipart/form-data">
                         {!! csrf_field() !!}
 
@@ -33,7 +33,7 @@
                             <label for="user_id">Reviewer Name:</label>
                             <div class="form-group autocomplete">
                                 <input class="form-control user-search" value="{{ $cur_category->reviewer_id ?? '' }}"
-                                       id="user_id" name="user_id"/>
+                                       id="user_id" name="user_id" />
                             </div>
                         </div>
 
@@ -68,7 +68,8 @@
                         @if(count($categories) > 0)
                             @foreach($categories as $category)
                                 <div class="col-5 row m-1 w-100">
-                                    <div class="px-4 py-2 my-2 w-75 rounded-start overflow-hidden ellipsis {{ $category == $cur_category ? 'bg-warning' : 'bg-info' }}">
+                                    <div
+                                        class="px-4 py-2 my-2 w-75 rounded-start overflow-hidden ellipsis {{ $category == $cur_category ? 'bg-warning' : 'bg-info' }}">
                                         <a href="{{ route('feedback::index', ['category' => $category->url]) }}"
                                            class="text-reset">{{ $category->title }}</a> {{ $category->reviewer ? " | Reviewer:" . $category->reviewer->calling_name : "" }}
                                     </div>
@@ -102,14 +103,14 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        let checkbox = document.getElementById("can_review");
-        checkbox.addEventListener('change', function () {
+        let checkbox = document.getElementById('can_review');
+        checkbox.addEventListener('change', function() {
             if (checkbox.checked) {
-                document.getElementById("reviewer").classList.remove('d-none');
-                document.getElementById("user_id").required = true;
+                document.getElementById('reviewer').classList.remove('d-none');
+                document.getElementById('user_id').required = true;
             } else {
-                document.getElementById("reviewer").classList.add('d-none');
-                document.getElementById("user_id").required = false;
+                document.getElementById('reviewer').classList.add('d-none');
+                document.getElementById('user_id').required = false;
             }
         });
     </script>

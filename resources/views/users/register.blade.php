@@ -16,11 +16,14 @@
             @include('users.registerwizard_macro')
         @endif
 
-        <a href="{{ route('login::edu') }}" class="btn btn-success w-100">
-            Create an account with your university account
-        </a>
+        {{--         temporarily disabled because the creation of an account with a university account is not fully working--}}
 
-        <hr>
+        {{--     <a href="{{ route('login::edu') }}" class="btn btn-success w-100">
+                     Create an account with your university account
+                 </a>
+
+                 <hr>
+         --}}
 
         @if(!Session::get('wizard'))
 

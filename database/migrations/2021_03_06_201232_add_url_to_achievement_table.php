@@ -8,10 +8,8 @@ class AddUrlToAchievementTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('achievement', function (Blueprint $table) {
             $table->boolean('has_page')->after('tier');
@@ -22,10 +20,8 @@ class AddUrlToAchievementTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('achievement', function (Blueprint $table) {
             $table->dropColumn('has_page');

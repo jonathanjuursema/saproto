@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddDatesToFlickr extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('flickr_albums', function ($table) {
             $table->integer('date_create');
@@ -19,10 +18,8 @@ class AddDatesToFlickr extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('flickr_albums', function ($table) {
             $table->dropColumn('date_create');

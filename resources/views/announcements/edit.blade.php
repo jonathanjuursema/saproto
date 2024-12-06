@@ -11,7 +11,7 @@
         <div class="col-md-4">
 
             <form method="post"
-                  action="{{ ($announcement == null ? route("announcement::add") : route("announcement::edit", ['id' => $announcement->id])) }}"
+                  action="{{ ($announcement == null ? route("announcement::store") : route("announcement::update", ['id' => $announcement->id])) }}"
                   enctype="multipart/form-data">
 
                 <div class="card mb-3">

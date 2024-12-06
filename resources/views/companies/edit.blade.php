@@ -7,7 +7,7 @@
 @section('container')
 
     <form method="post"
-          action="{{ ($company == null ? route("companies::add") : route("companies::edit", ['id' => $company->id])) }}"
+          action="{{ ($company == null ? route("companies::store") : route("companies::update", ['id' => $company->id])) }}"
           enctype="multipart/form-data">
 
         {!! csrf_field() !!}

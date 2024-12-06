@@ -18,8 +18,8 @@ return new class extends Migration
             $table->boolean('is_weekly')->default(false);
         });
 
-        $lastSent = HashMapItem::where('key', 'newsletter_last_sent')->first();
-        $text = HashMapItem::where('key', 'newsletter_text')->first();
+        $lastSent = HashMapItem::query()->where('key', 'newsletter_last_sent')->first();
+        $text = HashMapItem::query()->where('key', 'newsletter_text')->first();
         if ($text) {
             $newsItem = new Newsitem([
                 'title' => 'Weekly newsletter of week '.Carbon::now()->weekOfYear.' of '.Carbon::now()->year,

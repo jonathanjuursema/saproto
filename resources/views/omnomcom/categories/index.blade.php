@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white">
                     @yield('page-title')
-                    <a href="{{ route('omnomcom::categories::add') }}" class="float-end badge bg-success">
+                    <a href="{{ route('omnomcom::categories::create') }}" class="float-end badge bg-success">
                         Add new category
                     </a>
                 </div>

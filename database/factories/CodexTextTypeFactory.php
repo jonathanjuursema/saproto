@@ -6,6 +6,9 @@ use App\Models\CodexTextType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
+/**
+ * @extends Factory<CodexTextType>
+ */
 class CodexTextTypeFactory extends Factory
 {
     protected $model = CodexTextType::class;
@@ -13,7 +16,7 @@ class CodexTextTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => $this->faker->word(),
+            'type' => fake()->word(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

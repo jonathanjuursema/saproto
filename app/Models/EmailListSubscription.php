@@ -40,12 +40,12 @@ class EmailListSubscription extends Model
     /** @return HasOne */
     public function user()
     {
-        return $this->hasOne(\App\Models\User::class);
+        return $this->hasOne(User::class);
     }
 
     /** @return BelongsTo */
     public function emaillist()
     {
-        return $this->belongsTo(\App\Models\EmailList::class, 'list_id');
+        return $this->belongsTo(EmailList::class, 'list_id');
     }
 }

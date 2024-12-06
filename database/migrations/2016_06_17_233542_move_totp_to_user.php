@@ -2,15 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class MoveTotpToUser extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::drop('google2fa');
         Schema::table('users', function (Blueprint $table) {
@@ -20,10 +19,8 @@ class MoveTotpToUser extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::create('google2fa', function (Blueprint $table) {
             $table->increments('id');

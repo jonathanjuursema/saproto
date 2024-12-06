@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ( ! isset($dinnerformCurrent) ? route("dinnerform::add") : route("dinnerform::edit", ['id' => $dinnerformCurrent->id])) }}"
+      action="{{ ( ! isset($dinnerformCurrent) ? route("dinnerform::store") : route("dinnerform::update", ['id' => $dinnerformCurrent->id])) }}"
       enctype="multipart/form-data">
 
     {!! csrf_field() !!}
@@ -62,7 +62,9 @@
                     <div class="col-md-12 mb-3">
                         <div class="form-group autocomplete">
                             <label for="ordered_by">Ordered by:</label>
-                            <input class="form-control user-search" id="ordered_by" value="{{ $dinnerformCurrent->ordered_by ?? ''}}" name="ordered_by" data-label="User:" required>
+                            <input class="form-control user-search" id="ordered_by"
+                                   value="{{ $dinnerformCurrent->ordered_by ?? ''}}" name="ordered_by"
+                                   data-label="User:" required>
                         </div>
                     </div>
                 </div>

@@ -16,9 +16,7 @@ class FeeEmailForBoard extends Mailable
      *
      * @return void
      */
-    public function __construct(public $charged_fees)
-    {
-    }
+    public function __construct(public $charged_fees) {}
 
     /**
      * Build the message.

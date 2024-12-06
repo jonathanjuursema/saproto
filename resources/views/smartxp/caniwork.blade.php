@@ -5,18 +5,18 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
     <meta name="theme-color" content="#C1FF00">
 
-    <meta property="og:type" content="website"/>
-    <meta property="og:title" content="Can you work in the SmartXP?"/>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can you work in the SmartXP?" />
     <meta property="og:description"
-          content="Do you want to know if the SmartXP is available for working? Check the SmartXP timetable here!"/>
-    <meta property="og:url" content="https://www.caniworkintheSmartXP.nl/"/>
-    <meta property="og:image" content="{{ asset('images/subsites/smartxp.jpg') }}"/>
+          content="Do you want to know if the SmartXP is available for working? Check the SmartXP timetable here!" />
+    <meta property="og:url" content="https://www.caniworkintheSmartXP.nl/" />
+    <meta property="og:image" content="{{ asset('images/subsites/smartxp.jpg') }}" />
 
-    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
+    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}" />
 
     <title>Can I work in the SmartXP?</title>
 
@@ -106,26 +106,6 @@
 
     </style>
 
-    <!-- Matomo -->
-    <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        var _paq = _paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function () {
-            var u = "//{{ config('proto.analytics_url') }}/";
-            _paq.push(['setTrackerUrl', u + 'piwik.php']);
-            _paq.push(['setSiteId', '2']);
-            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-            g.type = 'text/javascript';
-            g.async = true;
-            g.defer = true;
-            g.src = u + 'piwik.js';
-            s.parentNode.insertBefore(g, s);
-        })();
-    </script>
-    <!-- End Matomo Code -->
-
 </head>
 
 <body>
@@ -166,7 +146,8 @@
 
                         @if(count($day) > 0)
                             @foreach($day as $activity)
-                                <div class="activity {{ ($activity->current ? 'current' : ($activity->over ? 'past' : '')) }}">
+                                <div
+                                    class="activity {{ ($activity->current ? 'current' : ($activity->over ? 'past' : '')) }}">
                                     {{ date('H:i', $activity->start) }} - {{ date('H:i', $activity->end) }}<br>
                                     <strong>{{ $activity->title }}</strong> ({{ $activity->type }})
                                 </div>

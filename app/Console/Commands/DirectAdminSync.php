@@ -7,6 +7,8 @@ use App\Models\Committee;
 use App\Models\CommitteeMembership;
 use App\Models\Member;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use Solitweb\DirectAdmin\DirectAdmin;
 
 class DirectAdminSync extends Command
@@ -38,15 +40,15 @@ class DirectAdminSync extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $da = new DirectAdmin();
-        $da->connect(getenv('DA_HOSTNAME'), getenv('DA_PORT'));
-        $da->set_login(getenv('DA_USERNAME'), getenv('DA_PASSWORD'));
+        $da = new DirectAdmin;
+        $da->connect(Config::string('directadmin.da-hostname'), Config::string('directadmin.da-port'));
+        $da->set_login(Config::string('directadmin.da-username'), Config::string('directadmin.da-password'));
 
         // Mail forwarders
         $da->query('/CMD_API_EMAIL_FORWARDERS', [
-            'domain' => getenv('DA_DOMAIN'),
+            'domain' => Config::string('directadmin.da-domain'),
         ]);
         $current = $da->fetch_parsed_body();
         $target = $this->constructForwarderList();
@@ -55,7 +57,7 @@ class DirectAdminSync extends Command
 
         // E-mail accounts
         $da->query('/CMD_API_POP', [
-            'domain' => getenv('DA_DOMAIN'),
+            'domain' => Config::string('directadmin.da-domain'),
             'action' => 'list',
         ]);
         $current = $da->fetch_parsed_body();
@@ -70,10 +72,8 @@ class DirectAdminSync extends Command
 
     /**
      * Generate the user, committee and manually defined mail forwarders.
-     *
-     * @return array
      */
-    private function constructForwarderList()
+    private function constructForwarderList(): array
     {
         $data = [];
 
@@ -93,7 +93,7 @@ class DirectAdminSync extends Command
             $users = CommitteeMembership::withTrashed()
                 ->where('committee_id', $committee->id)
                 ->where('created_at', '<', date('Y-m-d H:i:s'))
-                ->where(function ($q) {
+                ->where(static function ($q) {
                     $q->whereNull('deleted_at')
                         ->orWhere('deleted_at', '>', date('Y-m-d H:i:s'));
                 })->get();
@@ -102,9 +102,9 @@ class DirectAdminSync extends Command
                 $destinations[] = $user->user->email;
             }
 
-            if (count($destinations) > 0) {
+            if ($destinations !== []) {
                 $data[strtolower($committee->slug)] = $destinations;
-                $data['committees'][] = strtolower($committee->slug.'@'.config('proto.emaildomain'));
+                $data['committees'][] = strtolower($committee->slug.'@'.Config::string('proto.emaildomain'));
             }
         }
 
@@ -119,10 +119,8 @@ class DirectAdminSync extends Command
 
     /**
      * Generate the list of accounts for all members.
-     *
-     * @return array
      */
-    private function constructAccountList()
+    private function constructAccountList(): array
     {
         $data = [];
 
@@ -133,7 +131,7 @@ class DirectAdminSync extends Command
             }
         }
 
-        foreach (config('proto.additional_mailboxes') as $additional) {
+        foreach (Config::array('proto.additional_mailboxes') as $additional) {
             $data[] = $additional;
         }
 
@@ -147,7 +145,7 @@ class DirectAdminSync extends Command
      * @param  array  $target  The target list of forwarders
      * @return array A forwarders patch list containing an 'add', 'mod' and 'del' array
      */
-    private function constructForwarderPatchList($current, $target)
+    private function constructForwarderPatchList(array $current, array $target): array
     {
         $data = [
             'add' => [],
@@ -180,8 +178,7 @@ class DirectAdminSync extends Command
                 }
 
                 // Otherwise, we do not modify this alias.
-            }
-            // Remove the forwarder because it does not exist according to the target list.
+            } // Remove the forwarder because it does not exist according to the target list.
             else {
                 $data['del'][] = $alias;
             }
@@ -205,7 +202,7 @@ class DirectAdminSync extends Command
      * @param  array  $patch  The forwarders patch list containing a 'add' and 'del' array.
      * @return array A list of queries to apply the forwarders patch
      */
-    private function applyForwarderPatchList($patch)
+    private function applyForwarderPatchList(array $patch): array
     {
         $queries = [];
 
@@ -213,7 +210,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => getenv('DA_DOMAIN'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'create',
                     'user' => $alias,
                     'email' => implode(',', $destination),
@@ -225,7 +222,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => getenv('DA_DOMAIN'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'modify',
                     'user' => $alias,
                     'email' => implode(',', $destination),
@@ -237,7 +234,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_EMAIL_FORWARDERS',
                 'options' => [
-                    'domain' => getenv('DA_DOMAIN'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'delete',
                     'select0' => $del,
                 ],
@@ -254,7 +251,7 @@ class DirectAdminSync extends Command
      * @param  array  $target  The target list of accounts
      * @return array An accounts patch list containing an 'add' and 'del' array
      */
-    private function constructAccountPatchList($current, $target)
+    private function constructAccountPatchList($current, array $target): array
     {
         $data = [
             'add' => [],
@@ -288,16 +285,16 @@ class DirectAdminSync extends Command
      * @param  array  $patch  The accounts patch list containing a 'add' and 'del' array.
      * @return array A list of queries to apply the accounts patch
      */
-    private function applyAccountPatchList($patch)
+    private function applyAccountPatchList(array $patch): array
     {
         $queries = [];
 
         foreach ($patch['add'] as $account) {
-            $password = str_random(32);
+            $password = Str::random(32);
             $queries[] = [
                 'cmd' => '/CMD_API_POP',
                 'options' => [
-                    'domain' => getenv('DA_DOMAIN'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'create',
                     'user' => $account,
                     'passwd' => $password,
@@ -312,7 +309,7 @@ class DirectAdminSync extends Command
             $queries[] = [
                 'cmd' => '/CMD_API_POP',
                 'options' => [
-                    'domain' => getenv('DA_DOMAIN'),
+                    'domain' => Config::string('directadmin.da-domain'),
                     'action' => 'delete',
                     'user' => $account,
                 ],
@@ -328,16 +325,22 @@ class DirectAdminSync extends Command
      * @param  DirectAdmin  $da  The DirectAdmin instance
      * @param  array  $queries  An array containing a 'cmd' and 'options' array
      */
-    private function executeQueries($da, $queries)
+    private function executeQueries(DirectAdmin $da, array $queries): void
     {
         foreach ($queries as $query) {
             //$this->info('Query '.$i.'/'.count($queries).': '.$query['cmd'].implode($query['options'])); //Temporarily disabled to reduce Sentry spam
             $da->query($query['cmd'], $query['options']);
 
             $response = $da->fetch_parsed_body();
-            if (array_key_exists('error', $response) && $response['error'] == 1) {
-                $this->info('Error: '.$response['text'].', '.$response['details'].'!'.PHP_EOL);
+            if (! array_key_exists('error', $response)) {
+                continue;
             }
+
+            if ($response['error'] != 1) {
+                continue;
+            }
+
+            $this->info('Error: '.$response['text'].', '.$response['details'].'!'.PHP_EOL);
         }
     }
 }

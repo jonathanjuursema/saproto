@@ -7,10 +7,8 @@ class SessionsBackInDatabase extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('sessions', function ($table) {
             $table->string('id')->unique();
@@ -24,10 +22,8 @@ class SessionsBackInDatabase extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('sessions');
     }

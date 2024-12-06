@@ -8,24 +8,23 @@
 
     <div id="achievement-accordion">
 
-
         @foreach(['common' => $common, 'uncommon' => $uncommon, 'rare' => $rare, 'epic' => $epic, 'legendary' => $legendary] as $tier => $achievements)
 
             <div class="card mb-3 achievement-{{ $tier }}" id="achievement-{{ $tier }}">
 
-                <div class="card-header text-white cursor-pointer" data-bs-toggle="collapse"
+                <div class="card-header text-reset cursor-pointer" data-bs-toggle="collapse"
                      data-bs-target="#collapse-achievement-{{ $tier }}">
 
                     @for($i = 0; $i < 5; $i++)
-                        @if ($i >= $achievements[0]->numberOfStars())
-                            <i class="far fa-star"></i>
+                        @if($i< $achievements[0]->numberOfStars())
+                            <i class="text-white far fa-star"></i>
                         @else
-                            <i class="fas fa-star"></i>
+                            <i class="achievement-{{ $tier }} far fa-star"></i>
                         @endif
                     @endfor
 
                     <span class="text-capitalize ms-3">
-                    <strong>{{ $tier }}</strong>
+                    <strong class="text-white">{{ $tier }}</strong>
                 </span>
 
                 </div>

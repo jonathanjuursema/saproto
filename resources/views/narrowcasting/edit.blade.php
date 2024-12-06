@@ -13,7 +13,7 @@
             <div class="card mb-3">
 
                 <form method="post"
-                      action="{{ ($item == null ? route("narrowcasting::add") : route("narrowcasting::edit", ['id' => $item->id])) }}"
+                      action="{{ ($item == null ? route("narrowcasting::store") : route("narrowcasting::update", ['id' => $item->id])) }}"
                       enctype="multipart/form-data">
 
                     {!! csrf_field() !!}
@@ -66,7 +66,8 @@
 
                             <div class="row">
                                 <iframe height="300"
-                                        src="https://www.youtube.com/embed/{{$item->youtube_id}}" allow="encrypted-media" allowfullscreen></iframe>
+                                        src="https://www.youtube.com/embed/{{$item->youtube_id}}"
+                                        allow="encrypted-media" allowfullscreen></iframe>
                             </div>
 
                         @else
@@ -97,7 +98,7 @@
                             Submit
                         </button>
 
-                        <a href="{{ route("narrowcasting::list") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("narrowcasting::index") }}" class="btn btn-default">Cancel</a>
 
                         <p class="text-center mb-0 mt-2">
                             Developed with <span class="text-danger"><i class="fab fa-youtube fa-fw"></i> YouTube</span>

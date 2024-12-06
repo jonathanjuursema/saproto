@@ -8,10 +8,8 @@ class AddProfileInAlmanacToUsers extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('profile_in_almanac')->after('show_achievements')->default(1);
@@ -20,10 +18,8 @@ class AddProfileInAlmanacToUsers extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('profile_in_almanac');

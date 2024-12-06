@@ -26,7 +26,7 @@ class RefreshEventUniqueUsers extends Command
      */
     public function handle(): void
     {
-        Event::chunk(25, function ($events) {
+        Event::query()->chunk(25, static function ($events) {
             foreach ($events as $event) {
                 $event->updateUniqueUsersCount();
             }

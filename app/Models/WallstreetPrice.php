@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class WallstreetPrice.
  *
- * @property int wallstreet_drink_id
- * @property float price
+ * @property int $wallstreet_drink_id
+ * @property float $price
  **/
 class WallstreetPrice extends Model
 {

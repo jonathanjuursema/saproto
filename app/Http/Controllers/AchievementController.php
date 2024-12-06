@@ -5,61 +5,51 @@ namespace App\Http\Controllers;
 use App\Models\Achievement;
 use App\Models\AchievementOwnership;
 use App\Models\User;
-use Auth;
 use Carbon\Carbon;
 use Exception;
 use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class AchievementController extends Controller
 {
-    /** @return View */
-    public function overview()
+    public function index(): View
     {
-        return view('achievement.list', ['achievements' => Achievement::orderBy('name', 'asc')->paginate(15)]);
+        return view('achievement.list', ['achievements' => Achievement::query()->orderBy('name', 'asc')->paginate(15)]);
     }
 
-    /** @return View */
-    public function gallery()
+    public function gallery(): View
     {
-        $common = Achievement::where('tier', 'COMMON')->where('is_archived', false)->get();
-        $uncommon = Achievement::where('tier', 'UNCOMMON')->where('is_archived', false)->get();
-        $rare = Achievement::where('tier', 'RARE')->where('is_archived', false)->get();
-        $epic = Achievement::where('tier', 'EPIC')->where('is_archived', false)->get();
-        $legendary = Achievement::where('tier', 'LEGENDARY')->where('is_archived', false)->get();
+        $common = Achievement::query()->where('tier', 'COMMON')->where('is_archived', false)->get();
+        $uncommon = Achievement::query()->where('tier', 'UNCOMMON')->where('is_archived', false)->get();
+        $rare = Achievement::query()->where('tier', 'RARE')->where('is_archived', false)->get();
+        $epic = Achievement::query()->where('tier', 'EPIC')->where('is_archived', false)->get();
+        $legendary = Achievement::query()->where('tier', 'LEGENDARY')->where('is_archived', false)->get();
         $obtained = Auth::user()?->achievements->where('is_archived', false);
 
         return view('achievement.gallery', ['common' => $common, 'uncommon' => $uncommon, 'rare' => $rare, 'epic' => $epic, 'legendary' => $legendary, 'obtained' => $obtained]);
     }
 
-    /**
-     * @param  int  $id
-     * @return View
-     */
-    public function manage($id)
+    public function edit(int $id): View
     {
         /** @var Achievement $achievement */
-        $achievement = Achievement::findOrFail($id);
+        $achievement = Achievement::query()->findOrFail($id);
 
         return view('achievement.manage', ['achievement' => $achievement]);
     }
 
-    /** @return View */
-    public function create()
+    public function create(): View
     {
         return view('achievement.manage', ['achievement' => null]);
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $achievement = new Achievement();
+        $achievement = new Achievement;
         $achievement->name = $request->name;
         $achievement->desc = $request->desc;
         $achievement->fa_icon = $request->fa_icon;
@@ -68,7 +58,7 @@ class AchievementController extends Controller
         $achievement->page_content = $request->page_content;
         $achievement->is_archived = $request->has('is_archived');
 
-        if (Achievement::where('page_name', '=', $request->page_name)->first()) {
+        if (Achievement::query()->where('page_name', '=', $request->page_name)->first()) {
             $achievement->save();
             Session::flash('flash_message', 'saproto.nl/achieve/'.$achievement->page_name.' is not a unique url.');
         } else {
@@ -77,17 +67,13 @@ class AchievementController extends Controller
             Session::flash('flash_message', "Achievement '".$achievement->name."' has been created.");
         }
 
-        return Redirect::route('achievement::manage', ['id' => $achievement->id]);
+        return Redirect::route('achievement::edit', ['id' => $achievement->id]);
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request): RedirectResponse
     {
         /** @var Achievement $achievement */
-        $achievement = Achievement::findOrFail($id);
+        $achievement = Achievement::query()->findOrFail($id);
         $achievement->name = $request->name;
         $achievement->desc = $request->desc;
         $achievement->fa_icon = $request->fa_icon;
@@ -96,7 +82,7 @@ class AchievementController extends Controller
         $achievement->page_content = $request->page_content;
         $achievement->is_archived = $request->has('is_archived');
 
-        if (Achievement::where('page_name', '=', $request->page_name)->where('id', '!=', $achievement->id)->first()) {
+        if (Achievement::query()->where('page_name', '=', $request->page_name)->where('id', '!=', $achievement->id)->first()) {
             $achievement->save();
             Session::flash('flash_message', 'saproto.nl/achieve/'.$request->page_name.' is not a unique url.');
         } else {
@@ -109,31 +95,25 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         /** @var Achievement $achievement */
-        $achievement = Achievement::findOrFail($id);
+        $achievement = Achievement::query()->findOrFail($id);
         if (count($achievement->users) > 0) {
             Session::flash('flash_message', "Achievement '".$achievement->name."' has users associated with it. You cannot remove it.");
 
-            return Redirect::route('achievement::list');
+            return Redirect::route('achievement::index');
         }
+
         $achievement->delete();
         Session::flash('flash_message', "Achievement '".$achievement->name."' has been removed.");
 
-        return Redirect::route('achievement::list');
+        return Redirect::route('achievement::index');
     }
 
-    /**
-     * @param  string  $page_name
-     * @return View|RedirectResponse
-     */
-    public function achieve($page_name)
+    public function achieve(string $page_name): View|RedirectResponse
     {
         $user = Auth::user();
         if (! $user->is_member) {
@@ -142,7 +122,7 @@ class AchievementController extends Controller
             return Redirect::back();
         }
 
-        $achievement = Achievement::where('has_page', '=', true)->where('page_name', '=', $page_name)->firstOrFail();
+        $achievement = Achievement::query()->where('has_page', '=', true)->where('page_name', '=', $page_name)->firstOrFail();
         if ($achievement->is_archived) {
             Session::flash('flash_message', 'You can no longer earn this achievement');
 
@@ -158,14 +138,10 @@ class AchievementController extends Controller
         return view('achievement.achieve', ['achievement' => $achievement, 'parsed_content' => Markdown::convert($achievement->page_content)]);
     }
 
-    /**
-     * @param  int  $achievement_id
-     * @return RedirectResponse
-     */
-    public function award($achievement_id, Request $request)
+    public function award(int $achievement_id, Request $request): RedirectResponse
     {
-        $achievement = Achievement::findOrFail($achievement_id);
-        $user = User::findOrFail($request->get('user-id'));
+        $achievement = Achievement::query()->findOrFail($achievement_id);
+        $user = User::query()->findOrFail($request->get('user-id'));
 
         if ($this->giveAchievement($achievement, $user, $request->input('description'), $request->input('achieved_on'))) {
             Session::flash('flash_message', "Achievement $achievement->name has been given to $user->name.");
@@ -176,20 +152,25 @@ class AchievementController extends Controller
         return Redirect::back();
     }
 
-    public function give(Request $request)
+    public function give(Request $request): RedirectResponse
     {
-        $achievement = Achievement::findOrFail($request->input('achievement-id'));
+        $achievement = Achievement::query()->findOrFail($request->input('achievement-id'));
         $userIds = $request->input('users');
         $awarded = '';
         foreach ($userIds as $userId) {
-            $user = User::find($userId);
-            if ($user) {
-                if ($this->giveAchievement($achievement, $user, $request->input('description'), $request->input('achieved_on'))) {
-                    $awarded = $awarded.' '.$user->name.',';
-                }
+            $user = User::query()->find($userId);
+            if (! $user) {
+                continue;
             }
+
+            if (! $this->giveAchievement($achievement, $user, $request->input('description'), $request->input('achieved_on'))) {
+                continue;
+            }
+
+            $awarded = $awarded.' '.$user->name.',';
         }
-        if ($awarded) {
+
+        if ($awarded !== '' && $awarded !== '0') {
             Session::flash('flash_message', "Achievement $achievement->name has been newly given to:".$awarded);
         } else {
             Session::flash('flash_message', "Achievement $achievement->name had already been achieved by all users!");
@@ -199,16 +180,12 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $achievement_id
-     * @param  int  $user_id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function take($achievement_id, $user_id)
+    public function take(int $achievement_id, int $user_id): RedirectResponse
     {
-        $achievement = Achievement::findOrFail($achievement_id);
-        $user = User::findOrFail($user_id);
+        $achievement = Achievement::query()->findOrFail($achievement_id);
+        $user = User::query()->findOrFail($user_id);
 
         $achieved = AchievementOwnership::all();
         foreach ($achieved as $entry) {
@@ -222,50 +199,41 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $achievement_id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function takeAll($achievement_id)
+    public function takeAll(int $achievement_id): RedirectResponse
     {
-        $this->staticTakeAll($achievement_id);
-        $achievement = Achievement::findOrFail($achievement_id);
+        static::staticTakeAll($achievement_id);
+        $achievement = Achievement::query()->findOrFail($achievement_id);
         Session::flash('flash_message', "Achievement $achievement->name taken from everyone");
 
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function icon($id, Request $request)
+    public function icon(int $id, Request $request): RedirectResponse
     {
         /** @var Achievement $achievement */
-        $achievement = Achievement::findOrFail($id);
+        $achievement = Achievement::query()->findOrFail($id);
         $achievement->fa_icon = $request->fa_icon;
         $achievement->save();
 
         Session::flash('flash_message', 'Achievement Icon set');
 
-        return Redirect::route('achievement::manage', ['id' => $id]);
+        return Redirect::route('achievement::edit', ['id' => $id]);
     }
 
     /**
-     * @param  int  $id
-     *
      * @throws Exception
      */
-    public static function staticTakeAll($id)
+    public static function staticTakeAll(int $id): void
     {
-        $achieved = AchievementOwnership::where('achievement_id', $id)->get();
+        $achieved = AchievementOwnership::query()->where('achievement_id', $id)->get();
         foreach ($achieved as $entry) {
             $entry->delete();
         }
     }
 
-    private function giveAchievement($achievement, $user, $description, $achievedOn)
+    private function giveAchievement($achievement, $user, $description, $achievedOn): bool
     {
         $achieved = $user->achievements()->where('achievement_id', $achievement->id)->first();
         if (! $achieved) {
@@ -277,10 +245,12 @@ class AchievementController extends Controller
             if ($achievedOn) {
                 $relation->created_at = Carbon::parse($achievedOn);
             }
+
             $relation->save();
 
             return true;
         }
+
         if ($description) {
             $achieved->pivot->description = $description;
             $achievement->save();

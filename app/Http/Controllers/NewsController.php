@@ -13,16 +13,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use stdClass;
 
 class NewsController extends Controller
 {
     /** @return View */
     public function admin()
     {
-        $newsitems = Newsitem::orderBy('published_at', 'desc')->paginate(20);
+        $newsitems = Newsitem::query()->orderBy('published_at', 'desc')->paginate(20);
 
         return view('news.admin', ['newsitems' => $newsitems]);
     }
@@ -43,7 +45,7 @@ class NewsController extends Controller
     {
         $preview = false;
 
-        $newsitem = Newsitem::findOrFail($id);
+        $newsitem = Newsitem::query()->findOrFail($id);
 
         if (! $newsitem->isPublished()) {
             if (Auth::user()?->can('board')) {
@@ -53,7 +55,7 @@ class NewsController extends Controller
             }
         }
 
-        $events = Event::whereIn('id', $newsitem->events()->pluck('id'))->get();
+        $events = Event::query()->whereIn('id', $newsitem->events()->pluck('id'))->get();
 
         return view('news.show', [
             'newsitem' => $newsitem,
@@ -64,7 +66,7 @@ class NewsController extends Controller
 
     public function showWeeklyPreview(int $id)
     {
-        $newsitem = Newsitem::findOrFail($id);
+        $newsitem = Newsitem::query()->findOrFail($id);
 
         if (! $newsitem->published_at && ! Auth::user()?->can('board')) {
             Session::flash('flash_message', 'This weekly newsletter has not been published yet.');
@@ -74,7 +76,7 @@ class NewsController extends Controller
 
         return view('emails.newsletter', [
             'user' => Auth::user(),
-            'list' => EmailList::find(config('proto.weeklynewsletter')),
+            'list' => EmailList::query()->find(Config::integer('proto.weeklynewsletter')),
             'events' => $newsitem->events()->get(),
             'text' => $newsitem->content,
             'image_url' => $newsitem->featuredImage?->generateImagePath(600, 300),
@@ -84,8 +86,8 @@ class NewsController extends Controller
     /** @return View */
     public function create(Request $request)
     {
-        $lastWeekly = Newsitem::where('is_weekly', true)->orderBy('published_at', 'desc')->first();
-        $upcomingEvents = Event::where('start', '>', date('U'))->where('secret', false)->orderBy('start')->get();
+        $lastWeekly = Newsitem::query()->where('is_weekly', true)->orderBy('published_at', 'desc')->first();
+        $upcomingEvents = Event::query()->where('start', '>', date('U'))->where('secret', false)->orderBy('start')->get();
 
         return view('news.edit', ['item' => null, 'new' => true, 'is_weekly' => $request->boolean('is_weekly'), 'upcomingEvents' => $upcomingEvents, 'events' => [], 'lastWeekly' => $lastWeekly]);
     }
@@ -93,33 +95,30 @@ class NewsController extends Controller
     /** @return View */
     public function edit($id)
     {
-        $newsitem = Newsitem::findOrFail($id);
-        $upcomingEvents = Event::where('start', '>', date('U'))->where('secret', false)->orderBy('start')->get()->merge($newsitem->events()->get());
+        $newsitem = Newsitem::query()->findOrFail($id);
+        $upcomingEvents = Event::query()->where('start', '>', date('U'))->where('secret', false)->orderBy('start')->get()->merge($newsitem->events()->get());
         $events = $newsitem->events()->pluck('id')->toArray();
-        $lastWeekly = Newsitem::where('is_weekly', true)->orderBy('published_at', 'desc')->first();
+        $lastWeekly = Newsitem::query()->where('is_weekly', true)->orderBy('published_at', 'desc')->first();
 
         return view('news.edit', ['item' => $newsitem, 'new' => false, 'upcomingEvents' => $upcomingEvents, 'events' => $events, 'is_weekly' => $newsitem->is_weekly, 'lastWeekly' => $lastWeekly]);
     }
 
-    /**
-     * @return View
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $newsitem = new Newsitem();
+        $newsitem = new Newsitem;
 
         return $this->storeNews($newsitem, $request);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         /** @var Newsitem $newsitem */
-        $newsitem = Newsitem::findOrFail($id);
+        $newsitem = Newsitem::query()->findOrFail($id);
 
         return $this->storeNews($newsitem, $request);
     }
 
-    public function storeNews(Newsitem $newsitem, Request $request): View
+    public function storeNews(Newsitem $newsitem, Request $request): RedirectResponse
     {
         $newsitem->user_id = Auth::user()->id;
         $newsitem->content = $request->input('content');
@@ -133,20 +132,22 @@ class NewsController extends Controller
             $newsitem->title = 'Weekly update for week '.date('W').' of '.date('Y').'.';
             $newsitem->published_at = null;
         }
+
         $newsitem->save();
 
         $newsitem->events()->sync($request->input('event'));
 
         $image = $request->file('image');
         if ($image) {
-            $file = new StorageEntry();
+            $file = new StorageEntry;
             $file->createFromFile($image);
             $file->save();
             $newsitem->featuredImage()->associate($file);
         }
+
         $newsitem->save();
 
-        return $this->edit($newsitem->id);
+        return Redirect::route('news::edit', ['id' => $newsitem->id]);
     }
 
     /**
@@ -157,7 +158,7 @@ class NewsController extends Controller
     public function destroy(int $id)
     {
         /** @var Newsitem $newsitem */
-        $newsitem = Newsitem::findOrFail($id);
+        $newsitem = Newsitem::query()->findOrFail($id);
 
         Session::flash('flash_message', 'Newsitem '.$newsitem->title.' has been removed.');
 
@@ -168,10 +169,11 @@ class NewsController extends Controller
 
     public function sendWeeklyEmail(int $id)
     {
-        $newsitem = Newsitem::findOrFail($id);
+        $newsitem = Newsitem::query()->findOrFail($id);
         if (! Auth::user()->can('board')) {
             abort(403, 'Only the board can do this.');
         }
+
         Artisan::call('proto:newslettercron', ['id' => $newsitem->id]);
 
         $newsitem->published_at = date('Y-m-d H:i:s', Carbon::now()->timestamp);
@@ -182,8 +184,7 @@ class NewsController extends Controller
         return Redirect::route('news::admin');
     }
 
-    /** @return array */
-    public function apiIndex()
+    public function apiIndex(): array
     {
         $newsitems = Newsitem::all()->sortByDesc('published_at');
 
@@ -191,7 +192,7 @@ class NewsController extends Controller
 
         foreach ($newsitems as $newsitem) {
             if ($newsitem->isPublished()) {
-                $returnItem = new \stdClass();
+                $returnItem = new stdClass;
                 $returnItem->id = $newsitem->id;
                 $returnItem->title = $newsitem->title;
                 $returnItem->featured_image_url = $newsitem->featuredImage ? $newsitem->featuredImage->generateImagePath(700, null) : null;

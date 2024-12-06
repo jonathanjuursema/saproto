@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateAchievementImgIdNullable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('achievement', function ($table) {
             $table->integer('img_file_id')->nullable()->change();
@@ -18,10 +17,8 @@ class UpdateAchievementImgIdNullable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('achievement', function ($table) {
             $table->integer('img_file_id')->nullable(false)->change();

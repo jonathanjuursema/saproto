@@ -1,6 +1,6 @@
 <div class="modal fade" id="addMembership" tabindex="-1" role="dialog" aria-labelledby="addMembershipLabel">
     <div class="modal-dialog" role="document">
-        <form action="{{ route("user::member::add", ['id'=>$user->id]) }}" method="post">
+        <form action="{{ route("user::member::create", ['id'=>$user->id]) }}" method="post">
             {!! csrf_field() !!}
             <div class="modal-content">
                 <div class="modal-header">
@@ -46,12 +46,12 @@
                             </li>
                         @endif
                         @if(!$user->signed_membership_form)
-                                <li class="text-danger">
-                                    <strong>
-                                        {{ $user->calling_name }} has not signed the membership form digitally,
-                                        make sure they sign it either digitally or physically.
-                                    </strong>
-                                </li>
+                            <li class="text-danger">
+                                <strong>
+                                    {{ $user->calling_name }} has not signed the membership form digitally,
+                                    make sure they sign it either digitally or physically.
+                                </strong>
+                            </li>
                         @endif
                     </ul>
 

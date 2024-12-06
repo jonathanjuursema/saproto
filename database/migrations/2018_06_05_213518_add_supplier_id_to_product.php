@@ -8,10 +8,8 @@ class AddSupplierIdToProduct extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
             $table->text('supplier_id')->nullable(true)->default(null)->after('price');
@@ -21,10 +19,8 @@ class AddSupplierIdToProduct extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
             $table->string('nicename')->after('name');

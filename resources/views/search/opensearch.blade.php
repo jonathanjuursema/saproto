@@ -5,6 +5,6 @@
         This search engine lets you search in the data of Study Association Proto from the University of Twente.
     </Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image width="16" height="16" type="image/x-icon">{{ asset('images/favicons/favicon2.png') }}</Image>
-    <Url type="text/html" method="get" template="{{ route('search') }}/?query={searchTerms}"/>
+    <Image width="16" height="16" type="image/x-icon">{{ asset('images/favicons/favicon1.png') }}</Image>
+    <Url type="text/html" method="get" template="{{ route('search::get') }}/?query={searchTerms}" />
 </OpenSearchDescription>

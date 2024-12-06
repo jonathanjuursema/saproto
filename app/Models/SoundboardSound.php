@@ -40,6 +40,6 @@ class SoundboardSound extends Model
     /** @return BelongsTo */
     public function file()
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'file_id');
+        return $this->belongsTo(StorageEntry::class, 'file_id');
     }
 }

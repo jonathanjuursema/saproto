@@ -55,14 +55,15 @@
 
                         <tr class="bg-dark text-white">
 
-                        <td>Event</td>
-                        <td>Category</td>
-                        <td>Start</td>
-                        <td>Organizing Committee</td>
-                        <td>Sign ups</td>
-                        <td>Back-up</td>
-                        <td>Attendees</td>
-                        <td>Costs</td>
+                            <td>Event</td>
+                            <td>Category</td>
+                            <td>Start</td>
+                            <td>Organizing Committee</td>
+                            <td>Sign ups</td>
+                            <td>Back-up</td>
+                            <td>Limit</td>
+                            <td>Attendees</td>
+                            <td>Costs</td>
 
                         </tr>
 
@@ -96,16 +97,17 @@
                                         <span class="font-italic text-muted">not set</span>
                                     @endif
                                 </td>
-                                
+
                                 @if ($event->activity)
 
                                     <td>{{ $event->activity->users->count() }}</td>
                                     <td>{{ $event->activity->backupUsers->count() }}</td>
-                                    <td>{{$event->activity->getAttendees()}}</td>
-                                    <td>€{{$event->activity->price}}</td>
-
+                                    <td>{{ $event->activity->participants !== -1 ? $event->activity->participants : 'no limit' }}</td>
+                                    <td>{{ $event->activity->getAttendees() }}</td>
+                                    <td>€{{ $event->activity->price }}</td>
 
                                 @else
+                                    <td><span class="font-italic text-muted">no activity</span></td>
                                     <td><span class="font-italic text-muted">no activity</span></td>
                                     <td><span class="font-italic text-muted">no activity</span></td>
                                     <td><span class="font-italic text-muted">no activity</span></td>

@@ -5,7 +5,9 @@
 @endsection
 
 @section('container')
-    <form action="{{ isset($song)&&$song?route('codex::edit-song', ['id'=>$song->id]):route("codex::add-song") }}" method="POST">
+    <form action="{{ !empty($song) ? route('codexSong.update', ['codexSong' => $song]) : route("codexSong.store") }}"
+          method="POST">
+        <input type="hidden" name="_method" value="{{ !empty($song) ? "PUT" : "POST" }}">
         {{ csrf_field()}}
         <div class="row gap-3 justify-content-center">
             <div class="col-6">
@@ -18,33 +20,34 @@
                             {{-- Title }--}}
                             <label for="type">Title:</label>
                             <div class="form-group mb-3">
-                                <input type="text" value="{{$song->title??""}}" class="form-control" id="title" name="title">
+                                <input type="text" value="{{$song->title??""}}" class="form-control" id="title"
+                                       name="title">
                             </div>
 
                             {{-- Artist }--}}
                             <label for="artist">Artist:</label>
                             <div class="form-group mb-3">
-                                <input type="text" value="{{$song->artist??""}}" class="form-control" id="artist" name="artist">
+                                <input type="text" value="{{$song->artist??""}}" class="form-control" id="artist"
+                                       name="artist">
                             </div>
 
                             {{-- Youtube ID }--}}
                             <label for="youtube">Youtube ID:</label>
                             <div class="form-group mb-3">
-                                <input type="text" value="{{$song->youtube??""}}" class="form-control" id="youtube" name="youtube">
+                                <input type="text" value="{{$song->youtube??""}}" class="form-control" id="youtube"
+                                       name="youtube">
                             </div>
 
-                                {{-- Categories }--}}
-                            <label for="categories">Categories:</label>
-                            <ul>
+                            {{-- Categories }--}}
+                            <label for="category">Category</label>
+
+                            <select class="form-select form-select-m mb-3" aria-label="category-dropdown"
+                                    name="category">
                                 @foreach($categories as $category)
-                                    <li>
-                                            <div class="form-check d-inline-flex">
-                                                <input class="form-check-input" type="checkbox" {{in_array($category->id, $myCategories)?"checked":""}} name="categoryids[]" value="{{$category->id}}">
-                                            </div>
-                                        {{ $category->name}}
-                                    </li>
+                                    <option value="{{$category->id}}"
+                                            {{ $category->id === $myCategories ? "selected" : "" }}>{{ $category->name }}</option>
                                 @endforeach
-                            </ul>
+                            </select>
 
                             {{-- Lyrics }--}}
                             <label for="lyrics">Lyrics:</label>

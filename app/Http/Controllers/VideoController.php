@@ -7,9 +7,9 @@ use App\Models\Video;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 use Youtube;
 
 class VideoController extends Controller
@@ -23,15 +23,15 @@ class VideoController extends Controller
     /** @return View */
     public static function publicIndex()
     {
-        return view('videos.public_index', ['videos' => Video::orderBy('video_date', 'desc')->get()]);
+        return view('videos.public_index', ['videos' => Video::query()->orderBy('video_date', 'desc')->get()]);
     }
 
     /**
      * @return View
      */
-    public static function view(Request $request)
+    public static function show(Request $request)
     {
-        return view('videos.view', ['video' => Video::findOrFail($request->id)]);
+        return view('videos.view', ['video' => Video::query()->findOrFail($request->id)]);
     }
 
     /**
@@ -56,13 +56,13 @@ class VideoController extends Controller
             return Redirect::back();
         }
 
-        if (Video::where('youtube_id', $youtube_video->id)->count() > 0) {
+        if (Video::query()->where('youtube_id', $youtube_video->id)->count() > 0) {
             Session::flash('flash_message', 'This video has already been added!');
 
             return Redirect::back();
         }
 
-        Video::create([
+        Video::query()->create([
             'title' => $youtube_video->snippet->title,
             'youtube_id' => $youtube_video->id,
             'youtube_title' => $youtube_video->snippet->title,
@@ -83,7 +83,7 @@ class VideoController extends Controller
      */
     public static function edit(Request $request)
     {
-        $video = Video::findOrFail($request->id);
+        $video = Video::query()->findOrFail($request->id);
 
         return view('videos.edit', ['video' => $video]);
     }
@@ -94,12 +94,12 @@ class VideoController extends Controller
     public static function update(Request $request)
     {
         /** @var Video $video */
-        $video = Video::findOrFail($request->id);
+        $video = Video::query()->findOrFail($request->id);
         $video->video_date = date('Y-m-d', strtotime($request->video_date));
         $video->save();
 
         if ($request->has('event')) {
-            $event = Event::findOrFail($request->get('event'));
+            $event = Event::query()->findOrFail($request->get('event'));
             $video->event_id = $event->id;
             $video->save();
         }
@@ -116,7 +116,7 @@ class VideoController extends Controller
      */
     public static function destroy(Request $request)
     {
-        $video = Video::findOrFail($request->id);
+        $video = Video::query()->findOrFail($request->id);
         Session::flash('flash_message', sprintf('The video <strong>%s</strong> has been deleted!', $video->title));
         $video->delete();
 

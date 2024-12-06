@@ -7,21 +7,39 @@ use App\Models\Event;
 use App\Models\OrderLine;
 use App\Models\StorageEntry;
 use App\Models\TicketPurchase;
+use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class WrappedController extends Controller
 {
     public function index()
     {
-        $timespan = [now()->startOfYear(), now()->endOfYear()];
-        $total_spent = round(OrderLine::whereBetween('created_at', $timespan)->sum('total_price'), 2);
+        $from = Carbon::now()->startOfYear();
+        $to = Carbon::now()->endOfYear();
+        $purchases = $this->getPurchases($from, $to);
 
         return response()->json([
-            'total_spent' => $total_spent,
             'order_totals' => $this->orderTotals(),
+            'purchases' => $purchases,
+            'total_spent' => round($purchases->sum('total_price'), 2),
             'events' => $this->eventList(),
             'user' => auth()->user(),
         ], 200, [], JSON_NUMERIC_CHECK);
+    }
+
+    /**
+     * @return Collection|OrderLine[]
+     */
+    public function getPurchases(Carbon $from, Carbon $to)
+    {
+        return OrderLine::query()->where('user_id', Auth::id())
+            ->with('product')
+            ->where('created_at', '>', $from)
+            ->where('created_at', '<', $to)
+            ->orderBy('created_at', 'DESC')
+            ->get();
     }
 
     public function orderTotals()
@@ -35,23 +53,21 @@ class WrappedController extends Controller
             ->orderBy('total')
             ->get();
 
-        return $totals->groupBy('product_id')->map(function ($product) {
-            return $product->pluck('total');
-        });
+        return $totals->groupBy('product_id')->map(static fn ($product) => $product->pluck('total'));
     }
 
     public function eventList()
     {
         $events = Event::query()
             ->whereBetween('start', [now()->startOfYear()->timestamp, now()->endOfYear()->timestamp])
-            ->where(function ($query) {
-                $query->whereIn('id', function (Builder $query) {
+            ->where(static function ($query) {
+                $query->whereIn('id', static function (Builder $query) {
                     $query->select('event_id')
                         ->from('tickets')
                         ->join('ticket_purchases', 'tickets.id', '=', 'ticket_purchases.ticket_id')
                         ->where('ticket_purchases.user_id', auth()->user()->id);
                 })
-                    ->orWhereIn('id', function (Builder $query) {
+                    ->orWhereIn('id', static function (Builder $query) {
                         $query->select('event_id')
                             ->from('activities')
                             ->join('activities_users', 'activities.id', '=', 'activities_users.activity_id')
@@ -83,13 +99,13 @@ class WrappedController extends Controller
             ->get();
 
         return $events
-            ->map(function (Event $event) use ($activity_prices, $ticket_prices, $images) {
+            ->map(static function (Event $event) use ($activity_prices, $ticket_prices, $images) {
                 $activity_price = $activity_prices->where('event_id', $event->id)->sum('price');
                 $ticket_price = $ticket_prices->where('event_id', $event->id)->sum('total');
-
+                /** @phpstan-ignore-next-line */
                 $event->price = $activity_price + $ticket_price;
-
-                $event->image_url = $images->where('event_id', $event->id)->first()->generateImagePath(null, null);
+                /** @phpstan-ignore-next-line */
+                $event->image_url = $images->where('event_id', $event->id)->first()?->generateImagePath(null, null);
 
                 return $event->only([
                     'title',

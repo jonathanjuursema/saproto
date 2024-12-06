@@ -6,12 +6,16 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class UserMailChange extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var User
+     */
     public $user;
 
     /**
@@ -32,7 +36,7 @@ class UserMailChange extends Mailable
     public function build()
     {
         return $this
-            ->from('security@'.config('proto.emaildomain'), 'Have You Tried Turning It Off And On Again committee')
+            ->from('security@'.Config::string('proto.emaildomain'), 'Have You Tried Turning It Off And On Again committee')
             ->subject('Your e-mail address for S.A. Proto has been changed.')
             ->view('emails.emailchange');
     }

@@ -10,7 +10,7 @@
 
         <div class="col-xl-3 col-lg-12">
 
-            <form method="post" action="{{ route('ldap::search') }}">
+            <form method="post" action="{{ route('search::ldap::post') }}">
 
                 {!! csrf_field() !!}
 
@@ -46,13 +46,13 @@
 
                     <div class="card-body">
 
-                        @if (count($data) == 0 && $term != null)
+                        @if (count($data) <= 0)
 
                             <p class="text-center card-text">
                                 Your search returned no results.
                             </p>
 
-                        @elseif($term != null)
+                        @else
 
                             <div class="row">
 
@@ -67,45 +67,43 @@
                                                 <p class="card-text">
 
                                                     <i class="fas fa-id-badge fa-fw"></i>
-                                                    {{ property_exists($result, 'givenname') ? $result->givenname : null }}
-                                                    {{ property_exists($result, 'middlename') ? $result->middlename : null }}
-                                                    {{ property_exists($result, 'sn') ? $result->sn : null }},
-                                                    {{ property_exists($result, 'initials') ? $result->initials : null }}
-
+                                                    {{ $result['givenname'] ?? null }}
+                                                    {{ $result['middlename'] ?? null }}
+                                                    {{ $result['sn'] ?? null }},
+                                                    {{ $result['initials'] ?? null }}
                                                     <br>
 
                                                     <i class="fas fa-user-friends fa-fw"></i>
                                                     <em>
-                                                        @if($result->type == 'student')
-                                                            Student {{ property_exists($result, 'department') ? $result->department : null }}
-                                                        @elseif($result->type == 'employee')
-                                                            {{ property_exists($result, 'department') ? $result->department : null }}
-                                                            Employee
+                                                        @if(\Illuminate\Support\Str::startsWith($result['description'], 'Student'))
+                                                            Student {{ $result['department'] ?? null }}
+                                                        @elseif(\Illuminate\Support\Str::startsWith($result['description'], 'Employee'))
+                                                            Employee {{ $result['department'] ?? null }}
                                                         @else
                                                             Functional Account
-                                                            {{ property_exists($result, 'department') ? '('.$result->department.')' : null }}
+                                                            {{ $result['department'] ? '('.$result->department.')' : null }}
                                                         @endif
                                                     </em>
 
-                                                    @if(Auth::user()->can('board') && property_exists($result, 'userprincipalname'))
+                                                    @if(Auth::user()->can('board') &&   array_key_exists('userprincipalname', $result))
                                                         <br>
                                                         <i class="fas fa-users-cog fa-fw"></i>
-                                                        {{ $result->userprincipalname }}
+                                                        {{ $result['userprincipalname'] }}
                                                     @endif
-                                                    @if(property_exists($result, 'mail'))
+                                                    @if(array_key_exists('mail', $result))
                                                         <br>
                                                         <i class="fas fa-envelope fa-fw"></i>
-                                                        <a href="mailto:{{ $result->mail }}">{{ $result->mail }}</a>
+                                                        <a href="mailto:{{ $result['mail'] }}">{{ $result['mail'] }}</a>
                                                     @endif
-                                                    @if(property_exists($result, 'telephonenumber'))
+                                                    @if(array_key_exists('telephonenumber', $result))
                                                         <br>
                                                         <i class="fas fa-phone fa-fw"></i>
-                                                        <a href="tel:{{ $result->telephonenumber }}">{{ $result->telephonenumber }}</a>
+                                                        <a href="tel:{{ $result['telephonenumber'] }}">{{ $result['telephonenumber'] }}</a>
                                                     @endif
-                                                    @if(property_exists($result, 'physicaldeliveryofficename'))
+                                                    @if(array_key_exists('physicaldeliveryofficename', $result))
                                                         <br>
                                                         <i class="fas fa-map-marker-alt fa-fw"></i>
-                                                        Room {{ $result->physicaldeliveryofficename }}
+                                                        Room {{ $result['physicaldeliveryofficename'] }}
                                                     @endif
 
                                                 </p>

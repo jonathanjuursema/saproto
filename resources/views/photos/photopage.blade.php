@@ -14,28 +14,24 @@
 
                 <div class="card-header bg-dark text-end">
 
-                    <a href="{{route("photo::album::list", ["id"=> $photo->album_id])}}"
+                    <a href="{{route("photo::album::list", ["id"=> $photo->album_id, 'page' => $photo->getAlbumPageNumber(24)])}}"
                        class="btn btn-success float-start me-3">
-                        <i class="fas fa-images me-2"></i> {{ $photo->album_name }}
+                        <i class="fas fa-images me-2"></i> {{ $photo->album->name }}
                     </a>
-
-                    @if ($photo->previous != null && $photo->previous != $photo->id)
-                        <a href="{{route("photo::view", ["id"=> $photo->previous])}}" class="btn btn-dark me-3">
+                    @php
+                        $previous = $photo->getPreviousPhoto();
+                        $next = $photo->getNextPhoto();
+                    @endphp
+                    @if ($previous != null && $previous->id != $photo->id)
+                        <a href="{{ route("photo::view", ["id"=> $previous]) }}" class="btn btn-dark me-3">
                             <i class="fas fa-arrow-left"></i>
                         </a>
                     @endif
 
-                    @if ($photo->liked == null)
-                        <a href="{{route("photo::likes", ["id"=> $photo->id])}}" class="btn btn-outline-info me-3">
-                            <i class="far fa-heart"></i> {{ $photo->likes }}
-                        </a>
-                    @endif
-
-                    @if($photo->liked != null)
-                        <a href="{{route("photo::dislikes", ["id"=> $photo->id])}}" class="btn btn-info me-3">
-                            <i class="fas fa-heart"></i> {{ $photo->likes }}
-                        </a>
-                    @endif
+                    <a href="{{ route("photo::likes", ["id"=> $photo->id]) }}"
+                       class="btn {{ $photo->liked_by_me ? 'btn-info':'btn-outline-info'}} me-3">
+                        <i class="fas fa-heart"></i> {{ $photo->likes_count }}
+                    </a>
 
                     @if($photo->private)
                         <a href="#" class="btn btn-info me-3" data-bs-toggle="tooltip"
@@ -44,15 +40,16 @@
                         </a>
                     @endif
 
-                    @if($photo->next != null && $photo->next != $photo->id)
-                        <a href="{{route("photo::view", ["id"=> $photo->next])}}" class="btn btn-dark">
+                    @if($next != null && $next->id != $photo->id)
+                        <a href="{{route("photo::view", ["id"=> $next])}}" class="btn btn-dark">
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     @endif
 
                 </div>
 
-                <img class="card-img-bottom" src="{!! $photo->photo_url !!}" style="max-height: 70vh; object-fit:scale-down">
+                <img class="card-img-bottom" src="{!! $photo->url !!}"
+                     style="max-height: 70vh; object-fit:scale-down">
 
             </div>
 
@@ -60,8 +57,8 @@
                 <div class="card-body text-center">
                     <i class="fas fa-shield-alt fa-fw me-3"></i>
                     If there is a photo that you would like removed, please contact
-                    <a href="mailto:photos&#64;{{ config('proto.emaildomain') }}">
-                        photos&#64;{{ config('proto.emaildomain') }}.
+                    <a href="mailto:photos&#64;{{ Config::string('proto.emaildomain') }}">
+                        photos&#64;{{ Config::string('proto.emaildomain') }}.
                     </a>
                 </div>
             </div>
@@ -78,15 +75,15 @@
             if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key))
                 e.preventDefault();
 
-            switch(e.key) {
-                @if ($photo->previous != null)
+            switch (e.key) {
+                @if ($previous != null)
                 case 'ArrowLeft':
-                    window.location.href = '{{route("photo::view", ["id"=> $photo->previous])}}';
+                    window.location.href = '{{route("photo::view", ["id"=> $previous->id])}}';
                     break;
                 @endif
-                @if ($photo->next != null)
+                @if ($next != null)
                 case 'ArrowRight':
-                    window.location.href = '{{route("photo::view", ["id"=> $photo->next])}}';
+                    window.location.href = '{{route("photo::view", ["id"=> $next->id])}}';
                     break;
                 @endif
                 @if (Auth::check())
@@ -94,24 +91,19 @@
                     window.location.href = '{{route("photo::likes", ["id"=> $photo->id])}}';
                     break;
                 @endif
-                @if (Auth::check())
-                case 'ArrowDown':
-                    window.location.href = '{{route("photo::dislikes", ["id"=> $photo->id])}}';
-                    break;
-                @endif
             }
-        })
+        });
     </script>
 
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        history.replaceState(null, document.title, location.pathname+"#!/history")
-        history.pushState(null, document.title, location.pathname)
+        history.replaceState(null, document.title, location.pathname + '#!/history');
+        history.pushState(null, document.title, location.pathname);
 
-        window.addEventListener("popstate", function() {
-            if(location.hash === "#!/history") {
-                history.replaceState(null, document.title, location.pathname)
-                setTimeout(_ => location.replace("{{ route('photo::album::list', ['id' => $photo->album_id])."?page=".$photo->albumPage }}"), 10)
+        window.addEventListener('popstate', function() {
+            if (location.hash === '#!/history') {
+                history.replaceState(null, document.title, location.pathname);
+                setTimeout(_ => location.replace("{{ route('photo::album::list', ['id' => $photo->album_id])."?page=".$photo->albumPage }}"), 10);
             }
-        }, false)
+        }, false);
     </script>
 @endpush

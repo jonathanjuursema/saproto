@@ -30,7 +30,7 @@
 
 
 <div class="card mb-3">
-    <a href="{{ route("event::list", ['id'=>$event->id]) }}" class="btn btn-default">
+    <a href="{{ route("event::index", ['id'=>$event->id]) }}" class="btn btn-default">
         Back to calendar
     </a>
 </div>
@@ -73,7 +73,8 @@
             <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i>
             {{ $event->location }}
             @if($event->maps_location)
-                <a  class="btn btn-sm btn-secondary ms-3" target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ urlencode($event->maps_location) }}">
+                <a class="btn btn-sm btn-secondary ms-3" target="_blank"
+                   href="https://www.google.com/maps/search/?api=1&query={{ urlencode($event->maps_location) }}">
                     <i class="fas fa-fw fa-map-marker-alt text-danger" aria-hidden="true"></i>
                     View on Maps
                 </a>
@@ -82,7 +83,7 @@
         </li>
 
         @if ($event->involves_food == true)
-            <a class="list-group-item bg-info text-white" href="{{ route("user::dashboard") }}#alergies">
+            <a class="list-group-item bg-info text-white" href="{{ route("user::dashboard::show") }}#alergies">
                 <i class="fas fa-fw fa-utensils" aria-hidden="true"></i> There will be food, please indicate
                 any allergies or diets on your dashboard
             </a>
@@ -134,7 +135,7 @@
                 @foreach($event->videos as $video)
 
                     @include('website.home.cards.card-bg-image', [
-                        'url' => route('video::view', ['id'=> $video->id]),
+                        'url' => route('video::show', ['id'=> $video->id]),
                         'img' => $video->youtube_thumb_url,
                         'html' => sprintf('<em>%s</em><br><strong><i class="fas fa-fw fa-play" aria-hidden="true"></i> %s</strong>', date("M j, Y", strtotime($video->video_date)), $video->title)
                     ])

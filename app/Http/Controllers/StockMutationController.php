@@ -14,14 +14,14 @@ class StockMutationController extends Controller
      */
     public function filterMutations(Request $rq, ?array $selection = null)
     {
-        $mutations = StockMutation::orderBy('stock_mutations.created_at', 'desc')->orderBy('stock_mutations.id', 'desc');
+        $mutations = StockMutation::query()->orderBy('stock_mutations.created_at', 'desc')->orderBy('stock_mutations.id', 'desc');
 
         // Find mutations by Pwoduct
         if ($rq->has('product_name') && strlen($rq->get('product_name')) > 2) {
             $search = $rq->get('product_name');
             $mutations = $mutations
                 ->join('products', 'products.id', '=', 'stock_mutations.product_id', 'inner')
-                ->where('products.name', 'like', "%$search%");
+                ->where('products.name', 'like', "%{$search}%");
         }
 
         // Find mutations by authoring User
@@ -29,7 +29,7 @@ class StockMutationController extends Controller
             $search = $rq->get('author_name');
             $mutations = $mutations
                 ->join('users', 'users.id', '=', 'stock_mutations.user_id', 'inner')
-                ->where('users.name', 'like', "%$search%");
+                ->where('users.name', 'like', "%{$search}%");
         }
 
         // Find mutations before given date
@@ -81,19 +81,18 @@ class StockMutationController extends Controller
             'Pragma' => 'public',
         ];
 
-        $callback = function () use ($mutations) {
+        $callback = static function () use ($mutations) {
             $f = fopen('php://output', 'w');
-
             $csv_header = ['Product ID', 'Product Name', 'Change', 'Old stock', 'Updated stock', 'Creation time'];
             fputcsv($f, $csv_header);
-
             foreach ($mutations as $row) {
-                $product = Product::find($row['product_id']);
+                $product = Product::query()->find($row['product_id']);
 
                 if (! is_null($product)) {
                     fputcsv($f, [$row['product_id'], $product->name, $row['after'] - $row['before'], $row['before'], $row['after'], $row['created_at']]);
                 }
             }
+
             fclose($f);
         };
 

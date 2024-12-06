@@ -9,7 +9,7 @@
     <p>
         You receive this e-mail because we found that the password you use at our website was exposed in one or more
         data breaches. This means that the password is no longer safe, and we strongly recommend <a
-                href="{{ route("login::password::change") }}">changing your password on our website</a> and any sites
+            href="{{ route("login::password::change::index") }}">changing your password on our website</a> and any sites
         that you also use this password for.
     </p>
 

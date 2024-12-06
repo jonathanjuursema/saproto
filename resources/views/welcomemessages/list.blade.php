@@ -56,9 +56,15 @@
                                 <td>{{ $message->updated_at->format('d/m/Y') }}</td>
 
                                 <td>
-                                    <a href="{{ route('welcomeMessages::delete', ['id' => $message->id]) }}">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </a>
+                                    @include('components.modals.confirm-modal', [
+                                          'action' => route("welcomeMessages.destroy", ['welcomeMessage'=>$message->id]),
+                                          'method'=>'DELETE',
+                                          'classes' => 'fas fa-trash text-danger',
+                                          'text' => '',
+                                          'confirm' => 'Delete',
+                                          'title' => 'Confirm deleting the welcome message',
+                                          'message' => 'Are you sure you want to delete the welcome message of '.$message->user->name.'?',
+                                      ])
                                 </td>
 
                             </tr>

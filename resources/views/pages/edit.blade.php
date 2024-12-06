@@ -15,7 +15,7 @@
         <div class="col-md-6">
 
             <form method="post"
-                  action="@if($new) {{ route("page::add") }} @else {{ route("page::edit", ['id' => $item->id]) }} @endif"
+                  action="@if($new) {{ route("page::store") }} @else {{ route("page::update", ['id' => $item->id]) }} @endif"
                   enctype="multipart/form-data">
 
                 <div class="card mb-3">
@@ -127,7 +127,7 @@
 
                 </form>
 
-                <form method="post" action="{{ route("page::file::add", ["id" => $item->id]) }}"
+                <form method="post" action="{{ route("page::file::create", ["id" => $item->id]) }}"
                       enctype="multipart/form-data">
 
                     {!! csrf_field() !!}
@@ -221,24 +221,24 @@
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         // Borrowed from https://stackoverflow.com/questions/23733455/inserting-a-new-text-at-given-cursor-position
         function insertLineAtCursor(data) {
-            const cm = document.getElementsByClassName('.CodeMirror')[0].CodeMirror
-            const doc = cm.getDoc()
-            const cursor = doc.getCursor() // gets the line number in the cursor position
-            const line = doc.getLine(cursor.line) // get the line contents
+            const cm = document.getElementsByClassName('.CodeMirror')[0].CodeMirror;
+            const doc = cm.getDoc();
+            const cursor = doc.getCursor(); // gets the line number in the cursor position
+            const line = doc.getLine(cursor.line); // get the line contents
             const pos = { // create a new object to avoid mutation of the original selection
-                line: cursor.line, ch: line.length - 1 // set the character position to the end of the line
-            }
-            doc.replaceRange('\n' + data + '\n', pos) // adds a new line
+                line: cursor.line, ch: line.length - 1, // set the character position to the end of the line
+            };
+            doc.replaceRange('\n' + data + '\n', pos); // adds a new line
         }
 
-        const insertLinks = document.querySelectorAll('.pageEdit_insertLink, .pageEdit_insertImage')
+        const insertLinks = document.querySelectorAll('.pageEdit_insertLink, .pageEdit_insertImage');
         insertLinks.forEach(el => {
             el.addEventListener('click', e => {
-                e.preventDefault()
-                const linkUrl = e.target.getAttribute('rel')
-                insertLineAtCursor(`[Link text](${linkUrl})`)
-            })
-        })
+                e.preventDefault();
+                const linkUrl = e.target.getAttribute('rel');
+                insertLineAtCursor(`[Link text](${linkUrl})`);
+            });
+        });
     </script>
 
 @endpush

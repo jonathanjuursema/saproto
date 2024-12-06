@@ -8,10 +8,8 @@ class ExtendDmxManager extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::rename('dmx_channel_names', 'dmx_channels');
         Schema::table('dmx_fixtures', function (Blueprint $table) {
@@ -31,10 +29,8 @@ class ExtendDmxManager extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('dmx_fixtures', function (Blueprint $table) {
             $table->dropColumn('follow_timetable');

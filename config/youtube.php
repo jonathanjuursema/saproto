@@ -10,5 +10,5 @@
 */
 
 return [
-    'key' => getenv('GOOGLE_KEY_PRIVATE'),
+    'key' => env('GOOGLE_KEY_PRIVATE'),
 ];

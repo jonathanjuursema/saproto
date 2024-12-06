@@ -19,7 +19,7 @@ class FeedbackFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
+            'user_id' => User::query()->inRandomOrder()->first()->id,
             'feedback' => fake()->realTextBetween(50, 200),
             'reviewed' => fake()->boolean(),
             'accepted' => fake()->boolean(),

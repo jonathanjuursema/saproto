@@ -9,11 +9,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class DevelopmentAccess
 {
     /** @var string[] */
-    protected $except = [
+    protected array $except = [
         'webhook/*',
     ];
 
@@ -26,30 +27,27 @@ class DevelopmentAccess
 
     /**
      * Whether the current request client is allowed to access the app.
-     *
-     * @return bool
      */
-    protected function clientNotAllowed()
+    protected function clientNotAllowed(): bool
     {
         $isAllowedIP = in_array(request()->ip(), $this->ipWhitelist);
+        if (auth()->guest()) {
+            return true;
+        }
 
-        return auth()->guest() || ! $isAllowedIP;
+        return ! $isAllowedIP;
     }
 
     /**
      * Handle an incoming request.
-     *
-     * @param  Request  $request
-     * @param  Closure  $next
-     * @return Closure
      */
-    public function handle($request, $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-        if (config('app-proto.debug-whitelist') == null) {
+        if (Config::get('app-proto.debug-whitelist') == null) {
             return $next($request);
         }
 
-        $this->ipWhitelist = explode(',', config('app-proto.debug-whitelist'));
+        $this->ipWhitelist = explode(',', Config::string('app-proto.debug-whitelist'));
 
         if ($this->clientNotAllowed()) {
             config(['app.debug' => false]);

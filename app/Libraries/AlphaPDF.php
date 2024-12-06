@@ -12,14 +12,14 @@ class AlphaPDF extends tFpdf
     // bm:    blend mode, one of the following:
     //          Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn,
     //          HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity
-    public function SetAlpha($alpha, $bm = 'Normal')
+    public function SetAlpha($alpha, string $bm = 'Normal'): void
     {
         // set alpha for stroking (CA) and non-stroking (ca) operations
         $gs = $this->AddExtGState(['ca' => $alpha, 'CA' => $alpha, 'BM' => '/'.$bm]);
         $this->SetExtGState($gs);
     }
 
-    public function AddExtGState($parms)
+    public function AddExtGState($parms): int
     {
         $n = count($this->extgstates) + 1;
         $this->extgstates[$n]['parms'] = $parms;
@@ -27,22 +27,24 @@ class AlphaPDF extends tFpdf
         return $n;
     }
 
-    public function SetExtGState($gs)
+    public function SetExtGState($gs): void
     {
         $this->_out(sprintf('/GS%d gs', $gs));
     }
 
-    public function _enddoc()
+    protected function _enddoc()
     {
         if (! empty($this->extgstates) && $this->PDFVersion < '1.4') {
             $this->PDFVersion = '1.4';
         }
+
         parent::_enddoc();
     }
 
-    public function _putextgstates()
+    public function _putextgstates(): void
     {
-        for ($i = 1; $i <= count($this->extgstates); $i++) {
+        $counter = count($this->extgstates);
+        for ($i = 1; $i <= $counter; $i++) {
             $this->_newobj();
             $this->extgstates[$i]['n'] = $this->n;
             $this->_put('<</Type /ExtGState');
@@ -55,17 +57,18 @@ class AlphaPDF extends tFpdf
         }
     }
 
-    public function _putresourcedict()
+    protected function _putresourcedict()
     {
         parent::_putresourcedict();
         $this->_put('/ExtGState <<');
         foreach ($this->extgstates as $k => $extgstate) {
             $this->_put('/GS'.$k.' '.$extgstate['n'].' 0 R');
         }
+
         $this->_put('>>');
     }
 
-    public function _putresources()
+    protected function _putresources()
     {
         $this->_putextgstates();
         parent::_putresources();

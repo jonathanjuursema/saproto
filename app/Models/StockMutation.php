@@ -2,35 +2,37 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\StockMutation.
  *
  * @property int $id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property int $user_id
  * @property int $product_id
  * @property int $before
  * @property int $after
  * @property int $is_bulk
- * @property-read \App\Models\Product|null $product
- * @property-read \App\Models\User|null $user
+ * @property-read Product|null $product
+ * @property-read User|null $user
  *
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation query()
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereAfter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereBefore($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereIsBulk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereProductId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|StockMutation whereUserId($value)
+ * @method static Builder|StockMutation newModelQuery()
+ * @method static Builder|StockMutation newQuery()
+ * @method static Builder|StockMutation query()
+ * @method static Builder|StockMutation whereAfter($value)
+ * @method static Builder|StockMutation whereBefore($value)
+ * @method static Builder|StockMutation whereCreatedAt($value)
+ * @method static Builder|StockMutation whereId($value)
+ * @method static Builder|StockMutation whereIsBulk($value)
+ * @method static Builder|StockMutation whereProductId($value)
+ * @method static Builder|StockMutation whereUpdatedAt($value)
+ * @method static Builder|StockMutation whereUserId($value)
  */
 class StockMutation extends Model
 {
@@ -42,12 +44,12 @@ class StockMutation extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Product::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function date(): string

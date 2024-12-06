@@ -6,11 +6,11 @@
 
 @section('container')
 
-    <form method="post"
-          action="{{ ($fixture == null ? route("dmx::add") : route("dmx::edit", ['id' => $fixture->id])) }}"
-          enctype="multipart/form-data">
-
-        {!! csrf_field() !!}
+    <form
+        action="{{ !empty($fixture) ? route('dmx.fixtures.update', ['fixture' => $fixture]) : route("dmx.fixtures.store") }}"
+        method="POST">
+        <input type="hidden" name="_method" value="{{ !empty($fixture) ? "PUT" : "POST" }}">
+        {{ csrf_field()}}
 
         <div class="row justify-content-center">
 
@@ -62,26 +62,31 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <label>Name for channel {{ $channel->id }}:</label>
-                                            <input type="text" class="form-control" name="channel_name[{{ $channel->id }}]"
+                                            <input type="text" class="form-control"
+                                                   name="channel_name[{{ $channel->id }}]"
                                                    value="{{ $channel->name }}" required>
                                         </div>
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="channel_start">Channel type:</label>
-                                                <select class="form-control" name="special_function[{{ $channel->id }}]">
+                                                <select class="form-control"
+                                                        name="special_function[{{ $channel->id }}]">
                                                     <option value="none">
                                                         None
                                                     </option>
                                                     <option value="red" @selected($channel->special_function == 'red')>
                                                         Red
                                                     </option>
-                                                    <option value="green" @selected($channel->special_function == 'green')>
+                                                    <option
+                                                        value="green" @selected($channel->special_function == 'green')>
                                                         Green
                                                     </option>
-                                                    <option value="blue" @selected($channel->special_function == 'blue')>
+                                                    <option
+                                                        value="blue" @selected($channel->special_function == 'blue')>
                                                         Blue
                                                     </option>
-                                                    <option value="brightness" @selected($channel->special_function == 'brightness')>
+                                                    <option
+                                                        value="brightness" @selected($channel->special_function == 'brightness')>
                                                         Brightness
                                                     </option>
                                                 </select>
@@ -100,7 +105,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("dmx::index") }}" class="btn btn-default">
+                        <a href="{{ route("dmx.index") }}" class="btn btn-default">
                             Cancel
                         </a>
 

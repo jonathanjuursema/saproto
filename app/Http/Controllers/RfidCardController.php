@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\QrAuthRequest;
 use App\Models\RfidCard;
-use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class RfidCardController extends Controller
 {
@@ -19,18 +19,20 @@ class RfidCardController extends Controller
      *
      * @throws Exception
      */
-    public function store(Request $request)
+    public function store(Request $request): array
     {
         switch ($request->input('credentialtype')) {
             case 'qr':
-                $qrAuthRequest = QrAuthRequest::where('auth_token', $request->input('credentials'))->first();
+                $qrAuthRequest = QrAuthRequest::query()->where('auth_token', $request->input('credentials'))->first();
                 if (! $qrAuthRequest) {
                     return ['ok' => false, 'text' => 'Invalid authentication token.'];
                 }
+
                 $user = $qrAuthRequest->authUser();
                 if (! $user) {
                     return ['ok' => false, 'text' => "QR authentication hasn't been completed."];
                 }
+
                 break;
 
             default:
@@ -46,7 +48,7 @@ class RfidCardController extends Controller
             return ['ok' => false, 'text' => 'Empty card UID provided. Did you scan your card properly?'];
         }
 
-        $card = RfidCard::where('card_id', $uid)->first();
+        $card = RfidCard::query()->where('card_id', $uid)->first();
         if ($card) {
             if ($card->user->id == $user->id) {
                 return ['ok' => false, 'text' => 'This card is already registered to you!'];
@@ -54,7 +56,8 @@ class RfidCardController extends Controller
 
             return ['ok' => false, 'text' => 'This card is already registered to someone.'];
         }
-        $card = RfidCard::create([
+
+        $card = RfidCard::query()->create([
             'user_id' => $user->id,
             'card_id' => $uid,
         ]);
@@ -70,7 +73,7 @@ class RfidCardController extends Controller
     public function edit($id)
     {
         /** @var RfidCard $rfid */
-        $rfid = RfidCard::findOrFail($id);
+        $rfid = RfidCard::query()->findOrFail($id);
         if (($rfid->user->id != Auth::id()) && (! Auth::user()->can('board'))) {
             abort(403);
         }
@@ -85,7 +88,7 @@ class RfidCardController extends Controller
     public function update(Request $request, $id)
     {
         /** @var RfidCard $rfid */
-        $rfid = RfidCard::findOrFail($id);
+        $rfid = RfidCard::query()->findOrFail($id);
         if ($rfid->user->id != Auth::id()) {
             abort(403);
         }
@@ -95,7 +98,7 @@ class RfidCardController extends Controller
 
         Session::flash('flash_message', 'Your RFID card has been updated.');
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 
     /**
@@ -107,10 +110,11 @@ class RfidCardController extends Controller
     public function destroy(Request $request, $id)
     {
         /** @var RfidCard $rfid */
-        $rfid = RfidCard::findOrFail($id);
+        $rfid = RfidCard::query()->findOrFail($id);
         if ($rfid->user->id != Auth::id()) {
             abort(403);
         }
+
         $rfid->delete();
 
         Session::flash('flash_message', 'Your RFID card has been deleted.');

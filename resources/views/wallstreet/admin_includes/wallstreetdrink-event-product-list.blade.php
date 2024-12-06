@@ -3,7 +3,7 @@
     <div class="card-header bg-dark text-white mb-1">
         WallstreetDrink Event Product overview
     </div>
-    <form method="post" action="{{ route('wallstreet::events::products::add', ['id'=>$currentEvent->id]) }}">
+    <form method="post" action="{{ route('wallstreet::events::products::create', ['id'=>$currentEvent->id]) }}">
 
         {!! csrf_field() !!}
         <div class="row mx-2 mb-3">

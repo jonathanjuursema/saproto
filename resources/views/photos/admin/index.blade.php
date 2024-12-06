@@ -22,6 +22,7 @@
                         {{ csrf_field() }}
                         <div class="input-group">
                             <input class="form-control"
+                                   value="{{ $query ?? '' }}"
                                    placeholder="Search albums" type="search" name="query">
                             <button type="submit" class="input-group-text btn btn-info">
                                 <i class="fas fa-search"></i>
@@ -38,7 +39,7 @@
                     Add Album
                 </div>
 
-                <form method="post" action="{{ route('photo::admin::add') }}">
+                <form method="post" action="{{ route('photo::admin::create') }}">
                     {{ csrf_field() }}
                     <div class="card-body">
                         <div class="form-group">
@@ -79,7 +80,7 @@
                     <div class="row">
 
 
-                        @foreach(App\Models\PhotoManager::getAlbums(null, $query, True, True) as $key => $album)
+                        @foreach($unpublished as $album)
 
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 
@@ -114,8 +115,7 @@
 
                     <div class="row">
 
-
-                        @foreach(App\Models\PhotoManager::getAlbums(null, $query, False, True) as $key => $album)
+                        @foreach($published as  $album)
 
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
 

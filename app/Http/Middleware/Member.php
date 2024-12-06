@@ -2,24 +2,25 @@
 
 namespace App\Http\Middleware;
 
-use Auth;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Member
 {
     /**
      * This middleware only allows access if the visiting user is authenticated and is a member.
-     *
-     * @param  Request  $request
-     * @param  Closure  $next
-     * @return mixed
      */
-    public function handle($request, $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-        if (Auth::user()?->is_member) {
-            return $next($request);
+        if (! Auth::check()) {
+            abort(403, 'You need to be logged in to access this page.');
         }
-        abort(403, 'You need to be a member of S.A. Proto to see this page.');
+
+        if (! Auth::user()?->is_member) {
+            abort(403, 'You need to be a member to access this page.');
+        }
+
+        return $next($request);
     }
 }

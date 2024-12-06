@@ -22,7 +22,6 @@ use Illuminate\Support\Collection;
  * @property bool $is_prepaid
  * @property bool $show_participants
  * @property bool $has_buy_limit
- * @property string $redirect_url
  * @property-read Event $event
  * @property-read Product $product
  * @property-read Collection|TicketPurchase[] $purchases
@@ -48,70 +47,54 @@ class Ticket extends Model
 
     public $timestamps = false;
 
-    /** @return BelongsTo */
-    public function product()
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Product::class);
+        return $this->belongsTo(Product::class);
     }
 
-    /** @return BelongsTo */
-    public function event()
+    public function event(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Event::class);
+        return $this->belongsTo(Event::class);
     }
 
-    /** @return HasMany */
-    public function purchases()
+    public function purchases(): HasMany
     {
-        return $this->hasMany(\App\Models\TicketPurchase::class);
+        return $this->hasMany(TicketPurchase::class);
     }
 
-    /** @return Collection */
-    public function getUsers()
+    public function getUsers(): Collection
     {
-        return User::whereHas('tickets', function ($query) {
+        return User::query()->whereHas('tickets', function ($query) {
             $query->where('ticket_id', $this->id);
         })->get();
     }
 
-    /** @return int */
-    public function totalAvailable()
+    public function totalAvailable(): int
     {
         return $this->sold() + $this->product->stock;
     }
 
-    /** @return int */
-    public function sold()
+    public function sold(): int
     {
         return $this->purchases->count();
     }
 
-    /**
-     * @return bool
-     */
-    public function canBeSoldTo(User $user)
+    public function canBeSoldTo(User $user): bool
     {
         return ($user->is_member || ! $this->members_only) && ! $this->buyLimitReached($user);
     }
 
-    /**
-     * @return bool
-     */
-    public function buyLimitReached(User $user)
+    public function buyLimitReached(User $user): bool
     {
         return $this->has_buy_limit && $this->buyLimitForUser($user) <= 0;
     }
 
-    /**
-     * @return int
-     */
-    public function buyLimitForUser(User $user)
+    public function buyLimitForUser(User $user): int|float
     {
         return $this->buy_limit - $this->purchases->where('user_id', $user->id)->count();
     }
 
-    /** @return bool */
-    public function isOnSale()
+    public function isOnSale(): bool
     {
         return date('U') > $this->available_from && date('U') < $this->available_to;
     }
@@ -121,8 +104,7 @@ class Ticket extends Model
         return $this->isOnSale() && $this->canBeSoldTo($user) && $this->product->stock > 0;
     }
 
-    /** @return float|int */
-    public function turnover()
+    public function turnover(): int|float
     {
         $total = 0;
         foreach ($this->purchases as $purchase) {

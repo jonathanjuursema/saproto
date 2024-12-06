@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\QrAuthRequest;
-use Auth;
+use Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Milon\Barcode\DNS2D;
 
@@ -18,28 +20,25 @@ class QrAuthController extends Controller
      */
     public function showCode($code)
     {
-        $qrAuthRequest = QrAuthRequest::where('qr_token', '=', $code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('qr_token', '=', $code)->first();
 
         if ($qrAuthRequest == null) {
             abort(404);
         }
 
-        return response((new DNS2D())->getBarcodeSVG(route('qr::dialog', $qrAuthRequest->qr_token), 'QRCODE'))->header('Content-Type', 'image/svg+xml');
+        return response((new DNS2D)->getBarcodeSVG(route('qr::dialog', $qrAuthRequest->qr_token), 'QRCODE'))->header('Content-Type', 'image/svg+xml');
     }
 
-    /**
-     * @return QrAuthRequest
-     */
-    public function generateRequest(Request $request)
+    public function generateRequest(Request $request): QrAuthRequest
     {
         if (! $request->has('description')) {
             abort(500, 'No description was provided.');
         }
 
-        $qrAuthRequest = new QrAuthRequest();
+        $qrAuthRequest = new QrAuthRequest;
         $qrAuthRequest->description = $request->description;
-        $qrAuthRequest->qr_token = str_random(8);
-        $qrAuthRequest->auth_token = md5(str_random(40));
+        $qrAuthRequest->qr_token = Str::random(8);
+        $qrAuthRequest->auth_token = md5(Str::random(40));
         $qrAuthRequest->save();
 
         return $qrAuthRequest;
@@ -51,7 +50,7 @@ class QrAuthController extends Controller
      */
     public function showDialog($code)
     {
-        $qrAuthRequest = QrAuthRequest::where('qr_token', '=', $code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('qr_token', '=', $code)->first();
 
         if (! $qrAuthRequest) {
             abort(404);
@@ -66,13 +65,13 @@ class QrAuthController extends Controller
      */
     public function approve($code)
     {
-        $qrAuthRequest = QrAuthRequest::where('qr_token', '=', $code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('qr_token', '=', $code)->first();
 
         if (! $qrAuthRequest) {
             abort(404);
         }
 
-        $qrAuthRequest->approved_at = \Carbon::now();
+        $qrAuthRequest->approved_at = Carbon::now();
         $qrAuthRequest->user_id = Auth::id();
 
         $qrAuthRequest->save();
@@ -86,13 +85,13 @@ class QrAuthController extends Controller
      */
     public function apiApprove($code)
     {
-        $qrAuthRequest = QrAuthRequest::where('qr_token', '=', $code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('qr_token', '=', $code)->first();
 
         if (! $qrAuthRequest) {
             abort(403);
         }
 
-        $qrAuthRequest->approved_at = \Carbon::now();
+        $qrAuthRequest->approved_at = Carbon::now();
         $qrAuthRequest->user_id = Auth::id();
 
         $qrAuthRequest->save();
@@ -106,7 +105,7 @@ class QrAuthController extends Controller
      */
     public function apiInfo($code)
     {
-        $qrAuthRequest = QrAuthRequest::where('qr_token', '=', $code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('qr_token', '=', $code)->first();
 
         if (! $qrAuthRequest) {
             abort(404);
@@ -115,12 +114,9 @@ class QrAuthController extends Controller
         return response()->json(['description' => $qrAuthRequest->description], 200);
     }
 
-    /**
-     * @return string
-     */
-    public function isApproved(Request $request)
+    public function isApproved(Request $request): string
     {
-        $qrAuthRequest = QrAuthRequest::where('auth_token', '=', $request->code)->first();
+        $qrAuthRequest = QrAuthRequest::query()->where('auth_token', '=', $request->code)->first();
 
         if (! $qrAuthRequest) {
             abort(404);

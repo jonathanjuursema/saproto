@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\HashMapItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Redirect;
-use Session;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Redirect;
 use SpotifyWebAPI\Session as SpotifySession;
 use SpotifyWebAPI\SpotifyWebAPI;
 
@@ -20,12 +20,12 @@ class SpotifyController extends Controller
     public function oauthTool(Request $request)
     {
         $session = new SpotifySession(
-            config('app-proto.spotify-clientkey'),
-            config('app-proto.spotify-secretkey'),
+            Config::string('app-proto.spotify-clientkey'),
+            Config::string('app-proto.spotify-secretkey'),
             route('spotify::oauth')
         );
 
-        $api = new SpotifyWebAPI();
+        $api = new SpotifyWebAPI;
 
         if (! $request->has('code')) {
             $options = [
@@ -37,43 +37,47 @@ class SpotifyController extends Controller
 
             return Redirect::to($session->getAuthorizeUrl($options));
         }
+
         $session->requestAccessToken($request->get('code'));
         $api->setAccessToken($session->getAccessToken());
         /** @phpstan-ignore-next-line */
         $spotify_user = $api->me()->id;
-        $right_user = config('app-proto.spotify-user');
+        $right_user = Config::string('app-proto.spotify-user');
         if ($spotify_user != $right_user) {
-            abort(404, "You authenticated as the wrong user. (Authenticated as $spotify_user but should authenticate as $right_user.)");
+            abort(404, "You authenticated as the wrong user. (Authenticated as {$spotify_user} but should authenticate as {$right_user}.)");
         }
+
         self::setSession($session);
         self::setApi($api);
-        Session::flash('flash_message', 'Successfully saved Spotify credentials.');
+        \Illuminate\Support\Facades\Session::flash('flash_message', 'Successfully saved Spotify credentials.');
 
         return Redirect::route('homepage');
     }
 
-    public static function setSession(SpotifySession $session)
+    public static function setSession(SpotifySession $session): void
     {
-        $dbSession = HashMapItem::where('key', 'spotify')->where('subkey', 'session')->first();
+        $dbSession = HashMapItem::query()->where('key', 'spotify')->where('subkey', 'session')->first();
         if ($dbSession == null) {
-            $dbSession = HashMapItem::create([
+            $dbSession = HashMapItem::query()->create([
                 'key' => 'spotify',
                 'subkey' => 'session',
             ]);
         }
+
         $dbSession->value = serialize($session);
         $dbSession->save();
     }
 
     public static function setApi(SpotifyWebAPI $api): void
     {
-        $dbApi = HashMapItem::where('key', 'spotify')->where('subkey', 'api')->first();
+        $dbApi = HashMapItem::query()->where('key', 'spotify')->where('subkey', 'api')->first();
         if ($dbApi == null) {
-            $dbApi = HashMapItem::create([
+            $dbApi = HashMapItem::query()->create([
                 'key' => 'spotify',
                 'subkey' => 'api',
             ]);
         }
+
         $dbApi->value = serialize($api);
         $dbApi->save();
     }
@@ -81,7 +85,7 @@ class SpotifyController extends Controller
     public static function getSession(): SpotifySession
     {
         return unserialize(
-            HashMapItem::where('key', 'spotify')
+            HashMapItem::query()->where('key', 'spotify')
                 ->where('subkey', 'session')
                 ->first()->value
         );
@@ -90,7 +94,7 @@ class SpotifyController extends Controller
     public static function getApi(): SpotifyWebAPI
     {
         return unserialize(
-            HashMapItem::where('key', 'spotify')
+            HashMapItem::query()->where('key', 'spotify')
                 ->where('subkey', 'api')
                 ->first()->value
         );

@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ($event == null ? route("event::add") : route("event::edit", ['id' => $event->id])) }}"
+      action="{{ ($event == null ? route("event::store") : route("event::update", ['id' => $event->id])) }}"
       enctype="multipart/form-data">
 
     {!! csrf_field() !!}
@@ -43,7 +43,8 @@
                                data-html="true"
                                title="Fill in the Google Maps name or coordinates to add a Google Maps link."></i>
                             <input type="text" class="form-control" id="maps_location" name="maps_location"
-                                   placeholder="52.239198, 6.857367" value="{{ old('location',$event->maps_location ?? '') }}">
+                                   placeholder="52.239198, 6.857367"
+                                   value="{{ old('location',$event->maps_location ?? '') }}">
                         </div>
 
                         <!-- Start -->
@@ -116,7 +117,8 @@
                                         Uncategorized
                                     </option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" @selected($event?->category_id == $category->id)>
+                                        <option
+                                            value="{{ $category->id }}" @selected($event?->category_id == $category->id)>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach

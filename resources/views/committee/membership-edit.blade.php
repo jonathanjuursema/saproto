@@ -14,7 +14,8 @@
 
         <div class="col-md-4 col-sm-8 col-xs-12">
 
-            <form class="form-horizontal" action="{{ route('committee::membership::edit', ["id" => $membership->id]) }}"
+            <form class="form-horizontal"
+                  action="{{ route('committee::membership::update', ["id" => $membership->id]) }}"
                   method="post">
 
                 {!! csrf_field() !!}

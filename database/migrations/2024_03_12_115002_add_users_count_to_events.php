@@ -24,7 +24,7 @@ return new class extends Migration
             $table->unsignedInteger('unique_users_count')->after('publication')->default(0);
         });
 
-        Event::chunk(25, function ($events) {
+        Event::query()->chunk(25, function ($events) {
             foreach ($events as $event) {
                 $event->updateUniqueUsersCount();
             }

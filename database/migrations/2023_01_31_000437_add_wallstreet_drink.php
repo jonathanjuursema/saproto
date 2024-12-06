@@ -8,10 +8,8 @@ class AddWallstreetDrink extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('wallstreet_drink', function (Blueprint $table) {
             $table->id();
@@ -41,10 +39,8 @@ class AddWallstreetDrink extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('wallstreet_drink');
         Schema::dropIfExists('wallstreet_drink_prices');

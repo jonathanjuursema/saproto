@@ -4,21 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\User;
-use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use PostcodeApi;
-use Redirect;
-use Session;
 
 class AddressController extends Controller
 {
     /**
      * @return View|RedirectResponse
      */
-    public function add(Request $request)
+    public function create(Request $request)
     {
         $user = Auth::user();
 
@@ -27,7 +26,7 @@ class AddressController extends Controller
         }
 
         if ($request->has('wizard')) {
-            Session::flash('wizard', true);
+            Session::flash('wizard');
         }
 
         return view('users.addresses.edit', ['user' => $user, 'action' => 'add']);
@@ -41,7 +40,7 @@ class AddressController extends Controller
         $user = Auth::user();
 
         // Establish new address
-        $address = new Address();
+        $address = new Address;
 
         return self::saveAddressData($request, $address, $user);
     }
@@ -97,16 +96,18 @@ class AddressController extends Controller
 
             return Redirect::back();
         }
+
         if ($user->is_member) {
             Session::flash('flash_message', "You are a member. You can't delete your address!");
 
             return Redirect::back();
         }
+
         $user->address->delete();
 
         Session::flash('flash_message', 'Your address has been deleted.');
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 
     /** @return RedirectResponse */
@@ -123,60 +124,26 @@ class AddressController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  Address  $address
-     * @param  User  $user
      * @return RedirectResponse
      */
-    public static function saveAddressData($request, $address, $user)
+    public static function saveAddressData(Request $request, Address $address, User $user)
     {
         $addressdata = $request->all();
         $addressdata['user_id'] = $user->id;
 
-        if ($request->has(['nl-lookup'])) {
-            try {
-                $fetched_address = PostcodeApi::create('ApiPostcode')->findByPostcodeAndHouseNumber($addressdata['zipcode-nl'], $addressdata['number-nl']);
-                $fetched_address_array = $fetched_address->toArray();
-                $address->fill([
-                    'street' => $fetched_address_array['street'],
-                    'number' => $fetched_address_array['house_no'],
-                    'zipcode' => $addressdata['zipcode-nl'],
-                    'city' => $fetched_address_array['town'],
-                    'country' => 'The Netherlands',
-                ]);
-
-                Session::flash('flash_message', sprintf(
-                    'The address has been saved as: %s %s, %s, %s (%s)',
-                    $address->street,
-                    $address->number,
-                    $address->zipcode,
-                    $address->city,
-                    $address->country
-                ));
-            } catch (Exception $e) {
-                Session::flash('flash_message', sprintf(
-                    'No address could be found for %s, %s.',
-                    $addressdata['zipcode-nl'],
-                    $addressdata['number-nl']
-                ));
-
-                return Redirect::back();
-            }
-        } else {
-            if (! $address->validate($addressdata)) {
-                return Redirect::route('user::address::edit')->withErrors($address->errors());
-            }
-            $address->fill($request->except(['zipcode-nl', 'number-nl']));
-            Session::flash('flash_message', 'Your address has been saved!');
+        if (! $address->validate($addressdata)) {
+            return Redirect::route('user::address::edit')->withErrors($address->errors());
         }
 
-        $address['user_id'] = $user->id;
+        $address->fill($addressdata);
+        Session::flash('flash_message', 'Your address has been saved!');
+
         $address->save();
 
         if (Session::get('wizard')) {
             return Redirect::route('becomeamember');
         }
 
-        return Redirect::route('user::dashboard');
+        return Redirect::route('user::dashboard::show');
     }
 }

@@ -8,10 +8,8 @@ class AddAttendeesToActivities extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('activities', function (Blueprint $table) {
             $table->integer('attendees')->after('hide_participants')->nullable();
@@ -20,10 +18,8 @@ class AddAttendeesToActivities extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('activities', function (Blueprint $table) {
             $table->dropColumn('attendees');

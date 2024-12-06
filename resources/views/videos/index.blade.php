@@ -10,7 +10,7 @@
 
         <div class="col-md-2">
 
-            <form method="post" action="{{ route('video::admin::add') }}">
+            <form method="post" action="{{ route('video::admin::create') }}">
 
                 {!! csrf_field(); !!}
 
@@ -84,7 +84,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('video::view', ['id' => $video->id]) }}">
+                                    <a href="{{ route('video::show', ['id' => $video->id]) }}">
                                         <i class="fas fa-play me-2"></i>
                                     </a>
                                     <a href="{{ route('video::admin::edit', ['id' => $video->id]) }}">

@@ -47,11 +47,23 @@ mv new_build live
 echo "Migrating database..."
 (cd live && php artisan migrate --force)
 
+echo "Clearing laravel config..."
+(cd live && php artisan 'config:clear')
+
+echo "Clearing laravel events..."
+(cd live && php artisan 'event:clear')
+
+echo "Clearing laravel routes..."
+(cd live && php artisan 'route:clear')
+
+echo "Clearing laravel views..."
+(cd live && php artisan 'view:clear')
+
 echo "Syncing permissions and roles..."
 (cd live && php artisan 'proto:syncroles')
 
-echo "Clearing laravel config..."
-(cd live && php artisan 'config:clear')
+echo "Caching laravel (optimize)..."
+(cd live && php artisan 'optimize')
 
 echo "Bringing up new live build..."
 (cd live && php artisan up)

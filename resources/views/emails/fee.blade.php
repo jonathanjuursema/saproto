@@ -12,7 +12,7 @@
 
     @if (count($charged_fees->regular) > 0)
         <p>
-            <strong>Creative Technology students paying the regular fee</strong>
+            <strong>Members paying the regular fee</strong>
         <ul>
             @foreach($charged_fees->regular as $user)
                 <li>{{ $user }}</li>

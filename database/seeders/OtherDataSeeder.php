@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\MembershipTypeEnum;
 use App\Models\AchievementOwnership;
 use App\Models\Activity;
 use App\Models\ActivityParticipation;
@@ -22,21 +23,20 @@ class OtherDataSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run($output)
+    public function run($output): void
     {
         $output->info('Seeding fake data');
 
         // Create users
         $n = 10;
-        $output->task("creating $n regular users", function () use ($n) {
+        $output->task("creating {$n} regular users", function () use ($n) {
             $users = User::factory()->count($n)->create();
             foreach ($users as $user) {
                 if (fake()->boolean(30)) {
                     Address::factory()->for($user)->create();
                 }
+
                 if (fake()->boolean(30)) {
                     Bank::factory()->for($user)->create();
                 }
@@ -45,7 +45,7 @@ class OtherDataSeeder extends Seeder
 
         // Create members
         $n = 90;
-        $output->task("creating $n members", function () use ($n) {
+        $output->task("creating {$n} members", function () use ($n) {
             Member::factory()
                 ->count($n - 5)
                 ->create();
@@ -53,20 +53,19 @@ class OtherDataSeeder extends Seeder
             Member::factory()
                 ->count(4)
                 ->state(new Sequence(
-                    ['is_lifelong' => 1],
-                    ['is_honorary' => 1],
-                    ['is_donor' => 1],
-                    ['is_pet' => 1],
+                    ['membership_type' => MembershipTypeEnum::LIFELONG],
+                    ['membership_type' => MembershipTypeEnum::HONORARY],
+                    ['membership_type' => MembershipTypeEnum::DONOR],
+                    ['membership_type' => MembershipTypeEnum::PET],
                 ))
                 ->state([
-                    'is_pending' => 0,
                     'deleted_at' => null,
                 ])
                 ->create();
         });
 
         // Get users with completed membership
-        $members = User::whereHas('member', fn ($members) => $members->where('is_pending', '==', false))->get();
+        $members = User::query()->whereHas('member', fn ($members) => $members->whereNot('membership_type', MembershipTypeEnum::PENDING))->get();
 
         // Create committee participations
         $committees = Committee::all();
@@ -104,7 +103,7 @@ class OtherDataSeeder extends Seeder
 
         // Create activity participations
         $output->task('creating activity participations', function () use ($members) {
-            $activities = Activity::has('event')->orderBy('id', 'desc')->take(25)->get();
+            $activities = Activity::query()->has('event')->orderBy('id', 'desc')->take(25)->get();
             foreach ($activities as $activity) {
                 $n = fake()->numberBetween(1, $members->count());
                 foreach ($members->random($n) as $member) {
@@ -118,15 +117,15 @@ class OtherDataSeeder extends Seeder
 
         // Create pages
         $n = 10;
-        $output->task("creating $n pages", fn () => Page::factory()->count($n)->create());
+        $output->task("creating {$n} pages", fn () => Page::factory()->count($n)->create());
 
         //create quotes and good ideas
         $n = 100;
-        $output->task("creating $n Good Ideas", fn () => Feedback::factory()->state(['feedback_category_id' => 1])->count($n)->create());
-        $output->task("creating $n quotes", fn () => Feedback::factory()->state(['feedback_category_id' => 2])->count($n)->create());
+        $output->task("creating {$n} Good Ideas", fn () => Feedback::factory()->state(['feedback_category_id' => 1])->count($n)->create());
+        $output->task("creating {$n} quotes", fn () => Feedback::factory()->state(['feedback_category_id' => 2])->count($n)->create());
 
         // Create newsitems and weekly newsitems
         $n = 40;
-        $output->task("creating $n newsitems", fn () => Newsitem::factory()->count($n)->create());
+        $output->task("creating {$n} newsitems", fn () => Newsitem::factory()->count($n)->create());
     }
 }

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 /**
@@ -16,20 +17,20 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         $gender = fake()->randomElement(['male', 'female']);
         $firstName = fake()->unique()->firstName($gender);
         $lastName = fake()->lastName();
-        $name = "$firstName $lastName";
+        $name = "{$firstName} {$lastName}";
         $callingName = explode(' ', $firstName)[0];
 
         return [
             'name' => $name,
             'calling_name' => $callingName,
-            'email' => strtolower(Str::transliterate("$callingName.$lastName@")).fake()->freeEmailDomain(),
-            'password' => bcrypt(str_random()),
-            'remember_token' => str_random(10),
+            'email' => strtolower(Str::transliterate("{$callingName}.{$lastName}@")).fake()->freeEmailDomain(),
+            'password' => bcrypt(Str::random()),
+            'remember_token' => Str::random(10),
             'birthdate' => fake()->dateTimeBetween('-40 years', '-16 years')->format('Y-m-d'),
             'phone' => fake()->e164PhoneNumber(),
             'diet' => fake()->sentence(),
@@ -43,7 +44,7 @@ class UserFactory extends Factory
             'show_omnomcom_total' => fake()->boolean(),
             'show_omnomcom_calories' => fake()->boolean(),
             'disable_omnomcom' => fake()->boolean(),
-            'theme' => fake()->randomElement(config('proto.themes')),
+            'theme' => fake()->randomElement(array_keys(Config::array('proto.themes'))),
             'did_study_create' => fake()->boolean(25),
             'did_study_itech' => fake()->boolean(25),
         ];

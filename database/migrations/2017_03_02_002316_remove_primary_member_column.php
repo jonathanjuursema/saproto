@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class RemovePrimaryMemberColumn extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('members', function ($table) {
             $table->dropColumn('is_associate');
@@ -18,10 +17,8 @@ class RemovePrimaryMemberColumn extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('members', function ($table) {
             $table->boolean('is_associate');

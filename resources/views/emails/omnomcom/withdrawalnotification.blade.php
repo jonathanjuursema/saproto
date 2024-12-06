@@ -14,14 +14,14 @@
     </p>
 
     <p>
-        Our creditor ID: {{ config('proto.sepa_info')->creditor_id }}<br>
+        Our creditor ID: {{ Config::string('proto.sepa_info.creditor_id') }}<br>
         Your authorization ID: {{ $user->bank->machtigingid }}<br>
-        Withdrawal reference: {{ $withdrawal->withdrawalId() }}
+        Withdrawal reference: {{ $withdrawal->withdrawalId }}
     </p>
 
     <p>
         If you would like to know which purchases, activities et cetera are included in this withdrawal, please click <a
-                href="{{ route('omnomcom::mywithdrawal', ['id' => $withdrawal->id]) }}">here</a>.
+            href="{{ route('omnomcom::mywithdrawal', ['id' => $withdrawal->id]) }}">here</a>.
     </p>
 
     <p>
@@ -31,7 +31,7 @@
 
     <p>
         Kind regards,<br>
-        {{ config('proto.treasurer') }}<br>
+        {{ Config::string('proto.treasurer') }}<br>
         <i>On behalf of the board of Study Association Proto</i>
     </p>
 

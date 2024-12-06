@@ -8,10 +8,8 @@ class CreateDinnerOrderlineTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('dinnerform_orderline', function (Blueprint $table) {
             $table->id();
@@ -33,10 +31,8 @@ class CreateDinnerOrderlineTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('dinnerform_orderline');
         Schema::table('dinnerforms', function (Blueprint $table) {

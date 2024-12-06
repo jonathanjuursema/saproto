@@ -5,7 +5,7 @@
         @if ($announcement->show_as_popup)
 
             <?php
-                $announcement->dismissForUser(Auth::user());
+                $announcement->dismissForUser(\Illuminate\Support\Facades\Auth::user());
             ?>
 
             <div class="modal fade" id="{{ $announcement->modal_id }}" tabindex="-1" role="dialog">

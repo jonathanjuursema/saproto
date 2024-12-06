@@ -136,36 +136,46 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Public Timetable Calendar
+    | Google Calendar
     |--------------------------------------------------------------------------
     |
-    | The Google calendar ID for the imported timetable.
+    | The Google calendar ID's for the imported CreaTe timetable, SmartXp calendar and ProtOpener calendar.
     |
     */
 
-    'google-timetable-id' => '2mmp2tp6atcdjhnptr4k58n9qhq4ht88@import.calendar.google.com',
+    'google-calendar' => [
+        'timetable-id' => env('TIMETABLE_GOOGLE_CALENDAR_ID'),
+        'smartxp-id' => env('SMARTXP_GOOGLE_CALENDAR_ID'),
+        'protopeners-id' => env('PROTOPENERS_GOOGLE_CALENDAR_ID'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | SmartXp Timetable Calendar
+    | Google Default Credentials
     |--------------------------------------------------------------------------
     |
-    | The Google calendar ID for the imported timetable.
+    | The location of the Google Workspace service account application credentials.
     |
     */
 
-    'smartxp-google-timetable-id' => 'jf5coo8stv8ju2jiukg8t0alakuu3ifo@import.calendar.google.com',
+    'google_application_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
 
     /*
-    |--------------------------------------------------------------------------
-    | Protopeners Calendar
-    |--------------------------------------------------------------------------
-    |
-    | The Google calendar ID for the ProtOpeners.
-    |
-    */
+      |--------------------------------------------------------------------------
+      | Timetable translations
+      |--------------------------------------------------------------------------
+      |
+      | The translations for the different types of events in the timetable from timeedit
+      |
+      */
 
-    'protopeners-google-timetable-id' => '0u65jbm7rgtqq6m7aoni69v4vk@group.calendar.google.com',
+    'timetable-translations' => [
+        'Zelfstudie geen begeleiding' => 'Self-study',
+        'Zelfstudie met begeleiding' => 'Self-study with guidance',
+        'Presentatie' => 'Presentation',
+        'Examen' => 'Exam',
+        'Hoorcollege' => 'Lecture',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -176,7 +186,7 @@ return [
     |
     */
 
-    'internal' => 'Joris Agtereek',
+    'internal' => 'Jona Patig',
 
     /*
     |--------------------------------------------------------------------------
@@ -187,7 +197,7 @@ return [
     |
     */
 
-    'treasurer' => 'Emma Burema',
+    'treasurer' => 'Badr Boubric',
 
     /*
     |--------------------------------------------------------------------------
@@ -198,7 +208,7 @@ return [
     |
     */
 
-    'secretary' => 'Ilse de Haan',
+    'secretary' => 'Bart van Dorst',
 
     /*
     |--------------------------------------------------------------------------
@@ -209,7 +219,7 @@ return [
     |
     */
 
-    'boardnumber' => '13.1',
+    'boardnumber' => '14.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -296,7 +306,7 @@ return [
     |
     */
 
-    'sepa_info' => (object) [
+    'sepa_info' => [
         'iban' => env('SEPA_IBAN'),
         'bic' => env('SEPA_BIC'),
         'creditor_id' => env('SEPA_CI'),
@@ -326,7 +336,4 @@ return [
         3 => 'broto-inverse',
         4 => 'inverse',
     ],
-
-    // Analytics URL
-    'analytics_url' => env('ANALYTICS_URL', ''),
 ];

@@ -6,7 +6,7 @@
 
 @section('login-body')
 
-    <form method="POST" action="{{ route("login::resetpass::submit") }}">
+    <form method="POST" action="{{ route("login::password::reset::submit") }}">
 
         {!! csrf_field() !!}
 

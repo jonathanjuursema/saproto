@@ -1,6 +1,6 @@
 <div class="row justify-content-center">
 
-    <form method="post" action="{{ route('dinnerform::orderline::add', ['id' => $dinnerform->id]) }}">
+    <form method="post" action="{{ route('dinnerform::orderline::store', ['id' => $dinnerform->id]) }}">
 
         {!! csrf_field() !!}
 
@@ -9,7 +9,8 @@
             <div class="card-header bg-dark text-white">
                 Add an order with us at {{$dinnerform->restaurant}}
                 @if(Auth::user()->can('tipcie'))
-                    <a href="{{ route('dinnerform::edit', ['id' => $dinnerform->id]) }}" class="btn btn-warning badge float-end">
+                    <a href="{{ route('dinnerform::edit', ['id' => $dinnerform->id]) }}"
+                       class="btn btn-warning badge float-end">
                         <i class="fas fa-edit me-1"></i> Edit dinnerform
                     </a>
                 @endif
@@ -27,7 +28,8 @@
             <div class="card-body">
                 @if($dinnerform->regular_discount_percentage)
                     <div class="alert alert-primary text-center">
-                        This dinnerform has a discount of <strong>{{ $dinnerform->regular_discount_percentage }}%</strong> 🎉
+                        This dinnerform has a discount of <strong>{{ $dinnerform->regular_discount_percentage }}
+                            %</strong> 🎉
                     </div>
                 @endif
                 <div class="form-group mb-3">

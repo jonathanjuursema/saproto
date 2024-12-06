@@ -2,19 +2,19 @@
 
     @foreach($categories as $category)
 
-        <?php $products_in_category = []; ?>
+            <?php $products_in_category = []; ?>
 
         <div class="category-view {{ ($category == $categories[0] ? '' : 'inactive') }}"
              data-id="{{ $category->category->id }}">
 
-            <?php /** @var $product \App\Models\Product */ ?>
+                <?php /** @var $product \App\Models\Product */ ?>
             @foreach($category->products as $product)
                 @if($product->isVisible())
-                    <?php
+                        <?php
                         if ($product->stock > 0) {
                             $products_in_category[] = $product->id;
                         }
-                    ?>
+                        ?>
 
                     <div class="product col-3 {{ ($product->stock <= 0 ? 'nostock' : '') }}"
                          data-id="{{ $product->id }}" data-stock="{{ $product->stock }}"
@@ -74,14 +74,14 @@
         </div>
     @endforeach
 
-<!-- This is for the minor member tool //-->
+    <!-- This is for the minor member tool //-->
     @if(count($minors) > 0)
         <div class="category-view inactive" data-id="static-minors">
             @foreach($minors as $user)
                 <div class="product col-3">
                     <div class="product-inner">
                         <div class="product-image user-image"
-                             style="background-image: url('{!! $user->generatePhotoPath(200, null) !!}');">
+                             style="background-image: url('{!! $user->generatePhotoPath(200, 200) !!}');">
                         </div>
                         <div class="product-details">
                             <div class="product-name">

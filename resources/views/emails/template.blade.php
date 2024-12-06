@@ -1,16 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html lang="en" >
+<html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <style> img { width: 100% } </style>
-    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style> img {
+            width: 100%
+        } </style>
+    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}" />
     <link rel="search" type="application/opensearchdescription+xml" title="S.A. Proto"
-          href="{{ route('search::opensearch') }}"/>
+          href="{{ route('search::opensearch') }}" />
 
-    <title>@if(config('app.env') != 'production')
+    <title>@if(!App::environment('production'))
             [{{ strtoupper(config('app.env')) }}]
         @endif S.A. Proto
         | @yield('page-title','Default Page Title')</title>
@@ -20,11 +22,12 @@
     @stack('stylesheet')
 </head>
 
-<body class="bg-body template-{{ $viewName }}" style="margin: 0; padding: 0; font-family: Arial, sans-serif;" >
+<body class="bg-body template-{{ $viewName }}" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
 
 <br><br><br>
 
-<table class="table table-light table-borderless" style="width: 500px ; margin: 0 auto; padding: 0; border-top: 5px solid #83b716;" >
+<table class="table table-light table-borderless"
+       style="width: 500px ; margin: 0 auto; padding: 0; border-top: 5px solid #83b716;">
     <tr style="padding: 0; margin: 0;">
         <td style="padding: 20px 40px; text-align: justify; width:500px">
             @yield('body')
@@ -67,9 +70,11 @@
 <div style="text-align: center;">
     <a href="{{route('homepage')}}">
         @if(Auth::check() && Auth::user()->theme)
-            <img src="{{ asset('images/logo/'.config('proto.logoThemes')[Auth::user()->theme].'.png') }}" style="width: 30%; max-width: 200px;" alt="ProtoLogo"/>
+            <img
+                src="{{ asset('images/logo/'.Config::array('proto.logoThemes')[Auth::user()->theme].'.png') }}"
+                style="width: 30%; max-width: 200px;" alt="ProtoLogo" />
         @else
-            <img src="{{ asset('images/logo/regular.png') }}" style="width: 30%; max-width: 200px;" alt="ProtoLogo"/>
+            <img src="{{ asset('images/logo/regular.png') }}" style="width: 30%; max-width: 200px;" alt="ProtoLogo" />
         @endif
     </a>
 </div>

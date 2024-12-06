@@ -5,6 +5,7 @@ namespace App\Handlers\Events;
 use App\Models\Committee;
 use App\Models\User;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Config;
 
 class AuthLoginEventHandler
 {
@@ -22,9 +23,8 @@ class AuthLoginEventHandler
      * Handle the event.
      *
      * @param  Login  $event
-     * @return void
      */
-    public function handle($event)
+    public function handle($event): void
     {
         /** @var User $user */
         $user = $event->user;
@@ -32,23 +32,21 @@ class AuthLoginEventHandler
 
         // We will grant the user all roles to which they are entitled to!
         $committees = [
-            ['committee' => Committee::where('slug', config('proto.rootcommittee'))->first(), 'role' => 'protube', 'nda' => true],
-            ['committee' => Committee::find(config('proto.committee')['board']), 'role' => 'board', 'nda' => true],
-            ['committee' => Committee::find(config('proto.committee')['omnomcom']), 'role' => 'omnomcom', 'nda' => true],
-            ['committee' => Committee::find(config('proto.committee')['tipcie']), 'role' => 'tipcie', 'nda' => true],
-            ['committee' => Committee::find(config('proto.committee')['drafters']), 'role' => 'drafters', 'nda' => false],
-            ['committee' => Committee::find(config('proto.committee')['protography']), 'role' => 'protography', 'nda' => false],
+            ['committee' => Committee::query()->where('slug', Config::string('proto.rootcommittee'))->first(), 'role' => 'protube', 'nda' => true],
+            ['committee' => Committee::query()->find(Config::integer('proto.committee.board')), 'role' => 'board', 'nda' => true],
+            ['committee' => Committee::query()->find(Config::integer('proto.committee.omnomcom')), 'role' => 'omnomcom', 'nda' => true],
+            ['committee' => Committee::query()->find(Config::integer('proto.committee.tipcie')), 'role' => 'tipcie', 'nda' => true],
+            ['committee' => Committee::query()->find(Config::integer('proto.committee.drafters')), 'role' => 'drafters', 'nda' => false],
+            ['committee' => Committee::query()->find(Config::integer('proto.committee.protography')), 'role' => 'protography', 'nda' => false],
         ];
 
         foreach ($committees as $committee) {
-            if ($user->isInCommittee($committee['committee']) && (! $committee['nda'] or $user->signed_nda)) {
+            if ($user->isInCommittee($committee['committee']) && (! $committee['nda'] || $user->signed_nda)) {
                 if (! $user->hasRole($committee['role'])) {
                     $user->assignRole($committee['role']);
                 }
-            } else {
-                if ($user->hasRole($committee['role'])) {
-                    $user->removeRole($committee['role']);
-                }
+            } elseif ($user->hasRole($committee['role'])) {
+                $user->removeRole($committee['role']);
             }
         }
     }

@@ -11,7 +11,7 @@
         <div class="col-md-4">
 
             <form method="post"
-                  action="{{ ($ticket == null ? route("tickets::add") : route("tickets::edit", ['id' => $ticket->id])) }}"
+                  action="{{ ($ticket == null ? route("tickets::store") : route("tickets::update", ['id' => $ticket->id])) }}"
                   enctype="multipart/form-data">
 
                 <div class="card mb-3">
@@ -89,7 +89,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("tickets::list") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("tickets::index") }}" class="btn btn-default">Cancel</a>
 
                     </div>
 
@@ -107,7 +107,7 @@
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         document.querySelectorAll('.buy_limit_checkbox').forEach((element) => {
             element.addEventListener('click', () => {
-                document.getElementById("buy_limit__collapse").classList.toggle("show");
+                document.getElementById('buy_limit__collapse').classList.toggle('show');
             });
         });
 

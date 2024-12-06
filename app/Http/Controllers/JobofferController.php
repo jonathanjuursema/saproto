@@ -7,16 +7,16 @@ use App\Models\Joboffer;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class JobofferController extends Controller
 {
     /** @return View */
     public function index()
     {
-        $companies = Company::has('joboffers')->get();
+        $companies = Company::query()->has('joboffers')->get();
 
         return view('companies.joboffers.list', ['companies' => $companies]);
     }
@@ -58,7 +58,7 @@ class JobofferController extends Controller
             return Redirect::back();
         }
 
-        $joboffer = Joboffer::create($request->all());
+        $joboffer = Joboffer::query()->create($request->all());
         $joboffer->save();
 
         return Redirect::route('joboffers::admin');
@@ -70,7 +70,7 @@ class JobofferController extends Controller
      */
     public function show($id)
     {
-        $joboffer = Joboffer::findOrFail($id);
+        $joboffer = Joboffer::query()->findOrFail($id);
 
         return view('companies.joboffers.show', ['joboffer' => $joboffer]);
     }
@@ -81,7 +81,7 @@ class JobofferController extends Controller
      */
     public function edit($id)
     {
-        $joboffer = Joboffer::findOrFail($id);
+        $joboffer = Joboffer::query()->findOrFail($id);
         $companies = Company::all();
 
         return view('companies.joboffers.edit', ['joboffer' => $joboffer, 'companies' => $companies]);
@@ -94,7 +94,7 @@ class JobofferController extends Controller
     public function update(Request $request, $id)
     {
         /** @var Joboffer $joboffer */
-        $joboffer = Joboffer::findOrFail($id);
+        $joboffer = Joboffer::query()->findOrFail($id);
         $joboffer->title = $request->title;
         $joboffer->description = $request->description;
         $joboffer->redirect_url = $request->redirect_url;
@@ -113,7 +113,7 @@ class JobofferController extends Controller
      */
     public function destroy($id)
     {
-        $joboffer = Joboffer::findOrFail($id);
+        $joboffer = Joboffer::query()->findOrFail($id);
         $joboffer->delete();
 
         Session::flash('flash_message', 'The job offer has been deleted.');

@@ -27,7 +27,7 @@
                                 Orderlines of {{ $date }}
                             @endif
 
-                            <br/>
+                            <br />
 
                             <i>A day starts at 6am</i>
                         </p>
@@ -57,20 +57,21 @@
 
             <div class="card mb-3">
 
-                @if(count($orders) > 0)
+                @if(count($products) > 0)
                     <table class="table table-borderless table-hover">
                         <tbody>
-                        @foreach($orders as $order)
+                        @php /**@var \App\Models\Product $product **/ @endphp
+                        @foreach($products as $product)
                             <tr>
-                                <td>{{ $order->name }}</td>
-                                <td>{{ $order->amount }}</td>
-                                <td>&euro; {{ number_format($order->totalPrice, 2) }}</td>
+                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->orderlines_sum_units }}</td>
+                                <td>&euro; {{ number_format($product->orderlines_sum_total_price, 2) }}</td>
                             </tr>
                         @endforeach
                         <tr>
                             <td></td>
-                            <td><strong>{{ $dailyAmount }}</strong></td>
-                            <td><strong>&euro; {{ number_format($dailyTotal, 2) }}</strong></td>
+                            <td><strong>{{ $totalAmount }}</strong></td>
+                            <td><strong>&euro; {{ number_format($totalPrice, 2) }}</strong></td>
                         </tr>
                         </tbody>
                     </table>
@@ -94,10 +95,10 @@
                 @if(count($pinOrders) > 0)
                     <table class="table table-borderless table-hover">
                         <tbody>
-                        @foreach($pinOrders as $time => $amount)
+                        @foreach($pinOrders as $pinOrder)
                             <tr>
-                                <td>{{ $time }}</td>
-                                <td>&euro; {{ number_format($amount, 2) }}</td>
+                                <td>{{ $pinOrder->created_at }}</td>
+                                <td>&euro; {{ number_format($pinOrder->total_price, 2) }}</td>
                             </tr>
                         @endforeach
                         </tbody>

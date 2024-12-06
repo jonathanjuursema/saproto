@@ -7,7 +7,7 @@
 @section('container')
 
     <form method="post"
-          action="{{ ($account == null ? route("omnomcom::accounts::add") : route("omnomcom::accounts::edit", ['id' => $account->id])) }}"
+          action="{{ ($account == null ? route("omnomcom::accounts::store") : route("omnomcom::accounts::update", ['id' => $account->id])) }}"
           enctype="multipart/form-data">
 
         {!! csrf_field() !!}
@@ -40,7 +40,7 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-success float-end">Submit</button>
-                        <a href="{{ route("omnomcom::accounts::list") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("omnomcom::accounts::index") }}" class="btn btn-default">Cancel</a>
                     </div>
 
                 </div>

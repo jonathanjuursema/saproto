@@ -10,29 +10,34 @@
 
         <div class="col-md-3">
 
-            <form method="get" action="{{ route('user::admin::list') }}">
+            <form method="get" action="{{ route('user::admin::index') }}">
                 <div class="card mb-4">
                     <div class="card-header bg-dark text-white">Search in users</div>
                     <div class="card-body">
                         <div class="input-group mb-2">
-                            <input type="text" class="form-control" placeholder="Search term" name="query" value="{{ $query }}">
+                            <input type="text" class="form-control" placeholder="Search term" name="query"
+                                   value="{{ $query }}">
                         </div>
                         <b>Filter users</b>
                         <div class="input-group mb-2">
                             <div class="form-check me-2">
-                                <input class="form-check-input" type="radio" name="filter" id="users" value="users" @if($filter == 'users') checked @endif>
+                                <input class="form-check-input" type="radio" name="filter" id="users" value="users"
+                                       @if($filter == 'users') checked @endif>
                                 <label class="form-check-label" for="users"> Users </label>
                             </div>
                             <div class="form-check me-2">
-                                <input class="form-check-input" type="radio" name="filter" id="members" value="members" @if($filter == 'members') checked @endif>
+                                <input class="form-check-input" type="radio" name="filter" id="members" value="members"
+                                       @if($filter == 'members') checked @endif>
                                 <label class="form-check-label" for="members"> Members </label>
                             </div>
                             <div class="form-check me-2">
-                                <input class="form-check-input" type="radio" name="filter" id="pending" value="pending" @if($filter == 'pending') checked @endif>
+                                <input class="form-check-input" type="radio" name="filter" id="pending" value="pending"
+                                       @if($filter == 'pending') checked @endif>
                                 <label class="form-check-label" for="pending"> Pending </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" id="all" name="filter" value="" @if($filter == null) checked @endif>
+                                <input class="form-check-input" type="radio" id="all" name="filter" value=""
+                                       @if($filter == null) checked @endif>
                                 <label class="form-check-label" for="all"> All </label>
                             </div>
                         </div>
@@ -70,34 +75,44 @@
                         </thead>
 
                         <tbody>
+                        @php
+                            /** @var \App\Models\User[] $users */
+                        @endphp
                         @foreach($users as $user)
                             <tr class="{{ $user->deleted_at ? 'opacity-50' : '' }}">
                                 <td class="controls" class="ps-3">
                                     @if(!$user->deleted_at)
                                         <a href="{{ route('user::admin::details', ['id'=>$user->id]) }}"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title="Go to user admin" class="text-decoration-none">
+                                           data-bs-toggle="tooltip" data-bs-placement="top" title="Go to user admin"
+                                           class="text-decoration-none">
                                             <i class="fas fa-info-circle fa-fw me-1 text-info" aria-hidden="true"></i>
                                         </a>
                                         @if($user->is_member)
                                             <a href="{{ route('user::profile', ['id'=>$user->getPublicId()]) }}"
-                                               data-bs-toggle="tooltip" data-bs-placement="top" title="Go to public profile" class="text-decoration-none">
-                                                <i class="fas fa-user-circle fa-fw me-1 text-primary" aria-hidden="true"></i>
+                                               data-bs-toggle="tooltip" data-bs-placement="top"
+                                               title="Go to public profile" class="text-decoration-none">
+                                                <i class="fas fa-user-circle fa-fw me-1 text-primary"
+                                                   aria-hidden="true"></i>
                                             </a>
                                         @else
                                             <i class="fas fa-user-circle fa-fw me-1 text-muted" aria-hidden="true"></i>
                                         @endif
                                         <a href="{{ route('user::member::impersonate', ['id'=>$user->id]) }}"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title="Impersonate" class="text-decoration-none">
-                                            <i class="fas fa-sign-in-alt fa-fw me-1 text-warning" aria-hidden="true"></i>
+                                           data-bs-toggle="tooltip" data-bs-placement="top" title="Impersonate"
+                                           class="text-decoration-none">
+                                            <i class="fas fa-sign-in-alt fa-fw me-1 text-warning"
+                                               aria-hidden="true"></i>
                                         </a>
                                         @if ($user->isTempadmin())
                                             <a href="{{ route('tempadmin::end', ['id'=>$user->id]) }}"
-                                               data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke temp admin" class="text-decoration-none">
+                                               data-bs-toggle="tooltip" data-bs-placement="top"
+                                               title="Revoke temp admin" class="text-decoration-none">
                                                 <i class="fas fa-user-lock fa-fw text-dark" aria-hidden="true"></i>
                                             </a>
                                         @else
-                                            <a  href="{{ route('tempadmin::make', ['id'=>$user->id]) }}"
-                                               data-bs-toggle="tooltip" data-bs-placement="top" title="Grant temp admin till midnight" class="text-decoration-none">
+                                            <a href="{{ route('tempadmins.create', ['id'=>$user->id]) }}"
+                                               data-bs-toggle="tooltip" data-bs-placement="top"
+                                               title="Grant temp admin till midnight" class="text-decoration-none">
                                                 <i class="fas fa-user-clock fa-fw text-dark" aria-hidden="true"></i>
                                             </a>
                                         @endif
@@ -110,7 +125,7 @@
                                     @if($user->deleted_at)
                                         Deleted
                                     @elseif($user->member)
-                                        @if($user->member->is_pending)
+                                        @if($user->member->membership_type === \App\Enums\MembershipTypeEnum::PENDING)
                                             <strong class="text-warning">Pending</strong>
                                         @else
                                             <strong>Member</strong>

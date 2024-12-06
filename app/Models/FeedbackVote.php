@@ -40,11 +40,11 @@ class FeedbackVote extends Model
 
     public function feedback(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Feedback::class);
+        return $this->belongsTo(Feedback::class);
     }
 
     public function user(): HasOne
     {
-        return $this->hasOne(\App\Models\User::class);
+        return $this->hasOne(User::class);
     }
 }

@@ -50,7 +50,7 @@ class MenuItem extends Model
     /** @return BelongsTo */
     public function page()
     {
-        return $this->belongsTo(\App\Models\Page::class, 'page_id', 'id');
+        return $this->belongsTo(Page::class, 'page_id', 'id');
     }
 
     /** @return HasMany */
@@ -62,10 +62,10 @@ class MenuItem extends Model
     /** @return string|null */
     public function getUrl()
     {
-        if (substr($this->url, 0, 8) == '(route) ') {
+        if (str_starts_with($this->url, '(route) ')) {
             try {
                 return route(substr($this->url, 8));
-            } catch (Exception $e) {
+            } catch (Exception) {
                 return '#';
             }
         } else {
@@ -73,18 +73,16 @@ class MenuItem extends Model
         }
     }
 
-    /** @return bool */
-    public function isFirst()
+    public function isFirst(): bool
     {
-        $lowest = self::where('parent', '=', $this->parent)->orderBy('order')->first();
+        $lowest = self::query()->where('parent', '=', $this->parent)->orderBy('order')->first();
 
         return $this->id == $lowest->id;
     }
 
-    /** @return bool */
-    public function isLast()
+    public function isLast(): bool
     {
-        $highest = self::where('parent', '=', $this->parent)->orderBy('order', 'desc')->first();
+        $highest = self::query()->where('parent', '=', $this->parent)->orderBy('order', 'desc')->first();
 
         return $this->id == $highest->id;
     }

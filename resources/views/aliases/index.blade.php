@@ -17,69 +17,72 @@
                 </div>
 
                 <div class="table-responsive">
-                <table class="table table-hover">
+                    <table class="table table-hover">
 
-                    <thead>
+                        <thead>
 
-                    <tr class="bg-dark text-white">
+                        <tr class="bg-dark text-white">
 
-                        <td class="text-end">Alias</td>
-                        <td>Destination</td>
-
-                    </tr>
-
-                    </thead>
-
-                    @foreach($aliases as $alias => $destinations)
-
-                        <tr>
-
-                            <td class="text-end">
-
-                                <strong>{{ $alias }}</strong> @ {{ config('proto.emaildomain') }}
-
-                                <a href="{{ route('alias::delete', ['id_or_alias' => $alias]) }}" class="ms-2">
-                                    <i class="fas fa-trash text-danger"></i>
-                                </a>
-
-                            </td>
-                            <td>
-
-                                @foreach($destinations as $destination)
-
-                                    <a href="{{ route('alias::delete', ['id_or_alias' => $destination->id]) }}" class="me-2">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </a>
-
-                                    @if($destination->destination)
-                                        {{ $destination->destination }}
-                                    @elseif($destination->user)
-                                        @if($destination->user->isMember)
-                                            <a href="{{ route('user::profile', ['id' => $destination->user->getPublicId()]) }}">
-                                                @endif
-                                                @if($destination->user->trashed())
-                                                    <span class="text-decoration-line-through">{{ $destination->user->name }}</span>
-                                                @else
-                                                    {{ $destination->user->name }}
-                                                @endif
-                                                @if($destination->user->isMember)
-                                            </a>
-                                        @endif
-                                    @else
-                                        <i>deleted user</i>
-                                    @endif
-
-                                    <br>
-
-                                @endforeach
-
-                            </td>
+                            <td class="text-end">Alias</td>
+                            <td>Destination</td>
 
                         </tr>
 
-                    @endforeach
+                        </thead>
 
-                </table>
+                        @foreach($aliases as $alias => $destinations)
+
+                            <tr>
+
+                                <td class="text-end">
+
+                                    <strong>{{ $alias }}</strong>
+                                    @ {{ Config::string('proto.emaildomain') }}
+
+                                    <a href="{{ route('alias::delete', ['id_or_alias' => $alias]) }}" class="ms-2">
+                                        <i class="fas fa-trash text-danger"></i>
+                                    </a>
+
+                                </td>
+                                <td>
+
+                                    @foreach($destinations as $destination)
+
+                                        <a href="{{ route('alias::delete', ['id_or_alias' => $destination->id]) }}"
+                                           class="me-2">
+                                            <i class="fas fa-trash text-danger"></i>
+                                        </a>
+
+                                        @if($destination->destination)
+                                            {{ $destination->destination }}
+                                        @elseif($destination->user)
+                                            @if($destination->user->isMember)
+                                                <a href="{{ route('user::profile', ['id' => $destination->user->getPublicId()]) }}">
+                                                    @endif
+                                                    @if($destination->user->trashed())
+                                                        <span
+                                                            class="text-decoration-line-through">{{ $destination->user->name }}</span>
+                                                    @else
+                                                        {{ $destination->user->name }}
+                                                    @endif
+                                                    @if($destination->user->isMember)
+                                                </a>
+                                            @endif
+                                        @else
+                                            <i>deleted user</i>
+                                        @endif
+
+                                        <br>
+
+                                    @endforeach
+
+                                </td>
+
+                            </tr>
+
+                        @endforeach
+
+                    </table>
                 </div>
 
             </div>
@@ -97,7 +100,8 @@
                 <div class="card-body">
 
                     <p>
-                        <a href="{{ route('alias::add') }}" class="form-control btn btn-success">Create a new alias.</a>
+                        <a href="{{ route('alias::create') }}" class="form-control btn btn-success">Create a new
+                            alias.</a>
                     </p>
 
                     <p class="text-center">

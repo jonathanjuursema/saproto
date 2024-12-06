@@ -8,10 +8,8 @@ class AddFeaturedToLeaderboardsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('leaderboards', function (Blueprint $table) {
             $table->boolean('featured')->after('name');
@@ -20,10 +18,8 @@ class AddFeaturedToLeaderboardsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('leaderboards', function (Blueprint $table) {
             $table->dropColumn('featured');

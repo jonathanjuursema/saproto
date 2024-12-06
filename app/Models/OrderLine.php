@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Config;
 
 /**
  * App\Models\OrderLine.
@@ -65,44 +66,59 @@ class OrderLine extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function user()
+    protected function casts(): array
     {
-        return $this->belongsTo(\App\Models\User::class)->withTrashed();
+        return [
+            'payed_with_loss' => 'boolean',
+        ];
     }
 
-    /** @return BelongsTo */
-    public function product()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Product::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
-    /** @return BelongsTo */
-    public function cashier()
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class)->withTrashed();
+        return $this->belongsTo(Product::class);
     }
 
-    /** @return BelongsTo */
-    public function withdrawal()
+    public function cashier(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Withdrawal::class, 'payed_with_withdrawal');
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
-    /** @return BelongsTo */
-    public function molliePayment()
+    public function withdrawal(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\MollieTransaction::class, 'payed_with_mollie');
+        return $this->belongsTo(Withdrawal::class, 'payed_with_withdrawal');
     }
 
-    /** @return HasOne */
-    public function ticketPurchase()
+    public function molliePayment(): BelongsTo
     {
-        return $this->hasOne(\App\Models\TicketPurchase::class, 'orderline_id');
+        return $this->belongsTo(MollieTransaction::class, 'payed_with_mollie');
     }
 
-    /** @return bool */
-    public function isPayed()
+    public function ticketPurchase(): HasOne
+    {
+        return $this->hasOne(TicketPurchase::class, 'orderline_id');
+    }
+
+    public function scopeUnpayed(Builder $query): Builder
+    {
+        return $query->whereNull('payed_with_cash')
+            ->whereNull('payed_with_bank_card')
+            ->whereNull('payed_with_withdrawal')
+            ->where('payed_with_loss', false)
+            ->where(function ($query) {
+                $query->whereDoesntHave('molliePayment')
+                    ->orWhereHas('molliePayment', static function ($query) {
+                        $query->whereNotIn('status', Config::array('omnomcom.mollie.paid_statuses'));
+                    });
+            })
+            ->where('total_price', '!=', 0);
+    }
+
+    public function isPayed(): bool
     {
         $mollie_payment = false;
         if ($this->payed_with_mollie !== null) {
@@ -118,18 +134,17 @@ class OrderLine extends Model
             $this->payed_with_bank_card !== null;
     }
 
-    /** @return bool */
-    public function canBeDeleted()
+    public function canBeDeleted(): bool
     {
         return $this->total_price == 0 || ! $this->isPayed();
     }
 
-    /** @return string */
-    public function generateHistoryStatus()
+    public function generateHistoryStatus(): string
     {
         if ($this->payed_with_loss) {
             return 'Loss';
         }
+
         if ($this->payed_with_withdrawal !== null) {
             return "Withdrawal <a href='".
                 route('omnomcom::mywithdrawal', ['id' => $this->payed_with_withdrawal]).
@@ -137,43 +152,44 @@ class OrderLine extends Model
                 $this->payed_with_withdrawal.
                 '</a>';
         }
+
         if ($this->payed_with_cash !== null) {
             return 'Cash';
         }
+
         if ($this->payed_with_bank_card !== null) {
             return 'Bank Card';
         }
-        if ($this->payed_with_mollie !== null) {
-            switch ($this->molliePayment->translatedStatus()) {
-                case 'paid':
-                    return '<i class="fas fa-check ml-2 text-success"></i>'." - <a href='".
-                        route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
-                        "'>#".
-                        $this->payed_with_mollie.
-                        '</a>';
-                case 'failed':
-                    return '<i class="fas fa-times ml-2 text-danger"></i>'." - <a href='".
-                        route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
-                        "'>#".
-                        $this->payed_with_mollie.
-                        '</a>';
-                case 'open':
-                    return '<i class="fas fa-spinner ml-2 text-normal"></i>'." - <a href='".
-                        route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
-                        "'>#".
-                        $this->payed_with_mollie.
-                        '</a>';
-                default:
-                    return '<i class="fas fa-question ml-2 text-normal"></i>'." - <a href='".
-                        route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
-                        "'>#".
-                        $this->payed_with_mollie.
-                        '</a>';
-            }
-        } elseif ($this->total_price == 0) {
+
+        if ($this->total_price == 0) {
             return 'Free!';
-        } else {
-            return 'Unpaid';
         }
+
+        if ($this->payed_with_mollie !== null) {
+            return match ($this->molliePayment->translatedStatus()) {
+                'paid' => '<i class="fas fa-check ml-2 text-success"></i> - <a href=\''.
+                    route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
+                    "'>#".
+                    $this->payed_with_mollie.
+                    '</a>',
+                'failed' => '<i class="fas fa-times ml-2 text-danger"></i> - <a href=\''.
+                    route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
+                    "'>#".
+                    $this->payed_with_mollie.
+                    '</a>',
+                'open' => '<i class="fas fa-spinner ml-2 text-normal"></i> - <a href=\''.
+                    route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
+                    "'>#".
+                    $this->payed_with_mollie.
+                    '</a>',
+                default => '<i class="fas fa-question ml-2 text-normal"></i> - <a href=\''.
+                    route('omnomcom::mollie::status', ['id' => $this->payed_with_mollie]).
+                    "'>#".
+                    $this->payed_with_mollie.
+                    '</a>',
+            };
+        }
+
+        return 'Unpaid';
     }
 }

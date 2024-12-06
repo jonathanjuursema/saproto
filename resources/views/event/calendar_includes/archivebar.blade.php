@@ -4,11 +4,11 @@
 
         <div class="btn-group mb-1">
 
-            @if (Route::currentRouteName() == 'event::list')
+            @if (Route::currentRouteName() == 'event::index')
                 <span class="bg-primary text-white px-3 py-2 rounded-start">Upcoming</span>
                 <span class="bg-secondary text-white px-3 py-2">Archive</span>
             @else
-                <a href="{{ route('event::list', ['category' => $cur_category]) }}" class="btn btn-secondary">
+                <a href="{{ route('event::index', ['category' => $cur_category]) }}" class="btn btn-secondary">
                     Upcoming
                 </a>
                 <span class="bg-primary text-white px-3 py-2">Archive</span>
@@ -32,16 +32,16 @@
             </button>
 
             @can('board')
-                <a href="{{ route("event::add") }}" class="btn btn-info rounded-end">
+                <a href="{{ route("event::create") }}" class="btn btn-info rounded-end">
                     <i class="fas fa-calendar-plus me-2"></i><span
-                            class="d-none d-sm-inline-block ms-2">Create Event</span>
+                        class="d-none d-sm-inline-block ms-2">Create Event</span>
                 </a>
             @endcan
 
             @php($categories = \App\Models\EventCategory::all())
             @if(count($categories) > 0)
                 <form class="form-inline ms-3"
-                      action="{{ Route::currentRouteName() == 'event::archive' ? route('event::archive', ['year' => $year]) : route('event::list')}}">
+                      action="{{ Route::currentRouteName() == 'event::archive' ? route('event::archive', ['year' => $year]) : route('event::index')}}">
                     <div id="category-search" class="input-group">
                         <div class="input-group-prepend">
                             <button type="submit" class="btn btn-info"><i class="fas fa-search"></i></button>
@@ -84,8 +84,8 @@
                        value="{{ Auth::check() ? Auth::user()->getIcalUrl() : route("ical::calendar") }}" readonly>
                 <script nonce="{{ csp_nonce() }}"> document.getElementById('ical-url').addEventListener('click', e => {
                         e.target.focus();
-                        e.target.select()
-                    }) </script>
+                        e.target.select();
+                    }); </script>
 
                 <hr>
 
@@ -142,7 +142,8 @@
 
                         <div class="row">
 
-                            <div class="col-6 col-sm-4 d-flex {{ Auth::user()->getCalendarAlarm() ? '' : 'offset-sm-2' }}">
+                            <div
+                                class="col-6 col-sm-4 d-flex {{ Auth::user()->getCalendarAlarm() ? '' : 'offset-sm-2' }}">
                                 <input id="hours" class="form-control" type="number" step="0.01" placeholder="0.5"
                                        name="hours" min="0"
                                        value="{{ Auth::user()->getCalendarAlarm() ? Auth::user()->getCalendarAlarm() : '' }}">

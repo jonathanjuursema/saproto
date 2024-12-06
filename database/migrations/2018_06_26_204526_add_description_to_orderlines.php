@@ -8,10 +8,8 @@ class AddDescriptionToOrderlines extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('orderlines', function (Blueprint $table) {
             $table->text('description')->nullable(true)->default(null)->after('payed_with_withdrawal');
@@ -20,10 +18,8 @@ class AddDescriptionToOrderlines extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('orderlines', function (Blueprint $table) {
             $table->dropColumn('description');

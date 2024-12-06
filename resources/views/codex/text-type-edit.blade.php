@@ -5,7 +5,9 @@
 @endsection
 
 @section('container')
-    <form action="{{ isset($textType)&&$textType?route('codex::edit-text-type', ['id'=>$textType->id]):route("codex::add-text-type") }}" method="POST">
+    <form action="{{ !empty($textType) ? route('codexTextType.update', ['codexTextType' => $textType]) : route("codexTextType.store")}}"
+          method="POST">
+        <input type="hidden" name="_method" value="{{ !empty($textType) ? "PUT" : "POST" }}">
         {{ csrf_field()}}
         <div class="row gap-3 justify-content-center">
             <div class="col-6">
@@ -17,7 +19,8 @@
                         <div class="card-body">
                             <label for="type">Name:</label>
                             <div class="form-group mb-3">
-                                <input type="text" value="{{$textType->type??""}}" class="form-control" id="type" name="type">
+                                <input type="text" value="{{$textType->type??""}}" class="form-control" id="type"
+                                       name="type">
                             </div>
                             <button type="submit" class="btn btn-success btn-block">
                                 Save text type!

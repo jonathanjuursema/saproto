@@ -10,8 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Redirect;
-use Session;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class LeaderboardEntryController extends Controller
 {
@@ -20,7 +20,7 @@ class LeaderboardEntryController extends Controller
      */
     public function store(Request $request)
     {
-        $leaderboard = Leaderboard::findOrFail($request->input('leaderboard_id'));
+        $leaderboard = Leaderboard::query()->findOrFail($request->input('leaderboard_id'));
 
         if (! $leaderboard->canEdit(Auth::user())) {
             abort(403, "Only the board or member of the {$leaderboard->committee->name} can edit this leaderboard");
@@ -32,8 +32,8 @@ class LeaderboardEntryController extends Controller
             return Redirect::back();
         }
 
-        $entry = LeaderboardEntry::create($request->all());
-        $user = User::findOrFail($request->user_id);
+        $entry = LeaderboardEntry::query()->create($request->all());
+        $user = User::query()->findOrFail($request->user_id);
         $entry->leaderboard()->associate($leaderboard);
         $entry->user()->associate($user);
         $entry->save();
@@ -48,7 +48,7 @@ class LeaderboardEntryController extends Controller
      */
     public function update(Request $request)
     {
-        $entry = LeaderboardEntry::findOrFail($request->id);
+        $entry = LeaderboardEntry::query()->findOrFail($request->id);
 
         if (! $entry->leaderboard->canEdit(Auth::user())) {
             abort(403, "Only the board or member of the {$entry->leaderboard->committee->name} can edit this leaderboard");
@@ -68,7 +68,7 @@ class LeaderboardEntryController extends Controller
      */
     public function destroy($id)
     {
-        $entry = LeaderboardEntry::findOrFail($id);
+        $entry = LeaderboardEntry::query()->findOrFail($id);
 
         if (! $entry->leaderboard->canEdit(Auth::user())) {
             abort(403, "Only the board or member of the {$entry->leaderboard->committee->name} can edit this leaderboard");

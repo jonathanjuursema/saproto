@@ -1,6 +1,7 @@
 @extends('website.layouts.redesign.dashboard')
 
 @section('page-title')
+    @php /** @var \App\Models\Withdrawal $withdrawal */@endphp
     Withdrawal of {{ date('d-m-Y', strtotime($withdrawal->date)) }}
 @endsection
 
@@ -10,7 +11,7 @@
 
         <div class="col-md-3">
 
-            <a href="{{ route('omnomcom::withdrawal::list') }}" class="btn btn-block btn-dark mb-2">
+            <a href="{{ route('omnomcom::withdrawal::index') }}" class="btn btn-block btn-dark mb-2">
                 <i class="fas fa-back"></i>
                 Return to overview
             </a>
@@ -30,15 +31,15 @@
                         <tbody>
                         <tr>
                             <th>ID</th>
-                            <td>{{ $withdrawal->withdrawalId() }}</td>
+                            <td>{{ $withdrawal->withdrawalId }}</td>
                         </tr>
                         <tr>
                             <th>Users</th>
-                            <td>{{ $withdrawal->users()->count() }}</td>
+                            <td>{{ $withdrawal->users_count }}</td>
                         </tr>
                         <tr>
                             <th>Orderlines</th>
-                            <td>{{ $withdrawal->orderlines->count() }}</td>
+                            <td>{{ $withdrawal->orderlines_count }}</td>
                         </tr>
                         <tr>
                             <th>Sum</th>
@@ -134,7 +135,7 @@
                         </tr>
                         </thead>
 
-                        @foreach($withdrawal->totalsPerUser() as $data)
+                        @foreach($userLines as $data)
 
                             <tr>
                                 <td>{{ $data->user->id }}</td>
@@ -154,21 +155,22 @@
                                         <td></td>
                                     @endisset
                                 @endif
-                                <td>{{ $data->count }}</td>
-                                <td>&euro;{{ number_format($data->sum, 2, ',', '.') }}</td>
+                                <td>{{ $data->orderline_count }}</td>
+                                <td>&euro;{{ number_format($data->total_price, 2, ',', '.') }}</td>
                                 @if(!$withdrawal->closed)
                                     <td>
-                                        @if($withdrawal->getFailedWithdrawal($data->user))
+                                        @if($withdrawal->failedWithdrawals->contains('user_id', $data->user->id))
                                             Failed
                                             @include('components.modals.confirm-modal', [
-                                               'action' => route('omnomcom::orders::delete', ['id'=>$withdrawal->getFailedWithdrawal($data->user)->correction_orderline_id]),
+                                               'action' => route('omnomcom::orders::delete', ['id'=>$withdrawal->failedWithdrawals->where('user_id', $data->user->id)->first()->correction_orderline_id]),
                                                'text' => '(Revert)',
                                                'title' => 'Confirm Revert',
                                                'message' => 'Are you sure you want to revert this withdrawal? The user will <b>NOT</b> automatically receive an e-mail about this!',
                                                'confirm' => 'Revert',
                                             ])
                                         @else
-                                            <a href="{{ route('omnomcom::withdrawal::deleteuser', ['id' => $withdrawal->id, 'user_id' => $data->user->id]) }}" class="text-white fw-bold underline-on-hover">
+                                            <a href="{{ route('omnomcom::withdrawal::deleteuser', ['id' => $withdrawal->id, 'user_id' => $data->user->id]) }}"
+                                               class="text-white fw-bold underline-on-hover">
                                                 Remove
                                             </a>
 

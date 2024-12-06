@@ -8,7 +8,7 @@ use App\Models\Member;
 use Carbon;
 use Exception;
 use Illuminate\Console\Command;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class EndMemberships extends Command
 {
@@ -41,18 +41,18 @@ class EndMemberships extends Command
      *
      * @throws Exception
      */
-    public function handle()
+    public function handle(): void
     {
         $deleted = [];
-        foreach (Member::all()->whereNotNull('until') as $member) {
+        foreach (Member::query()->whereNotNull('until')->get() as $member) {
             if ($member->until < Carbon::now()->timestamp) {
-                (new UserAdminController())->endMembership($member->user->id);
+                (new UserAdminController)->endMembership($member->user->id);
                 $this->info("Membership from $member->proto_username ended!");
                 $deleted[] = $member;
             }
         }
 
-        if (count($deleted) > 0) {
+        if ($deleted !== []) {
             Mail::queue((new MembershipEndedForBoard($deleted))->onQueue('high'));
         } else {
             $this->info("No users who's membership to end!");

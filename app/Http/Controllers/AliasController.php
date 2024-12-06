@@ -4,20 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Alias;
 use App\Models\User;
-use DB;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class AliasController extends Controller
 {
     /** @return View|RedirectResponse */
     public function index()
     {
-        $aliases = Alias::orderBy('alias', 'asc')->get();
+        $aliases = Alias::query()->orderBy('alias', 'asc')->get();
 
         if ($aliases->count() > 0) {
             $data = [];
@@ -28,7 +28,7 @@ class AliasController extends Controller
             return view('aliases.index', ['aliases' => $data]);
         }
 
-        return Redirect::route('alias::add');
+        return Redirect::route('alias::create');
     }
 
     /** @return View */
@@ -43,7 +43,7 @@ class AliasController extends Controller
     public function store(Request $request)
     {
         if ($request->input('destination') != '') {
-            $alias = Alias::create([
+            $alias = Alias::query()->create([
                 'alias' => $request->input('alias'),
                 'destination' => $request->input('destination'),
             ]);
@@ -52,8 +52,8 @@ class AliasController extends Controller
             Session::flash('flash_message', 'Destination added to alias.');
         } elseif ($request->input('user') != '') {
             /** @var User $user */
-            $user = User::findOrFail($request->input('user'));
-            $alias = Alias::create([
+            $user = User::query()->findOrFail($request->input('user'));
+            $alias = Alias::query()->create([
                 'alias' => $request->input('alias'),
                 'user_id' => $user->id,
             ]);
@@ -89,14 +89,13 @@ class AliasController extends Controller
     }
 
     /**
-     * @param  mixed  $id_or_alias
      * @return RedirectResponse
      *
      * @throws Exception
      */
-    public function destroy(Request $request, $id_or_alias)
+    public function destroy(Request $request, mixed $id_or_alias)
     {
-        $alias = Alias::find($id_or_alias);
+        $alias = Alias::query()->find($id_or_alias);
 
         if ($alias) {
             $alias->delete();

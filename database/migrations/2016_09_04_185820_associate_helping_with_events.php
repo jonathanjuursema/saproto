@@ -2,15 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AssociateHelpingWithEvents extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->integer('committee_id')->nullable()->default(null);
@@ -23,10 +22,8 @@ class AssociateHelpingWithEvents extends Migration
 
     /**
      * This is a one-way migration!
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropColumn('committee_id');

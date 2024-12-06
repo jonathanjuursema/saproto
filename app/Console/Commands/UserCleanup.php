@@ -34,7 +34,7 @@ class UserCleanup extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Starting clean-up.');
 
@@ -44,10 +44,11 @@ class UserCleanup extends Command
             if (! $user->isStale()) {
                 continue;
             }
+
             $count++;
             $user->forceDelete();
         }
 
-        $this->info("Found and deleted $count stale users.");
+        $this->info("Found and deleted {$count} stale users.");
     }
 }

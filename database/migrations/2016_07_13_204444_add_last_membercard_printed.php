@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddLastMembercardPrinted extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('members', function ($table) {
             $table->date('card_printed_on')->nullable()->default(null);
@@ -18,10 +17,8 @@ class AddLastMembercardPrinted extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('members', function ($table) {
             $table->dropColumn('card_printed_on');

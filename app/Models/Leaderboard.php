@@ -49,22 +49,26 @@ class Leaderboard extends Model
     /** @return BelongsTo */
     public function committee()
     {
-        return $this->belongsTo(\App\Models\Committee::class, 'committee_id');
+        return $this->belongsTo(Committee::class, 'committee_id');
     }
 
     /** @return HasMany */
     public function entries()
     {
-        return $this->hasMany(\App\Models\LeaderboardEntry::class);
+        return $this->hasMany(LeaderboardEntry::class);
     }
 
     public static function isAdminAny(User $user): bool
     {
-        return Leaderboard::whereRelation('committee.users', 'users.id', $user->id)->count() > 0;
+        return \App\Models\Leaderboard::query()->whereRelation('committee.users', 'users.id', $user->id)->count() > 0;
     }
 
     public function canEdit(User $user): bool
     {
-        return $user->can('board') || $this->committee->users->contains($user);
+        if ($user->can('board')) {
+            return true;
+        }
+
+        return $this->committee->users->contains($user);
     }
 }

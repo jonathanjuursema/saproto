@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a href="{{ route('joboffers::add') }}" class="badge bg-info float-end">
+                    <a href="{{ route('joboffers::create') }}" class="badge bg-info float-end">
                         Create a new job offer.
                     </a>
                 </div>

@@ -6,16 +6,16 @@ use App\Models\ProductCategory;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class ProductCategoryController extends Controller
 {
     /** @return View */
     public function index()
     {
-        return view('omnomcom.categories.index', ['categories' => ProductCategory::withCount('products')->get()]);
+        return view('omnomcom.categories.index', ['categories' => ProductCategory::query()->withCount('products')->get()]);
     }
 
     /** @return View */
@@ -29,12 +29,12 @@ class ProductCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = ProductCategory::create($request->all());
+        $category = ProductCategory::query()->create($request->all());
         $category->save();
 
         Session::flash('flash_message', 'Category '.$category->name.' created.');
 
-        return Redirect::route('omnomcom::categories::list');
+        return Redirect::route('omnomcom::categories::index');
     }
 
     /**
@@ -43,7 +43,7 @@ class ProductCategoryController extends Controller
      */
     public function show($id)
     {
-        $category = ProductCategory::findOrFail($id);
+        $category = ProductCategory::query()->findOrFail($id);
 
         return view('omnomcom.categories.edit', ['category' => $category]);
     }
@@ -55,13 +55,13 @@ class ProductCategoryController extends Controller
     public function update(Request $request, $id)
     {
         /** @var ProductCategory $category */
-        $category = ProductCategory::findOrFail($id);
+        $category = ProductCategory::query()->findOrFail($id);
         $category->fill($request->all());
         $category->save();
 
         Session::flash('flash_message', 'Category '.$category->name.' saved.');
 
-        return Redirect::route('omnomcom::categories::list');
+        return Redirect::route('omnomcom::categories::index');
     }
 
     /**
@@ -73,11 +73,11 @@ class ProductCategoryController extends Controller
     public function destroy(Request $request, $id)
     {
         /** @var ProductCategory $category */
-        $category = ProductCategory::findOrFail($id);
+        $category = ProductCategory::query()->findOrFail($id);
 
         Session::flash('flash_message', 'Category '.$category->name.' deleted.');
         $category->delete();
 
-        return Redirect::route('omnomcom::categories::list');
+        return Redirect::route('omnomcom::categories::index');
     }
 }

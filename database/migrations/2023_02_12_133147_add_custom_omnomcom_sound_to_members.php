@@ -8,10 +8,8 @@ class AddCustomOmnomcomSoundToMembers extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('members', function (Blueprint $table) {
             $table->integer('omnomcom_sound_id')->nullable();
@@ -20,10 +18,8 @@ class AddCustomOmnomcomSoundToMembers extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('members', function (Blueprint $table) {
             $table->dropColumn('omnomcom_sound_id');

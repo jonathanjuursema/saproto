@@ -8,10 +8,8 @@ class AddInstitutionColumnToUserTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('edu_username')->after('utwente_username')->nullable()->default(null);
@@ -20,10 +18,8 @@ class AddInstitutionColumnToUserTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('edu_username');

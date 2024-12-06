@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddMemberOnlyToMenuitems extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('menuitems', function ($table) {
             $table->boolean('is_member_only');
@@ -18,10 +17,8 @@ class AddMemberOnlyToMenuitems extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('menuitems', function ($table) {
             $table->dropColumn('is_member_only');

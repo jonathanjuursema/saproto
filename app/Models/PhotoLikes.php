@@ -38,6 +38,6 @@ class PhotoLikes extends Model
     /** @return BelongsTo */
     public function photo()
     {
-        return $this->belongsTo(\App\Models\Photo::class, 'photo_id');
+        return $this->belongsTo(Photo::class, 'photo_id');
     }
 }

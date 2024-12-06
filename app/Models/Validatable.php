@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
-use Validator;
 
 /**
  * Validatable Model.
@@ -13,17 +13,14 @@ use Validator;
  * @method static Builder|Validatable newModelQuery()
  * @method static Builder|Validatable newQuery()
  * @method static Builder|Validatable query()
- *
- * @mixin Eloquent
  */
-class Validatable extends Eloquent
+class Validatable extends Model
 {
-    protected $rules = [];
+    protected array $rules = [];
 
-    protected $errors;
+    protected MessageBag $errors;
 
-    /** @return bool */
-    public function validate($data)
+    public function validate($data): bool
     {
         $v = Validator::make($data, $this->rules);
         if ($v->fails()) {
@@ -35,8 +32,7 @@ class Validatable extends Eloquent
         return true;
     }
 
-    /** @return MessageBag */
-    public function errors()
+    public function errors(): MessageBag
     {
         return $this->errors;
     }

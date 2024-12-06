@@ -6,6 +6,7 @@ use App\Models\OrderLine;
 use App\Models\WallstreetDrink;
 use App\Models\WallstreetEvent;
 use App\Models\WallstreetPrice;
+use Carbon;
 use Illuminate\Console\Command;
 
 class UpdateWallstreetPrices extends Command
@@ -24,7 +25,7 @@ class UpdateWallstreetPrices extends Command
      */
     protected $description = 'Update the prices when a wallstreet drink is active';
 
-    protected $maxPriceMultiplier = 1.2;
+    protected float $maxPriceMultiplier = 1.2;
 
     /**
      * Create a new command instance.
@@ -38,20 +39,19 @@ class UpdateWallstreetPrices extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): ?int
     {
         //get the wallstreet drink that is currently active
-        $currentDrink = WallstreetDrink::where('start_time', '<=', time())->where('end_time', '>=', time())->first();
+        /** @var WallstreetDrink|null $currentDrink */
+        $currentDrink = WallstreetDrink::query()->where('start_time', '<=', time())->where('end_time', '>=', time())->first();
         if ($currentDrink === null) {
             $this->info('No active wallstreet drink found');
 
             return 0;
         }
 
-        foreach ($currentDrink->products as $product) {
+        foreach ($currentDrink->products()->get() as $product) {
             //search for the latest price of the current product and if it does not exist take the current price
             $latestPrice = WallstreetPrice::query()->where('product_id', $product->id)->where('wallstreet_drink_id', $currentDrink->id)->orderBy('id', 'desc')->first();
             if ($latestPrice === null) {
@@ -66,7 +66,7 @@ class UpdateWallstreetPrices extends Command
                 continue;
             }
 
-            $newOrderlines = OrderLine::query()->where('created_at', '>=', \Carbon::now()->subMinute())->where('product_id', $product->id)->sum('units');
+            $newOrderlines = OrderLine::query()->where('created_at', '>=', Carbon::now()->subMinute())->where('product_id', $product->id)->sum('units');
             //heighten the price if there are new orders and the price is not the actual price
             if ($newOrderlines > 0) {
                 $delta = $newOrderlines * $currentDrink->price_increase;
@@ -98,16 +98,17 @@ class UpdateWallstreetPrices extends Command
             }
         }
 
-        $randomEventQuery = WallstreetEvent::inRandomOrder()->whereHas('products', function ($q) use ($currentDrink) {
+        $randomEventQuery = WallstreetEvent::query()->inRandomOrder()->whereHas('products', static function ($q) use ($currentDrink) {
             $q->whereIn('products.id', $currentDrink->products->pluck('id'));
         })->where('active', true);
 
         //chance of 1 in random_events_chance (so about every random_events_chance minutes that a random event is triggered)
-        if ($currentDrink->random_events_chance > 0 && $randomEventQuery->count() > 0 && rand(1, $currentDrink->random_events_chance) === 1) {
+        if ($currentDrink->random_events_chance > 0 && $randomEventQuery->count() > 0 && random_int(1, $currentDrink->random_events_chance) === 1) {
+            /** @var WallstreetEvent $randomEvent */
             $randomEvent = $randomEventQuery->first();
             $this->info('Random event '.$randomEvent->name.' triggered');
             $currentDrink->events()->attach($randomEvent->id);
-            foreach ($randomEvent->products->whereIn('id', $currentDrink->products->pluck('id')) as $product) {
+            foreach ($randomEvent->products()->whereIn('products.id', $currentDrink->products->pluck('id'))->get() as $product) {
                 $latestPrice = WallstreetPrice::query()->where('product_id', $product->id)->where('wallstreet_drink_id', $currentDrink->id)->orderBy('id', 'desc')->first();
                 $delta = ($randomEvent->percentage / 100) * $product->price;
                 $newPriceObject = new WallstreetPrice([
@@ -118,5 +119,7 @@ class UpdateWallstreetPrices extends Command
                 $newPriceObject->save();
             }
         }
+
+        return null;
     }
 }

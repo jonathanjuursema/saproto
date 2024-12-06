@@ -1,3 +1,4 @@
+@php /** @var \App\Models\User $user */ @endphp
 <div class="card mb-3">
 
     <div class="card-header bg-dark text-white">Membership center for <strong>{{ $user->name }}</strong></div>
@@ -26,13 +27,14 @@
                             'text' => 'End membership immediately!',
                             'message' => "Are you sure you want to end the membership of $user->name?"
                         ])
-                <a href="#" class="list-group-item text-warning" data-bs-toggle="modal" data-bs-target="#setMembershipType">
-                    Change membership type
-                </a>
-                <a href="{{ route('membercard::download', ['id' => $user->id]) }}" target="_blank"
-                   class="list-group-item">
-                    Preview membership card
-                </a>
+                    <a href="#" class="list-group-item text-warning" data-bs-toggle="modal"
+                       data-bs-target="#setMembershipType">
+                        Change membership type
+                    </a>
+                    <a href="{{ route('membercard::download', ['id' => $user->id]) }}" target="_blank"
+                       class="list-group-item">
+                        Preview membership card
+                    </a>
 
                 @else
                     @include('components.modals.confirm-modal', [
@@ -51,6 +53,13 @@
                     'text' => 'Print membership card',
                     'message' => "Do you want to print $user->name's card? <br> Card last printed on: ".($user->member->card_printed_on ?? 'Never printed before' )
                 ])
+
+                <a class="list-group-item"
+                   href="{{ route('user::admin::toggle_primary_somewhere_else', ['id' => $user->id]) }}">
+                    Is {!! $user->member->is_primary_at_another_association ? '' : '<strong>not</strong>' !!} a primary
+                    member
+                    at another association.
+                </a>
 
             @else
                 <li class="list-group-item">
@@ -96,13 +105,13 @@
                                 {{ strtotime($user->member->created_at) > 0 ? date('d-m-Y', strtotime($user->member->created_at)) : 'forever' }}
                             </td>
                             <td>
-                                @if($user->member->is_lifelong)
+                                @if($user->member->membership_type === \App\Enums\MembershipTypeEnum::LIFELONG)
                                     Lifelong <i class="fas fa-clock"></i>
-                                @elseif($user->member->is_honorary)
+                                @elseif($user->member->membership_type === \App\Enums\MembershipTypeEnum::HONORARY)
                                     Honorary <i class="fas fa-trophy"></i>
-                                @elseif($user->member->is_donor)
+                                @elseif($user->member->membership_type === \App\Enums\MembershipTypeEnum::DONOR)
                                     Donor <i class="fas fa-hand-holding-usd"></i>
-                                @elseif($user->member->is_pet)
+                                @elseif($user->member->membership_type === \App\Enums\MembershipTypeEnum::PET)
                                     Pet <i class="fas fa-paw"></i>
                                 @else
                                     Regular
@@ -122,13 +131,13 @@
                         </tr>
                         </tbody>
                         <trow>
-                        @if($user->member->until)
-                            <tr>
-                                <td>
-                                    <b>Until: </b><i>{{Carbon::createFromTimestamp($user->member->until)->format('d M Y')}}</i>
-                                </td>
-                            </tr>
-                        @endif
+                            @if($user->member->until)
+                                <tr>
+                                    <td>
+                                        <b>Until: </b><i>{{Carbon::createFromTimestamp($user->member->until)->format('d M Y')}}</i>
+                                    </td>
+                                </tr>
+                            @endif
                         </trow>
                     </table>
                 </li>

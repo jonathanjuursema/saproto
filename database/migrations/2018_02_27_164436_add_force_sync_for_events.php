@@ -8,10 +8,8 @@ class AddForceSyncForEvents extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->boolean('force_calendar_sync')->after('secret')->nullable(false)->default(false);
@@ -20,10 +18,8 @@ class AddForceSyncForEvents extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropColumn('force_calendar_sync');

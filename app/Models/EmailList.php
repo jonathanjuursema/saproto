@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Crypt;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * Email List Model.
@@ -49,7 +49,7 @@ class EmailList extends Model
      */
     public function isSubscribed(User $user): bool
     {
-        return EmailListSubscription::where('user_id', $user->id)->where('list_id', $this->id)->count() > 0;
+        return EmailListSubscription::query()->where('user_id', $user->id)->where('list_id', $this->id)->count() > 0;
     }
 
     /**
@@ -78,10 +78,11 @@ class EmailList extends Model
      */
     public function unsubscribe(User $user): bool
     {
-        $s = EmailListSubscription::where('user_id', $user->id)->where('list_id', $this->id);
+        $s = EmailListSubscription::query()->where('user_id', $user->id)->where('list_id', $this->id);
         if ($s == null) {
             return false;
         }
+
         $s->delete();
 
         return true;
@@ -97,7 +98,7 @@ class EmailList extends Model
         return base64_encode(Crypt::encrypt(json_encode(['user' => $user_id, 'list' => $list_id])));
     }
 
-    public static function parseUnsubscribeHash(string $hash)
+    public static function parseUnsubscribeHash(string $hash): mixed
     {
         return json_decode(Crypt::decrypt(base64_decode($hash)));
     }

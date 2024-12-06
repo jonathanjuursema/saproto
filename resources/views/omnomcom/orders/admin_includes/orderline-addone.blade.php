@@ -2,7 +2,7 @@
     Add orderline wizard. <span class="ms-3">🧙</span>
 </a>
 
-<form method="post" action="{{ route('omnomcom::orders::add') }}">
+<form method="post" action="{{ route('omnomcom::orders::store') }}">
 
     {!! csrf_field() !!}
 

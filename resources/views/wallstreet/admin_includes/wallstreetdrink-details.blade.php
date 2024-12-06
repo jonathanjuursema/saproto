@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ( ! isset($currentDrink) ? route("wallstreet::add") : route("wallstreet::edit", ['id' => $currentDrink->id])) }}"
+      action="{{ ( ! isset($currentDrink) ? route("wallstreet::store") : route("wallstreet::update", ['id' => $currentDrink->id])) }}"
       enctype="multipart/form-data">
 
     {!! csrf_field() !!}

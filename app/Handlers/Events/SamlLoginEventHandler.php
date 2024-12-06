@@ -3,7 +3,7 @@
 namespace App\Handlers\Events;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class SamlLoginEventHandler
 {
@@ -21,9 +21,8 @@ class SamlLoginEventHandler
      * Handle the event.
      *
      * @param  Saml2LoginEvent  $event
-     * @return void
      */
-    public function handle($event)
+    public function handle($event): void
     {
         $remoteUser = $event->getSaml2User()->getAttributes();
         Session::flash('surfconext_sso_user', $remoteUser);

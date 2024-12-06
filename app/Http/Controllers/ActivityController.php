@@ -7,13 +7,13 @@ use App\Models\ActivityParticipation;
 use App\Models\Committee;
 use App\Models\Event;
 use App\Models\HelpingCommittee;
-use Auth;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class ActivityController extends Controller
 {
@@ -24,10 +24,10 @@ class ActivityController extends Controller
     public function store(Request $request, $id)
     {
         /** @var Event $event */
-        $event = Event::findOrFail($id);
+        $event = Event::query()->findOrFail($id);
 
         $new = $event->activity === null;
-        $activity = ($new ? new Activity() : $event->activity);
+        $activity = ($new ? new Activity : $event->activity);
 
         $newPrice = floatval(str_replace(',', '.', $request->price));
         $newNoShow = floatval(str_replace(',', '.', $request->no_show_fee));
@@ -40,6 +40,7 @@ class ActivityController extends Controller
 
             return Redirect::route('event::edit', ['id' => $event->id]);
         }
+
         if ($newNoShow > floatval($activity->no_show_fee) && $activity->users->count() > 0) {
             Session::flash('flash_message', 'You cannot make the no show fee higher since this activity already has participants.');
 
@@ -98,7 +99,7 @@ class ActivityController extends Controller
     public function destroy(Request $request, $id)
     {
         /** @var Event $event */
-        $event = Event::findOrFail($id);
+        $event = Event::query()->findOrFail($id);
         if (! $event->activity) {
             Session::flash('flash_message', 'There is no participation data to delete.');
 
@@ -127,10 +128,11 @@ class ActivityController extends Controller
     public function checklist($id)
     {
         /** @var Event $event */
-        $event = Event::findOrFail($id);
-        if (! Auth::check() || ! (Auth::user()->can('board') || $event->isEventAdmin(Auth::user()))) {
+        $event = Event::query()->findOrFail($id);
+        if (! Auth::check() || ! Auth::user()->can('board') && ! $event->isEventAdmin(Auth::user())) {
             abort(403, 'You may not see this page.');
         }
+
         if (! $event->activity) {
             abort(404, 'This event has no activity.');
         }
@@ -145,7 +147,7 @@ class ActivityController extends Controller
     public function addHelp(Request $request, $id)
     {
         /** @var Event $event */
-        $event = Event::findOrFail($id);
+        $event = Event::query()->findOrFail($id);
         if (! $event->activity) {
             Session::flash('flash_message', 'This event has no activity data.');
 
@@ -159,7 +161,7 @@ class ActivityController extends Controller
             return Redirect::back();
         }
 
-        $committee = Committee::findOrFail($request->input('committee'));
+        $committee = Committee::query()->findOrFail($request->input('committee'));
 
         if (HelpingCommittee::whereActivityId($event->activity->id)->whereCommitteeId($committee->id)->count() > 0) {
             Session::flash('flash_message', 'This committee is already helping at this event.');
@@ -167,7 +169,7 @@ class ActivityController extends Controller
             return Redirect::back();
         }
 
-        HelpingCommittee::create([
+        HelpingCommittee::query()->create([
             'activity_id' => $event->activity->id,
             'committee_id' => $committee->id,
             'amount' => $amount,
@@ -186,10 +188,11 @@ class ActivityController extends Controller
     public function updateHelp(Request $request, $id)
     {
         /** @var HelpingCommittee $help */
-        $help = HelpingCommittee::findOrFail($id);
+        $help = HelpingCommittee::query()->findOrFail($id);
         $amount = $request->input('amount');
 
         $help->amount = ($amount > 0 ? $amount : $help->amount);
+
         $help->notification_sent = false;
         $help->save();
 
@@ -207,7 +210,7 @@ class ActivityController extends Controller
     public function deleteHelp(Request $request, $id)
     {
         /** @var HelpingCommittee $help */
-        $help = HelpingCommittee::findOrFail($id);
+        $help = HelpingCommittee::query()->findOrFail($id);
 
         foreach (ActivityParticipation::withTrashed()->where('committees_activities_id', $help->id)->get() as $participation) {
             $participation->delete();

@@ -1,5 +1,5 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
 
@@ -26,5 +26,5 @@ parameters:
         - '#Relation (.*) is not found in Illuminate\\Contracts\\Session\\Session model#'
         # Issue with incorrect type hinting on Illuminate\Support\Collection methods
         - '#Illuminate\\Support\\Collection<(.*)>::#'
-
-    checkMissingIterableValueType: false
+        -
+            identifier: missingType.iterableValue

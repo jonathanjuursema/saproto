@@ -35,7 +35,7 @@ class FileCleanup extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Starting clean-up.');
 
@@ -49,6 +49,6 @@ class FileCleanup extends Command
             }
         }
 
-        $this->info("Found and deleted $count orphaned files.");
+        $this->info("Found and deleted {$count} orphaned files.");
     }
 }

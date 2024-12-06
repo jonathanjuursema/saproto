@@ -106,7 +106,7 @@
         </div>
 
         <div class="col-md-12 col-xl-6">
-            <a href="{{ route("event::list") }}" class="btn btn-info btn-block">
+            <a href="{{ route("event::index") }}" class="btn btn-info btn-block">
                 <i class="far fa-calendar-alt me-2" aria-hidden="true"></i> Upcoming events
             </a>
         </div>
@@ -117,7 +117,7 @@
 
 @section('right-column')
 
-    @include('website.home.cards.recentalbums', ['n' => 4])
+    @include('website.home.cards.recentalbums', ['albums'=>$albums])
 
     @if(isset($videos) && count($videos) > 0)
 

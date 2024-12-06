@@ -8,16 +8,16 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Redirect;
-use Session;
 
 class NarrowcastingController extends Controller
 {
     /** @return View */
     public function index()
     {
-        return view('narrowcasting.list', ['messages' => NarrowcastingItem::orderBy('campaign_start', 'desc')->paginate(10)]);
+        return view('narrowcasting.list', ['messages' => NarrowcastingItem::query()->orderBy('campaign_start', 'desc')->paginate(10)]);
     }
 
     /** @return View */
@@ -45,14 +45,14 @@ class NarrowcastingController extends Controller
             return Redirect::back();
         }
 
-        $narrowcasting = new NarrowcastingItem();
+        $narrowcasting = new NarrowcastingItem;
         $narrowcasting->name = $request->name;
         $narrowcasting->campaign_start = strtotime($request->campaign_start);
         $narrowcasting->campaign_end = strtotime($request->campaign_end);
         $narrowcasting->slide_duration = $request->slide_duration;
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
+            $file = new StorageEntry;
             $file->createFromFile($request->file('image'));
 
             $narrowcasting->image()->associate($file);
@@ -70,7 +70,7 @@ class NarrowcastingController extends Controller
 
         Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been added.");
 
-        return Redirect::route('narrowcasting::list');
+        return Redirect::route('narrowcasting::index');
     }
 
     /**
@@ -79,7 +79,7 @@ class NarrowcastingController extends Controller
      */
     public function edit($id)
     {
-        $narrowcasting = NarrowcastingItem::findOrFail($id);
+        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
 
         return view('narrowcasting.edit', ['item' => $narrowcasting]);
     }
@@ -92,7 +92,7 @@ class NarrowcastingController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $narrowcasting = NarrowcastingItem::findOrFail($id);
+        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
 
         $narrowcasting->name = $request->name;
         $narrowcasting->campaign_start = strtotime($request->campaign_start);
@@ -100,7 +100,7 @@ class NarrowcastingController extends Controller
         $narrowcasting->slide_duration = $request->slide_duration;
 
         if ($request->file('image')) {
-            $file = new StorageEntry();
+            $file = new StorageEntry;
             $file->createFromFile($request->file('image'));
 
             $narrowcasting->image()->associate($file);
@@ -121,7 +121,7 @@ class NarrowcastingController extends Controller
 
         Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been saved.");
 
-        return Redirect::route('narrowcasting::list');
+        return Redirect::route('narrowcasting::index');
     }
 
     /**
@@ -132,12 +132,12 @@ class NarrowcastingController extends Controller
      */
     public function destroy($id)
     {
-        $narrowcasting = NarrowcastingItem::findOrFail($id);
+        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
 
         Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been deleted.");
         $narrowcasting->delete();
 
-        return Redirect::route('narrowcasting::list');
+        return Redirect::route('narrowcasting::index');
     }
 
     /**
@@ -147,21 +147,21 @@ class NarrowcastingController extends Controller
      */
     public function clear()
     {
-        foreach (NarrowcastingItem::where('campaign_end', '<', date('U'))->get() as $item) {
+        foreach (NarrowcastingItem::query()->where('campaign_end', '<', date('U'))->get() as $item) {
             $item->delete();
         }
 
         Session::flash('flash_message', 'All finished campaigns have been deleted.');
 
-        return Redirect::route('narrowcasting::list');
+        return Redirect::route('narrowcasting::index');
     }
 
     /** @return array Return a JSON object of all currently active campaigns. */
-    public function indexApi()
+    public function indexApi(): array
     {
         $data = [];
         foreach (
-            NarrowcastingItem::where('campaign_start', '<', date('U'))->where('campaign_end', '>', date('U'))->get() as $item) {
+            NarrowcastingItem::query()->where('campaign_start', '<', date('U'))->where('campaign_end', '>', date('U'))->get() as $item) {
             if ($item->youtube_id) {
                 $data[] = [
                     'slide_duration' => $item->slide_duration,

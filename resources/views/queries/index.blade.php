@@ -17,57 +17,57 @@
                 </div>
 
                 <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover">
 
-                    <thead>
+                        <thead>
 
-                    <tr class="bg-dark text-white">
+                        <tr class="bg-dark text-white">
 
-                        <td>Query</td>
-                        <td>Description</td>
-                        <td></td>
+                            <td>Query</td>
+                            <td>Description</td>
+                            <td></td>
 
-                    </tr>
+                        </tr>
 
-                    </thead>
+                        </thead>
 
-                    <tr>
+                        <tr>
 
-                        <td>Activity overview</td>
-                        <td>Generates an overview of activities between two dates.</td>
-                        <td>
-                            <a href="{{ route("queries::activity_overview") }}">
-                                <i class="fas fa-running"></i>
-                            </a>
-                        </td>
+                            <td>Activity overview</td>
+                            <td>Generates an overview of activities between two dates.</td>
+                            <td>
+                                <a href="{{ route("queries::activity_overview") }}">
+                                    <i class="fas fa-running"></i>
+                                </a>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    <tr>
+                        <tr>
 
-                        <td>Membership totals</td>
-                        <td>Shows an overview of a number of membership totals.</td>
-                        <td>
-                            <a href="{{ route("queries::membership_totals") }}">
-                                <i class="fas fa-running"></i>
-                            </a>
-                        </td>
+                            <td>Membership totals</td>
+                            <td>Shows an overview of a number of membership totals.</td>
+                            <td>
+                                <a href="{{ route("queries::membership_totals") }}">
+                                    <i class="fas fa-running"></i>
+                                </a>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    <tr>
+                        <tr>
 
-                        <td>Activity statistics</td>
-                        <td>Generates activity statistics between two dates.</td>
-                        <td>
-                            <a href="{{ route("queries::activity_statistics") }}">
-                                <i class="fas fa-running"></i>
-                            </a>
-                        </td>
+                            <td>Activity statistics</td>
+                            <td>Generates activity statistics between two dates.</td>
+                            <td>
+                                <a href="{{ route("queries::activity_statistics") }}">
+                                    <i class="fas fa-running"></i>
+                                </a>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                </table>
+                    </table>
                 </div>
 
             </div>

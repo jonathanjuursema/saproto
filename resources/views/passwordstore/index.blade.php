@@ -14,10 +14,11 @@
 
         <div class="col-12 col-sm-2 mb-3">
 
-            <a href="{{ route('passwordstore::add', ['type' => 'password']) }}" class="btn btn-success btn-block mb-3">
+            <a href="{{ route('passwordstore::create', ['type' => 'password']) }}"
+               class="btn btn-success btn-block mb-3">
                 Add Password
             </a>
-            <a href="{{ route('passwordstore::add', ['type' => 'note']) }}" class="btn btn-success btn-block">
+            <a href="{{ route('passwordstore::create', ['type' => 'note']) }}" class="btn btn-success btn-block">
                 Add Secure Note
             </a>
 
@@ -35,106 +36,108 @@
                 @if (count($passwords) > 0)
 
                     <div class="table-responsive">
-                    <table class="table table-hover table-sm">
+                        <table class="table table-hover table-sm">
 
-                        <thead>
+                            <thead>
 
-                        <tr class="bg-dark text-white">
+                            <tr class="bg-dark text-white">
 
-                            <td></td>
-                            <td>Description</td>
-                            <td>Access</td>
-                            <td class="text-center">URL</td>
-                            <td class="text-center">User</td>
-                            <td class="text-center">Pass</td>
-                            <td class="text-center">Comment</td>
-                            <td>Age</td>
-                            <td></td>
-                            <td></td>
+                                <td></td>
+                                <td>Description</td>
+                                <td>Access</td>
+                                <td class="text-center">URL</td>
+                                <td class="text-center">User</td>
+                                <td class="text-center">Pass</td>
+                                <td class="text-center">Comment</td>
+                                <td>Age</td>
+                                <td></td>
+                                <td></td>
 
-                        </tr>
+                            </tr>
 
-                        </thead>
+                            </thead>
 
-                        <?php $i = 0; ?>
+                                <?php $i = 0; ?>
 
-                        @foreach($passwords as $password)
+                            @foreach($passwords as $password)
 
-                            <?php $i++; ?>
+                                    <?php ++$i; ?>
 
-                            @if($password->canAccess(Auth::user()))
+                                @if($password->canAccess(Auth::user()))
 
-                                <tr>
+                                    <tr>
 
-                                    <td class="text-end">
-                                        @if($password->username == null)
-                                            <i class="fas fa-sticky-note" aria-hidden="true"></i>
-                                        @else
-                                            <i class="fas fa-key" aria-hidden="true"></i>
-                                        @endif
-                                    </td>
+                                        <td class="text-end">
+                                            @if($password->username == null)
+                                                <i class="fas fa-sticky-note" aria-hidden="true"></i>
+                                            @else
+                                                <i class="fas fa-key" aria-hidden="true"></i>
+                                            @endif
+                                        </td>
 
-                                    <td>{{ $password->description }}</td>
+                                        <td>{{ $password->description }}</td>
 
-                                    <td>{{ $password->permission->display_name }}</td>
+                                        <td>{{ $password->permission->display_name }}</td>
 
-                                    <td class="text-center">
-                                        @if($password->url)
-                                            <a href="{{ $password->url }}" target="_blank">
-                                                <i class="fas fa-globe-africa" aria-hidden="true"></i>
+                                        <td class="text-center">
+                                            @if($password->url)
+                                                <a href="{{ $password->url }}" target="_blank">
+                                                    <i class="fas fa-globe-africa" aria-hidden="true"></i>
+                                                </a>
+                                            @endif
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if($password->username != null)
+                                                <a id="{{ $password->description }}-username"
+                                                   class="passwordmanager__copy"
+                                                   data-copy="{{ Crypt::decrypt($password->username) }}"
+                                                   data-bs-toggle="tooltip" data-bs-trigger="manual" title="Copied!">
+                                                    <i class="fas fa-user me-1"></i>
+                                                </a>
+                                            @endif
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if($password->password != null)
+                                                <a id="{{ $password->description }}-password"
+                                                   class="passwordmanager__copy"
+                                                   data-copy="{{ Crypt::decrypt($password->password) }}"
+                                                   data-bs-toggle="tooltip" data-bs-trigger="manual" title="Copied!">
+                                                    <i class="fas fa-key me-1"></i>
+                                                </a>
+                                            @endif
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if($password->note)
+                                                <a class="passwordmanager__shownote" data-bs-toggle="modal"
+                                                   data-bs-target="#passwordmodal-{{ $password->id }}">
+                                                    <i class="fas fa-sticky-note"></i>
+                                                </a>
+                                            @endif
+                                        </td>
+
+                                        <td class="{{ ($password->age() > 12 ? 'text-danger' : 'text-primary') }}">
+                                            {{ $password->age() }} months
+                                        </td>
+
+                                        <td>
+                                            <a href="{{ route("passwordstore::edit", ['id' => $password->id]) }}">
+                                                <i class="fas fa-edit me-2"></i>
                                             </a>
-                                        @endif
-                                    </td>
-
-                                    <td class="text-center">
-                                        @if($password->username != null)
-                                            <a id="{{ $password->description }}-username" class="passwordmanager__copy"
-                                               data-copy="{{ Crypt::decrypt($password->username) }}"
-                                               data-bs-toggle="tooltip" data-bs-trigger="manual" title="Copied!">
-                                                <i class="fas fa-user me-1"></i>
+                                            <a href="{{ route("passwordstore::delete", ['id' => $password->id]) }}">
+                                                <i class="fas fa-trash text-danger"></i>
                                             </a>
-                                        @endif
-                                    </td>
+                                        </td>
 
-                                    <td class="text-center">
-                                        @if($password->password != null)
-                                            <a id="{{ $password->description }}-password" class="passwordmanager__copy"
-                                               data-copy="{{ Crypt::decrypt($password->password) }}"
-                                               data-bs-toggle="tooltip" data-bs-trigger="manual" title="Copied!">
-                                                <i class="fas fa-key me-1"></i>
-                                            </a>
-                                        @endif
-                                    </td>
+                                    </tr>
 
-                                    <td class="text-center">
-                                        @if($password->note)
-                                            <a class="passwordmanager__shownote" data-bs-toggle="modal"
-                                               data-bs-target="#passwordmodal-{{ $password->id }}">
-                                                <i class="fas fa-sticky-note"></i>
-                                            </a>
-                                        @endif
-                                    </td>
+                                @endif
 
-                                    <td class="{{ ($password->age() > 12 ? 'text-danger' : 'text-primary') }}">
-                                        {{ $password->age() }} months
-                                    </td>
+                            @endforeach
 
-                                    <td>
-                                        <a href="{{ route("passwordstore::edit", ['id' => $password->id]) }}">
-                                            <i class="fas fa-edit me-2"></i>
-                                        </a>
-                                        <a href="{{ route("passwordstore::delete", ['id' => $password->id]) }}">
-                                            <i class="fas fa-trash text-danger"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-
-                            @endif
-
-                        @endforeach
-
-                    </table>
+                        </table>
                     </div>
 
                 @else
@@ -183,15 +186,17 @@
 @push('javascript')
 
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        document.querySelectorAll(".passwordmanager__copy").forEach(el => {
-            const copy = el.getAttribute('data-copy')
+        document.querySelectorAll('.passwordmanager__copy').forEach(el => {
+            const copy = el.getAttribute('data-copy');
             el.addEventListener('click', _ => {
-                navigator.clipboard.writeText(copy)
-                let tooltip = tooltips[el.id]
-                tooltip.show()
-                setTimeout(_ => { tooltip.hide() }, 1000)
-            })
-        })
+                navigator.clipboard.writeText(copy);
+                let tooltip = tooltips[el.id];
+                tooltip.show();
+                setTimeout(_ => {
+                    tooltip.hide();
+                }, 1000);
+            });
+        });
     </script>
 
 @endpush

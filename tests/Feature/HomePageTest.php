@@ -1,0 +1,26 @@
+<?php
+
+use App\Models\Member;
+use App\Models\User;
+
+it('shows the unauthorized homepage', function () {
+    $response = $this->get('/');
+    $response->assertSee('Log-in');
+    $response->assertStatus(200);
+});
+
+it('shows the authorized homepage', function () {
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)
+        ->get('/');
+    $response->assertSee('Dashboard');
+});
+
+it('shows the member homepage', function () {
+    /** @var Member $member */
+    $member = Member::factory()->create();
+    $response = $this->actingAs($member->user)
+        ->get('/');
+
+    $response->assertSee('My Profile');
+});

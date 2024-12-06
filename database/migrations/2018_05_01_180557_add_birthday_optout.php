@@ -8,10 +8,8 @@ class AddBirthdayOptout extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('show_birthday')->after('keep_protube_history')->nullable(false)->default(true);
@@ -20,10 +18,8 @@ class AddBirthdayOptout extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('show_birthday');

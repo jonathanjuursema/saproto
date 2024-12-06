@@ -3,9 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\CodexText;
+use App\Models\CodexTextType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
+/**
+ * @extends Factory<CodexText>
+ */
 class CodexTextFactory extends Factory
 {
     protected $model = CodexText::class;
@@ -13,9 +17,9 @@ class CodexTextFactory extends Factory
     public function definition(): array
     {
         return [
-            'type_id' => $this->faker->randomNumber(),
-            'name' => $this->faker->name(),
-            'text' => $this->faker->text(),
+            'type_id' => CodexTextType::factory(),
+            'name' => fake()->name(),
+            'text' => fake()->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

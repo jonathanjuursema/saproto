@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -34,19 +35,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class HeaderImage extends Model
 {
+    use HasFactory;
+
     protected $table = 'headerimages';
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'credit_id');
+        return $this->belongsTo(User::class, 'credit_id');
     }
 
-    /** @return BelongsTo */
-    public function image()
+    public function image(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\StorageEntry::class, 'image_id', 'id');
+        return $this->belongsTo(StorageEntry::class, 'image_id', 'id');
+    }
+
+    public function StorageEntry(): BelongsTo
+    {
+        return $this->belongsTo(StorageEntry::class, 'image_id', 'id');
     }
 }

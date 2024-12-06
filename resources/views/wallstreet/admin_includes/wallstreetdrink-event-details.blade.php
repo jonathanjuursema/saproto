@@ -1,5 +1,5 @@
 <form method="post"
-      action="{{ ( ! isset($currentEvent) ? route("wallstreet::events::add") : route("wallstreet::events::edit", ['id' => $currentEvent->id])) }}"
+      action="{{ ( ! isset($currentEvent) ? route("wallstreet::events::store") : route("wallstreet::events::update", ['id' => $currentEvent->id])) }}"
       enctype="multipart/form-data">
 
     {!! csrf_field() !!}
@@ -46,7 +46,7 @@
                     @if($currentEvent?->image == null)
                         <label for="image">Set event image:</label>
                     @else
-                        <image class="mb-3" src="{{ $currentEvent->image->generatePath() ?? '' }}"/>
+                        <image class="mb-3" src="{{ $currentEvent->image->generatePath() ?? '' }}" />
                     @endif
                     <input type="file" id="image" class="form-control" name="image">
                 </div>

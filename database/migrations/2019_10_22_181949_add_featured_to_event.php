@@ -8,10 +8,8 @@ class AddFeaturedToEvent extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->boolean('is_featured')->after('location')->default(false);
@@ -20,10 +18,8 @@ class AddFeaturedToEvent extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropColumn('is_featured');

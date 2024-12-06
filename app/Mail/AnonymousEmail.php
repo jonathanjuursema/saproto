@@ -12,6 +12,9 @@ class AnonymousEmail extends Mailable
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var Committee
+     */
     public $committee;
 
     /**

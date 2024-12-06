@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\MembershipTypeEnum;
 use App\Mail\BirthdayEmail;
 use App\Mail\BirthdayEmailForBoard;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Mail;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Mail;
 
 class BirthdayCron extends Command
 {
@@ -37,12 +39,12 @@ class BirthdayCron extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $users = User::query()
             ->where('birthdate', 'LIKE', '%-'.date('m-d'))
-            ->whereHas('member', function ($q) {
-                $q->where('is_pending', false);
+            ->whereHas('member', static function ($q) {
+                $q->whereNot('membership_type', MembershipTypeEnum::PENDING);
             })
             ->get();
 
@@ -61,7 +63,7 @@ class BirthdayCron extends Command
                 Mail::to($user)->queue((new BirthdayEmail($user))->onQueue('medium'));
             }
 
-            Mail::to('board@'.config('proto.emaildomain'))->queue((new BirthdayEmailForBoard($adminoverview))->onQueue('low'));
+            Mail::to('board@'.Config::string('proto.emaildomain'))->queue((new BirthdayEmailForBoard($adminoverview))->onQueue('low'));
 
             $this->info('Done!');
         } else {

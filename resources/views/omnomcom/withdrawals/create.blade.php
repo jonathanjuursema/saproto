@@ -10,7 +10,7 @@
 
         <div class="row-md-4">
 
-            <form method="post" action="{{ route("omnomcom::withdrawal::add") }}">
+            <form method="post" action="{{ route("omnomcom::withdrawal::store") }}">
 
                 {!! csrf_field() !!}
 
@@ -56,7 +56,7 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
 
-                        <a href="{{ route("omnomcom::withdrawal::list") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("omnomcom::withdrawal::index") }}" class="btn btn-default">Cancel</a>
 
                     </div>
 

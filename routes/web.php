@@ -1,348 +1,483 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\AliasController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthorizationController;
+use App\Http\Controllers\BankController;
+use App\Http\Controllers\CodexController;
+use App\Http\Controllers\CodexSongCategoryController;
+use App\Http\Controllers\CodexSongController;
+use App\Http\Controllers\CodexTextController;
+use App\Http\Controllers\CodexTextTypeController;
+use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DinnerformController;
+use App\Http\Controllers\DinnerformOrderlineController;
+use App\Http\Controllers\DmxFixtureController;
+use App\Http\Controllers\DmxOverrrideController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\EmailListController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\HeaderImageController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IsAlfredThereController;
+use App\Http\Controllers\JobofferController;
+use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\LeaderboardEntryController;
+use App\Http\Controllers\MemberCardController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MollieController;
+use App\Http\Controllers\NarrowcastingController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\OmNomController;
+use App\Http\Controllers\OrderLineController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\ParticipationController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\PhotoAdminController;
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfilePictureController;
+use App\Http\Controllers\ProtubeController;
+use App\Http\Controllers\QrAuthController;
+use App\Http\Controllers\QueryController;
+use App\Http\Controllers\RegistrationHelperController;
+use App\Http\Controllers\RfidCardController;
+use App\Http\Controllers\SearchController;
+/* --- use App\Http\Controllers\RadioController; --- */
+
+use App\Http\Controllers\ShortUrlController;
+use App\Http\Controllers\SmartXpScreenController;
+use App\Http\Controllers\SpotifyController;
+use App\Http\Controllers\StockMutationController;
+use App\Http\Controllers\SurfConextController;
+use App\Http\Controllers\TempAdminController;
+use App\Http\Controllers\TFAController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TIPCieController;
+use App\Http\Controllers\UserAdminController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\VideoController;
+use App\Http\Controllers\WallstreetController;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\WithdrawalController;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
-require 'minisites.php';
+require __DIR__.'/minisites.php';
 
-/* Pass view name to body class */
+/* Route block convention:
+ *
+ * Route::controller(C::class)->prefix('section')->name('section::')->middleware(['some:middleware'])->group( function () {
+ *      /. --- #perm# only ---. /
+ *      Route::middleware(['permission:#perm#'])->group(function () {
+ *          Route::post('delete', 'delete')->name('delete');
+ *      });
+ *
+ *      /. --- Public Routes --- ./
+ *      Route::#method#('url', 'controllerFn')->name('name');
+ *
+ *      /. --- Catch alls  ---./
+ *      Route::#method#('{id}', 'show')->('show')
+ * });
+ *
+ *
+ */
+
+/* --- Pass view name to body class --- */
 View::composer('*', function ($view) {
     View::share('viewName', $view->getName());
 });
 
-// TODO: change string based controller route definitions to standard PHP callable syntax.
-
-Route::group(['middleware' => ['forcedomain']], function () {
-
-    /* The main route for the frontpage. */
-    Route::get('', ['as' => 'homepage', 'uses' => 'HomeController@show']);
-    Route::get('developers', ['uses' => 'HomeController@developers']);
-    Route::get('becomeamember', ['as' => 'becomeamember', 'uses' => 'UserDashboardController@becomeAMemberOf']);
-
-    Route::get('fishcam', ['as' => 'fishcam', 'middleware' => ['member'], 'uses' => 'HomeController@fishcam']);
-
-    /* Routes related to the header images. */
-    Route::group(['prefix' => 'headerimage', 'middleware' => ['auth', 'permission:header-image'], 'as' => 'headerimage::'], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'HeaderImageController@index']);
-        Route::get('add', ['as' => 'add', 'uses' => 'HeaderImageController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'HeaderImageController@store']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'HeaderImageController@destroy']);
+Route::middleware('forcedomain')->group(function () {
+    /* --- The main route for the frontpage --- */
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('developers', 'developers');
+        Route::get('', 'show')->name('homepage');
+        Route::get('fishcam', 'fishcam')->middleware(['member'])->name('fishcam');
     });
 
-    /* Routes for the search function. */
-    Route::get('search', ['as' => 'search', 'uses' => 'SearchController@search']);
-    Route::post('search', ['as' => 'search', 'uses' => 'SearchController@search']);
-    Route::get('opensearch', ['as' => 'search::opensearch', 'uses' => 'SearchController@openSearch']);
+    Route::get('becomeamember', [UserDashboardController::class, 'becomeAMemberOf'])->name('becomeamember');
 
-    /* Routes for the UTwente address book. */
-    Route::group(['prefix' => 'ldap', 'as' => 'ldap::', 'middleware' => ['utwente']], function () {
-        Route::get('search', ['as' => 'search', 'uses' => 'SearchController@ldapSearch']);
-        Route::post('search', ['as' => 'search', 'uses' => 'SearchController@ldapSearch']);
+    Route::resource('headerimages', HeaderImageController::class)->only(['index', 'create', 'store', 'destroy'])->middleware(['auth', 'permission:header-image']);
+
+    /* Routes for the search function. All public*/
+    Route::controller(SearchController::class)->name('search::')->group(function () {
+        Route::get('search', 'search')->name('get');
+        Route::post('search', 'search')->name('post');
+        Route::get('opensearch', 'openSearch')->name('opensearch');
+        /* --- Routes for the UTwente address book --- */
+        Route::prefix('ldap')->name('ldap::')->middleware(['utwente'])->group(function () {
+            Route::get('search', 'ldapSearch')->name('get');
+            Route::post('search', 'ldapSearch')->name('post');
+        });
     });
 
-    /* Routes related to authentication. */
-    Route::group(['as' => 'login::'], function () {
-        Route::get('login', ['as' => 'show', 'uses' => 'AuthController@getLogin']);
-        Route::post('login', ['as' => 'post', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@postLogin']);
-        Route::get('logout', ['as' => 'logout', 'uses' => 'AuthController@getLogout']);
-        Route::get('logout/redirect', ['as' => 'logout::redirect', 'uses' => 'AuthController@getLogoutRedirect']);
+    /* --- Routes related to authentication. All public --- */
+    Route::controller(AuthController::class)->name('login::')->group(function () {
+        Route::get('login', 'getLogin')->name('show');
+        Route::post('login', 'postLogin')->middleware(['throttle:5,1'])->name('post');
+        Route::get('logout', 'getLogout')->name('logout');
+        Route::get('logout/redirect', 'getLogoutRedirect')->name('logout::redirect');
 
-        Route::get('password/reset/{token}', ['as' => 'resetpass::token', 'uses' => 'AuthController@getPasswordReset']);
-        Route::post('password/reset', ['as' => 'resetpass::submit', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@postPasswordReset']);
+        Route::prefix('password')->name('password::')->group(function () {
+            Route::get('reset/{token}', 'getPasswordReset')->name('reset::token');
+            Route::post('reset', 'postPasswordReset')->middleware(['throttle:5,1'])->name('reset::submit');
 
-        Route::get('password/email', ['as' => 'resetpass', 'uses' => 'AuthController@getPasswordResetEmail']);
-        Route::post('password/email', ['as' => 'resetpass::send', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@postPasswordResetEmail']);
+            Route::get('email', 'getPasswordResetEmail')->name('reset');
+            Route::post('email', 'postPasswordResetEmail')->middleware(['throttle:5,1'])->name('reset::send');
 
-        Route::get('password/sync', ['as' => 'password::sync', 'middleware' => ['auth'], 'uses' => 'AuthController@getPasswordSync']);
-        Route::post('password/sync', ['as' => 'password::sync', 'middleware' => ['throttle:5,1', 'auth'], 'uses' => 'AuthController@postPasswordSync']);
+            Route::get('sync', 'getPasswordSync')->middleware(['auth'])->name('sync::index');
+            Route::post('sync', 'postPasswordSync')->middleware(['throttle:5,1', 'auth'])->name('sync');
 
-        Route::get('password/change', ['as' => 'password::change', 'middleware' => ['auth'], 'uses' => 'AuthController@getPasswordChange']);
-        Route::post('password/change', ['as' => 'password::change', 'middleware' => ['throttle:5,1', 'auth'], 'uses' => 'AuthController@postPasswordChange']);
+            Route::get('change', 'getPasswordChange')->middleware(['auth'])->name('change::index');
+            Route::post('change', 'postPasswordChange')->middleware(['throttle:5,1', 'auth'])->name('change');
+        });
 
-        Route::get('register', ['as' => 'register', 'uses' => 'AuthController@getRegister']);
-        Route::post('register', ['as' => 'register', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@postRegister']);
-        Route::post('register/surfconext', ['as' => 'register::surfconext', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@postRegisterSurfConext']);
+        Route::get('register', 'getRegister')->name('register::index');
+        Route::post('register', 'postRegister')->middleware(['throttle:5,1'])->name('register');
+        Route::post('register/surfconext', 'postRegisterSurfConext')->middleware(['throttle:5,1'])->name('register::surfconext');
 
-        Route::get('surfconext', ['as' => 'edu', 'uses' => 'AuthController@startSurfConextAuth']);
-        Route::get('surfconext/post', ['as' => 'edupost', 'uses' => 'AuthController@postSurfConextAuth']);
+        Route::get('surfconext', 'startSurfConextAuth')->name('edu');
+        Route::get('surfconext/post', 'postSurfConextAuth')->name('edupost');
 
-        Route::get('username', ['as' => 'requestusername', 'uses' => 'AuthController@requestUsername']);
-        Route::post('username', ['as' => 'requestusername', 'middleware' => ['throttle:5,1'], 'uses' => 'AuthController@requestUsername']);
+        Route::get('username', 'requestUsername')->name('requestusername::index');
+        Route::post('username', 'requestUsername')->middleware(['throttle:5,1'])->name('requestusername');
     });
 
-    /* Routes related to user profiles. */
-    Route::group(['prefix' => 'user', 'as' => 'user::', 'middleware' => ['auth']], function () {
-        Route::post('delete', ['as' => 'delete', 'uses' => 'AuthController@deleteUser']);
-        Route::post('password', ['as' => 'changepassword', 'uses' => 'AuthController@updatePassword']);
+    /* --- Routes related to user profiles --- */
+    Route::prefix('user')->name('user::')->middleware(['auth'])->group(function () {
 
-        Route::get('personal_key', ['as' => 'personal_key::generate', 'uses' => 'UserDashboardController@generateKey']);
+        /* --- Public routes ---- */
+        Route::controller(AuthController::class)->group(function () {
+            Route::post('delete', 'deleteUser')->name('delete');
+            Route::post('password', 'updatePassword')->name('changepassword');
+        });
 
-        /* Routes related to members. */
-        Route::group(['prefix' => '{id}/member', 'as' => 'member::', 'middleware' => ['auth', 'permission:registermembers']], function () {
-            Route::get('impersonate', ['as' => 'impersonate', 'middleware' => ['auth', 'permission:board'], 'uses' => 'UserAdminController@impersonate']);
+        Route::get('personal_key', [UserDashboardController::class, 'generateKey'])->name('personal_key::generate');
 
-            Route::post('add', ['as' => 'add', 'uses' => 'UserAdminController@addMembership']);
-            Route::post('remove', ['as' => 'remove', 'uses' => 'UserAdminController@endMembership']);
-            Route::post('end_in_september', ['as' => 'endinseptember', 'uses' => 'UserAdminController@EndMembershipInSeptember']);
-            Route::post('remove_end', ['as' => 'removeend', 'uses' => 'UserAdminController@removeMembershipEnd']);
-            Route::post('settype', ['as' => 'settype', 'uses' => 'UserAdminController@setMembershipType']);
+        Route::controller(UserDashboardController::class)->prefix('memberprofile')->name('memberprofile::')->middleware('auth')->group(function () {
+            Route::get('complete', 'getCompleteProfile')->name('show');
+            Route::post('complete', 'postCompleteProfile')->name('complete');
+            Route::get('clear', 'getClearProfile')->name('showclear');
+            Route::post('clear', 'postClearProfile')->name('clear');
+        });
 
-            /* Routes related to the custom omnomcom sound. */
-            Route::group(['prefix' => 'omnomcomsound', 'as' => 'omnomcomsound::', 'middleware' => ['auth', 'permission:board']], function () {
-                Route::post('update', ['as' => 'update', 'uses' => 'UserAdminController@uploadOmnomcomSound']);
-                Route::get('delete', ['as' => 'delete', 'uses' => 'UserAdminController@deleteOmnomcomSound']);
+        Route::controller(UserDashboardController::class)->group(function () {
+            Route::post('change_email/{id}', 'updateMail')->middleware(['throttle:3,1'])->name('changemail');
+            Route::get('dashboard', 'show')->name('dashboard::show');
+            Route::post('dashboard', 'update')->name('dashboard');
+        });
+
+        Route::get('quit_impersonating', [UserAdminController::class, 'quitImpersonating'])->name('quitimpersonating');
+
+        /* --- Routes related to addresses --- */
+        Route::controller(AddressController::class)->prefix('address')->name('address::')->group(function () {
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('delete', 'destroy')->name('delete');
+            Route::get('edit', 'edit')->name('edit');
+            Route::post('update', 'update')->name('update');
+            Route::get('togglehidden', 'toggleHidden')->name('togglehidden');
+        });
+
+        /* --- Route(s) related to diet --- */
+        Route::post('diet/edit', [UserDashboardController::class, 'editDiet'])->name('diet::edit');
+
+        /* --- Routes related to bank accounts --- */
+        Route::controller(BankController::class)->prefix('bank')->name('bank::')->group(function () {
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::get('edit', 'edit')->name('edit');
+            Route::post('update', 'update')->name('update');
+        });
+
+        /* --- Routes related to RFID cards --- */
+        Route::controller(RfidCardController::class)->prefix('rfidcard/{id}')->name('rfid::')->group(function () {
+            Route::get('delete', 'destroy')->name('delete');
+            Route::get('edit', 'edit')->name('edit');
+            Route::post('update', 'update')->name('update');
+        });
+
+        /* --- Routes related to profile pictures --- */
+        Route::controller(ProfilePictureController::class)->prefix('profilepic')->name('pic::')->group(function () {
+            Route::post('update', 'update')->name('update');
+            Route::get('delete', 'destroy')->name('delete');
+        });
+
+        /* --- Routes related to UT accounts --- */
+        Route::controller(SurfConextController::class)->prefix('edu')->name('edu::')->group(function () {
+            Route::get('delete', 'destroy')->name('delete');
+            Route::get('create', 'create')->name('create');
+        });
+
+        /* --- Routes related to 2FA --- */
+        Route::controller(TFAController::class)->prefix('2fa')->name('2fa::')->group(function () {
+            Route::post('create', 'create')->name('create');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('delete/{id}', 'adminDestroy')->middleware(['permission:board'])->name('admindelete');
+        });
+
+        /* --- Restricted routes ---- */
+
+        /* --- Registration helper --- */
+        Route::controller(RegistrationHelperController::class)->prefix('registrationhelper')->name('registrationhelper::')->middleware(['auth', 'permission:registermembers'])->group(function () {
+            Route::get('', 'index')->name('list');
+            Route::get('{id}', 'details')->name('details');
+        });
+
+        /* --- Routes related to member administration --- */
+        Route::controller(UserAdminController::class)->prefix('{id}/member')->name('member::')->middleware(['auth', 'permission:registermembers'])->group(function () {
+            // Board only
+            // Impersonation
+            Route::get('impersonate', 'impersonate')->middleware(['auth', 'permission:board'])->name('impersonate');
+            // OmNomCom sound
+            Route::prefix('omnomcomsound')->name('omnomcomsound::')->middleware(['auth', 'permission:board'])->group(function () {
+                Route::post('update', 'uploadOmnomcomSound')->name('update');
+                Route::get('delete', 'deleteOmnomcomSound')->name('delete');
             });
+            Route::post('create', 'addMembership')->name('create');
+            Route::post('remove', 'endMembership')->name('remove');
+            Route::post('end_in_september', 'EndMembershipInSeptember')->name('endinseptember');
+            Route::post('remove_end', 'removeMembershipEnd')->name('removeend');
+            Route::post('settype', 'setMembershipType')->name('settype');
+
         });
 
-        Route::group(['prefix' => 'memberprofile', 'as' => 'memberprofile::', 'middleware' => ['auth']], function () {
-            Route::get('complete', ['as' => 'complete', 'uses' => 'UserDashboardController@getCompleteProfile']);
-            Route::post('complete', ['as' => 'complete', 'uses' => 'UserDashboardController@postCompleteProfile']);
-            Route::get('clear', ['as' => 'clear', 'uses' => 'UserDashboardController@getClearProfile']);
-            Route::post('clear', ['as' => 'clear', 'uses' => 'UserDashboardController@postClearProfile']);
+        /* --- User admin: Board only --- */
+        Route::controller(UserAdminController::class)->prefix('admin')->name('admin::')->middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('index', 'index')->name('index');
+
+            Route::get('studied_create/{id}', 'toggleStudiedCreate')->name('toggle_studied_create');
+            Route::get('studied_itech/{id}', 'toggleStudiedITech')->name('toggle_studied_itech');
+            Route::get('primary_somewhere_else/{id}', 'togglePrimaryAtAnotherAssociation')->name('toggle_primary_somewhere_else');
+            Route::get('nda/{id}', 'toggleNda')->name('toggle_nda');
+            Route::get('unblock_omnomcom/{id}', 'unblockOmnomcom')->name('unblock_omnomcom');
+
+            Route::get('{id}', 'details')->name('details');
+            Route::post('{id}', 'update')->name('update');
         });
 
-        Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => ['auth', 'permission:board']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'UserAdminController@index']);
-            Route::get('{id}', ['as' => 'details', 'uses' => 'UserAdminController@details']);
-            Route::post('{id}', ['as' => 'update', 'uses' => 'UserAdminController@update']);
+        Route::get('{id?}', [UserProfileController::class, 'show'])->middleware(['member'])->name('profile');
 
-            Route::get('studied_create/{id}', ['as' => 'toggle_studied_create', 'uses' => 'UserAdminController@toggleStudiedCreate']);
-            Route::get('studied_itech/{id}', ['as' => 'toggle_studied_itech', 'uses' => 'UserAdminController@toggleStudiedITech']);
-            Route::get('nda/{id}', ['as' => 'toggle_nda', 'middleware' => ['permission:board'], 'uses' => 'UserAdminController@toggleNda']);
-            Route::get('unblock_omnomcom/{id}', ['as' => 'unblock_omnomcom', 'uses' => 'UserAdminController@unblockOmnomcom']);
+    });
+
+    /* --- Routes related to the Membership Forms --- */
+    Route::prefix('memberform')->name('memberform::')->middleware(['auth'])->group(function () {
+        Route::controller(UserDashboardController::class)->group(function () {
+            Route::get('sign', 'getMemberForm')->name('showsign');
+            Route::post('sign', 'postMemberForm')->name('sign');
         });
-
-        Route::group(['prefix' => 'registrationhelper', 'as' => 'registrationhelper::', 'middleware' => ['auth' => 'permission:registermembers']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'RegistrationHelperController@index']);
-            Route::get('{id}', ['as' => 'details', 'uses' => 'RegistrationHelperController@details']);
-        });
-
-        Route::get('quit_impersonating', ['as' => 'quitimpersonating', 'uses' => 'UserAdminController@quitImpersonating']);
-
-        Route::post('change_email/{id}', ['as' => 'changemail', 'middleware' => ['throttle:3,1'], 'uses' => 'UserDashboardController@updateMail']);
-
-        Route::get('dashboard', ['as' => 'dashboard', 'uses' => 'UserDashboardController@show']);
-        Route::post('dashboard', ['as' => 'dashboard', 'uses' => 'UserDashboardController@update']);
-
-        Route::get('{id?}', ['as' => 'profile', 'middleware' => ['member'], 'uses' => 'UserProfileController@show']);
-
-        /* Routes related to addresses. */
-        Route::group(['prefix' => 'address', 'as' => 'address::'], function () {
-            Route::get('add', ['as' => 'add', 'uses' => 'AddressController@add']);
-            Route::post('add', ['as' => 'add', 'uses' => 'AddressController@store']);
-            Route::get('delete', ['as' => 'delete', 'uses' => 'AddressController@destroy']);
-            Route::get('edit', ['as' => 'edit', 'uses' => 'AddressController@edit']);
-            Route::post('edit', ['as' => 'edit', 'uses' => 'AddressController@update']);
-            Route::get('togglehidden', ['as' => 'togglehidden', 'uses' => 'AddressController@toggleHidden']);
-        });
-
-        /* Routes related to diet. */
-        Route::group(['prefix' => 'diet', 'as' => 'diet::'], function () {
-            Route::post('edit', ['as' => 'edit', 'uses' => 'UserDashboardController@editDiet']);
-        });
-
-        /* Routes related to bank accounts. */
-        Route::group(['prefix' => 'bank', 'as' => 'bank::'], function () {
-            Route::get('add', ['as' => 'add', 'uses' => 'BankController@add']);
-            Route::post('add', ['as' => 'add', 'uses' => 'BankController@store']);
-            Route::post('delete', ['as' => 'delete', 'uses' => 'BankController@destroy']);
-            Route::get('edit', ['as' => 'edit', 'uses' => 'BankController@edit']);
-            Route::post('edit', ['as' => 'edit', 'uses' => 'BankController@update']);
-        });
-
-        /* Routes related to RFID cards. */
-        Route::group(['prefix' => 'rfidcard/{id}', 'as' => 'rfid::'], function () {
-            Route::get('delete', ['as' => 'delete', 'uses' => 'RfidCardController@destroy']);
-            Route::get('edit', ['as' => 'edit', 'uses' => 'RfidCardController@edit']);
-            Route::post('edit', ['as' => 'edit', 'uses' => 'RfidCardController@update']);
-        });
-
-        /* Routes related to profile pictures. */
-        Route::group(['prefix' => 'profilepic', 'as' => 'pic::'], function () {
-            Route::post('update', ['as' => 'update', 'uses' => 'ProfilePictureController@update']);
-            Route::get('delete', ['as' => 'delete', 'uses' => 'ProfilePictureController@destroy']);
-        });
-
-        /* Routes related to UT accounts. */
-        Route::group(['prefix' => 'edu', 'as' => 'edu::'], function () {
-            Route::get('delete', ['as' => 'delete', 'uses' => 'SurfConextController@destroy']);
-            Route::get('add', ['as' => 'add', 'uses' => 'SurfConextController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'SurfConextController@store']);
-        });
-
-        /* Routes related to 2FA. */
-        Route::group(['prefix' => '2fa', 'as' => '2fa::'], function () {
-            Route::post('add', ['as' => 'add', 'uses' => 'TFAController@create']);
-            Route::post('delete', ['as' => 'delete', 'uses' => 'TFAController@destroy']);
-            Route::post('delete/{id}', ['as' => 'admindelete', 'middleware' => ['permission:board'], 'uses' => 'TFAController@adminDestroy']);
+        Route::controller(UserAdminController::class)->group(function () {
+            Route::prefix('download')->name('download::')->group(function () {
+                Route::get('new/{id}', 'getNewMemberForm')->name('new');
+                Route::get('signed/{id}', 'getSignedMemberForm')->name('signed');
+            });
+            // Member form management (Board)
+            Route::post('print/{id}', 'printMemberForm')->middleware(['permission:board'])->name('print');
+            Route::post('delete/{id}', 'destroyMemberForm')->middleware(['permission:board'])->name('delete');
         });
     });
 
-    /* Routes related to the Membership Forms */
-    Route::group(['prefix' => 'memberform', 'as' => 'memberform::', 'middleware' => ['auth']], function () {
-        Route::get('sign', ['as' => 'sign', 'uses' => 'UserDashboardController@getMemberForm']);
-        Route::post('sign', ['as' => 'sign', 'uses' => 'UserDashboardController@postMemberForm']);
-        Route::group(['prefix' => 'download', 'as' => 'download::'], function () {
-            Route::get('new/{id}', ['as' => 'new', 'uses' => 'UserAdminController@getNewMemberForm']);
-            Route::get('signed/{id}', ['as' => 'signed', 'uses' => 'UserAdminController@getSignedMemberForm']);
-        });
-        Route::post('print/{id}', ['as' => 'print', 'middleware' => ['permission:board'], 'uses' => 'UserAdminController@printMemberForm']);
-        Route::post('delete/{id}', ['as' => 'delete', 'middleware' => ['permission:board'], 'uses' => 'UserAdminController@destroyMemberForm']);
-    });
+    /* --- Routes related to committees --- */
+    Route::controller(CommitteeController::class)->prefix('committee')->name('committee::')->group(function () {
+        /* --- Board only --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            // Membership management
+            Route::prefix('membership')->name('membership::')->group(function () {
+                Route::post('store', 'addMembership')->name('store');
+                Route::get('end/{committee}/{edition}', 'endEdition')->name('endedition');
+                Route::get('{id}/delete', 'deleteMembership')->name('delete');
+                Route::get('{id}', 'editMembershipForm')->name('edit');
+                Route::post('{id}', 'updateMembershipForm')->name('update');
+            });
 
-    /* Routes related to committees. */
-    Route::group(['prefix' => 'committee', 'as' => 'committee::'], function () {
-        Route::group(['prefix' => 'membership', 'as' => 'membership::', 'middleware' => ['auth', 'permission:board']], function () {
-            Route::post('add', ['as' => 'add', 'uses' => 'CommitteeController@addMembership']);
-            Route::get('{id}/delete', ['as' => 'delete', 'uses' => 'CommitteeController@deleteMembership']);
-            Route::get('{id}', ['as' => 'edit', 'uses' => 'CommitteeController@editMembershipForm']);
-            Route::post('{id}', ['as' => 'edit', 'uses' => 'CommitteeController@editMembership']);
-            Route::get('end/{committee}/{edition}', ['as' => 'endedition', 'uses' => 'CommitteeController@endEdition']);
-        });
-
-        Route::get('list', ['as' => 'list', 'uses' => 'CommitteeController@overview']);
-
-        Route::get('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CommitteeController@add']);
-        Route::post('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CommitteeController@store']);
-
-        Route::get('{id}', ['as' => 'show', 'uses' => 'CommitteeController@show']);
-
-        Route::get('{id}/send_anonymous_email', ['as' => 'anonymousmail', 'middleware' => ['auth', 'member'], 'uses' => 'CommitteeController@showAnonMailForm']);
-        Route::post('{id}/send_anonymous_email', ['as' => 'anonymousmail', 'middleware' => ['auth', 'member'], 'uses' => 'CommitteeController@postAnonMailForm']);
-
-        Route::get('{id}/edit', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CommitteeController@edit']);
-        Route::post('{id}/edit', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CommitteeController@update']);
-
-        Route::post('{id}/image', ['as' => 'image', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CommitteeController@image']);
-    });
-
-    /* Routes related to societies. */
-    Route::group(['prefix' => 'society', 'as' => 'society::'], function () {
-        Route::get('list', ['as' => 'list', 'uses' => 'CommitteeController@overview'])->defaults('showSociety', true);
-        Route::get('{id}', ['as' => 'show', 'uses' => 'CommitteeController@show']);
-    });
-
-    /* Routes related to narrowcasting. */
-    Route::group(['prefix' => 'narrowcasting', 'as' => 'narrowcasting::'], function () {
-        Route::get('', ['as' => 'display', 'uses' => 'NarrowcastingController@show']);
-        Route::get('list', ['as' => 'list', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@index']);
-        Route::get('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@create']);
-        Route::post('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@store']);
-        Route::get('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@destroy']);
-        Route::get('clear', ['as' => 'clear', 'middleware' => ['auth', 'permission:board'], 'uses' => 'NarrowcastingController@clear']);
-    });
-
-    /* Routes related to companies. */
-    Route::group(['prefix' => 'companies', 'as' => 'companies::'], function () {
-        Route::get('list', ['as' => 'admin', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@adminIndex']);
-        Route::get('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@create']);
-        Route::post('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@store']);
-        Route::get('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@destroy']);
-
-        Route::get('up/{id}', ['as' => 'orderUp', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@orderUp']);
-        Route::get('down/{id}', ['as' => 'orderDown', 'middleware' => ['auth', 'permission:board'], 'uses' => 'CompanyController@orderDown']);
-
-        Route::get('', ['as' => 'index', 'uses' => 'CompanyController@index']);
-        Route::get('{id}', ['as' => 'show', 'uses' => 'CompanyController@show']);
-    });
-
-    /* Routes related to membercard. */
-    Route::group(['prefix' => 'membercard', 'as' => 'membercard::'], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'CompanyController@indexmembercard']);
-
-        Route::post('print', ['as' => 'print', 'middleware' => ['auth', 'permission:board'], 'uses' => 'MemberCardController@startPrint']);
-        Route::get('download/{id}', ['as' => 'download', 'uses' => 'MemberCardController@download']);
-
-        Route::get('{id}', ['as' => 'show', 'uses' => 'CompanyController@showmembercard']);
-    });
-
-    /* Routes related to joboffers. */
-    Route::group(['prefix' => 'joboffers', 'as' => 'joboffers::'], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'JobofferController@index']);
-        Route::get('list', ['as' => 'admin', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@adminIndex']);
-
-        Route::get('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@create']);
-        Route::post('add', ['as' => 'add', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@store']);
-
-        Route::get('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@update']);
-
-        Route::get('delete/{id}', ['as' => 'delete', 'middleware' => ['auth', 'permission:board'], 'uses' => 'JobofferController@destroy']);
-
-        Route::get('{id}', ['as' => 'show', 'uses' => 'JobofferController@show']);
-    });
-
-    /* Routes related to leaderboards. */
-    Route::group(['prefix' => 'leaderboards', 'as' => 'leaderboards::', 'middleware' => ['auth', 'member']], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'LeaderboardController@index']);
-
-        Route::get('list', ['as' => 'admin', 'uses' => 'LeaderboardController@adminIndex']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'LeaderboardController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'LeaderboardController@update']);
-
-        Route::group(['middleware' => ['permission:board']], function () {
-            Route::get('add', ['as' => 'add', 'uses' => 'LeaderboardController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'LeaderboardController@store']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'LeaderboardController@destroy']);
+            // Committee management
+            Route::get('create', 'create')->name('create');
+            Route::post('', 'store')->name('store');
+            Route::get('{id}/edit', 'edit')->name('edit');
+            Route::post('{id}/edit', 'update')->name('update');
+            Route::post('{id}/image', 'image')->name('image');
         });
 
-        Route::group(['prefix' => 'entries', 'as' => 'entries::'], function () {
-            Route::post('add', ['as' => 'add', 'uses' => 'LeaderboardEntryController@store']);
-            Route::post('update', ['as' => 'update', 'uses' => 'LeaderboardEntryController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'LeaderboardEntryController@destroy']);
+        /* --- Public routes --- */
+        Route::get('index', 'index')->name('index');
+        Route::get('{id}', 'show')->name('show');
+        Route::get('{id}/send_anonymous_email', 'showAnonMailForm')->middleware(['auth', 'member'])->name('anonymousmail');
+        Route::post('{id}/send_anonymous_email', 'sendAnonMailForm')->middleware(['auth', 'member'])->name('sendanonymousmail');
+        Route::get('{slug}/toggle_helper_reminder', 'toggleHelperReminder')->middleware(['auth'])->name('toggle_helper_reminder');
+    });
+
+    /* --- Routes related to societies --- */
+    Route::controller(CommitteeController::class)->prefix('society')->name('society::')->group(function () {
+        Route::get('list', 'index')->name('list')->defaults('showSociety', true);
+        Route::get('{id}', 'show')->name('show');
+    });
+
+    /* --- Routes related to narrowcasting (Board only) --- */
+    Route::controller(NarrowcastingController::class)->prefix('narrowcasting')->name('narrowcasting::')->group(function () {
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('edit/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('clear', 'clear')->name('clear');
+        });
+        Route::get('', 'show')->name('display');
+    });
+
+    /* --- Routes related to companies --- */
+    Route::controller(CompanyController::class)->prefix('companies')->name('companies::')->group(function () {
+
+        /* --- Board only --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('list', 'adminIndex')->name('admin');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('edit/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+
+            Route::get('up/{id}', 'orderUp')->name('orderUp');
+            Route::get('down/{id}', 'orderDown')->name('orderDown');
+        });
+
+        /* --- Public routes --- */
+        Route::get('index', 'index')->name('index');
+        Route::get('{id}', 'show')->name('show');
+    });
+
+    /* --- Routes related to membercard --- */
+    Route::prefix('membercard')->name('membercard::')->group(function () {
+        Route::controller(CompanyController::class)->group(function () {
+            Route::get('index', 'indexmembercard')->name('index');
+            Route::get('{id}', 'showmembercard')->name('show');
+        });
+
+        Route::controller(MemberCardController::class)->group(function () {
+            Route::post('print', 'startPrint')->middleware(['auth', 'permission:board'])->name('print');
+            Route::get('download/{id}', 'download')->name('download');
         });
     });
 
-    /* Routes related to dinnerforms. */
-    Route::group(['prefix' => 'dinnerform', 'as' => 'dinnerform::', 'middleware' => ['auth']], function () {
-        Route::group(['middleware' => ['permission:tipcie']], function () {
-            Route::get('add', ['as' => 'add', 'uses' => 'DinnerformController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'DinnerformController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'DinnerformController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'DinnerformController@update']);
-            Route::get('close/{id}', ['as' => 'close', 'uses' => 'DinnerformController@close']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'DinnerformController@destroy']);
-            Route::get('admin/{id}', ['as' => 'admin', 'uses' => 'DinnerformController@admin']);
-            Route::get('process/{id}', ['as' => 'process', 'uses' => 'DinnerformController@process']);
+    /* --- Routes related to joboffers --- */
+    Route::controller(JobofferController::class)->prefix('joboffers')->name('joboffers::')->group(function () {
+        /* --- Board only --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('list', 'adminIndex')->name('admin');
+
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('edit/{id}', 'update')->name('update');
+
+            Route::get('delete/{id}', 'destroy')->name('delete');
         });
-        Route::group(['prefix' => 'orderline', 'as' => 'orderline::'], function () {
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'DinnerformOrderlineController@delete']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'DinnerformOrderlineController@edit']);
-            Route::post('add/{id}', ['as' => 'add', 'uses' => 'DinnerformOrderlineController@store']);
-            Route::post('update/{id}', ['as' => 'update', 'middleware' => ['permission:tipcie'], 'uses' => 'DinnerformOrderlineController@update']);
-        });
-        Route::get('{id}', ['as' => 'show', 'uses' => 'DinnerformController@show']);
+        /* --- Public routes --- */
+        Route::get('index', 'index')->name('index');
+        Route::get('{id}', 'show')->name('show');
     });
 
-    /* routes related to the wallstreet drink system */
-    Route::group(['prefix' => 'wallstreet', 'as' => 'wallstreet::', 'middleware' => ['permission:tipcie']], function () {
-        Route::get('', ['as' => 'admin', 'uses' => 'WallstreetController@admin']);
-        Route::get('marquee', ['as' => 'marquee', 'uses' => 'WallstreetController@marquee']);
-        Route::post('add', ['as' => 'add', 'uses' => 'WallstreetController@store']);
-        Route::get('close/{id}', ['as' => 'close', 'uses' => 'WallstreetController@close']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'WallstreetController@destroy']);
-        Route::get('statistics/{id}', ['as' => 'statistics', 'uses' => 'WallstreetController@statistics']);
-        Route::group(['prefix' => 'products', 'as' => 'products::'], function () {
-            Route::post('add/{id}', ['as' => 'add', 'uses' => 'WallstreetController@addProducts']);
-            Route::get('remove/{id}/{productId}', ['as' => 'remove', 'uses' => 'WallstreetController@removeProduct']);
+    /* --- Routes related to leaderboards --- */
+    Route::prefix('leaderboards')->name('leaderboards::')->middleware(['auth', 'member'])->group(function () {
+        Route::controller(LeaderboardController::class)->group(function () {
+
+            // Committee dependent
+            Route::get('list', 'adminIndex')->name('admin');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+
+            // Board only
+            Route::middleware(['permission:board'])->group(function () {
+                Route::get('create', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::get('delete/{id}', 'destroy')->name('delete');
+            });
+
+            // Public route
+            Route::get('', 'index')->name('index');
+
         });
 
-        Route::group(['prefix' => 'events', 'as' => 'events::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'WallstreetController@events']);
-            Route::post('add', ['as' => 'add', 'uses' => 'WallstreetController@addEvent']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@editEvent']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'WallstreetController@updateEvent']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'WallstreetController@destroyEvent']);
-            Route::group(['prefix' => 'products', 'as' => 'products::'], function () {
-                Route::post('add/{id}', ['as' => 'add', 'uses' => 'WallstreetController@addEventProducts']);
-                Route::get('remove/{id}/{productId}', ['as' => 'remove', 'uses' => 'WallstreetController@removeEventProduct']);
+        /* --- Committee dependent --- */
+        Route::controller(LeaderboardEntryController::class)->prefix('entries')->name('entries::')->group(function () {
+            Route::post('create', 'store')->name('create');
+            Route::post('update', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+        });
+    });
+
+    /* --- Routes related to dinnerforms --- */
+    Route::prefix('dinnerform')->name('dinnerform::')->middleware(['member'])->group(function () {
+
+        /* --- TIPCie only --- */
+        Route::controller(DinnerformController::class)->middleware(['permission:tipcie'])->group(function () {
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('store', 'store')->name('store');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('close/{id}', 'close')->name('close');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('admin/{id}', 'admin')->name('admin');
+            Route::get('process/{id}', 'process')->name('process');
+        });
+
+        /* --- Member only --- */
+        Route::get('{id}', [DinnerformController::class, 'show'])->name('show');
+
+        /* --- Routes related to the dinnerform orderlines --- */
+        Route::controller(DinnerformOrderlineController::class)->prefix('orderline')->name('orderline::')->group(function () {
+            /* --- TIPCie only --- */
+            Route::middleware(['permission:tipcie'])->group(function () {
+                Route::get('edit/{id}', 'edit')->name('edit');
+                Route::post('update/{id}', 'update')->name('update');
+            });
+
+            /* --- Member only --- */
+            Route::get('delete/{id}', 'delete')->name('delete');
+            Route::post('store/{id}', 'store')->name('store');
+        });
+    });
+
+    /* --- Routes related to the wallstreet drink system (TIPCie only) --- */
+    Route::controller(WallstreetController::class)->prefix('wallstreet')->name('wallstreet::')->middleware(['permission:tipcie'])->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('marquee', 'marquee')->name('marquee');
+        Route::post('store', 'store')->name('store');
+        Route::get('close/{id}', 'close')->name('close');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('edit/{id}', 'update')->name('update');
+        Route::get('delete/{id}', 'destroy')->name('delete');
+        Route::get('statistics/{id}', 'statistics')->name('statistics');
+        route::prefix('products')->name('products::')->group(function () {
+            Route::post('create/{id}', 'addProducts')->name('create');
+            Route::get('remove/{id}/{productId}', 'removeProduct')->name('remove');
+        });
+
+        Route::prefix('events')->name('events::')->group(function () {
+            Route::get('', 'eventIndex')->name('index');
+            Route::post('store', 'addEvent')->name('store');
+            Route::get('edit/{id}', 'editEvent')->name('edit');
+            Route::post('update/{id}', 'updateEvent')->name('update');
+            Route::get('delete/{id}', 'destroyEvent')->name('delete');
+            Route::prefix('products')->name('products::')->group(function () {
+                Route::post('create/{id}', 'addEventProducts')->name('create');
+                Route::get('remove/{id}/{productId}', 'removeEventProduct')->name('remove');
             });
         });
     });
@@ -351,563 +486,574 @@ Route::group(['middleware' => ['forcedomain']], function () {
      * Routes related to events.
      * Important: routes in this block always use event_id or a relevant other ID. activity_id is in principle never used.
      */
-    Route::group(['prefix' => 'events', 'as' => 'event::'], function () {
-        Route::group(['prefix' => 'financial', 'as' => 'financial::', 'middleware' => ['permission:closeactivities']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'EventController@finindex']);
-            Route::post('close/{id}', ['as' => 'close', 'uses' => 'EventController@finclose']);
+    Route::prefix('events')->name('event::')->group(function () {
+        Route::controller(EventController::class)->group(function () {
+
+            // Financials related to events (Finadmin only)
+            Route::prefix('financial')->name('financial::')->middleware('permission:finadmin')->group(function () {
+                Route::get('list', 'finindex')->name('list');
+                Route::post('close/{id}', 'finclose')->name('close');
+            });
+
+            // Event related admin (Board only)
+            Route::middleware(['permission:board'])->group(function () {
+                // Categories
+                Route::prefix('categories')->name('category::')->group(function () {
+                    Route::get('index', 'categoryAdmin')->name('admin');
+                    Route::post('store', 'categoryStore')->name('store');
+                    Route::get('edit/{id}', 'categoryEdit')->name('edit');
+                    Route::post('update/{id}', 'categoryUpdate')->name('update');
+                    Route::get('delete/{id}', 'categoryDestroy')->name('delete');
+                });
+
+                // Events admin
+                Route::get('create', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::get('edit/{id}', 'edit')->name('edit');
+                Route::post('update/{id}', 'update')->name('update');
+                Route::get('delete/{id}', 'destroy')->name('delete');
+
+                // Albums
+                Route::post('album/{event}/link', 'linkAlbum')->name('linkalbum');
+                Route::get('album/unlink/{album}', 'unlinkAlbum')->name('unlinkalbum');
+            });
+
+            // Public routes
+            Route::get('', 'index')->name('index');
+            Route::get('archive/{year}', 'archive')->name('archive');
+            Route::post('copy', 'copyEvent')->name('copy');
+
+            // Catch-alls
+            Route::get('admin/{id}', 'admin')->middleware(['auth'])->name('admin');
+            Route::get('scan/{id}', 'scan')->middleware(['auth'])->name('scan');
+
+            Route::post('set_reminder', 'setReminder')->middleware(['auth'])->name('set_reminder');
+            Route::get('toggle_relevant_only', 'toggleRelevantOnly')->middleware(['auth'])->name('toggle_relevant_only');
+
+            // Force login for event
+            Route::get('{id}/login', 'forceLogin')->middleware(['auth'])->name('login');
+            // Show event
+            Route::get('{id}', 'show')->name('show');
         });
 
-        Route::group(['prefix' => 'categories', 'middleware' => ['permission:board'], 'as' => 'category::'], function () {
-            Route::get('', ['as' => 'admin', 'uses' => 'EventController@categoryAdmin']);
-            Route::post('add', ['as' => 'add', 'uses' => 'EventController@categoryStore']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'EventController@categoryEdit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'EventController@categoryUpdate']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'EventController@categoryDestroy']);
+        /* --- Related to presence & participation --- */
+        Route::controller(ParticipationController::class)->group(function () {
+            // Public routes
+            Route::get('togglepresence/{id}', 'togglePresence')->middleware(['auth'])->name('togglepresence');
+
+            // Manage participation
+            Route::get('participate/{id}', 'create')->middleware(['member'])->name('addparticipation');
+            Route::get('unparticipate/{participation_id}', 'destroy')->name('deleteparticipation');
+
+            // Participate for someone else (Board only)
+            Route::post('participatefor/{id}', 'createFor')->middleware(['permission:board'])->name('addparticipationfor');
+
         });
 
-        Route::get('', ['as' => 'list', 'uses' => 'EventController@index']);
-        Route::get('add', ['as' => 'add', 'middleware' => ['permission:board'], 'uses' => 'EventController@create']);
-        Route::post('add', ['as' => 'add', 'middleware' => ['permission:board'], 'uses' => 'EventController@store']);
-        Route::get('edit/{id}', ['as' => 'edit', 'middleware' => ['permission:board'], 'uses' => 'EventController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'middleware' => ['permission:board'], 'uses' => 'EventController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'middleware' => ['permission:board'], 'uses' => 'EventController@destroy']);
+        /* --- Buy tickets for an event (Public) --- */
+        Route::post('buytickets/{id}', [TicketController::class, 'buyForEvent'])->middleware(['auth'])->name('buytickets');
 
-        Route::post('set_reminder', ['as' => 'set_reminder', 'middleware' => ['auth'], 'uses' => 'EventController@setReminder']);
-        Route::get('toggle_relevant_only', ['as' => 'toggle_relevant_only', 'middleware' => ['auth'], 'uses' => 'EventController@toggleRelevantOnly']);
+        Route::controller(ActivityController::class)->group(function () {
 
-        Route::post('album/{event}/link', ['as' => 'linkalbum', 'middleware' => ['permission:board'], 'uses' => 'EventController@linkAlbum']);
-        Route::get('album/unlink/{album}', ['as' => 'unlinkalbum', 'middleware' => ['permission:board'], 'uses' => 'EventController@unlinkAlbum']);
+            // Board only admin
+            Route::middleware(['permission:board'])->group(function () {
+                // Related to activities
+                Route::post('signup/{id}', 'store')->middleware(['permission:board'])->name('addsignup');
+                Route::get('signup/{id}/delete', 'destroy')->middleware(['permission:board'])->name('deletesignup');
 
-        Route::get('admin/{id}', ['as' => 'admin', 'middleware' => ['auth'], 'uses' => 'EventController@admin']);
-        Route::get('scan/{id}', ['as' => 'scan', 'middleware' => ['auth'], 'uses' => 'EventController@scan']);
+                // Related to helping committees
+                Route::post('addhelp/{id}', 'addHelp')->middleware(['permission:board'])->name('addhelp');
+                Route::post('updatehelp/{id}', 'updateHelp')->middleware(['permission:board'])->name('updatehelp');
+                Route::get('deletehelp/{id}', 'deleteHelp')->middleware(['permission:board'])->name('deletehelp');
+            });
+            // Public routes
+            Route::get('checklist/{id}', 'checklist')->name('checklist');
+        });
 
-        Route::get('checklist/{id}', ['as' => 'checklist', 'uses' => 'ActivityController@checklist']);
-
-        Route::get('archive/{year}', ['as' => 'archive', 'uses' => 'EventController@archive']);
-
-        // Related to presence
-        Route::get('togglepresence/{id}', ['as' => 'togglepresence', 'middleware' => ['auth'], 'uses' => 'ParticipationController@togglePresence']);
-
-        // Related to participation
-        Route::get('participate/{id}', ['as' => 'addparticipation', 'middleware' => ['member'], 'uses' => 'ParticipationController@create']);
-        Route::get('unparticipate/{participation_id}', ['as' => 'deleteparticipation', 'uses' => 'ParticipationController@destroy']);
-
-        Route::post('participatefor/{id}', ['as' => 'addparticipationfor', 'middleware' => ['permission:board'], 'uses' => 'ParticipationController@createFor']);
-
-        // Related to activities
-        Route::post('signup/{id}', ['as' => 'addsignup', 'middleware' => ['permission:board'], 'uses' => 'ActivityController@store']);
-        Route::get('signup/{id}/delete', ['as' => 'deletesignup', 'middleware' => ['permission:board'], 'uses' => 'ActivityController@destroy']);
-
-        // Related to helping committees
-        Route::post('addhelp/{id}', ['as' => 'addhelp', 'middleware' => ['permission:board'], 'uses' => 'ActivityController@addHelp']);
-        Route::post('updatehelp/{id}', ['as' => 'updatehelp', 'middleware' => ['permission:board'], 'uses' => 'ActivityController@updateHelp']);
-        Route::get('deletehelp/{id}', ['as' => 'deletehelp', 'middleware' => ['permission:board'], 'uses' => 'ActivityController@deleteHelp']);
-
-        // Buy tickets for an event
-        Route::post('buytickets/{id}', ['as' => 'buytickets', 'middleware' => ['auth'], 'uses' => 'TicketController@buyForEvent']);
-
-        // Show event
-        Route::get('{id}', ['as' => 'show', 'uses' => 'EventController@show']);
-
-        Route::post('copy', ['as' => 'copy', 'uses' => 'EventController@copyEvent']);
-
-        // Force login for event
-        Route::get('{id}/login', ['as' => 'login', 'middleware' => ['auth'], 'uses' => 'EventController@forceLogin']);
     });
 
-    /* Routes related to pages. */
-    Route::group(['prefix' => 'page', 'as' => 'page::'], function () {
-        Route::group(['middleware' => ['auth', 'permission:board']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'PageController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'PageController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'PageController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'PageController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'PageController@update']);
-            Route::post('edit/{id}/image', ['as' => 'image', 'uses' => 'PageController@featuredImage']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'PageController@destroy']);
+    /* --- Routes related to pages --- */
+    Route::controller(PageController::class)->prefix('page')->name('page::')->group(function () {
 
-            Route::group(['prefix' => '/edit/{id}/file', 'as' => 'file::'], function () {
-                Route::post('add', ['as' => 'add', 'uses' => 'PageController@addFile']);
-                Route::get('{file_id}/delete', ['as' => 'delete', 'uses' => 'PageController@deleteFile']);
+        /* --- Board only --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('', 'index')->name('list');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::post('edit/{id}/image', 'featuredImage')->name('image');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+
+            Route::prefix('/edit/{id}/file')->name('file::')->group(function () {
+                Route::post('create', 'addFile')->name('create');
+                Route::get('{file_id}/delete', 'deleteFile')->name('delete');
             });
         });
 
-        Route::get('{slug}', ['as' => 'show', 'uses' => 'PageController@show']);
+        /* --- Public --- */
+        Route::get('{slug}', 'show')->name('show');
     });
 
-    /* Routes related to news. */
-    Route::group(['prefix' => 'news', 'as' => 'news::', 'middleware' => ['member']], function () {
-        Route::group(['middleware' => ['auth', 'permission:board']], function () {
-            Route::get('admin', ['as' => 'admin', 'uses' => 'NewsController@admin']);
-            Route::get('add', ['as' => 'add', 'uses' => 'NewsController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'NewsController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'NewsController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'NewsController@update']);
-            Route::post('edit/{id}/image', ['as' => 'image', 'uses' => 'NewsController@featuredImage']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'NewsController@destroy']);
-            Route::get('sendWeekly/{id}', ['as' => 'sendWeekly', 'uses' => 'NewsController@sendWeeklyEmail']);
+    /* --- Routes related to news --- */
+    Route::controller(NewsController::class)->prefix('news')->name('news::')->middleware(['member'])->group(function () {
+
+        /* --- Board only --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('admin', 'admin')->name('admin');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::post('edit/{id}/image', 'featuredImage')->name('image');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('sendWeekly/{id}', 'sendWeeklyEmail')->name('sendWeekly');
         });
-        Route::get('showWeeklyPreview/{id}', ['as' => 'showWeeklyPreview', 'uses' => 'NewsController@showWeeklyPreview']);
-        Route::get('', ['as' => 'list', 'uses' => 'NewsController@index']);
-        Route::get('{id}', ['as' => 'show', 'uses' => 'NewsController@show']);
+        /* --- Member only --- */
+        Route::get('showWeeklyPreview/{id}', 'showWeeklyPreview')->name('showWeeklyPreview');
+        Route::get('index', 'index')->name('index');
+        Route::get('{id}', 'show')->name('show');
     });
 
-    /* Routes related to menu. */
-    Route::group(['prefix' => 'menu', 'as' => 'menu::', 'middleware' => ['auth', 'permission:board']], function () {
-        Route::get('', ['as' => 'list', 'uses' => 'MenuController@index']);
-        Route::get('add', ['as' => 'add', 'uses' => 'MenuController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'MenuController@store']);
+    /* --- Routes related to menu. (Board only) --- */
+    Route::controller(MenuController::class)->prefix('menu')->name('menu::')->middleware(['auth', 'permission:board'])->group(function () {
+        Route::get('', 'index')->name('list');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
 
-        Route::get('up/{id}', ['as' => 'orderUp', 'uses' => 'MenuController@orderUp']);
-        Route::get('down/{id}', ['as' => 'orderDown', 'uses' => 'MenuController@orderDown']);
+        Route::get('up/{id}', 'orderUp')->name('orderUp');
+        Route::get('down/{id}', 'orderDown')->name('orderDown');
 
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'MenuController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'MenuController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'MenuController@destroy']);
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update/{id}', 'update')->name('update');
+        Route::get('delete/{id}', 'destroy')->name('delete');
     });
 
-    /* Routes related to tickets. */
-    Route::group(['prefix' => 'tickets', 'middleware' => ['auth'], 'as' => 'tickets::'], function () {
-        Route::group(['middleware' => ['auth', 'permission:board']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'TicketController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'TicketController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'TicketController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'TicketController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'TicketController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'TicketController@destroy']);
+    /* --- Routes related to tickets --- */
+    Route::controller(TicketController::class)->prefix('tickets')->name('tickets::')->middleware(['auth'])->group(function () {
+        /* --- Board only admin --- */
+        Route::middleware(['auth', 'permission:board'])->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
         });
 
-        Route::get('scan/{barcode}', ['as' => 'scan', 'uses' => 'TicketController@scan']);
-        Route::get('unscan/{barcode?}', ['as' => 'unscan', 'uses' => 'TicketController@unscan']);
-        Route::get('download/{id}', ['as' => 'download', 'uses' => 'TicketController@download']);
+        /* --- Public Routes --- */
+        Route::get('scan/{barcode}', 'scan')->name('scan');
+        Route::get('unscan/{barcode?}', 'unscan')->name('unscan');
+        Route::get('download/{id}', 'download')->name('download');
     });
 
-    /* Routes related to e-mail. */
-    Route::get('togglelist/{id}', ['as' => 'togglelist', 'middleware' => ['auth'], 'uses' => 'EmailListController@toggleSubscription']);
-
-    Route::get('unsubscribe/{hash}', ['as' => 'unsubscribefromlist', 'uses' => 'EmailController@unsubscribeLink']);
-
-    Route::group(['prefix' => 'email', 'middleware' => ['auth', 'permission:board'], 'as' => 'email::'], function () {
-        Route::get('', ['as' => 'admin', 'uses' => 'EmailController@index']);
-        Route::get('filter', ['as' => 'filter', 'uses' => 'EmailController@filter']);
-
-        Route::group(['prefix' => 'list', 'as' => 'list::'], function () {
-            Route::get('add', ['as' => 'add', 'uses' => 'EmailListController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'EmailListController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'EmailListController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'EmailListController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'EmailListController@destroy']);
+    /* --- Routes related to e-mail. (Board only) --- */
+    Route::prefix('email')->name('email::')->middleware(['auth', 'permission:board'])->group(function () {
+        Route::controller(EmailListController::class)->prefix('list')->name('list::')->group(function () {
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
         });
 
-        Route::get('add', ['as' => 'add', 'uses' => 'EmailController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'EmailController@store']);
-        Route::get('preview/{id}', ['as' => 'show', 'uses' => 'EmailController@show']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'EmailController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'EmailController@update']);
-        Route::get('toggleready/{id}', ['as' => 'toggleready', 'uses' => 'EmailController@toggleReady']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'EmailController@destroy']);
+        Route::controller(EmailController::class)->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::get('filter', 'filter')->name('filter');
 
-        Route::group(['prefix' => '{id}/attachment', 'as' => 'attachment::'], function () {
-            Route::post('add', ['as' => 'add', 'uses' => 'EmailController@addAttachment']);
-            Route::get('delete/{file_id}', ['as' => 'delete', 'uses' => 'EmailController@deleteAttachment']);
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('show/{id}', 'show')->name('show');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('toggleready/{id}', 'toggleReady')->name('toggleready');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+
+            Route::prefix('{id}/attachment')->name('attachment::')->group(function () {
+                Route::post('create', 'addAttachment')->name('create');
+                Route::get('delete/{file_id}', 'deleteAttachment')->name('delete');
+            });
         });
     });
 
-    Route::get('quotes', ['middleware' => ['member'], 'as' => 'quotes::list', function (Illuminate\Http\Request $request) {
-        return (new FeedbackController())->index($request, 'quotes');
-    }]);
+    /* --- Public Routes for e-mail --- */
+    Route::get('togglelist/{id}', [EmailListController::class, 'toggleSubscription'])->middleware(['auth'])->name('togglelist');
+    Route::get('unsubscribe/{hash}', [EmailController::class, 'unsubscribeLink'])->name('unsubscribefromlist');
 
-    Route::get('goodideas', ['middleware' => ['member'], 'as' => 'goodideas::index', function (Illuminate\Http\Request $request) {
-        return (new FeedbackController())->index($request, 'goodideas');
-    }]);
+    /* --- Routes to redirect /goodideas and /quotes to /feedback/goodideas and /feedback/quotes --- */
+    Route::get('goodideas', [FeedbackController::class, 'goodIdeas'])->middleware(['member'])->name('goodideas::index');
+    Route::get('quotes', [FeedbackController::class, 'quotes'])->middleware(['member'])->name('quotes::list');
 
-    /* Routes related to the Feedback Boards. */
-    Route::group(['prefix' => 'feedback', 'middleware' => ['member'], 'as' => 'feedback::'], function () {
-        Route::group(['prefix' => '/{category}'], function () {
-            Route::get('', ['as' => 'index', 'uses' => 'FeedbackController@index']);
-            Route::get('search/{searchTerm?}', ['as' => 'search', 'uses' => 'FeedbackController@search']);
-            Route::get('archived', ['as' => 'archived', 'uses' => 'FeedbackController@archived']);
-            Route::post('add', ['as' => 'add', 'uses' => 'FeedbackController@add']);
-            Route::get('archiveall', ['as' => 'archiveall', 'middleware' => ['permission:board'], 'uses' => 'FeedbackController@archiveAll']);
+    /* --- Routes related to the Feedback Boards --- */
+    Route::controller(FeedbackController::class)->prefix('feedback')->middleware(['member'])->name('feedback::')->group(function () {
+
+        Route::prefix('categories')->middleware(['permission:board'])->name('category::')->group(function () {
+            Route::get('admin', 'categoryAdmin')->name('admin');
+            Route::post('store', 'categoryStore')->name('store');
+            Route::get('edit/{id}', 'categoryEdit')->name('edit');
+            Route::post('edit/{id}', 'categoryUpdate')->name('update');
+            Route::get('delete/{id}', 'categoryDestroy')->name('delete');
         });
 
-        Route::group(['prefix' => 'categories', 'middleware' => ['permission:board'], 'as' => 'category::'], function () {
-            Route::get('admin', ['as' => 'admin', 'uses' => 'FeedbackController@categoryAdmin']);
-            Route::post('addone', ['as' => 'add', 'uses' => 'FeedbackController@categoryStore']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'FeedbackController@categoryEdit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'FeedbackController@categoryUpdate']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'FeedbackController@categoryDestroy']);
-        });
+        /* --- Public routes --- */
+        Route::get('approve/{id}', 'approve')->name('approve');
+        Route::post('reply/{id}', 'reply')->name('reply');
+        Route::get('archive/{id}', 'archive')->name('archive');
+        Route::get('restore/{id}', 'restore')->name('restore');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::post('vote', 'vote')->name('vote');
 
-        Route::get('approve/{id}', ['as' => 'approve', 'uses' => 'FeedbackController@approve']);
-        Route::post('reply/{id}', ['as' => 'reply', 'uses' => 'FeedbackController@reply']);
-        Route::get('archive/{id}', ['as' => 'archive', 'uses' => 'FeedbackController@archive']);
-        Route::get('restore/{id}', ['as' => 'restore', 'uses' => 'FeedbackController@restore']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'FeedbackController@delete']);
-        Route::post('vote', ['as' => 'vote', 'uses' => 'FeedbackController@vote']);
+        /* --- Catch-alls --- */
+        Route::prefix('/{category}')->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::get('search/{searchTerm?}', 'search')->name('search');
+            Route::get('archived', 'archived')->name('archived');
+            Route::post('store', 'store')->name('store');
+            Route::get('archiveall', 'archiveAll')->middleware(['permission:board'])->name('archiveall');
+        });
     });
 
-    /* Routes related to the OmNomCom. */
-    Route::group(['prefix' => 'omnomcom', 'as' => 'omnomcom::'], function () {
+    /* --- Routes related to the OmNomCom --- */
+    Route::prefix('omnomcom')->name('omnomcom::')->group(function () {
+        /* --- Pubic routes --- */
         Route::get('minisite', ['uses' => 'OmNomController@miniSite']);
 
-        /* Routes related to OmNomCom stores. */
-        Route::group(['prefix' => 'store', 'as' => 'store::'], function () {
-            Route::get('', ['as' => 'show', 'middleware' => ['auth'], 'uses' => 'OmNomController@choose']);
-            Route::get('{store?}', ['as' => 'show', 'uses' => 'OmNomController@display']);
-            Route::post('rfid/add', ['as' => 'rfidadd', 'uses' => 'RfidCardController@store']);
-            Route::post('{store}/buy', ['as' => 'buy', 'uses' => 'OmNomController@buy']);
+        /* --- Routes related to OmNomCom stores --- */
+        Route::prefix('store')->name('store::')->group(function () {
+            Route::controller(OmNomController::class)->group(function () {
+                Route::get('{store?}', 'display')->name('show');
+                Route::post('{store}/buy', 'buy')->name('buy');
+            });
+            Route::post('rfid/create', [RfidCardController::class, 'store'])->name('rfid::create');
         });
 
-        /* Routes related to OmNomCom orders. */
-        Route::group(['prefix' => 'orders', 'middleware' => ['auth'], 'as' => 'orders::'], function () {
-            Route::post('add/bulk', ['as' => 'addbulk', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@bulkStore']);
-            Route::post('add/single', ['as' => 'add', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@store']);
-            Route::get('delete/{id}', ['as' => 'delete', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@destroy']);
+        /* --- Routes related to OmNomCom orders --- */
+        Route::controller(OrderLineController::class)->group(function () {
 
-            Route::get('history/{date?}', ['as' => 'list', 'uses' => 'OrderLineController@index']);
-            Route::get('', ['as' => 'adminlist', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@adminindex']);
-            Route::get('orderline-wizard', ['as' => 'orderline-wizard', 'uses' => 'OrderLineController@orderlineWizard']);
+            Route::prefix('orders')->middleware(['auth'])->name('orders::')->group(function () {
+                // Public
+                Route::get('history/{date?}', 'index')->name('index');
+                Route::get('orderline-wizard', 'orderlineWizard')->name('orderline-wizard');
 
-            Route::group(['prefix' => 'filter', 'middleware' => ['permission:omnomcom'], 'as' => 'filter::'], function () {
-                Route::get('name/{name?}', ['as' => 'name', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@filterByUser']);
-                Route::get('date/{date?}', ['as' => 'date', 'middleware' => ['permission:omnomcom'], 'uses' => 'OrderLineController@filterByDate']);
+                // OmNomCom admins only
+                Route::middleware(['permission:omnomcom'])->group(function () {
+                    Route::post('store/bulk', 'bulkStore')->name('storebulk');
+                    Route::post('store/single', 'store')->name('store');
+                    Route::get('delete/{id}', 'destroy')->name('delete');
+                    Route::get('', 'adminindex')->name('adminlist');
+
+                    Route::prefix('filter')->name('filter::')->group(function () {
+                        Route::get('name/{name?}', 'filterByUser')->name('name');
+                        Route::get('date/{date?}', 'filterByDate')->name('date');
+                    });
+                });
+
+            });
+
+            // Routes related to Payment Statistics
+            Route::prefix('payments')->name('payments::')->middleware(['permission:finadmin'])->group(function () {
+                Route::get('statistics', 'showPaymentStatistics')->name('statistics');
             });
         });
 
-        /* Routes related to the TIPCie OmNomCom store. */
-        Route::group(['prefix' => 'tipcie', 'middleware' => ['auth', 'permission:tipcie'], 'as' => 'tipcie::'], function () {
-            Route::get('', ['as' => 'orderhistory', 'uses' => 'TIPCieController@orderIndex']);
+        /* --- Routes related to the TIPCie OmNomCom store --- */
+        Route::get('tipcie', [TIPCieController::class, 'orderIndex'])->middleware(['auth', 'permission:tipcie'])->name('tipcie::orderhistory');
+
+        /* --- Routes related to Financial Accounts. (Finadmin only) --- */
+        Route::controller(AccountController::class)->prefix('accounts')->name('accounts::')->middleware(['permission:finadmin'])->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('aggregate/{account}', 'showAggregation')->name('aggregate');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('{id}', 'show')->name('show');
         });
 
-        /* Routes related to Financial Accounts. */
-        Route::group(['prefix' => 'accounts', 'middleware' => ['permission:finadmin'], 'as' => 'accounts::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'AccountController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'AccountController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'AccountController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'AccountController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'AccountController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'AccountController@destroy']);
-            Route::get('{id}', ['as' => 'show', 'uses' => 'AccountController@show']);
-            Route::post('aggregate/{account}', ['as' => 'aggregate', 'uses' => 'AccountController@showAggregation']);
+        /* --- Routes related to managing Products. (Omnomcom admins only) --- */
+        Route::prefix('products')->middleware(['permission:omnomcom'])->name('products::')->group(function () {
+            Route::controller(ProductController::class)->group(function () {
+                Route::get('export/csv', 'generateCsv')->name('export_csv');
+                Route::post('update/bulk', 'bulkUpdate')->name('bulkupdate');
+
+                Route::get('', 'index')->name('index');
+                Route::get('create', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::get('edit/{id}', 'edit')->name('edit');
+                Route::post('update/{id}', 'update')->name('update');
+                Route::get('delete/{id}', 'destroy')->name('delete');
+            });
+
+            Route::controller(AccountController::class)->group(function () {
+                Route::get('statistics', 'showOmnomcomStatistics')->name('statistics');
+            });
+
+            Route::controller(StockMutationController::class)->group(function () {
+                Route::get('mut', 'index')->name('mutations');
+                Route::get('mut/csv', 'generateCsv')->name('mutations_export');
+            });
         });
 
-        /* Routes related to Payment Statistics. */
-        Route::group(['prefix' => 'payments', 'middleware' => ['permission:finadmin'], 'as' => 'payments::'], function () {
-            Route::get('statistics', ['as' => 'statistics', 'uses' => 'OrderLineController@showPaymentStatistics']);
-            Route::post('statistics', ['as' => 'statistics', 'uses' => 'OrderLineController@showPaymentStatistics']);
+        /* --- Routes related to OmNomCom Categories. (OmNomCom admins only) --- */
+        Route::controller(ProductCategoryController::class)->prefix('categories')->middleware(['permission:omnomcom'])->name('categories::')->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('{id}', 'show')->name('show');
         });
 
-        /* Routes related to Products. */
-        Route::group(['prefix' => 'products', 'middleware' => ['permission:omnomcom'], 'as' => 'products::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'ProductController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'ProductController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'ProductController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'ProductController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'ProductController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'ProductController@destroy']);
+        /* --- Routes related to Withdrawals --- */
+        Route::controller(WithdrawalController::class)->group(function () {
+            // Public routes
+            Route::get('mywithdrawal/{id}', 'showForUser')->middleware(['auth'])->name('mywithdrawal');
+            Route::get('unwithdrawable', ['middleware' => ['permission:finadmin'], 'as' => 'unwithdrawable', 'uses' => 'WithdrawalController@unwithdrawable']);
 
-            Route::get('export/csv', ['as' => 'export_csv', 'uses' => 'ProductController@generateCsv']);
-            Route::get('statistics', ['as' => 'statistics', 'uses' => 'AccountController@showOmnomcomStatistics']);
-            Route::post('statistics', ['as' => 'statistics', 'uses' => 'AccountController@showOmnomcomStatistics']);
+            // Finadmin only
+            Route::prefix('withdrawals')->middleware(['permission:finadmin'])->name('withdrawal::')->group(function () {
+                Route::get('', 'index')->name('index');
+                Route::get('create', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::post('edit/{id}', 'update')->name('edit');
+                Route::get('delete/{id}', 'destroy')->name('delete');
+                Route::get('accounts/{id}', 'showAccounts')->name('showAccounts');
 
-            Route::post('update/bulk', ['as' => 'bulkupdate', 'middleware' => ['permission:omnomcom'], 'uses' => 'ProductController@bulkUpdate']);
+                Route::get('export/{id}', 'export')->name('export');
+                Route::get('close/{id}', 'close')->name('close');
+                Route::get('email/{id}', 'email')->name('email');
 
-            Route::get('mut', ['as' => 'mutations', 'uses' => 'StockMutationController@index']);
-            Route::get('mut/csv', ['as' => 'mutations_export', 'uses' => 'StockMutationController@generateCsv']);
+                Route::get('deletefrom/{id}/{user_id}', 'deleteFrom')->name('deleteuser');
+                Route::get('markfailed/{id}/{user_id}', 'markFailed')->name('markfailed');
+                Route::get('markloss/{id}/{user_id}', 'markLoss')->name('markloss');
+
+                // Catchall
+                Route::get('{id}', 'show')->name('show');
+            });
         });
 
-        /* Routes related to OmNomCom Categories. */
-        Route::group(['prefix' => 'categories', 'middleware' => ['permission:omnomcom'], 'as' => 'categories::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'ProductCategoryController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'ProductCategoryController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'ProductCategoryController@store']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'ProductCategoryController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'ProductCategoryController@destroy']);
-            Route::get('{id}', ['as' => 'show', 'uses' => 'ProductCategoryController@show']);
+        /* --- Routes related to Mollie --- */
+        Route::controller(MollieController::class)->prefix('mollie')->middleware(['auth'])->name('mollie::')->group(function () {
+            // Public routes
+            Route::post('pay', 'pay')->name('pay');
+            Route::get('status/{id}', 'status')->name('status');
+            Route::get('receive/{id}', 'receive')->name('receive');
+
+            // Finadmin only
+            Route::get('list', 'index')->middleware(['permission:finadmin'])->name('index');
+            Route::get('monthly/{month}', 'monthly')->middleware(['permission:finadmin'])->name('monthly');
+        });
+        /* --- Order generation (omnomcom admin only) --- */
+        Route::get('supplier', [OmNomController::class, 'generateOrder'])->middleware(['permission:omnomcom'])->name('generateorder');
+    });
+
+    /* --- Routes related to webhooks --- */
+    Route::any('webhook/mollie/{id}', [MollieController::class, 'webhook'])->name('webhook::mollie');
+
+    /* --- Routes related to YouTube videos --- */
+    Route::controller(VideoController::class)->prefix('video')->name('video::')->group(function () {
+        Route::prefix('admin')->middleware(['permission:board'])->name('admin::')->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::post('create', 'store')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+        });
+        Route::get('', 'publicIndex')->name('index');
+        Route::get('{id}', 'show')->name('show');
+    });
+
+    /* --- Routes related to announcements --- */
+    Route::controller(AnnouncementController::class)->prefix('announcement')->name('announcement::')->group(function () {
+        Route::prefix('admin')->middleware(['permission:sysadmin'])->group(function () {
+            Route::get('', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{id}', 'destroy')->name('delete');
+            Route::get('clear', 'clear')->name('clear');
+        });
+        Route::get('dismiss/{id}', 'dismiss')->name('dismiss');
+    });
+
+    /* --- Routes related to photos --- */
+    Route::prefix('photos')->name('photo::')->group(function () {
+        // Public routes
+        Route::controller(PhotoController::class)->group(function () {
+            Route::get('', 'index')->name('albums');
+            Route::get('/like/{id}', 'toggleLike')->middleware(['auth'])->name('likes');
+            Route::get('/photo/{id}', 'photo')->name('view');
+            Route::get('{id}', 'show')->name('album::list');
         });
 
-        /* Routes related to Withdrawals. */
-        Route::group(['prefix' => 'withdrawals', 'middleware' => ['permission:finadmin'], 'as' => 'withdrawal::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'WithdrawalController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'WithdrawalController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'WithdrawalController@store']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'WithdrawalController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'WithdrawalController@destroy']);
-            Route::get('{id}', ['as' => 'show', 'uses' => 'WithdrawalController@show']);
-            Route::get('accounts/{id}', ['as' => 'showAccounts', 'uses' => 'WithdrawalController@showAccounts']);
-
-            Route::get('export/{id}', ['as' => 'export', 'uses' => 'WithdrawalController@export']);
-            Route::get('close/{id}', ['as' => 'close', 'uses' => 'WithdrawalController@close']);
-            Route::get('email/{id}', ['as' => 'email', 'uses' => 'WithdrawalController@email']);
-
-            Route::get('deletefrom/{id}/{user_id}', ['as' => 'deleteuser', 'uses' => 'WithdrawalController@deleteFrom']);
-            Route::get('markfailed/{id}/{user_id}', ['as' => 'markfailed', 'uses' => 'WithdrawalController@markFailed']);
-            Route::get('markloss/{id}/{user_id}', ['as' => 'markloss', 'uses' => 'WithdrawalController@markLoss']);
-        });
-
-        Route::get('unwithdrawable', ['middleware' => ['permission:finadmin'], 'as' => 'unwithdrawable', 'uses' => 'WithdrawalController@unwithdrawable']);
-
-        /* Routes related to Mollie. */
-        Route::group(['prefix' => 'mollie', 'middleware' => ['auth'], 'as' => 'mollie::'], function () {
-            Route::post('pay', ['as' => 'pay', 'uses' => 'MollieController@pay']);
-            Route::get('status/{id}', ['as' => 'status', 'uses' => 'MollieController@status']);
-            Route::get('receive/{id}', ['as' => 'receive', 'uses' => 'MollieController@receive']);
-            Route::get('list', ['as' => 'list', 'middleware' => ['permission:finadmin'], 'uses' => 'MollieController@index']);
-            Route::get('monthly/{month}', ['as' => 'monthly', 'middleware' => ['permission:finadmin'], 'uses' => 'MollieController@monthly']);
-        });
-
-        Route::get('mywithdrawal/{id}', ['as' => 'mywithdrawal', 'middleware' => ['auth'], 'uses' => 'WithdrawalController@showForUser']);
-
-        Route::get('supplier', ['as' => 'generateorder', 'middleware' => ['permission:omnomcom'], 'uses' => 'OmNomController@generateOrder']);
-    });
-
-    /* Routes related to webhooks. */
-    Route::group(['prefix' => 'webhook', 'as' => 'webhook::'], function () {
-        Route::any('mollie/{id}', ['as' => 'mollie', 'uses' => 'MollieController@webhook']);
-    });
-
-    /* Routes related to YouTube videos. */
-    Route::group(['prefix' => 'video', 'as' => 'video::'], function () {
-        Route::group(['prefix' => 'admin', 'middleware' => ['permission:board'], 'as' => 'admin::'], function () {
-            Route::get('', ['as' => 'index', 'uses' => 'VideoController@index']);
-            Route::post('add', ['as' => 'add', 'uses' => 'VideoController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'VideoController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'VideoController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'VideoController@destroy']);
-        });
-        Route::get('{id}', ['as' => 'view', 'uses' => 'VideoController@view']);
-        Route::get('', ['as' => 'index', 'uses' => 'VideoController@publicIndex']);
-    });
-
-    /* Routes related to announcements. */
-    Route::group(['prefix' => 'announcement', 'as' => 'announcement::'], function () {
-        Route::group(['prefix' => 'admin', 'middleware' => ['permission:sysadmin'], 'as' => ''], function () {
-            Route::get('', ['as' => 'index', 'uses' => 'AnnouncementController@index']);
-            Route::get('add', ['as' => 'add', 'uses' => 'AnnouncementController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'AnnouncementController@store']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'AnnouncementController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'AnnouncementController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'AnnouncementController@destroy']);
-            Route::get('clear', ['as' => 'clear', 'uses' => 'AnnouncementController@clear']);
-        });
-        Route::get('dismiss/{id}', ['as' => 'dismiss', 'uses' => 'AnnouncementController@dismiss']);
-    });
-
-    /* Routes related to photos. */
-    Route::group(['prefix' => 'photos', 'as' => 'photo::'], function () {
-        Route::get('', ['as' => 'albums', 'uses' => 'PhotoController@index']);
-        Route::get('slideshow', ['as' => 'slideshow', 'uses' => 'PhotoController@slideshow']);
-
-        Route::group(['prefix' => '{id}', 'as' => 'album::'], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'PhotoController@show']);
-        });
-        Route::get('/like/{id}', ['as' => 'likes', 'middleware' => ['auth'], 'uses' => 'PhotoController@likePhoto']);
-        Route::get('/dislike/{id}', ['as' => 'dislikes', 'middleware' => ['auth'], 'uses' => 'PhotoController@dislikePhoto']);
-        Route::get('/photo/{id}', ['as' => 'view', 'uses' => 'PhotoController@photo']);
-
-        /* Routes related to the photo admin. */
-        Route::group(['prefix' => 'admin', 'middleware' => ['permission:protography'], 'as' => 'admin::'], function () {
-            Route::get('index', ['as' => 'index', 'uses' => 'PhotoAdminController@index']);
-            Route::post('index', ['as' => 'index', 'uses' => 'PhotoAdminController@search']);
-            Route::post('add', ['as' => 'add', 'uses' => 'PhotoAdminController@create']);
-            Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'PhotoAdminController@edit']);
-            Route::post('edit/{id}', ['as' => 'edit', 'middleware' => ['permission:publishalbums'], 'uses' => 'PhotoAdminController@update']);
-            Route::post('edit/{id}/action', ['as' => 'action', 'uses' => 'PhotoAdminController@action']);
-            Route::post('edit/{id}/upload', ['as' => 'upload', 'uses' => 'PhotoAdminController@upload']);
-            Route::get('edit/{id}/delete', ['as' => 'delete', 'middleware' => ['permission:publishalbums'], 'uses' => 'PhotoAdminController@delete']);
-            Route::get('publish/{id}', ['as' => 'publish', 'middleware' => ['permission:publishalbums'], 'uses' => 'PhotoAdminController@publish']);
-            Route::get('unpublish/{id}', ['as' => 'unpublish', 'middleware' => ['permission:publishalbums'], 'uses' => 'PhotoAdminController@unpublish']);
-        });
-    });
-
-    Route::group(['prefix' => 'image', 'as' => 'image::'], function () {
-        Route::get('{id}/{hash}', ['as' => 'get', 'uses' => 'FileController@getImage']);
-        Route::get('{id}/{hash}/{name}', ['uses' => 'FileController@getImage']);
-    });
-
-    /* Routes related to Spotify. */
-    Route::group(['prefix' => 'spotify', 'middleware' => ['auth', 'permission:board'], 'as' => 'spotify::'], function () {
-        Route::get('oauth', ['as' => 'oauth', 'uses' => 'SpotifyController@oauthTool']);
-    });
-
-    /* Routes related to roles and permissions. */
-    Route::group(['prefix' => 'authorization', 'middleware' => ['auth', 'permission:sysadmin'], 'as' => 'authorization::'], function () {
-        Route::get('', ['as' => 'overview', 'uses' => 'AuthorizationController@index']);
-        Route::post('{id}/grant', ['as' => 'grant', 'uses' => 'AuthorizationController@grant']);
-        Route::get('{id}/revoke/{user}', ['as' => 'revoke', 'uses' => 'AuthorizationController@revoke']);
-    });
-
-    /* Routes related to the password manager. */
-    Route::group(['prefix' => 'passwordstore', 'middleware' => ['auth'], 'as' => 'passwordstore::'], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'PasswordController@index']);
-        Route::get('auth', ['as' => 'auth', 'uses' => 'PasswordController@getAuth']);
-        Route::post('auth', ['as' => 'auth', 'uses' => 'PasswordController@postAuth']);
-        Route::get('add', ['as' => 'add', 'uses' => 'PasswordController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'PasswordController@store']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'PasswordController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'PasswordController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'PasswordController@destroy']);
-    });
-
-    /* Routes related to e-mail aliases. */
-    Route::group(['prefix' => 'alias', 'middleware' => ['auth', 'permission:sysadmin'], 'as' => 'alias::'], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'AliasController@index']);
-        Route::get('add', ['as' => 'add', 'uses' => 'AliasController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'AliasController@store']);
-        Route::get('delete/{id_or_alias}', ['as' => 'delete', 'uses' => 'AliasController@destroy']);
-        Route::post('update', ['as' => 'update', 'uses' => 'AliasController@update']);
-    });
-
-    /* The route for the SmartXp Screen. */
-    Route::get('smartxp', ['as' => 'smartxp', 'uses' => 'SmartXpScreenController@show']);
-    Route::get('protopolis', ['as' => 'protopolis', 'uses' => 'SmartXpScreenController@showProtopolis']);
-    Route::get('caniworkinthesmartxp', ['uses' => 'SmartXpScreenController@canWork']);
-
-    /* The routes for Protube. */
-    Route::group(['prefix' => 'protube', 'as' => 'protube::'], function () {
-        Route::get('dashboard', ['as' => 'dashboard', 'middleware' => ['auth'], 'uses' => 'ProtubeController@dashboard']);
-        Route::get('togglehistory', ['as' => 'togglehistory', 'middleware' => ['auth'], 'uses' => 'ProtubeController@toggleHistory']);
-        Route::get('clearhistory', ['as' => 'clearhistory', 'middleware' => ['auth'], 'uses' => 'ProtubeController@clearHistory']);
-        Route::get('top', ['as' => 'top', 'uses' => 'ProtubeController@topVideos']);
-    });
-
-    /* Routes related to calendars. */
-    Route::group(['prefix' => 'ical', 'as' => 'ical::'], function () {
-        Route::get('calendar/{personal_key?}', ['as' => 'calendar', 'uses' => 'EventController@icalCalendar']);
-    });
-
-    /* Routes related to the Achievement system. */
-    Route::group(['prefix' => 'achievement', 'as' => 'achievement::'], function () {
-        Route::group(['middleware' => ['auth', 'permission:board']], function () {
-            Route::get('', ['as' => 'list', 'uses' => 'AchievementController@overview']);
-            Route::get('add', ['as' => 'add', 'uses' => 'AchievementController@create']);
-            Route::post('add', ['as' => 'add', 'uses' => 'AchievementController@store']);
-            Route::get('manage/{id}', ['as' => 'manage', 'uses' => 'AchievementController@manage']);
-            Route::post('update/{id}', ['as' => 'update', 'uses' => 'AchievementController@update']);
-            Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'AchievementController@destroy']);
-            Route::post('award/{id}', ['as' => 'award', 'uses' => 'AchievementController@award']);
-            Route::post('give', ['as' => 'give', 'uses' => 'AchievementController@give']);
-            Route::get('take/{id}/{user}', ['as' => 'take', 'uses' => 'AchievementController@take']);
-            Route::get('takeAll/{id}', ['as' => 'takeAll', 'uses' => 'AchievementController@takeAll']);
-            Route::post('{id}/icon', ['as' => 'icon', 'uses' => 'AchievementController@icon']);
-        });
-        Route::get('gallery', ['as' => 'gallery', 'uses' => 'AchievementController@gallery']);
-    });
-    Route::get('achieve/{achievement}', ['as' => 'achieve', 'middleware' => ['auth'], 'uses' => 'AchievementController@achieve']);
-
-    /* Routes related to the Welcome Message system. */
-    Route::group(['prefix' => 'welcomeMessages', 'middleware' => ['auth', 'permission:board'], 'as' => 'welcomeMessages::'], function () {
-        Route::get('', ['as' => 'list', 'uses' => 'WelcomeController@overview']);
-        Route::post('add', ['as' => 'add', 'uses' => 'WelcomeController@store']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'WelcomeController@destroy']);
-    });
-
-    /* Routes related to Protube TempAdmin */
-    Route::group(['prefix' => 'tempadmin', 'as' => 'tempadmin::', 'middleware' => ['auth', 'permission:board']], function () {
-        Route::get('make/{id}', ['as' => 'make', 'uses' => 'TempAdminController@make']);
-        Route::get('end/{id}', ['as' => 'end', 'uses' => 'TempAdminController@end']);
-        Route::get('endId/{id}', ['as' => 'endId', 'uses' => 'TempAdminController@endId']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'TempAdminController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'TempAdminController@update']);
-        Route::get('add', ['as' => 'add', 'uses' => 'TempAdminController@create']);
-        Route::post('add', ['as' => 'add', 'uses' => 'TempAdminController@store']);
-        Route::get('', ['as' => 'index', 'uses' => 'TempAdminController@index']);
-    });
-
-    /* Routes related to QR Authentication. */
-    Route::group(['prefix' => 'qr', 'as' => 'qr::'], function () {
-        Route::get('code/{code}', ['as' => 'code', 'uses' => 'QrAuthController@showCode']);
-        Route::post('generate', ['as' => 'generate', 'uses' => 'QrAuthController@generateRequest']);
-        Route::get('isApproved', ['as' => 'approved', 'uses' => 'QrAuthController@isApproved']);
-
-        Route::group(['middleware' => ['auth']], function () {
-            Route::get('{code}', ['as' => 'dialog', 'uses' => 'QrAuthController@showDialog']);
-            Route::get('{code}/approve', ['as' => 'approve', 'uses' => 'QrAuthController@approve']);
+        /* --- Routes related to the photo admin. (Protography only) --- */
+        Route::controller(PhotoAdminController::class)->prefix('admin')->middleware(['permission:protography'])->name('admin::')->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::post('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('edit/{id}', 'update')->middleware(['permission:publishalbums'])->name('update');
+            Route::post('edit/{id}/action', 'action')->name('action');
+            Route::post('edit/{id}/upload', 'upload')->name('upload');
+            Route::get('edit/{id}/delete', 'delete')->middleware(['permission:publishalbums'])->name('delete');
+            Route::get('publish/{id}', 'publish')->middleware(['permission:publishalbums'])->name('publish');
+            Route::get('unpublish/{id}', 'unpublish')->middleware(['permission:publishalbums'])->name('unpublish');
         });
     });
 
-    /* Routes related to the Short URL Service */
-    Route::group(['prefix' => 'short_url', 'as' => 'short_url::', 'middleware' => ['auth', 'permission:board']], function () {
-        Route::get('', ['as' => 'index', 'uses' => 'ShortUrlController@index']);
-        Route::get('edit/{id}', ['as' => 'edit', 'uses' => 'ShortUrlController@edit']);
-        Route::post('edit/{id}', ['as' => 'edit', 'uses' => 'ShortUrlController@update']);
-        Route::get('delete/{id}', ['as' => 'delete', 'uses' => 'ShortUrlController@destroy']);
+    /* --- Fetching images: Public --- */
+    Route::controller(FileController::class)->prefix('image')->name('image::')->group(function () {
+        Route::get('{id}/{hash}', 'getImage')->name('get');
+        Route::get('{id}/{hash}/{name}', 'getImage');
     });
-    Route::get('go/{short?}', ['as' => 'short_url::go', 'uses' => 'ShortUrlController@go']);
 
-    /* Routes related to the DMX Management. */
-    Route::group(['prefix' => 'dmx', 'as' => 'dmx::', 'middleware' => ['auth', 'permission:board|alfred']], function () {
-        Route::get('/', ['as' => 'index', 'uses' => 'DmxController@index']);
-        Route::get('/add', ['as' => 'add', 'uses' => 'DmxController@create']);
-        Route::post('/add', ['as' => 'add', 'uses' => 'DmxController@store']);
-        Route::get('/edit/{id}', ['as' => 'edit', 'uses' => 'DmxController@edit']);
-        Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'DmxController@update']);
-        Route::get('/delete/{id}', ['as' => 'delete', 'uses' => 'DmxController@delete']);
+    /* --- Fetching files: Public   --- */
+    Route::controller(FileController::class)->prefix('file')->name('file::')->group(function () {
+        Route::get('{id}/{hash}', 'get')->name('get');
+        Route::get('{id}/{hash}/{name}', 'get');
+    });
 
-        Route::group(['prefix' => 'override', 'as' => 'override::'], function () {
-            Route::get('/', ['as' => 'index', 'uses' => 'DmxController@overrideIndex']);
-            Route::get('/add', ['as' => 'add', 'uses' => 'DmxController@overrideCreate']);
-            Route::post('/add', ['as' => 'add', 'uses' => 'DmxController@overrideStore']);
-            Route::get('/edit/{id}', ['as' => 'edit', 'uses' => 'DmxController@overrideEdit']);
-            Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'DmxController@overrideUpdate']);
-            Route::get('/delete/{id}', ['as' => 'delete', 'uses' => 'DmxController@overrideDelete']);
+    /* --- Routes related to Spotify. (Board) --- */
+    Route::get('spotify/oauth', [SpotifyController::class, 'oauthTool'])->name('spotify::oauth')->middleware(['auth', 'permission:board']);
+
+    /* --- Routes related to roles and permissions. (Sysadmin) --- */
+    Route::controller(AuthorizationController::class)->prefix('authorization')->middleware(['auth', 'permission:sysadmin'])->name('authorization::')->group(function () {
+        Route::get('', 'index')->name('overview');
+        Route::post('{id}/grant', 'grant')->name('grant');
+        Route::get('{id}/revoke/{user}', 'revoke')->name('revoke');
+    });
+
+    /* Routes related to the password manager. (Access restricted in controller)*/
+    Route::controller(PasswordController::class)->prefix('passwordstore')->middleware(['auth'])->name('passwordstore::')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('auth', 'getAuth')->name('auth');
+        Route::post('auth', 'postAuth')->name('postAuth');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update/{id}', 'update')->name('update');
+        Route::get('delete/{id}', 'destroy')->name('delete');
+    });
+
+    /* --- Routes related to e-mail aliases. (Sysadmin only) --- */
+    Route::controller(AliasController::class)->prefix('alias')->middleware(['auth', 'permission:sysadmin'])->name('alias::')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::get('delete/{id_or_alias}', 'destroy')->name('delete');
+        Route::post('update', 'update')->name('update');
+    });
+
+    /* --- The route for the SmartXp Screen. (Public) --- */
+    Route::controller(SmartXpScreenController::class)->group(function () {
+        Route::get('smartxp', 'show')->name('smartxp');
+        Route::get('protopolis', 'showProtopolis')->name('protopolis');
+        Route::get('caniworkinthesmartxp', 'canWork');
+    });
+
+    /* The routes for Protube. (Public)*/
+    Route::controller(ProtubeController::class)->prefix('protube')->name('protube::')->group(function () {
+        Route::get('dashboard', 'dashboard')->middleware(['auth'])->name('dashboard');
+        Route::get('togglehistory', 'toggleHistory')->middleware(['auth'])->name('togglehistory');
+        Route::get('clearhistory', 'clearHistory')->middleware(['auth'])->name('clearhistory');
+        Route::get('top', 'topVideos')->name('top');
+    });
+
+    /* --- Routes related to calendars --- */
+    Route::get('ical/calendar/{personal_key?}', [EventController::class, 'icalCalendar'])->name('ical::calendar');
+
+    /* --- Routes related to the Achievement system --- */
+    Route::controller(AchievementController::class)->group(function () {
+        Route::get('achieve/{achievement}', 'achieve')->middleware(['auth'])->name('achieve');
+
+        Route::prefix('achievement')->name('achievement::')->group(function () {
+            // Board only
+            Route::middleware(['auth', 'permission:board'])->group(function () {
+                Route::get('', 'index')->name('index');
+                Route::get('create', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::get('edit/{id}', 'edit')->name('edit');
+                Route::post('update/{id}', 'update')->name('update');
+                Route::get('delete/{id}', 'destroy')->name('delete');
+                Route::post('award/{id}', 'award')->name('award');
+                Route::post('give', 'give')->name('give');
+                Route::get('take/{id}/{user}', 'take')->name('take');
+                Route::get('takeAll/{id}', 'takeAll')->name('takeAll');
+                Route::post('{id}/icon', 'icon')->name('icon');
+            });
+            // Public
+            Route::get('gallery', 'gallery')->name('gallery');
+        });
+    });
+    /* --- Routes related to the Welcome Message system. (Board only) --- */
+    Route::resource('welcomeMessages', WelcomeController::class)
+        ->middleware(['auth', 'permission:board'])
+        ->only(['index', 'store', 'destroy']);
+
+    /* --- Routes related to Protube TempAdmin (Board only) --- */
+    Route::controller(TempAdminController::class)->prefix('tempadmin')->name('tempadmin::')->middleware(['auth', 'permission:board'])->group(function () {
+        Route::get('make/{id}', 'make')->name('make');
+        Route::get('end/{id}', 'end')->name('end');
+        Route::get('endId/{id}', 'endId')->name('endId');
+    });
+    Route::resource('tempadmins', TempAdminController::class)->only(['index', 'create', 'store', 'edit', 'update'])->middleware(['auth', 'permission:board']);
+
+    /* --- Routes related to QR Authentication --- */
+    Route::controller(QrAuthController::class)->prefix('qr')->name('qr::')->group(function () {
+        // API routes
+        Route::get('code/{code}', 'showCode')->name('code');
+        Route::post('generate', 'generateRequest')->name('generate');
+        Route::get('isApproved', 'isApproved')->name('approved');
+
+        // Usage of the QR code
+        Route::middleware(['auth'])->group(function () {
+            Route::get('{code}', 'showDialog')->name('dialog');
+            Route::get('{code}/approve', 'approve')->name('approve');
         });
     });
 
-    /* Routes related to the Query system. */
-    Route::group(['prefix' => 'queries', 'as' => 'queries::', 'middleware' => ['auth', 'permission:board']], function () {
-        Route::get('/', ['as' => 'index', 'uses' => 'QueryController@index']);
-        Route::get('/activity_overview', ['as' => 'activity_overview', 'uses' => 'QueryController@activityOverview']);
-        Route::get('/activity_statistics', ['as' => 'activity_statistics', 'uses' => 'QueryController@activityStatistics']);
-        Route::get('/membership_totals', ['as' => 'membership_totals', 'uses' => 'QueryController@membershipTotals']);
+    /* Routes related to the Short URL Service*/
+    Route::get('go/{short?}', [ShortUrlController::class, 'go'])->name('short_urls.go');
+    Route::get('short_urls/qr_code/{id}', [ShortUrlController::class, 'qrCode'])->name('short_urls.qr_code')->middleware(['auth', 'permission:board']);
+    Route::resource('short_urls', ShortUrlController::class)->except('show')->middleware(['auth', 'permission:board']);
+
+    /* --- Routes related to the DMX Management. (Board or alfred) --- */
+    Route::prefix('dmx')->name('dmx.')->middleware(['auth', 'permission:board|alfred'])->group(function () {
+        Route::resource('fixtures', DmxFixtureController::class)->except('show');
+
+        Route::resource('overrides', DmxOverrrideController::class)->except('show');
     });
 
-    /* Routes related to the Minisites */
-    Route::group(['prefix' => 'minisites', 'as' => 'minisites::'], function () {
-        Route::group(['prefix' => 'isalfredthere', 'as' => 'isalfredthere::'], function () {
-            Route::get('/', ['as' => 'index', 'uses' => 'IsAlfredThereController@showMiniSite']);
-            Route::get('/admin', ['as' => 'admin', 'uses' => 'IsAlfredThereController@getAdminInterface', 'middleware' => ['auth', 'permission:sysadmin|alfred']]);
-            Route::post('/admin', ['as' => 'admin', 'uses' => 'IsAlfredThereController@postAdminInterface', 'middleware' => ['auth', 'permission:sysadmin|alfred']]);
+    /* --- Routes related to the Query system. (Board only) --- */
+    Route::controller(QueryController::class)->prefix('queries')->name('queries::')->middleware(['auth', 'permission:board'])->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/activity_overview', 'activityOverview')->name('activity_overview');
+        Route::get('/activity_statistics', 'activityStatistics')->name('activity_statistics');
+        Route::get('/membership_totals', 'membershipTotals')->name('membership_totals');
+        Route::get('/new_membership_totals', 'newMembershipTotals')->name('new_membership_totals');
+    });
+
+    /* --- Routes related to the mini-sites --- */
+    Route::prefix('minisites')->name('minisites::')->group(function () {
+        Route::controller(IsAlfredThereController::class)->prefix('isalfredthere')->name('isalfredthere::')->group(function () {
+            // Public routes
+            Route::get('/', 'index')->name('index');
+            // Board only
+            Route::get('/edit', 'edit')->middleware(['auth', 'permission:sysadmin|alfred'])->name('edit');
+            Route::post('/update', 'update')->middleware(['auth', 'permission:sysadmin|alfred'])->name('update');
         });
     });
 
-    Route::group(['prefix' => 'codex', 'as' => 'codex::', 'middleware' => ['auth', 'permission:senate']], function () {
-        Route::get('/', ['as' => 'index', 'uses' => 'CodexController@index']);
-        Route::get('add-codex', ['as' => 'add-codex', 'uses' => 'CodexController@addCodex']);
-        Route::get('add-song', ['as' => 'add-song', 'uses' => 'CodexController@addSong']);
-        Route::get('add-song-category', ['as' => 'add-song-category', 'uses' => 'CodexController@addSongCategory']);
-        Route::get('add-text-type', ['as' => 'add-text-type', 'uses' => 'CodexController@addTextType']);
-        Route::get('add-text', ['as' => 'add-text', 'uses' => 'CodexController@addText']);
-
-        Route::get('edit-codex/{codex}', ['as' => 'edit-codex', 'uses' => 'CodexController@editCodex']);
-        Route::get('edit-song/{id}', ['as' => 'edit-song', 'uses' => 'CodexController@editSong']);
-        Route::get('edit-song-category/{id}', ['as' => 'edit-song-category', 'uses' => 'CodexController@editSongCategory']);
-        Route::get('edit-text-type/{id}', ['as' => 'edit-text-type', 'uses' => 'CodexController@editTextType']);
-        Route::get('edit-text/{id}', ['as' => 'edit-text', 'uses' => 'CodexController@editText']);
-
-        Route::get('delete-codex/{codex}', ['as' => 'delete-codex', 'uses' => 'CodexController@deleteCodex']);
-        Route::get('delete-song/{id}', ['as' => 'delete-song', 'uses' => 'CodexController@deleteSong']);
-        Route::get('delete-song-category/{id}', ['as' => 'delete-song-category', 'uses' => 'CodexController@deleteSongCategory']);
-        Route::get('delete-text-type/{id}', ['as' => 'delete-text-type', 'uses' => 'CodexController@deleteTextType']);
-        Route::get('delete-text/{id}', ['as' => 'delete-text', 'uses' => 'CodexController@deleteText']);
-
-        Route::post('add-codex', ['as' => 'add-codex', 'uses' => 'CodexController@storeCodex']);
-        Route::post('add-song', ['as' => 'add-song', 'uses' => 'CodexController@storeSong']);
-        Route::post('add-song-category', ['as' => 'add-song-category', 'uses' => 'CodexController@storeSongCategory']);
-        Route::post('add-text-type', ['as' => 'add-text-type', 'uses' => 'CodexController@storeTextType']);
-        Route::post('add-text', ['as' => 'add-text', 'uses' => 'CodexController@storeText']);
-
-        Route::post('edit-codex/{codex}', ['as' => 'edit-codex', 'uses' => 'CodexController@updateCodex']);
-        Route::post('edit-song/{id}', ['as' => 'edit-song', 'uses' => 'CodexController@updateSong']);
-        Route::post('edit-song-category/{id}', ['as' => 'edit-song-category', 'uses' => 'CodexController@updateSongCategory']);
-        Route::post('edit-text-type/{id}', ['as' => 'edit-text-type', 'uses' => 'CodexController@updateTextType']);
-        Route::post('edit-text/{id}', ['as' => 'edit-text', 'uses' => 'CodexController@updateText']);
-
-        Route::get('export/{id}', ['as' => 'export', 'uses' => 'CodexController@exportCodex']);
+    Route::middleware(['auth', 'permission:senate'])->group(function () {
+        Route::resource('codex', CodexController::class);
+        Route::resource('codexSong', CodexSongController::class)->except(['index', 'show']);
+        Route::resource('codexSongCategory', CodexSongCategoryController::class)->except(['index', 'show']);
+        Route::resource('codexText', CodexTextController::class)->except(['index', 'show']);
+        Route::resource('codexTextType', CodexTextTypeController::class)->except(['index', 'show']);
     });
 
-    /*Route related to the december theme*/
+    /* --- Route related to the december theme --- */
     Route::get('/december/toggle', function () {
         Cookie::queue('disable-december', Cookie::get('disable-december') === 'disabled' ? 'enabled' : 'disabled', 43800);
 

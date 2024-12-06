@@ -8,10 +8,8 @@ class AddPayedWithLossToOrderlines extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('orderlines', function (Blueprint $table) {
             $table->boolean('payed_with_loss')->after('payed_with_withdrawal');
@@ -20,10 +18,8 @@ class AddPayedWithLossToOrderlines extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('orderlines', function (Blueprint $table) {
             $table->dropColumn('payed_with_loss');

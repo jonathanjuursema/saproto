@@ -23,7 +23,7 @@
                         @if($user)
                             <p>
                                 Showing transactions for <strong>{{ $user->name }}</strong>.
-                                (<a href="{{ route('omnomcom::mollie::list') }}">Show all</a>)
+                                (<a href="{{ route('omnomcom::mollie::index') }}">Show all</a>)
                             </p>
                         @else
                             <p>
@@ -34,7 +34,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group autocomplete">
-                                            <input class="form-control user-search" name="user_id" required/>
+                                            <input class="form-control user-search" name="user_id" required />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -134,14 +134,15 @@
                         <tbody>
 
                         @for($m = 0; $m <= 11 ; $m++)
-                            <?php
-                            $month = strtotime(sprintf('-%s months', $m));
-                            $total = \App\Http\Controllers\MollieController::getTotalForMonth(date('Y-m', $month));
-                            ?>
+                                <?php
+                                $month = strtotime(sprintf('-%s months', $m));
+                                $total = \App\Http\Controllers\MollieController::getTotalForMonth(date('Y-m', $month));
+                                ?>
                             <tr>
                                 <td>
                                     <a href="{{ route('omnomcom::mollie::monthly', ['month' => date('Y-m', $month)]) }}">
-                                        <span class="gray">{{ date('F Y', strtotime(sprintf('-%s months', $m))) }}</span>
+                                        <span
+                                            class="gray">{{ date('F Y', strtotime(sprintf('-%s months', $m))) }}</span>
                                     </a>
                                 </td>
                                 <td class="text-end">

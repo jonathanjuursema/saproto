@@ -8,10 +8,8 @@ class AddSoundboardSoundsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('soundboard_sounds', function (Blueprint $table) {
             $table->increments('id');
@@ -23,10 +21,8 @@ class AddSoundboardSoundsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('soundboard_sounds');
     }
