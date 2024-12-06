@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+<phpunit backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="false"
          colors="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
          cacheDirectory=".tmp/phpunit.cache"
->
-    <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-        <testsuite name="Architecture">
-            <directory suffix="Test.php">./tests/Architecture</directory>
-        </testsuite>
-    </testsuites>
+         backupStaticProperties="false"
+         bootstrap="bootstrap/app.php">
     <php>
         <ini name="memory_limit" value="-1"/>
         <server name="APP_ENV" value="testing"/>
@@ -23,7 +15,7 @@
         <env name="DB_USERNAME" value="saproto"/>
         <env name="DB_PASSWORD" value="saproto"/>
         <env name="DB_HOST" value="host.docker.internal"/>
-        
+
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
@@ -31,9 +23,9 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
     </php>
-    <source>
-        <include>
-            <directory suffix=".php">./app</directory>
-        </include>
-    </source>
+    <testsuites>
+        <testsuite name="Browser Test Suite">
+            <directory suffix="Test.php">./tests/Browser</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

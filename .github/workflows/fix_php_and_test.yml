@@ -6,9 +6,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  phplint:
+  frontendbuild:
     runs-on: ubuntu-latest
-    name: 🛠 PHP Automatic Fixing (Pint & Rector)
+    name: 🛠 Build front-end
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,45 +17,29 @@ jobs:
       - name: 🔍 Read .env
         run: grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV
 
-      - uses: shivammathur/setup-php@v2
+      - name: 🖱️ Set Node v${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
         with:
-          php-version: ${{ env.PHP_VERSION }}
-          coverage: xdebug
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-      - uses: ramsey/composer-install@v3
+      - name: 📥 Install front-end dependencies
+        run: npm ci --ignore-scripts
+
+      - run: npm run build --if-present
+
+      - uses: actions/upload-artifact@v4
         with:
-          composer-options: "--ignore-platform-reqs --optimize-autoloader --prefer-dist"
-
-      - uses: actions/cache@v4
-        with:
-          path: .tmp/rector
-          key: ${{ runner.os }}-rector-${{ github.run_id }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-rector-
-
-      - run: mkdir -p .tmp/rector
-
-      - name: Run rector
-        run: vendor/bin/rector --ansi
-
-      - name: Cache Pint
-        uses: actions/cache@v4
-        with:
-          path: .tmp/pint.cache
-          key: ${{ runner.os }}-pint-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-pint-
-
-      - name: Run pint
-        run: ./vendor/bin/pint
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: PHP Automatic Fixing (Pint & Rector)
-          skip_fetch: true
-  deploy:
-    name: 🐘 Test and ⚙ Deploy Check
+          name: Build
+          path: public/build
+  call-phplint:
+    name: Fix php
+    uses: ./.github/workflows/fix_php.yml
+    secrets: inherit
+  pest:
+    name: 🐘 Pest Tests
     runs-on: ubuntu-latest
-    needs: phplint
+    needs: [ call-phplint, frontendbuild ]
     services:
       mysql:
         image: mariadb:10
@@ -65,13 +49,6 @@ jobs:
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    env:
-      BUILD_SOURCE_DIR: .
-      BUILD_ARTIFACT_STAGING_DIR: build/
-      BUILD_ARTIFACT_DESTINATION_DIR: /domains/proto.utwente.nl/deployment/uploads/
-      HOST_SERVER: s176.webhostingserver.nl
-      SENTRY_ORG: sa-proto
-      SENTRY_PROJECT: sa-proto-website
     steps:
       - name: 🛎️ Checkout project
         uses: actions/checkout@v4
@@ -99,16 +76,10 @@ jobs:
         with:
           composer-options: "--ignore-platform-reqs --optimize-autoloader --prefer-dist"
 
-      - name: 🖱️ Set Node v${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: actions/download-artifact@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: 📥 Install front-end dependencies
-        run: npm ci --ignore-scripts
-      - name: 🔨 build front-end
-        run: npm run build
+          name: Build
+          path: public/build
 
       - name: Cache Pest test results
         uses: actions/cache@v4
@@ -143,3 +114,85 @@ jobs:
         with:
           name: laravel-failure-artifact
           path: storage/logs/laravel.log
+  dusk:
+    name: 🌜 Dusk Tests
+    runs-on: ubuntu-latest
+    needs: [ call-phplint, frontendbuild ]
+    services:
+      mysql:
+        image: mariadb:10
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: 🛎️ Checkout project
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Verify MariaDB connection
+        env:
+          PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
+
+      - name: 🔍 Read .env
+        run: (grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV && cp .env.ci .env)
+
+      - name: 🖱️ Setup PHP v${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--ignore-platform-reqs --optimize-autoloader --prefer-dist"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Build
+          path: public/build
+
+      - name: Cache Dusk test results
+        uses: actions/cache@v4
+        with:
+          path: .tmp/phpunit.cache/test-results
+          key: ${{ runner.os }}-dusk-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-dusk-
+
+      - run: mkdir -p .tmp/phpunit.cache
+
+      - name: 🌜 Run dusk tests
+        env:
+          DB_CONNECTION: mysql
+          DB_DATABASE: testing
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+          DB_USERNAME: root
+          DB_PASSWORD: secret
+          DB_HOST: 127.0.0.1
+        run: |
+          php artisan key:generate
+          php artisan migrate
+          php artisan dusk:chrome-driver --detect
+          ./vendor/laravel/dusk/bin/chromedriver-linux --port=9515 &
+          php artisan serve --no-reload &
+          php artisan dusk --pest
+      - name: Upload Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tests/Browser/screenshots
+      - name: Upload Console Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: console
+          path: tests/Browser/console
+

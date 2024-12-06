@@ -96,10 +96,13 @@ to `~/.bash_aliases` (WSL2/Linux) or `~/.zshenv` (macOS) the alias will persist 
 *The rest of these instruction will assume that you successfully added the `sail` alias.*
 
 WSL2/Linux/macOS High Sierra or earlier:
+
 ```shell
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" > ~/.bash_aliases
 ```
+
 macOS Catalina or newer:
+
 ```shell
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" > ~/.zshenv
 ```
@@ -216,13 +219,25 @@ features such as timelines of runtime requests, database queries and client-metr
 
 ### Testing
 
-##### For testing we use the standard laravel implementation of tests which uses phpunit.
+For testing we use Pest for basic tests and Dusk for browser tests.
+These tests should be run locally, but are also run on every PR in GitHub Actions.
 
-You can run the tests with the following command:
-```sail composer test```.
+If tests are failing, and it shows that all the tests using a database fail, you should run
+```sail artisan optimize:clear``` first.
+
+#### Pest
+
+The Pest tests can be run with the following command:
+```sail test```.
+If you do not need the output and want it to go faster you can use the ```--parallel``` flag.
 
 To make a new test you can use the following command:
 ```sail artisan make:test {{TestName}}```.
 
 To make a unit test you can use the following command:
 ```sail artisan make:test {{TestName}} --unit```.
+
+#### Dusk
+
+The dusk tests can be run with the following command:
+```sail dusk```.
