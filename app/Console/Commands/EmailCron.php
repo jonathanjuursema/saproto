@@ -51,7 +51,7 @@ class EmailCron extends Command
 
             $batch = Bus::batch($email->recipients()->map(
                 fn($recipient) => new SendManualEmail($email, $recipient)
-            ))->onConnection('medium')->dispatch();
+            ))->onConnection('medium')->onQueue('medium')->dispatch();
 
             $email->update([
                 'job_batch_id' => $batch->id,

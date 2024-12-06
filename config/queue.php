@@ -35,25 +35,45 @@ return [
             'table' => 'jobs',
             'queue' => 'default',
             'backoff' => 30,
+            'after_commit' => true,
         ],
         'high' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'high',
             'backoff' => 30,
+            'after_commit' => true,
         ],
         'medium' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'medium',
             'backoff' => 60,
+            'after_commit' => true,
         ],
         'low' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'low',
             'backoff' => 120,
+            'after_commit' => true,
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Job Batching
+    |--------------------------------------------------------------------------
+    |
+    | The following options configure the database and table that store job
+    | batching information. These options can be updated to any database
+    | connection and table which has been defined by your application.
+    |
+    */
+
+    'batching' => [
+        'database' => env('DB_CONNECTION', 'mysql'),
+        'table' => 'job_batches',
     ],
 
     /*

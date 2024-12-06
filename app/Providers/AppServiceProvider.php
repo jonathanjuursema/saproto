@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\MenuItem;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -18,12 +20,16 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
 
+        RateLimiter::for('emails', function () {
+            Limit::perMinute(60);
+        });
+
         view()->composer('*', function ($view) {
             view()->share('viewName', Str::replace('.', '-', $view->getName()));
         });
 
         view()->composer('website.navbar', static function ($view) {
-            $menuItems = Cache::rememberForever('website.navbar', static fn () => MenuItem::query()->whereNull('parent')->orderBy('order')->with('page')->with('children')->get());
+            $menuItems = Cache::rememberForever('website.navbar', static fn() => MenuItem::query()->whereNull('parent')->orderBy('order')->with('page')->with('children')->get());
             $view->with('menuItems', $menuItems);
         });
 
@@ -44,5 +50,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register() {}
+    public function register()
+    {
+    }
 }

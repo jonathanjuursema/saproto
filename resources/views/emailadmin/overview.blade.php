@@ -147,7 +147,9 @@
                                         Draft
                                     @endif
                                 @else
-                                    <i>Sent</i>
+                                    @if($email->job_batch_id)
+                                        {{ Bus::findBatch($email->job_batch_id)->progress() }}%
+                                    @endif <i>Sent</i>
                                 @endif
                             </td>
                             <td>

@@ -6,8 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,6 +15,7 @@ return new class extends Migration
         Schema::table('emails', function (Blueprint $table) {
             $table->integer('destination')->default(EmailDestination::NO_DESTINATION);
             $table->string('job_batch_id')->nullable();
+            $table->foreign('job_batch_id')->references('id')->on('job_batches');
         });
 
         //loop through and chunk all the Emails and change the destination to EmailDestination Enum
