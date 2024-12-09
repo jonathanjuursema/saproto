@@ -5,10 +5,10 @@
 
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no'/>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
 
-    <link rel='shortcut icon' href='{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}' />
+    <link rel='shortcut icon' href='{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}'/>
     @vite('resources/assets/sass/dark.scss')
 
     <style>
@@ -42,7 +42,7 @@
                 @endif
             @endforeach
 
-              background-image: url('{{ asset($bg_image) }}');
+               background-image: url('{{ asset($bg_image) }}');
             background-position: center 100%;
             background-repeat: no-repeat;
         }
@@ -99,7 +99,7 @@
     let price = [];
 
     async function initializeOmNomCom() {
-        await get(config.routes.api_omnomcom_stock, { store: "{{ $store_slug }}" })
+        await get(config.routes.api_omnomcom_stock, {store: "{{ $store_slug }}"})
             .then(data => {
                 data.forEach(product => {
                     const id = product.id;
@@ -267,8 +267,8 @@
             '{{ route('omnomcom::store::buy', ['store' => $store_slug]) }}', {
                 credential_type: type,
                 credentials: credentials,
-                cash: payedCash && {{ $store->cash_allowed ? 'true' : 'false' }},
-                bank_card: payedCard && {{ $store->bank_card_allowed ? 'true' : 'false' }},
+                cash: payedCash && {{ $store['cash_allowed'] ? 'true' : 'false' }},
+                bank_card: payedCard && {{ $store['bank_card_allowed'] ? 'true' : 'false' }},
                 cart: cart_to_object(cart),
             })
             .then(data => {
@@ -295,7 +295,7 @@
 
     function doQrAuth(element, description, onComplete) {
         let authToken = null;
-        post('{{ route('qr::generate') }}', { description: description })
+        post('{{ route('qr::generate') }}', {description: description})
             .then(data => {
                 const qrImg = "{{ route('qr::code', '') }}" + '/' + data.qr_token;
                 const qrLink = "{{ route('qr::dialog', '') }}" + '/' + data.qr_token;
@@ -304,7 +304,7 @@
                 authToken = data.auth_token;
                 const qrAuthInterval = setInterval(_ => {
                     if (actionStatus == null) return clearInterval(qrAuthInterval);
-                    get('{{ route('qr::approved') }}', { code: authToken })
+                    get('{{ route('qr::approved') }}', {code: authToken})
                         .then(approved => {
                             if (approved) {
                                 element.innerHTML = 'Successfully authenticated :)';
@@ -469,7 +469,7 @@
                     document.querySelector('#rfid-modal .qrAuth'),
                     'Link RFID card to account',
                     (auth_token, credentialtype) => {
-                        let status = { class: '', text: '' };
+                        let status = {class: '', text: ''};
                         post(
                             '{{ route('omnomcom::store::rfid::create') }}',
                             {
@@ -478,8 +478,8 @@
                                 credentials: auth_token,
                             },
                         )
-                            .then(data => status = { class: 'primary', text: data.text })
-                            .catch(err => status = { class: 'danger', text: err.statusText })
+                            .then(data => status = {class: 'primary', text: data.text})
+                            .catch(err => status = {class: 'danger', text: err.statusText})
                             .finally(_ => document.querySelector('#rfid-modal .modal-status').innerHTML =
                                 '<span class="' + status.class + '">' + status.text + '</span>');
                     },
