@@ -11,6 +11,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 
 class ImportLiveDataSeeder extends Seeder
 {
@@ -78,6 +79,7 @@ class ImportLiveDataSeeder extends Seeder
      */
     public static function createEntries($entries, array $table): void
     {
+        Schema::disableForeignKeyConstraints();
         foreach ($entries as $entry) {
             $entry = (array) $entry;
 
@@ -89,6 +91,8 @@ class ImportLiveDataSeeder extends Seeder
 
             DB::table($table['name'])->insert($entry);
         }
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -126,6 +130,10 @@ class ImportLiveDataSeeder extends Seeder
         $adminUser = User::query()->create($userData);
         $adminUser->save();
         if ($memberData !== []) {
+            $memberData['user_id'] = 1;
+            unset($memberData['file_id']);
+            unset($memberData['membership_form_id']);
+            unset($memberData['omnomcom_sound_id']);
             $newMember = Member::query()->create($memberData);
             $newMember->user_id = 1;
             $newMember->save();

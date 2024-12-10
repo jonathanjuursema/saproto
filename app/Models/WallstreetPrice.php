@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class WallstreetPrice.
@@ -19,12 +20,12 @@ class WallstreetPrice extends Model
 
     protected $fillable = ['wallstreet_drink_id', 'product_id', 'price'];
 
-    public function drink()
+    public function drink(): BelongsTo
     {
         return $this->belongsTo(WallstreetDrink::class, 'wallstreet_drink_id');
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
     }

@@ -43,8 +43,7 @@ class NarrowcastingItem extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function image()
+    public function image(): BelongsTo
     {
         return $this->belongsTo(StorageEntry::class);
     }
