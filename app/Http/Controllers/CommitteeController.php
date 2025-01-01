@@ -306,7 +306,7 @@ class CommitteeController extends Controller
 
         Mail::to((object) [
             'name' => $committee->name,
-            'email' => $committee->email_address,
+            'email' => $committee->email,
         ])->queue((new AnonymousEmail($committee, $message_content, $message_hash))->onQueue('low'));
 
         Session::flash('flash_message', sprintf('Thanks for submitting your anonymous e-mail! The e-mail will be sent to the %s straightaway. Please remember that they cannot reply to your e-mail, so you will not receive any further confirmation other than this notification.', $committee->name));

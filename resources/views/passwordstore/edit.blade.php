@@ -17,7 +17,7 @@
             <form method="post"
                   action="{{ $password ? route('passwordstore::update', ['id'=>$password->id]) : route('passwordstore::store') }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card">
 

@@ -36,7 +36,7 @@
         <form method="post"
               action="{{ route("achievement::award", ['id' => $achievement->id]) }}">
 
-            {!! csrf_field() !!}
+            @csrf
 
             <div class="form-group autocomplete">
                 <label for="user-id">User</label>

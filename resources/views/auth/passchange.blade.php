@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route("login::password::change") }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <p>
             <input id="old_password" type="password" name="old_password" class="form-control"

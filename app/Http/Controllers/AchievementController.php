@@ -17,14 +17,12 @@ use Illuminate\View\View;
 
 class AchievementController extends Controller
 {
-    /** @return View */
-    public function index()
+    public function index(): View
     {
         return view('achievement.list', ['achievements' => Achievement::query()->orderBy('name', 'asc')->paginate(15)]);
     }
 
-    /** @return View */
-    public function gallery()
+    public function gallery(): View
     {
         $common = Achievement::query()->where('tier', 'COMMON')->where('is_archived', false)->get();
         $uncommon = Achievement::query()->where('tier', 'UNCOMMON')->where('is_archived', false)->get();
@@ -36,10 +34,7 @@ class AchievementController extends Controller
         return view('achievement.gallery', ['common' => $common, 'uncommon' => $uncommon, 'rare' => $rare, 'epic' => $epic, 'legendary' => $legendary, 'obtained' => $obtained]);
     }
 
-    /**
-     * @return View
-     */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         /** @var Achievement $achievement */
         $achievement = Achievement::query()->findOrFail($id);
@@ -47,16 +42,12 @@ class AchievementController extends Controller
         return view('achievement.manage', ['achievement' => $achievement]);
     }
 
-    /** @return View */
-    public function create()
+    public function create(): View
     {
         return view('achievement.manage', ['achievement' => null]);
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $achievement = new Achievement;
         $achievement->name = $request->name;
@@ -79,11 +70,7 @@ class AchievementController extends Controller
         return Redirect::route('achievement::edit', ['id' => $achievement->id]);
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request): RedirectResponse
     {
         /** @var Achievement $achievement */
         $achievement = Achievement::query()->findOrFail($id);
@@ -108,12 +95,9 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         /** @var Achievement $achievement */
         $achievement = Achievement::query()->findOrFail($id);
@@ -129,11 +113,7 @@ class AchievementController extends Controller
         return Redirect::route('achievement::index');
     }
 
-    /**
-     * @param  string  $page_name
-     * @return View|RedirectResponse
-     */
-    public function achieve($page_name)
+    public function achieve(string $page_name): View|RedirectResponse
     {
         $user = Auth::user();
         if (! $user->is_member) {
@@ -158,11 +138,7 @@ class AchievementController extends Controller
         return view('achievement.achieve', ['achievement' => $achievement, 'parsed_content' => Markdown::convert($achievement->page_content)]);
     }
 
-    /**
-     * @param  int  $achievement_id
-     * @return RedirectResponse
-     */
-    public function award($achievement_id, Request $request)
+    public function award(int $achievement_id, Request $request): RedirectResponse
     {
         $achievement = Achievement::query()->findOrFail($achievement_id);
         $user = User::query()->findOrFail($request->get('user-id'));
@@ -176,7 +152,7 @@ class AchievementController extends Controller
         return Redirect::back();
     }
 
-    public function give(Request $request)
+    public function give(Request $request): RedirectResponse
     {
         $achievement = Achievement::query()->findOrFail($request->input('achievement-id'));
         $userIds = $request->input('users');
@@ -204,13 +180,9 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $achievement_id
-     * @param  int  $user_id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function take($achievement_id, $user_id)
+    public function take(int $achievement_id, int $user_id): RedirectResponse
     {
         $achievement = Achievement::query()->findOrFail($achievement_id);
         $user = User::query()->findOrFail($user_id);
@@ -227,12 +199,9 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $achievement_id
-     * @return RedirectResponse
-     *
      * @throws Exception
      */
-    public function takeAll($achievement_id)
+    public function takeAll(int $achievement_id): RedirectResponse
     {
         static::staticTakeAll($achievement_id);
         $achievement = Achievement::query()->findOrFail($achievement_id);
@@ -241,11 +210,7 @@ class AchievementController extends Controller
         return Redirect::back();
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     */
-    public function icon($id, Request $request)
+    public function icon(int $id, Request $request): RedirectResponse
     {
         /** @var Achievement $achievement */
         $achievement = Achievement::query()->findOrFail($id);
@@ -258,11 +223,9 @@ class AchievementController extends Controller
     }
 
     /**
-     * @param  int  $id
-     *
      * @throws Exception
      */
-    public static function staticTakeAll($id): void
+    public static function staticTakeAll(int $id): void
     {
         $achieved = AchievementOwnership::query()->where('achievement_id', $id)->get();
         foreach ($achieved as $entry) {

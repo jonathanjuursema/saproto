@@ -143,7 +143,7 @@ class Photo extends Model implements HasMedia
 
     public function thumbnail(): string
     {
-        return $this->file->generateImagePath(400, 400);
+        return $this->file->generateImagePath(800, 300);
     }
 
     public function getUrlAttribute(): string

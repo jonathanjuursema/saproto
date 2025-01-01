@@ -2,7 +2,7 @@
       action="{{ ($event == null ? route("event::store") : route("event::update", ['id' => $event->id])) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

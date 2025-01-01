@@ -82,11 +82,12 @@ class SmartXpScreenController extends Controller
         foreach ($data->items as $entry) {
             $end_time = ($entry->end->date ?? $entry->end->dateTime);
             $start_time = (isset($entry->start->date) ? $entry->end->date : $entry->start->dateTime);
-            $name = $entry->summary;
-            preg_match('/Course\/Description:\s*([^\.]+)\./', $entry->summary, $name);
+
+            $name = $entry->summary ?? '';
+            preg_match('/Course\/Description:\s*([^\.]+)\./', $entry->summary ?? '', $name);
             $name = $name[1] ?? 'unknown';
 
-            preg_match('/Hall: ZI A138, (.*)/', $entry->summary, $type);
+            preg_match('/Hall: ZI A138, (.*)/', $entry->summary ?? '', $type);
             foreach (Config::array('proto.timetable-translations') as $key => $value) {
                 $type = str_replace($key, $value, $type);
             }

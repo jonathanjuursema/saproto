@@ -10,7 +10,6 @@
             api_omnomcom_stock: "{{ route('api::omnomcom::stock') }}",
             api_wallstreet_active: "{{ route('api::wallstreet::active') }}",
         },
-        analytics_url: "{{ Config::string('proto.analytics_url') }}",
         discord_server_id: "{{ Config::string('proto.discord_server_id') }}",
         theme: "{{ Auth::check() && Auth::user()->theme !== null ? Config::array('proto.themes')[Auth::user()->theme] : 'light' }}",
         @isset($companies) company_count: {{ count($companies) }} @endisset

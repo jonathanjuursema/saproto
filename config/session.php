@@ -19,15 +19,15 @@ return [
     'driver' => env('SESSION_DRIVER', 'database'),
 
     /*
-    |--------------------------------------------------------------------------
-    | Session Lifetime
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify the number of minutes that you wish the session
-    | to be allowed to remain idle before it expires. If you want them
-    | to immediately expire on the browser closing, set that option.
-    |
-    */
+   |--------------------------------------------------------------------------
+   | Session Lifetime
+   |--------------------------------------------------------------------------
+   |
+   | Here you may specify the number of minutes that you wish the session
+   | to be allowed to remain idle before it expires. If you want them
+   | to immediately expire on the browser closing, set that option.
+   |
+   */
 
     'lifetime' => 10080,
 
@@ -60,17 +60,17 @@ return [
     'files' => storage_path('framework/sessions'),
 
     /*
-    |--------------------------------------------------------------------------
-    | Session Database Connection
-    |--------------------------------------------------------------------------
-    |
-    | When using the "database" or "redis" session drivers, you may specify a
-    | connection that should be used to manage these sessions. This should
-    | correspond to a connection in your database configuration options.
-    |
-    */
+   |--------------------------------------------------------------------------
+   | Session Database Connection
+   |--------------------------------------------------------------------------
+   |
+   | When using the "database" or "redis" session drivers, you may specify a
+   | connection that should be used to manage these sessions. This should
+   | correspond to a connection in your database configuration options.
+   |
+   */
 
-    'connection' => 'mysql',
+    'connection' => env('SESSION_CONNECTION'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'table' => 'sessions',
+    'table' => env('SESSION_TABLE', 'sessions'),
 
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +98,7 @@ return [
     |
     */
 
-    'store' => env('SESSION_STORE', null),
+    'store' => env('SESSION_STORE'),
 
     /*
     |--------------------------------------------------------------------------
@@ -133,11 +133,11 @@ return [
     |
     | The session cookie path determines the path for which the cookie will
     | be regarded as available. Typically, this will be the root path of
-    | your application but you are free to change this when necessary.
+    | your application, but you are free to change this when necessary.
     |
     */
 
-    'path' => '/',
+    'path' => env('SESSION_PATH', '/'),
 
     /*
     |--------------------------------------------------------------------------
@@ -192,5 +192,18 @@ return [
    */
 
     'same_site' => 'none',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Partitioned Cookies
+    |--------------------------------------------------------------------------
+    |
+    | Setting this value to true will tie the cookie to the top-level site for
+    | a cross-site context. Partitioned cookies are accepted by the browser
+    | when flagged "secure" and the Same-Site attribute is set to "none".
+    |
+    */
+
+    'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
 
 ];

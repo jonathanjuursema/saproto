@@ -10,7 +10,7 @@
           action="{{ !isset($item) ? route("menu::create") : route("menu::update", ['id' => $item->id]) }}"
           enctype="multipart/form-data">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="row justify-content-center">
 
@@ -36,8 +36,8 @@
                                 <option @selected(!isset($item) || $item->parent == null) value>No parent</option>
                                 @foreach($topMenuItems as $topMenuItem)
                                     <option value="{{ $topMenuItem->id }}"
-                                        @selected(isset($item) && $topMenuItem->id == $item->parent)
-                                        @disabled(isset($item) && $topMenuItem->id == $item->id)>
+                                            @selected(isset($item) && $topMenuItem->id == $item->parent)
+                                            @disabled(isset($item) && $topMenuItem->id == $item->id)>
                                         {{ $topMenuItem->menuname }}
                                     </option>
                                 @endforeach
@@ -61,7 +61,7 @@
                                 <option disabled>---</option>
                                 @foreach($pages as $page)
                                     <option
-                                        @selected(isset($item) && $page->id == $item->page_id) value="{{ $page->id }}">
+                                            @selected(isset($item) && $page->id == $item->page_id) value="{{ $page->id }}">
                                         {{ $page->title }}
                                     </option>
                                 @endforeach
@@ -89,7 +89,7 @@
                                             $url = "https://$domain/$uri";
                                         @endphp
                                         <option
-                                            value="{{ $url }}" @selected(isset($item) && $item->url == '(route) '.$route->getName())>
+                                                value="{{ $url }}" @selected(isset($item) && $item->url == '(route) '.$route->getName())>
                                             [{{ $route->getName() }}] -> {{ $route->domain() }}/{{ $route->uri }}
                                         </option>
                                     @endforeach

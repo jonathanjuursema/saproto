@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - recaptcha.php

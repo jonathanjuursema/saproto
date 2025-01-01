@@ -12,7 +12,7 @@
 
             <form method="post" action="{{ route('search::ldap::post') }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

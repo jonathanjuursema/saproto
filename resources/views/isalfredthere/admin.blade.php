@@ -12,7 +12,7 @@
 
             <form method="post" action="{{ route("minisites::isalfredthere::update") }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

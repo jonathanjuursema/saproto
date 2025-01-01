@@ -6,7 +6,7 @@
     @if(!$currentDrink->is_active)
         <form method="post" action="{{ route('wallstreet::products::create', ['id'=>$currentDrink->id]) }}">
 
-            {!! csrf_field() !!}
+            @csrf
             <div class="row mx-2 mb-3">
                 <label for="product">Product(s):</label>
                 <div class="col-9">

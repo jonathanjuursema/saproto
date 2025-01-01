@@ -23,7 +23,8 @@
                         <tr class="bg-dark text-white">
                             <th></th>
                             @foreach($permissions as $permission)
-                                <th class="text-end align-middle py-2" style="writing-mode: vertical-lr">{{ $permission->name }}</th>
+                                <th class="text-end align-middle py-2"
+                                    style="writing-mode: vertical-lr">{{ $permission->name }}</th>
                             @endforeach
                         </tr>
                         </thead>
@@ -106,7 +107,7 @@
 
                             </div>
 
-                            {!! csrf_field() !!}
+                            @csrf
 
                         </form>
 

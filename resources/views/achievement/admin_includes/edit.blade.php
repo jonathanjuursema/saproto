@@ -1,7 +1,7 @@
 <form method="post"
       action="{{ (!$achievement ? route("achievement::store") : route("achievement::update", ['id' => $achievement->id])) }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

@@ -12,7 +12,7 @@
 
             <form method="POST" action="{{ route('user::memberprofile::complete') }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

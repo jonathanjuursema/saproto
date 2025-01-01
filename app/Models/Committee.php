@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $allow_anonymous_email
  * @property int $is_society
  * @property int $is_active
- * @property-read string $email_address
+ * @property-read string $email
  * @property-read StorageEntry|null $image
  * @property-read Collection|Event[] $organizedEvents
  * @property-read Collection|User[] $users
@@ -95,12 +95,15 @@ class Committee extends Model
         return Event::getEventBlockQuery()->where('committee_id', $this->id);
     }
 
-    public function getEmailAddressAttribute(): string
+    public function getEmailAttribute(): string
     {
         return $this->slug.'@'.Config::string('proto.emaildomain');
     }
 
-    public function pastEvents(int $n): Collection
+    /**
+     * @param  int  $n  the number of events to return
+     */
+    public function pastEvents(int $n): Collection|array
     {
         $events = $this->organizedEvents()->where('end', '<', time())->orderBy('start', 'desc')->take($n);
 
@@ -111,7 +114,7 @@ class Committee extends Model
         return $events->where('secret', '=', 0)->get();
     }
 
-    public function upcomingEvents(): Collection
+    public function upcomingEvents(): Collection|array
     {
         $events = $this->organizedEvents()->where('end', '>', time());
 
@@ -122,26 +125,7 @@ class Committee extends Model
         return $events->where('secret', '=', 0)->get();
     }
 
-    /**
-     * @return Event[]
-     */
-    public function helpedEvents(bool $includeSecret = false): array
-    {
-        /** @var Activity[] $activities */
-        $activities = $this->belongsToMany(Activity::class, 'committees_activities')->orderBy('created_at', 'desc')->get();
-
-        $events = [];
-        foreach ($activities as $activity) {
-            $event = $activity->event;
-            if ($event?->isPublished() || (! $event->secret || $includeSecret)) {
-                $events[] = $event;
-            }
-        }
-
-        return $events;
-    }
-
-    public function pastHelpedEvents($n): Collection
+    public function pastHelpedEvents($n): Collection|array
     {
         return Event::query()->whereHas('activity', function ($q) {
             $q->whereHas('helpingCommittees', function ($q) {

@@ -1,0 +1,50 @@
+on:
+  workflow_call:
+
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    name: 🛠 PHP Automatic Fixing (Pint & Rector)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: 🔍 Read .env
+        run: grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: xdebug
+
+      - uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--ignore-platform-reqs --optimize-autoloader --prefer-dist"
+
+      - uses: actions/cache@v4
+        with:
+          path: .tmp/rector
+          key: ${{ runner.os }}-rector-${{ github.run_id }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-rector-
+
+      - run: mkdir -p .tmp/rector
+
+      - name: Run rector
+        run: vendor/bin/rector --ansi
+
+      - name: Cache Pint
+        uses: actions/cache@v4
+        with:
+          path: .tmp/pint.cache
+          key: ${{ runner.os }}-pint-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-pint-
+
+      - name: Run pint
+        run: ./vendor/bin/pint
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: PHP Automatic Fixing (Pint & Rector)
+          skip_fetch: true

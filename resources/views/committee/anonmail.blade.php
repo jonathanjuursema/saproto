@@ -13,7 +13,7 @@
             <form method="post"
                   action="{{ route("committee::sendanonymousmail", ["id" => $committee->getPublicId()]) }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card">
 

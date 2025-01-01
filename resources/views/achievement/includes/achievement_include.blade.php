@@ -6,8 +6,8 @@
 
         <strong class="text-white">{{ $achievement->name }}</strong>
         @if(isset($obtained) && $obtained)
-                <i class="fas fa-check text-primary fa-fw" aria-hidden="true"
-                   data-bs-toggle="tooltip" data-bs-placement="top" title="You have achieved this!"></i>
+            <i class="fas fa-check text-primary fa-fw" aria-hidden="true"
+               data-bs-toggle="tooltip" data-bs-placement="top" title="You have achieved this!"></i>
         @endif
         @if(!empty($include_delete_for))
             <a href="{{ route('achievement::take', ['id' => $achievement->id, 'user' => $user->id]) }}"
@@ -17,11 +17,11 @@
         @endif
 
         <span class="float-end">
-            @for($i = 0; $i < 5; $i++)
-                @if ($i >= $achievement->numberOfStars())
-                    <i class="far fa-star"></i>
+              @for($i = 0; $i < 5; $i++)
+                @if($i< $achievement->numberOfStars())
+                    <i class="text-white fas fa-star"></i>
                 @else
-                    <i class="fas fa-star"></i>
+                    <i class="achievement-{{ $achievement->tier }} fas fa-star"></i>
                 @endif
             @endfor
         </span>
@@ -38,7 +38,6 @@
             </div>
         @endif
     </div>
-
 
 
     @if(!empty($footer))

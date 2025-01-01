@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         $output->task('setting roles and permissions', fn () => Artisan::call('proto:syncroles'));
 
-        $adminPassword = 'proto';
+        $adminPassword = Str::random();
 
         $importSeeder = new ImportLiveDataSeeder;
         $importSeeder->run($adminPassword, $output);

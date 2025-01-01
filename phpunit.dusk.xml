@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         colors="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         cacheDirectory=".tmp/phpunit.cache"
+         backupStaticProperties="false"
+         bootstrap="bootstrap/app.php">
+    <php>
+        <ini name="memory_limit" value="-1"/>
+        <server name="APP_ENV" value="testing"/>
+        <env name="DB_DATABASE" value="testing"/>
+        <env name="DB_USERNAME" value="saproto"/>
+        <env name="DB_PASSWORD" value="saproto"/>
+        <env name="DB_HOST" value="host.docker.internal"/>
+
+        <env name="APP_ENV" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+    </php>
+    <testsuites>
+        <testsuite name="Browser Test Suite">
+            <directory suffix="Test.php">./tests/Browser</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

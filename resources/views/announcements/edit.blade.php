@@ -22,7 +22,7 @@
 
                     <div class="card-body">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <div class="form-group">
                             <label for="name">Description:</label>

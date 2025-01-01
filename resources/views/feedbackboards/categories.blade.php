@@ -17,7 +17,7 @@
                     <form method="POST"
                           action="{{ ($cur_category == null ? route('feedback::category::store') : route('feedback::category::update', ['id' => $cur_category])) }}"
                           enctype="multipart/form-data">
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <label for="name">Category Name:</label>
                         <input type="text" class="form-control mb-3" id="name" name="name"
@@ -33,7 +33,7 @@
                             <label for="user_id">Reviewer Name:</label>
                             <div class="form-group autocomplete">
                                 <input class="form-control user-search" value="{{ $cur_category->reviewer_id ?? '' }}"
-                                       id="user_id" name="user_id" />
+                                       id="user_id" name="user_id"/>
                             </div>
                         </div>
 
@@ -104,7 +104,7 @@
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         let checkbox = document.getElementById('can_review');
-        checkbox.addEventListener('change', function() {
+        checkbox.addEventListener('change', function () {
             if (checkbox.checked) {
                 document.getElementById('reviewer').classList.remove('d-none');
                 document.getElementById('user_id').required = true;

@@ -150,6 +150,17 @@ return [
     ],
 
     /*
+    |--------------------------------------------------------------------------
+    | Google Default Credentials
+    |--------------------------------------------------------------------------
+    |
+    | The location of the Google Workspace service account application credentials.
+    |
+    */
+
+    'google_application_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+
+    /*
       |--------------------------------------------------------------------------
       | Timetable translations
       |--------------------------------------------------------------------------
@@ -325,7 +336,4 @@ return [
         3 => 'broto-inverse',
         4 => 'inverse',
     ],
-
-    // Analytics URL
-    'analytics_url' => env('ANALYTICS_URL', ''),
 ];

@@ -1,7 +1,7 @@
 <form method="post" action="{{ route("achievement::icon", ["id" => $achievement->id]) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

@@ -7,6 +7,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Alias Model.
@@ -37,9 +38,13 @@ class Alias extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getEmailAttribute(): string
+    {
+        return $this->alias.'@'.Config::string('proto.emaildomain');
     }
 }

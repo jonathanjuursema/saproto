@@ -1,5 +1,10 @@
 @extends('website.layouts.redesign.generic')
-
+@php
+    /**
+     * @var \App\Models\PhotoAlbum $album
+     * @var \Illuminate\Support\Collection<\App\Models\Photo> $photos
+     */
+@endphp
 @section('page-title')
     {{ $album->name }} ({{ date('M j, Y', $album->date_taken) }})
 @endsection

@@ -57,10 +57,10 @@
 
                                 <ul class="dropdown-menu">
                                     @foreach(Config::array('omnomcom.stores') as $name => $store)
-                                        @if(in_array(Request::ip(), $store->addresses) || Auth::user()->hasAnyPermission($store->roles))
+                                        @if(in_array(Request::ip(), $store['addresses']) || Auth::user()->hasAnyPermission($store['roles']))
                                             <a class="dropdown-item"
                                                href="{{ route('omnomcom::store::show', ['store'=>$name]) }}">
-                                                Open store: {{ $store->name }}
+                                                Open store: {{ $store['name'] }}
                                             </a>
                                         @endif
                                     @endforeach
@@ -121,7 +121,7 @@
                                         <a class="dropdown-item" href="{{ route("committee::create") }}">Add
                                             Committee</a>
                                         <a class="dropdown-item" href="{{ route("event::create") }}">Add Event</a>
-                                        <a class="dropdown-item" href="{{ route("event::category::admin") }}">Event
+                                        <a class="dropdown-item" href="{{ route("event::categories.create") }}">Event
                                             Categories</a>
                                         <a class="dropdown-item" href="{{ route("feedback::category::admin") }}">Feedback
                                             Categories</a>
@@ -287,7 +287,7 @@
                                    role="button" aria-haspopup="true" aria-expanded="false">
                                     {{ Auth::user()->calling_name }}
                                     <img id="profile-picture" class="rounded-circle ms-2" alt="your profile picture"
-                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}" />
+                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}"/>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end mt-2">

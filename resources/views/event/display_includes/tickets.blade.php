@@ -60,7 +60,7 @@
 
     <form method="post" action="{{ route('event::buytickets', ['id'=>$event->id]) }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="card mb-3">
 

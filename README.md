@@ -96,10 +96,13 @@ to `~/.bash_aliases` (WSL2/Linux) or `~/.zshenv` (macOS) the alias will persist 
 *The rest of these instruction will assume that you successfully added the `sail` alias.*
 
 WSL2/Linux/macOS High Sierra or earlier:
+
 ```shell
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" > ~/.bash_aliases
 ```
+
 macOS Catalina or newer:
+
 ```shell
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" > ~/.zshenv
 ```
@@ -122,6 +125,14 @@ for changes to scripts or stylesheets.
 
 When adding a new library or client-side dependency through npm don't forget to require the scripts in `application.js`
 and the stylesheet in `vendor.scss`.
+
+#### Websockets
+
+In some parts of the website we use websockets to update the page in real-time.
+For this we use a soketi server. This runs in a docker container in your sail setup.
+
+For the frontend we use the [Laravel Echo](https://laravel.com/docs/broadcasting) library to connect to the
+websocket server.
 
 #### Localhost
 
@@ -163,6 +174,18 @@ sail shell
 
 ```
 sail artisan migrate:fresh --seed
+```
+
+#### Run dev commands (Laravel Solo)
+
+When your sail container is running, you can use [Laravel Solo](https://github.com/aarondfrancis/solo) to run all the
+commands you would normally in different
+terminals. It will automatically start `npm run dev` and tail the logs. Use the arrow keys to switch between the
+different tabs, and press `q` to exit.
+The queue and schedule are not automatically run. To run these, switch to the tab and press 's'.
+
+```
+sail artisan solo
 ```
 
 ### Code completion, style and static analysis
@@ -216,13 +239,25 @@ features such as timelines of runtime requests, database queries and client-metr
 
 ### Testing
 
-##### For testing we use the standard laravel implementation of tests which uses phpunit.
+For testing we use Pest for basic tests and Dusk for browser tests.
+These tests should be run locally, but are also run on every PR in GitHub Actions.
 
-You can run the tests with the following command:
-```sail composer test```.
+If tests are failing, and it shows that all the tests using a database fail, you should run
+```sail artisan optimize:clear``` first.
+
+#### Pest
+
+The Pest tests can be run with the following command:
+```sail test```.
+If you do not need the output and want it to go faster you can use the ```--parallel``` flag.
 
 To make a new test you can use the following command:
 ```sail artisan make:test {{TestName}}```.
 
 To make a unit test you can use the following command:
 ```sail artisan make:test {{TestName}} --unit```.
+
+#### Dusk
+
+The dusk tests can be run with the following command:
+```sail dusk```.

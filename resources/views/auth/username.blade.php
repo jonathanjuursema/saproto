@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route("login::requestusername") }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <p>Please enter your e-mail address.</p>
 

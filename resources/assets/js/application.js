@@ -23,7 +23,7 @@ if ((new Date().getMonth() + 1) !== 12) {
 // Disable submit buttons after a form has been submitted so
 // spamming the button does not result in multiple requests
 let formList = Array.from(document.getElementsByTagName('form'));
-formList.forEach(form => form.addEventListener('submit', preventSubmitBounce, { once: true }));
+formList.forEach(form => form.addEventListener('submit', preventSubmitBounce, {once: true}));
 
 // Get online Discord users
 const discordOnlineCount = document.getElementById('discord__online');
@@ -38,24 +38,24 @@ if (discordOnlineCount) {
 }
 
 // Enables tooltips elements
-import { Tooltip } from 'bootstrap';
+import {Tooltip} from 'bootstrap';
 
 const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 window.tooltips = {};
 if (tooltipTriggerList.length) {
     tooltipTriggerList.forEach(el => {
-        window.tooltips[el.id] = Tooltip.getOrCreateInstance(el, { container: el.parentNode, boundary: document.body });
+        window.tooltips[el.id] = Tooltip.getOrCreateInstance(el, {container: el.parentNode, boundary: document.body});
     });
 }
 
 // Enable popover elements
-import { Popover } from 'bootstrap';
+import {Popover} from 'bootstrap';
 
 const popoverTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="popover"]'));
 if (popoverTriggerList.length) popoverTriggerList.forEach(el => new Popover(el));
 
 // Enable modal elements
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 
 let modalList = Array.from(document.getElementsByClassName('modal'));
 window.modals = {};
@@ -79,7 +79,7 @@ if (customFileInputList.length) {
 }
 
 // Enable Swiper with default settings
-import Swiper, { Autoplay, Navigation } from 'swiper';
+import Swiper, {Autoplay, Navigation} from 'swiper';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
@@ -251,7 +251,7 @@ document.querySelectorAll('.shift-select').forEach(el => el.hasAttribute('data-n
 
 //Lazy load background images
 if ('IntersectionObserver' in window) {
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         function handleIntersection(entries) {
             entries.map((entry) => {
                 if (entry.isIntersecting) {
@@ -267,7 +267,7 @@ if ('IntersectionObserver' in window) {
         const headers = document.querySelectorAll('div[data-bgimage]:not([data-bgimage=""])');
         const observer = new IntersectionObserver(
             handleIntersection,
-            { rootMargin: '200px' },
+            {rootMargin: '200px'},
         );
         headers.forEach(header => observer.observe(header));
     });
@@ -278,18 +278,3 @@ if ('IntersectionObserver' in window) {
         header.style.backgroundImage = 'url(\'' + header.dataset.bgimage + '\')';
     });
 }
-
-// Matomo Analytics
-const _paq = window._paq = window._paq || [];
-_paq.push(['trackPageView']);
-_paq.push(['enableLinkTracking']);
-(function() {
-    let u = '//' + config.analytics_url + '/';
-    _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', '1']);
-    const d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-    g.type = 'text/javascript';
-    g.async = true;
-    g.src = u + 'matomo.js';
-    s.parentNode.insertBefore(g, s);
-})();

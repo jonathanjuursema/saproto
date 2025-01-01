@@ -16,7 +16,7 @@
                         Scan the code below with your 2FA app and enter your code below to verify.
                     </p>
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     {!! $tfa_qrcode !!}
 
@@ -61,7 +61,7 @@
                         Enter a valid 2FA code from your app to disable 2FA.
                     </p>
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <p class="py-5">
                         <input class="form-control" name="2facode" placeholder="Your six digit code.">

@@ -2,7 +2,7 @@
 
     <form method="post" action="{{ route('dinnerform::orderline::store', ['id' => $dinnerform->id]) }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="card mb-3">
 

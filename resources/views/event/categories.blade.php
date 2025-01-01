@@ -11,13 +11,16 @@
         <div class="col-5">
             <div class="card">
                 <div class="card-header">
-                    {{ $cur_category == null ? 'Add new category' : 'Edit category: '.$cur_category->name }}
+                    {{ empty($cur_category) ? 'Add new category' : 'Edit category: '.$cur_category->name }}
                 </div>
                 <div class="card-body">
-                    <form method="post"
-                          action="{{ ($cur_category == null ? route('event::category::store') : route('event::category::update', ['id' => $cur_category])) }}"
-                          enctype="multipart/form-data">
-                        {!! csrf_field() !!}
+
+                    <form
+                        action="{{ !empty($cur_category) ? route('event::categories.update', ['category'=>$cur_category]) : route("event::categories.store") }}"
+
+                        method="POST">
+                        <input type="hidden" name="_method" value="{{ !empty($cur_category) ? "PUT" : "POST" }}">
+                        @csrf
 
                         <label for="name">Category Name:</label>
                         <input type="text" class="form-control mb-3" id="name" name="name"
@@ -31,7 +34,8 @@
 
                         <button type="submit" class="btn btn-success float-end">Submit</button>
                         @if($cur_category)
-                            <a class="btn btn-warning float-end me-1" href="{{ route('event::category::admin') }}">Cancel</a>
+                            <a class="btn btn-warning float-end me-1"
+                               href="{{ route('event::categories.create') }}">Cancel</a>
                         @endif
                     </form>
                 </div>
@@ -55,13 +59,19 @@
                                         {{ $category->name }}
                                     </div>
                                     <div class="bg-white px-2 py-2 my-2 w-25 rounded-end">
-                                        <a href="{{ route('event::category::admin', ['id' => $category]) }}">
+                                        <a href="{{ route('event::categories.edit', ['category' => $category]) }}">
                                             <i class="fas fa-edit me-2 ms-1 mt-1"></i>
                                         </a>
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete-category-modal"
-                                           data-id="{{ $category->id }}">
-                                            <i class="fas fa-trash mt-1 text-danger"></i>
-                                        </a>
+
+                                        @include('components.modals.confirm-modal', [
+                                          'action' => route('event::categories.destroy', ['category' => $category]),
+                                          'method'=>'DELETE',
+                                          'confirm' => 'Delete the event category',
+                                          'classes' => 'fa fa-trash text-danger',
+                                          'text' => '',
+                                          'message' => "Are you sure you want to delete this category. All events that currently have this category will
+                        become <b>uncategorised</b>",
+                                      ])
                                     </div>
                                 </div>
                             @endforeach
@@ -77,32 +87,4 @@
 
     </div>
 
-    <div class="modal fade" id="delete-category-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog model-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete Category</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this category. All events that currently have this category will
-                        become <b>uncategorised</b>.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cancel</button>
-                    <a id="delete-category" class="btn btn-danger" href="#">Delete Category</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection
-
-@push('javascript')
-    <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        document.getElementById('delete-category-modal').addEventListener('show.bs.modal', e => {
-            let categoryId = e.relatedTarget.getAttribute('data-id');
-            document.getElementById('delete-category').href = '{{ route('event::category::delete', ['id' => ':id']) }}'.replace(':id', categoryId);
-        });
-    </script>
-@endpush

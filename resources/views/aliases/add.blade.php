@@ -20,7 +20,7 @@
 
                     <div class="card-body">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <div class="input-group mb-3">
                             <input type="text" id="alias" class="form-control" placeholder="awesome-alias" name="alias"
