@@ -9,7 +9,7 @@
 
     @if($is_weekly && $lastWeekly)
         <a class="badge bg-danger disabled float-end">
-            Last sent: {{ Carbon::parse($lastWeekly->published_at)->diffForHumans() }}
+            Last sent: {{ Illuminate\Support\Carbon::parse($lastWeekly->published_at)->diffForHumans() }}
         </a>
     @endif
 @endsection
@@ -44,7 +44,7 @@
                             @include('components.forms.datetimepicker', [
                                 'name' => 'published_at',
                                 'label' => 'Publish at:',
-                                'placeholder' => $item ? strtotime($item->published_at) : strtotime(Carbon::now())
+                                'placeholder' => $item ? strtotime($item->published_at) : strtotime(Illuminate\Support\Carbon::now())
                             ])
                         @endif
 
@@ -108,8 +108,8 @@
                                                'action' => route('news::sendWeekly', ['id' => $item->id]),
                                                'text' => 'Send weekly!',
                                                'title' => 'Confirm Sending Weekly',
-                                               'classes' => 'btn ms-2 '.(Carbon::parse($lastWeekly->published_at)->diffInDays(Carbon::now()) < 7 ? 'btn-danger' : 'btn-success'),
-                                               'message' => 'Are you sure you want to send this weekly? <br> It was last sent: <b>'.Carbon::parse($lastWeekly->published_at)->diffForHumans()."</b> and should only be sent once per week.<br> This will send an email to everyone on the list.",
+                                               'classes' => 'btn ms-2 '.(Illuminate\Support\Carbon::parse($lastWeekly->published_at)->diffInDays(Illuminate\Support\Carbon::now()) < 7 ? 'btn-danger' : 'btn-success'),
+                                               'message' => 'Are you sure you want to send this weekly? <br> It was last sent: <b>'.Illuminate\Support\Carbon::parse($lastWeekly->published_at)->diffForHumans()."</b> and should only be sent once per week.<br> This will send an email to everyone on the list.",
                                                'confirm' => 'Send',
                                            ])
                                 @else

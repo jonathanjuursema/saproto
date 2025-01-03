@@ -167,7 +167,7 @@
                         ])
 
                         <select multiple name="listSelect[]" id="listSelect" class="form-control"
-                                {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
+                            {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
 
                             @foreach(App\Models\EmailList::all() as $list)
 
@@ -187,7 +187,7 @@
                     @include('components.forms.datetimepicker', [
                         'name' => 'time',
                         'label' => 'Scheduled:',
-                        'placeholder' => $email ? $email->time : strtotime(Carbon::now()->endOfDay())
+                        'placeholder' => $email ? $email->time : strtotime(Illuminate\Support\Carbon::now()->endOfDay())
                     ])
                 </div>
 

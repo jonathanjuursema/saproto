@@ -52,7 +52,7 @@
 
         <p class="card-text">
 
-            {!! Markdown::convert($committee->description) !!}
+            {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($committee->description) !!}
 
         </p>
 

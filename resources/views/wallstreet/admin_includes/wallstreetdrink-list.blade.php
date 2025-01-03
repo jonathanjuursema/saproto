@@ -33,8 +33,8 @@
                 @foreach($allDrinks as $wallstreetDrink)
                     <tr class="align-middle text-nowrap">
                         <td class="text-muted">#{{ $wallstreetDrink->id }}</td>
-                        <td>{{ Carbon::createFromTimestamp($wallstreetDrink->start_time)->format('m-d-Y H:i') }}</td>
-                        <td>{{ Carbon::createFromTimestamp($wallstreetDrink->end_time)->format('m-d-Y H:i') }}</td>
+                        <td>{{ Illuminate\Support\Carbon::createFromTimestamp($wallstreetDrink->start_time)->format('m-d-Y H:i') }}</td>
+                        <td>{{ Illuminate\Support\Carbon::createFromTimestamp($wallstreetDrink->end_time)->format('m-d-Y H:i') }}</td>
                         <td> €{{ $wallstreetDrink->minimum_price }} </td>
                         <td> €{{ $wallstreetDrink->price_decrease }} </td>
                         <td> €{{ $wallstreetDrink->price_increase }} </td>
@@ -55,7 +55,7 @@
                                     'action' => route("wallstreet::close", ['id' => $wallstreetDrink->id]),
                                     'text' => '<i class="fas fa-ban text-warning me-4"></i>',
                                     'title' => 'Confirm Close',
-                                    'message' => "Are you sure you want to close this wallstreet drink early? The drink will close automatically at:".Carbon::createFromTimestamp($wallstreetDrink->end_time)->format('m-d-Y H:i'),
+                                    'message' => "Are you sure you want to close this wallstreet drink early? The drink will close automatically at:".Illuminate\Support\Carbon::createFromTimestamp($wallstreetDrink->end_time)->format('m-d-Y H:i'),
                                     'confirm' => 'Close',
                                 ])
                             @endif

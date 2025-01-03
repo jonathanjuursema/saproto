@@ -49,7 +49,7 @@
                         @include('components.forms.datetimepicker', [
                             'name' => 'date',
                             'label' => 'Album date:',
-                            'placeholder' => strtotime(Carbon::now())
+                            'placeholder' => strtotime(Illuminate\Support\Carbon::now())
                         ])
                         @include('components.forms.checkbox', [
                             'name' => 'private',

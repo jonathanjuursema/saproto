@@ -116,7 +116,7 @@ class LeaderboardController extends Controller
             $leaderboard->icon = $request->input('icon');
         }
 
-        //Only editable for board permission
+        // Only editable for board permission
         if (Auth::user()->can('board')) {
             if ($request->has('featured') && Leaderboard::query()->where('featured', true)->first() != null) {
                 Leaderboard::query()->where('featured', true)->update(['featured' => false]);

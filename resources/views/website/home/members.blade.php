@@ -82,7 +82,7 @@
                             src="{{ $weekly->featuredImage ? $weekly->featuredImage->generateImagePath(500,300) : null }}"
                             class="img-fluid img-thumbnail mb-3 w-50 mx-auto d-block" alt="Featured image">
                     @endif
-                    {!! Markdown::convert($weekly->content) !!}
+                    {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($weekly->content) !!}
                 </div>
                 <div class="card-footer">
                     <a href="{{ route("news::showWeeklyPreview", ['id'=>$weekly->id]) }}"
@@ -144,7 +144,7 @@
                                     'height' => $newsitem->is_weekly ? 80 : 120,
                                     'url' => $newsitem->url,
                                     'img' => $newsitem->featuredImage ? $newsitem->featuredImage->generateImagePath(600,300) : ($newsitem->is_weekly?url('images/weekly-cover.png'):null),
-                                    'html' => sprintf('<strong>%s</strong><br><em>Published %s</em>', $newsitem->title, Carbon::parse($newsitem->published_at)->diffForHumans()),
+                                    'html' => sprintf('<strong>%s</strong><br><em>Published %s</em>', $newsitem->title, Illuminate\Support\Carbon::parse($newsitem->published_at)->diffForHumans()),
                                     'photo_pop' => $newsitem->featuredImage,
                                     'leftborder' => 'info'
                         ])

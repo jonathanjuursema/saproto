@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Carbon;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * QrAuth Request Model.

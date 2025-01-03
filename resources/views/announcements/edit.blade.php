@@ -43,13 +43,13 @@
                         @include('components.forms.datetimepicker', [
                             'name' => 'display_from',
                             'label' => 'Start:',
-                            'placeholder' => $announcement ? strtotime($announcement->display_from) : strtotime(Carbon::now())
+                            'placeholder' => $announcement ? strtotime($announcement->display_from) : strtotime(Illuminate\Support\Carbon::now())
                         ])
 
                         @include('components.forms.datetimepicker', [
                             'name' => 'display_till',
                             'label' => 'End:',
-                            'placeholder' => $announcement ? strtotime($announcement->display_till) : strtotime(Carbon::now()->endOfDay()   )
+                            'placeholder' => $announcement ? strtotime($announcement->display_till) : strtotime(Illuminate\Support\Carbon::now()->endOfDay()   )
                         ])
 
                         <hr>

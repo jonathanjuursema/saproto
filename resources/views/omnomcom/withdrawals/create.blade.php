@@ -31,11 +31,11 @@
 
                         </p>
 
-                        @php($wd = Carbon::createFromFormat('Y-m-d', date('Y-m-25')))
+                        @php($wd = Illuminate\Support\Carbon::createFromFormat('Y-m-d', date('Y-m-25')))
                         @include('components.forms.datetimepicker', [
                             'name' => 'date',
                             'label' => 'Withdrawal date:',
-                            'placeholder' => strtotime(Carbon::now()->day > 20 ? $wd->addMonth() : $wd),
+                            'placeholder' => strtotime(Illuminate\Support\Carbon::now()->day > 20 ? $wd->addMonth() : $wd),
                             'format' => 'date'
                         ])
 

@@ -42,13 +42,13 @@
                         @include('components.forms.datetimepicker', [
                             'name' => 'start_at',
                             'label' => 'Start at:',
-                            'placeholder' => $new ? strtotime(Carbon::now()) : strtotime($item->start_at)
+                            'placeholder' => $new ? strtotime(Illuminate\Support\Carbon::now()) : strtotime($item->start_at)
                         ])
 
                         @include('components.forms.datetimepicker', [
                             'name' => 'end_at',
                             'label' => 'End at:',
-                            'placeholder' => $new ? strtotime(Carbon::now()->endOfDay()) : strtotime($item->end_at)
+                            'placeholder' => $new ? strtotime(Illuminate\Support\Carbon::now()->endOfDay()) : strtotime($item->end_at)
                         ])
 
                     </div>

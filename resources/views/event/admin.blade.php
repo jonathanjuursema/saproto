@@ -33,7 +33,7 @@
 
                                     <tr>
                                         <td>{{ $user->name }}</td>
-                                        <td>{!! Markdown::convert($user->diet) !!}</td>
+                                        <td>{!! \GrahamCampbell\Markdown\Facades\Markdown::convert($user->diet) !!}</td>
                                     </tr>
 
                                 @endif

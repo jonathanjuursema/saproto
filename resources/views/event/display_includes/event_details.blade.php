@@ -6,7 +6,8 @@
     <div class="alert alert-warning" role="alert">
         This event is scheduled and not shown yet on the site.
         For now you can only access it directly via the URL.
-        It is scheduled for <i>{{Carbon::createFromTimestamp($event->publication)->format('l j F Y, H:i')}}</i>
+        It is scheduled for
+        <i>{{Illuminate\Support\Carbon::createFromTimestamp($event->publication)->format('l j F Y, H:i')}}</i>
     </div>
 @endif
 
@@ -114,7 +115,7 @@
 
     <div class="card-body">
 
-        {!! Markdown::convert($event->description) !!}
+        {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($event->description) !!}
 
     </div>
 

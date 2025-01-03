@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Mail\ReviewFeedbackMail;
 use App\Models\FeedbackCategory;
-use Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class ReviewFeedbackCron extends Command

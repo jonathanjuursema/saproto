@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('wallstreet_drink_prices', function (Blueprint $table) {
-            //add float delta to the wallstreet_drink_prices table
+            // add float delta to the wallstreet_drink_prices table
             $table->float('diff')->default(0)->after('price');
         });
     }

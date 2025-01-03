@@ -44,7 +44,7 @@
                             <td>
                                 <a href="{{ route("user::profile", ['id' => $tempadmin->creator->getPublicId()]) }}">{{ $tempadmin->creator->name }}</a>
                             </td>
-                            <td class="{{ Carbon::parse($tempadmin->start_at)->isPast() ? 'opacity-50' : '' }}">{{ $tempadmin->start_at }}</td>
+                            <td class="{{ Illuminate\Support\Carbon::parse($tempadmin->start_at)->isPast() ? 'opacity-50' : '' }}">{{ $tempadmin->start_at }}</td>
                             <td>{{ $tempadmin->end_at }}</td>
                             <td>
                                 <a href="{{ route("tempadmins.edit", ['tempadmin' => $tempadmin]) }}">
@@ -53,7 +53,7 @@
 
                                 @include('components.modals.confirm-modal', [
                                    'action' => route('tempadmin::endId', ['id' => $tempadmin->id]),
-                                   'text' => Carbon::parse($tempadmin->start_at)->isFuture() ?
+                                   'text' => Illuminate\Support\Carbon::parse($tempadmin->start_at)->isFuture() ?
                                                '<i class="fas fa-trash fa-fw text-danger"></i>' :
                                                '<i class="fas fa-hourglass-end text-danger fa-fw"></i>',
                                    'title' => 'Confirm End Rights',

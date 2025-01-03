@@ -5,6 +5,7 @@ use App\Models\Activity;
 use App\Models\Email;
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 

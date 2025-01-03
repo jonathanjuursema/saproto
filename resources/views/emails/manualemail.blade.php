@@ -2,7 +2,7 @@
 
 @section('body')
 
-    {!! Markdown::convert($body) !!}
+    {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($body) !!}
 
     <p>
         &nbsp;&nbsp;
@@ -21,7 +21,7 @@
                 You receive this e-mail because you signed up for any of the following events as a participant, helper
                 or by buying a ticket {{$destination=='event with backup'?'or you are on the backuplist':''}}:
                 @foreach($events as $event)
-                <br><a href="{{route('event::show', ['id' => $event->getPublicId()])}}"> {{$event->title}} </a>
+                    <br><a href="{{route('event::show', ['id' => $event->getPublicId()])}}"> {{$event->title}} </a>
                 @endforeach
             @elseif($destination == 'users')
                 You receive this e-mail because you have an active user account at the website of S.A. Proto.

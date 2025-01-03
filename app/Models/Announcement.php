@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
@@ -185,7 +185,7 @@ class Announcement extends Model
         return HashMapItem::query()->where('key', $this->hash_map_id)->where('subkey', $user->id)->count() <= 0;
     }
 
-    /** @param  User|null  $user */
+    /** @param User|null $user */
     public function dismissForUser($user = null): void
     {
         if ($user) {

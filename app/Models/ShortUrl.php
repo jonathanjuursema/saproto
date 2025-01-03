@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * Short Url Model.

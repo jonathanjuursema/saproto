@@ -10,7 +10,8 @@
         I am writing to you to let you know that the secretary has set an end date for your membership at S.A. Proto.
     </p>
     <p>
-        Your membership will end at: <b>{{Carbon::createFromTimestamp($user->member->until)->format('d-m-Y')}}.</b><br>
+        Your membership will end at:
+        <b>{{Illuminate\Support\Carbon::createFromTimestamp($user->member->until)->format('d-m-Y')}}.</b><br>
         This means that your membership is valid up until this date and will then be terminated.
         If you think this was a mistake and would like your membership to continue please contact me before this date.
         When you're membership actually ends you will get a follow-up e-mail from me.

@@ -53,8 +53,6 @@ use App\Http\Controllers\QueryController;
 use App\Http\Controllers\RegistrationHelperController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\SearchController;
-/* --- use App\Http\Controllers\RadioController; --- */
-
 use App\Http\Controllers\ShortUrlController;
 use App\Http\Controllers\SmartXpScreenController;
 use App\Http\Controllers\SpotifyController;
@@ -75,8 +73,6 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
-
-require __DIR__.'/minisites.php';
 
 /* Route block convention:
  *
@@ -106,14 +102,14 @@ Route::middleware('forcedomain')->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('developers', 'developers');
         Route::get('', 'show')->name('homepage');
-        Route::get('fishcam', 'fishcam')->middleware(['member'])->name('fishcam');
+        Route::get('fishcam', 'fishsailcam')->middleware(['member'])->name('fishcam');
     });
 
     Route::get('becomeamember', [UserDashboardController::class, 'becomeAMemberOf'])->name('becomeamember');
 
     Route::resource('headerimages', HeaderImageController::class)->only(['index', 'create', 'store', 'destroy'])->middleware(['auth', 'permission:header-image']);
 
-    /* Routes for the search function. All public*/
+    /* Routes for the search function. All public */
     Route::controller(SearchController::class)->name('search::')->group(function () {
         Route::get('search', 'search')->name('get');
         Route::post('search', 'search')->name('post');
@@ -714,7 +710,7 @@ Route::middleware('forcedomain')->group(function () {
     /* --- Routes related to the OmNomCom --- */
     Route::prefix('omnomcom')->name('omnomcom::')->group(function () {
         /* --- Pubic routes --- */
-        Route::get('minisite', ['uses' => 'OmNomController@miniSite']);
+        Route::get('minisite', [OmNomController::class, 'miniSite'])->name('minisite');
 
         /* --- Routes related to OmNomCom stores --- */
         Route::prefix('store')->name('store::')->group(function () {
@@ -807,7 +803,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::controller(WithdrawalController::class)->group(function () {
             // Public routes
             Route::get('mywithdrawal/{id}', 'showForUser')->middleware(['auth'])->name('mywithdrawal');
-            Route::get('unwithdrawable', ['middleware' => ['permission:finadmin'], 'as' => 'unwithdrawable', 'uses' => 'WithdrawalController@unwithdrawable']);
+            Route::get('unwithdrawable', [WithdrawalController::class, 'unwithdrawable'])->name('unwithdrawable')->middleware('permission:finadmin');
 
             // Finadmin only
             Route::prefix('withdrawals')->middleware(['permission:finadmin'])->name('withdrawal::')->group(function () {
@@ -922,7 +918,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('{id}/revoke/{user}', 'revoke')->name('revoke');
     });
 
-    /* Routes related to the password manager. (Access restricted in controller)*/
+    /* Routes related to the password manager. (Access restricted in controller) */
     Route::controller(PasswordController::class)->prefix('passwordstore')->middleware(['auth'])->name('passwordstore::')->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('auth', 'getAuth')->name('auth');
@@ -950,7 +946,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('caniworkinthesmartxp', 'canWork');
     });
 
-    /* The routes for Protube. (Public)*/
+    /* The routes for Protube. (Public) */
     Route::controller(ProtubeController::class)->prefix('protube')->name('protube::')->group(function () {
         Route::get('dashboard', 'dashboard')->middleware(['auth'])->name('dashboard');
         Route::get('togglehistory', 'toggleHistory')->middleware(['auth'])->name('togglehistory');
@@ -1011,7 +1007,7 @@ Route::middleware('forcedomain')->group(function () {
         });
     });
 
-    /* Routes related to the Short URL Service*/
+    /* Routes related to the Short URL Service */
     Route::get('go/{short?}', [ShortUrlController::class, 'go'])->name('short_urls.go');
     Route::get('short_urls/qr_code/{id}', [ShortUrlController::class, 'qrCode'])->name('short_urls.qr_code')->middleware(['auth', 'permission:board']);
     Route::resource('short_urls', ShortUrlController::class)->except('show')->middleware(['auth', 'permission:board']);

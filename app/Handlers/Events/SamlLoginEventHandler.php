@@ -19,10 +19,8 @@ class SamlLoginEventHandler
 
     /**
      * Handle the event.
-     *
-     * @param  Saml2LoginEvent  $event
      */
-    public function handle($event): void
+    public function handle(Saml2LoginEvent $event): void
     {
         $remoteUser = $event->getSaml2User()->getAttributes();
         Session::flash('surfconext_sso_user', $remoteUser);

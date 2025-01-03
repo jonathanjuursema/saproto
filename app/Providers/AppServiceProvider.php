@@ -6,6 +6,7 @@ use App\Models\MenuItem;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -16,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Vite::prefetch(concurrency: 3);
+
         Paginator::useBootstrapFive();
 
         view()->composer('*', function ($view) {

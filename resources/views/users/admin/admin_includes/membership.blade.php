@@ -134,7 +134,7 @@
                             @if($user->member->until)
                                 <tr>
                                     <td>
-                                        <b>Until: </b><i>{{Carbon::createFromTimestamp($user->member->until)->format('d M Y')}}</i>
+                                        <b>Until: </b><i>{{Illuminate\Support\Carbon::createFromTimestamp($user->member->until)->format('d M Y')}}</i>
                                     </td>
                                 </tr>
                             @endif

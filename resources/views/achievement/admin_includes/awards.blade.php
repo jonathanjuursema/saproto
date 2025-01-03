@@ -40,13 +40,13 @@
 
             <div class="form-group autocomplete">
                 <label for="user-id">User</label>
-                <input class="form-control user-search" name="user-id"/>
+                <input class="form-control user-search" name="user-id" />
             </div>
 
             @include('components.forms.datetimepicker', [
                      'name' => 'achieved_on',
                      'label' => 'Achieved on',
-                     'placeholder' => Carbon::now()->timestamp,
+                     'placeholder' => Illuminate\Support\Carbon::now()->timestamp,
                      'format'=>'date',
                  ])
 

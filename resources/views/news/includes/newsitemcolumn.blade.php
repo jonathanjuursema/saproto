@@ -26,7 +26,7 @@
                             $name=$newsitem->is_weekly? "Weekly" : "News";
                             $weekly ="<span class='badge rounded-pill $class float-end'>$name</span>";
                             $title="<strong> $newsitem->title </strong>";
-                            $published="<br>Published ".Carbon::parse($newsitem->published_at)->diffForHumans()." ";
+                            $published="<br>Published ".Illuminate\Support\Carbon::parse($newsitem->published_at)->diffForHumans()." ";
                         @endphp
 
                         @include('website.home.cards.card-bg-image', [

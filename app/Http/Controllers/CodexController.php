@@ -118,8 +118,8 @@ class CodexController extends Controller
 
         $pdf = new PDF_TOC('P', 'mm', $A6);
 
-        $pdf->setMargins(10, 10, 10); //left, top and right margins, 1cm
-        $pdf->setAutoPageBreak(true, 10); //bottom margin, 1cm
+        $pdf->setMargins(10, 10, 10); // left, top and right margins, 1cm
+        $pdf->setAutoPageBreak(true, 10); // bottom margin, 1cm
 
         $pdf->AddFont('minion', '', 'minion.ttf', true);
         $pdf->AddFont('minion', 'B', 'minionb.ttf', true);
@@ -132,7 +132,7 @@ class CodexController extends Controller
         $bulletListIndent = 7;
         $tocPage = 0;
 
-        $pdf->AddPage(); //frontPage
+        $pdf->AddPage(); // frontPage
         $pdf->SetFont('old', '', 52);
         $pdf->Image(public_path('images/logo/codex_logo.png'), 10, 10, 85, 48);
         $pdf->Ln(50);
@@ -144,7 +144,7 @@ class CodexController extends Controller
         $pdf->SetAlpha(0.1);
         $pdf->Image(public_path('images/logo/codex_logo.png'), -100, 47, 210);
         $pdf->SetAlpha(1);
-        $pdf->AddPage(); //empty page
+        $pdf->AddPage(); // empty page
 
         foreach ($textCategories as $category) {
             foreach ($category->texts as $text) {
@@ -243,7 +243,7 @@ class CodexController extends Controller
             }
         }
 
-        $pdf->AddPage(); //TOC, possibly empty pages, and notes page
+        $pdf->AddPage(); // TOC, possibly empty pages, and notes page
         $pdf->stopPageNums();
         $pdf->insertTOC($tocPage, 9, 6, 'minion');
 
@@ -258,7 +258,7 @@ class CodexController extends Controller
         $pdf->SetFont('minion', 'B', $textSize);
         $pdf->MultiCell(0, $textHeight, 'Notes:', 0, 'C');
 
-        $pdf->AddPage(); //backcover page
+        $pdf->AddPage(); // backcover page
         $pdf->SetAlpha(0.1);
         $pdf->Image(public_path('images/logo/codex_logo.png'), -5, 47, 210);
         $pdf->SetAlpha(1);

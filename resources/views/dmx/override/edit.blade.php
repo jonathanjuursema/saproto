@@ -66,7 +66,7 @@
                         @include('components.forms.datetimepicker', [
                             'name' => 'start',
                             'label' => 'Override start:',
-                            'placeholder' => $override ? $override->start : strtotime(Carbon::now())
+                            'placeholder' => $override ? $override->start : strtotime(Illuminate\Support\Carbon::now())
                         ])
 
                         <div class="form-group">
@@ -74,7 +74,7 @@
                             @include('components.forms.datetimepicker', [
                                 'name' => 'end',
                                 'label' => 'Override end:',
-                                'placeholder' => $override ? $override->end : strtotime(Carbon::now()->endOfDay())
+                                'placeholder' => $override ? $override->end : strtotime(Illuminate\Support\Carbon::now()->endOfDay())
                             ])
                         </div>
 

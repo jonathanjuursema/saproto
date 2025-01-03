@@ -23,7 +23,7 @@ class DevelopmentAccess
      *
      * @var string[]
      */
-    protected $ipWhitelist = [];
+    protected array $ipWhitelist = [];
 
     /**
      * Whether the current request client is allowed to access the app.

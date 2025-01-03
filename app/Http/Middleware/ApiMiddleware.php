@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ApiMiddleware
 {
-    protected $except = [
+    protected array $except = [
         'api/*',
         'image/*',
         'file/*',

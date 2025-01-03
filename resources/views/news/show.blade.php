@@ -26,7 +26,7 @@
 
                         Published
                         <span title="{{ $newsitem->published_at }}">
-                            {{ Carbon::parse($newsitem->published_at)->diffForHumans() }}
+                            {{ Illuminate\Support\Carbon::parse($newsitem->published_at)->diffForHumans() }}
                         </span>
                         by
                         <a href="{{ route('user::profile', ['id' => $newsitem->user->getPublicId()]) }}">

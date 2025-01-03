@@ -30,30 +30,57 @@ return [
     */
 
     'connections' => [
+        'sync' => [
+            'driver' => 'sync',
+        ],
         'database' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'default',
             'backoff' => 30,
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            'after_commit' => false,
         ],
         'high' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'high',
             'backoff' => 30,
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            'after_commit' => false,
         ],
         'medium' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'medium',
             'backoff' => 60,
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 120),
+            'after_commit' => false,
         ],
         'low' => [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'low',
             'backoff' => 120,
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 240),
+            'after_commit' => false,
         ],
+    ],
+
+    /*
+   |--------------------------------------------------------------------------
+   | Job Batching
+   |--------------------------------------------------------------------------
+   |
+   | The following options configure the database and table that store job
+   | batching information. These options can be updated to any database
+   | connection and table which has been defined by your application.
+   |
+   */
+
+    'batching' => [
+        'database' => env('DB_CONNECTION', 'sqlite'),
+        'table' => 'job_batches',
     ],
 
     /*

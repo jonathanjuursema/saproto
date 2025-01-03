@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\Tempadmin;
-use Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class TempAdminCleanup extends Command
 {

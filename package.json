@@ -23,32 +23,50 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vue-tsc && vite build",
+        "lint": "eslint resources/js --ext .js,.ts,.vue --ignore-path .gitignore --fix"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.6.0",
         "@popperjs/core": "^2.11.4",
-        "bootstrap": "^5.1.3",
+        "bootstrap": "^5.3.3",
         "codethereal-iconpicker": "^1.2.1",
         "cross-env": "^7.0.3",
         "easymde": "^2.18.0",
         "moment": "^2.29.2",
-        "quagga": "^0.6.16",
         "signature_pad": "^3.0.0-beta.4",
         "swiper": "^8.0.7",
         "util.promisify": "^1.0.1"
     },
     "devDependencies": {
+        "@inertiajs/vue3": "^2.0.0",
+        "@rushstack/eslint-patch": "^1.10.4",
+        "@tailwindcss/forms": "^0.5.9",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vue/eslint-config-prettier": "^10.1.0",
+        "@vue/eslint-config-typescript": "^14.2.0",
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.7.9",
+        "concurrently": "^9.1.2",
+        "eslint": "^9.17.0",
+        "eslint-plugin-vue": "^9.32.0",
         "glob": "^11.0.0",
         "laravel-echo": "^1.17.1",
-        "laravel-vite-plugin": "^0.7.8",
-        "postcss": "^8.2.7",
+        "laravel-vite-plugin": "^1.1.1",
+        "postcss": "^8.4.49",
         "postcss-discard-comments": "^7.0.3",
+        "prettier": "^3.4.2",
+        "prettier-plugin-organize-imports": "^4.0.0",
+        "prettier-plugin-tailwindcss": "^0.6.5",
         "pusher-js": "^8.4.0-rc2",
         "resolve-url-loader": "^5.0.0",
-        "sass": "1.38.2",
+        "sass": "^1.83.0",
         "sass-loader": "^12.1.0",
-        "vite": "^4.3.9"
+        "tailwindcss": "^3.4.17",
+        "typescript": "^5.7.2",
+        "vite": "^6.0.7",
+        "vue": "^3.5.13",
+        "vue-tsc": "^2.2.0"
     },
     "type": "module"
 }

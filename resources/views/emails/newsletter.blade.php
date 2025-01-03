@@ -13,7 +13,7 @@
     </p>
 
     @if($text != '')
-        {!! Markdown::convert($text) !!}
+        {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($text) !!}
     @endif
 
     <br>
@@ -47,7 +47,7 @@
 
                                     <p>
 
-                                        {!! Markdown::convert($event->summary) !!}
+                                        {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($event->summary) !!}
 
                                     </p>
 

@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Mail\ManualEmail;
 use App\Models\Email;
-use Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 

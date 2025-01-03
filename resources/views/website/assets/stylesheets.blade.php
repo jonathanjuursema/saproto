@@ -1,4 +1,4 @@
-@if((Carbon::now()->month===Carbon::DECEMBER) && Cookie::get('disable-december')!=='disabled')
+@if((Illuminate\Support\Carbon::now()->month===Illuminate\Support\Carbon::DECEMBER) && Cookie::get('disable-december')!=='disabled')
     @vite('resources/assets/sass/december.scss')
     @for($count=0; $count<12*12; $count++)
         <div class="snowflake"></div>

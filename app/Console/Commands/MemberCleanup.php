@@ -4,9 +4,9 @@ namespace App\Console\Commands;
 
 use App\Enums\MembershipTypeEnum;
 use App\Models\Member;
-use Carbon;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class MemberCleanup extends Command
 {

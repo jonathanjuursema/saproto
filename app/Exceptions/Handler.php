@@ -58,11 +58,10 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  Request  $request
-     * @return SymfonyResponse
      *
      * @throws Throwable
      */
-    public function render($request, Throwable $e)
+    public function render($request, Throwable $e): SymfonyResponse
     {
         if ($e instanceof UnauthorizedException) {
             return response()->view('errors.403');
@@ -75,9 +74,8 @@ class Handler extends ExceptionHandler
      * Convert an authentication exception into an unauthenticated response.
      *
      * @param  Request  $request
-     * @return JsonResponse|RedirectResponse
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated($request, AuthenticationException $exception): JsonResponse|RedirectResponse
     {
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
@@ -89,11 +87,10 @@ class Handler extends ExceptionHandler
     /**
      * Render the given HttpException.
      *
-     * @return SymfonyResponse
      *
      * @throws Throwable
      */
-    protected function renderHttpException(HttpExceptionInterface $e)
+    protected function renderHttpException(HttpExceptionInterface $e): SymfonyResponse
     {
         if (! view()->exists("errors.{$e->getStatusCode()}")) {
 

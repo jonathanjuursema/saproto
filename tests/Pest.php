@@ -23,7 +23,8 @@ uses(
 uses(
     TestCase::class,
     RefreshDatabase::class
-)->in('Feature');
+)->in('Feature')
+    ->beforeEach(fn () => $this->withoutVite());
 
 /*
 |--------------------------------------------------------------------------

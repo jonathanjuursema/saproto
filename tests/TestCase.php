@@ -12,5 +12,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         $this->seed(RolesAndPermissionsSeeder::class);
         //        $this->withoutExceptionHandling();
+        $this->withoutVite();
     }
 }

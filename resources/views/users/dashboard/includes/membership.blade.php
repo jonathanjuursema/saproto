@@ -22,7 +22,7 @@
                             <th><b>Member until</b></th>
                             <td>
                                 <span class="badge rounded-pill bg-danger">
-                                {{Carbon::createFromTimestamp($user->member->until)->format('d-m-Y')}}
+                                {{Illuminate\Support\Carbon::createFromTimestamp($user->member->until)->format('d-m-Y')}}
                                 </span>
                             </td>
                         </tr>

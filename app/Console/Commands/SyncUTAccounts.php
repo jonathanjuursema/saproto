@@ -7,9 +7,9 @@ use App\Http\Controllers\LdapController;
 use App\Mail\UtwenteCleanup;
 use App\Models\User;
 use App\Models\UtAccount;
-use Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -35,26 +35,26 @@ class SyncUTAccounts extends Command
      */
     public function handle(): void
     {
-        //set all accounts to not found
+        // set all accounts to not found
         UtAccount::query()->update(['found' => false]);
 
-        //get all regular members who do not have an account yet or have not been verified in this cron yet
+        // get all regular members who do not have an account yet or have not been verified in this cron yet
         $query = User::query()->whereHas('member', function ($member) {
             $member->type(MembershipTypeEnum::REGULAR)
                 ->whereHas('UtAccount', function ($q) {
                     $q->where('found', false);
                 })->orDoesntHave('UtAccount');
         });
-        //sync the students who are currently studying, with the constraints that they are either in the I-TECH or B-CREA department
+        // sync the students who are currently studying, with the constraints that they are either in the I-TECH or B-CREA department
         $this->syncStudents((clone $query), '(|(department=*B-CREA*)(department=*M-ITECH*))');
 
-        //get all past members who have studied I-TECH or B-CREA
+        // get all past members who have studied I-TECH or B-CREA
         $pastCreaTersQuery = (clone $query)->where(function (Builder $query) {
             $query->where('did_study_itech', true)->orWhere('did_study_create', true);
         });
         $this->syncStudents($pastCreaTersQuery);
 
-        //remove all accounts that have not been found
+        // remove all accounts that have not been found
         $notFoundUtAccounts = UtAccount::query()->where('found', false);
         $this->info('Removing. '.$notFoundUtAccounts->count().'. accounts that have not been found');
 
@@ -71,19 +71,19 @@ class SyncUTAccounts extends Command
 
     public function syncStudents($query, string $constraints = ''): void
     {
-        //try to find the users by their student number
+        // try to find the users by their student number
         $usersById = (clone $query)->whereNotNull('utwente_username')->get();
         $this->info('Checking '.$usersById->count().' users by student number');
         $newAccounts = $this->syncColumnToUTTrait($usersById, $this->standardQueryStringBuilder(...), $this->standardCompare(...), 'utwente_username', 'uid', $constraints);
         UtAccount::query()->insert($newAccounts->toArray());
 
-        //try to find the users by their email
+        // try to find the users by their email
         $usersByEmail = (clone $query)->whereNotNull('email')->get();
         $this->info('Checking the remaining '.$usersByEmail->count().' users by email');
         $newerAccounts = $this->syncColumnToUTTrait($usersByEmail, $this->standardQueryStringBuilder(...), $this->standardCompare(...), 'email', 'userprincipalname', $constraints);
         UtAccount::query()->insert($newerAccounts->toArray());
 
-        //try to find the users by their name
+        // try to find the users by their name
         $usersByName = (clone $query)->whereNotNull('name')->get();
         $this->info('Checking another '.$usersByName->count().' users by name');
         $newerAccounts = $this->syncColumnToUTTrait($usersByName, $this->nameQueryStringBuilder(...), $this->nameCompare(...), 'name', 'givenname', $constraints);
@@ -104,14 +104,14 @@ class SyncUTAccounts extends Command
             /** @var User|null $account */
             $account = $users->filter(fn ($user): bool => $compareFilter($user[$userColumn], $student, $UTIdentifier))->first();
 
-            //if we have found a match in the UT system but can not find the user anymore
+            // if we have found a match in the UT system but can not find the user anymore
             if ($account === null) {
                 $this->error('Could not find user we did find in the UT system with the info:'.iconv('utf-8', 'us-ascii//TRANSLIT', strtolower($student['givenname'].' '.$student['sn'])));
 
                 continue;
             }
 
-            //if the user does not have a UT account yet, create one
+            // if the user does not have a UT account yet, create one
             if (! $account->member->UtAccount) {
                 $newUTAccounts->push($this->formatUserInfo($account, $student));
 
@@ -154,7 +154,7 @@ class SyncUTAccounts extends Command
 
     public function nameCompare(string $userValue, array $student, string $UTIdentifier): bool
     {
-        //transliterate the names to ascii and compare them in lowercase because we can get cyrillic characters from the API
+        // transliterate the names to ascii and compare them in lowercase because we can get cyrillic characters from the API
         setlocale(LC_CTYPE, 'en_US.UTF8');
         $names = explode(' ', $userValue);
 
@@ -188,9 +188,9 @@ class SyncUTAccounts extends Command
 
     private function getUtwenteResults(string $sns, string $constraints = '')
     {
-        //get the results from the LDAP server
+        // get the results from the LDAP server
         $result = LdapController::searchUtwente("(&{$constraints}(description=Student *)(extensionattribute6=actief)(|{$sns}))");
-        //check that we have a valid response
+        // check that we have a valid response
         if (isset($result->error)) {
             $this->error('Error: '.$result->error);
             exit();

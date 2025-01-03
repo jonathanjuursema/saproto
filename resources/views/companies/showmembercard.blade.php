@@ -32,7 +32,7 @@
                     </h2>
 
                     <div class="mt-3">
-                        {!! Markdown::convert($company->membercard_long) !!}
+                        {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($company->membercard_long) !!}
                     </div>
 
                     <a href="{{ $company->url }}" class="card-link text-info">

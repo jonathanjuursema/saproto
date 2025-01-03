@@ -4,9 +4,9 @@
 
         @if ($announcement->show_as_popup)
 
-            <?php
+                <?php
                 $announcement->dismissForUser(\Illuminate\Support\Facades\Auth::user());
-            ?>
+                ?>
 
             <div class="modal fade" id="{{ $announcement->modal_id }}" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -16,7 +16,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            {!! Markdown::convert($announcement->content) !!}
+                            {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($announcement->content) !!}
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
 
                 <script type="text/javascript" nonce="{{ csp_nonce() }}">
                     window.addEventListener('load', _ => {
-                        modals['{{ $announcement->modal_id}}'].show()
+                        modals['{{ $announcement->modal_id}}'].show();
                     });
                 </script>
 
@@ -45,7 +45,7 @@
                     </span>
                 @endif
 
-                {!! Markdown::convert($announcement->content) !!}
+                {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($announcement->content) !!}
 
             </div>
 

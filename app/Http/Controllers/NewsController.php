@@ -38,10 +38,9 @@ class NewsController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return View
      */
-    public function show($id)
+    public function show(int $id)
     {
         $preview = false;
 

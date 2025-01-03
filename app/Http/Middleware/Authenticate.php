@@ -20,11 +20,11 @@ class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
      **/
     public function handle($request, Closure $next, ...$guards): mixed
     {
-        if ($request->ajax() && $this->auth->guest()) {
+        if ($request->ajax() && $request->auth->guest()) {
             return response('Unauthorized.', 401);
         }
 
-        if ($this->auth->guest()) {
+        if ($request->auth->guest()) {
             return Redirect::route('login::show');
         }
 

@@ -1,7 +1,8 @@
 @extends('website.layouts.redesign.generic')
 
 @section('page-title')
-    Participant checklist for {{ $event->title }} <a href="{{ route('event::show', ['id' => $event->getPublicId()]) }}" class="btn btn-default float-end">
+    Participant checklist for {{ $event->title }} <a href="{{ route('event::show', ['id' => $event->getPublicId()]) }}"
+                                                     class="btn btn-default float-end">
         Back to event
     </a>
 @endsection
@@ -21,13 +22,15 @@
                 <div class="card-body">
                     <table class="table table-responsive">
                         <thead>
-                            <tr>
-                                <th>Present</th>
-                            </tr>
+                        <tr>
+                            <th>Present</th>
+                        </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td><span id="present">{{$event->activity->getPresent()}}</span>/{{$event->allUsers()->count()}}</td>
+                            <td><span
+                                    id="present">{{$event->activity->getPresent()}}</span>/{{$event->allUsers()->count()}}
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -64,8 +67,8 @@
                                 <td>
                                     @if($participation)
                                         <span
-                                           class="cursor-pointer is_present badge bg-{{ $participation->is_present ? 'success' : 'danger' }}"
-                                           data-id="{{ $participation->id }}">
+                                            class="cursor-pointer is_present badge bg-{{ $participation->is_present ? 'success' : 'danger' }}"
+                                            data-id="{{ $participation->id }}">
                                             {{ $participation->is_present ? 'Present' : 'Absent' }}
                                         </span>
                                     @endif
@@ -101,7 +104,7 @@
                                 @if ($event->shouldShowDietInfo())
                                     <td>
                                         @if($user->hasDiet())
-                                            {!! Markdown::convert($user->diet) !!}
+                                            {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($user->diet) !!}
                                         @endif
                                     </td>
                                 @endif
@@ -125,18 +128,18 @@
 
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        present=document.getElementById('present');
+        present = document.getElementById('present');
 
         document.querySelectorAll('.is_present').forEach(el => {
             el.onclick = _ => {
-                get("{{ route('event::togglepresence', ['id' => 'id']) }}".replace("id", el.getAttribute('data-id')))
-                .then((data) => {
-                    el.classList.toggle('bg-success')
-                    el.classList.toggle('bg-danger')
-                    el.innerHTML = el.innerHTML === 'Present' ? 'Absent' : 'Present'
-                    present.innerHTML=data
-                })
-            }
-        })
+                get("{{ route('event::togglepresence', ['id' => 'id']) }}".replace('id', el.getAttribute('data-id')))
+                    .then((data) => {
+                        el.classList.toggle('bg-success');
+                        el.classList.toggle('bg-danger');
+                        el.innerHTML = el.innerHTML === 'Present' ? 'Absent' : 'Present';
+                        present.innerHTML = data;
+                    });
+            };
+        });
     </script>
 @endpush

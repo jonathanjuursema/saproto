@@ -25,7 +25,7 @@ class CodexSong extends Model
 
     protected $table = 'codex_songs';
 
-    //belongs to one category on category_id in codex_songs
+    // belongs to one category on category_id in codex_songs
     public function category(): BelongsTo
     {
         return $this->belongsTo(CodexSongCategory::class, 'category_id');

@@ -40,7 +40,7 @@
 
                         <div id="email__collapse__{{ $list->id }}" class="collapse" data-parent="#email__accordion">
                             <div class="card-body">
-                                {!! Markdown::convert($list->description) !!}
+                                {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($list->description) !!}
                             </div>
                         </div>
                     </div>

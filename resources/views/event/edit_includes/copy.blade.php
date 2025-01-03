@@ -16,7 +16,7 @@
                 @include('components.forms.datetimepicker', [
                                 'name' => 'newDate',
                                 'label' => 'This will copy the event and move the start to:',
-                                'placeholder' => Carbon::createFromTimestamp($event->start)->addWeek()->timestamp,
+                                'placeholder' => Illuminate\Support\Carbon::createFromTimestamp($event->start)->addWeek()->timestamp,
                                 'format'=>'date',
                             ])
             </div>

@@ -1,55 +1,73 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+use App\Http\Middleware\ApiMiddleware;
+use App\Http\Middleware\DevelopmentAccess;
+use App\Http\Middleware\EnforceHTTPS;
+use App\Http\Middleware\EnforceTFA;
+use App\Http\Middleware\EnforceWizard;
+use App\Http\Middleware\ForceDomain;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\Member;
+use App\Http\Middleware\ProBoto;
+use App\Http\Middleware\Saml;
+use App\Http\Middleware\Utwente;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Sentry\Laravel\Integration;
+use Spatie\Csp\AddCspHeaders;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
-$app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
-);
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+        then: function () {
+            Route::middleware('web')
+                ->group(base_path('routes/minisites.php'));
+        },
+    )
+    ->withMiddleware(function (Middleware $middleware) {
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+        $middleware->web(append: [
+            EnforceHTTPS::class,
+            DevelopmentAccess::class,
+            EnforceTFA::class,
+            EnforceWizard::class,
+            ApiMiddleware::class,
+            AddCspHeaders::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
+        ]);
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+        $middleware->alias([
+            'auth' => Authenticate::class,
+            'member' => Member::class,
+            'utwente' => Utwente::class,
+            'forcedomain' => ForceDomain::class,
+            'saml' => Saml::class,
+            'throttle' => ThrottleRequests::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'proboto' => ProBoto::class,
+        ]);
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
-
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
-
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
-
-return $app;
+        $middleware->validateCsrfTokens(except: [
+            'webhook/*',
+            'saml2/*',
+            'api/*',
+            'image/*',
+            'file/*',
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        Integration::handles($exceptions);
+    })->create();

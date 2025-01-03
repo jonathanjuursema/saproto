@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use App\Http\Controllers\UserAdminController;
 use App\Mail\MembershipEndedForBoard;
 use App\Models\Member;
-use Carbon;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class EndMemberships extends Command

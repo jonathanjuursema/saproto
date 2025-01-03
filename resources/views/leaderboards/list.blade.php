@@ -21,28 +21,30 @@
                          class="table-responsive collapse {{ $loop->index == 0 ? 'show' : '' }}"
                          data-parent="#leaderboard-accordion">
                         @if($leaderboard->description)
-                            <div class="px-3 pt-3">{!! Markdown::convert($leaderboard->description) !!}</div>
+                            <div
+                                class="px-3 pt-3">{!! \GrahamCampbell\Markdown\Facades\Markdown::convert($leaderboard->description) !!}</div>
                         @endif
                         @if(count($leaderboard->entries) > 0)
                             <table class="table table-sm">
                                 <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Name</th>
-                                        <th>{{ $leaderboard->points_name }}</th>
-                                    </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>{{ $leaderboard->points_name }}</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($leaderboard->entries->sortByDesc('points') as $entry)
-                                        <tr>
-                                            <td class="ps-3 place-{{ $loop->index+1 }}" style="max-width: 50px">
-                                                <i class="fas fa-sm fa-fw {{ $loop->index == 0 ? 'fa-crown' : 'fa-hashtag' }}"></i>
-                                                {{ $loop->index+1 }}
-                                            </td>
-                                            <td>{{ $entry->user->name }}</td>
-                                            <td class="pe-4"><i class="fa {{ $leaderboard->icon }}"></i> {{ $entry->points }}</td>
-                                        </tr>
-                                    @endforeach
+                                @foreach($leaderboard->entries->sortByDesc('points') as $entry)
+                                    <tr>
+                                        <td class="ps-3 place-{{ $loop->index+1 }}" style="max-width: 50px">
+                                            <i class="fas fa-sm fa-fw {{ $loop->index == 0 ? 'fa-crown' : 'fa-hashtag' }}"></i>
+                                            {{ $loop->index+1 }}
+                                        </td>
+                                        <td>{{ $entry->user->name }}</td>
+                                        <td class="pe-4"><i
+                                                class="fa {{ $leaderboard->icon }}"></i> {{ $entry->points }}</td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         @else

@@ -21,7 +21,7 @@
             @include('components.forms.datetimepicker', [
                            'name' => 'achieved_on',
                            'label' => 'Achieved on',
-                           'placeholder' => Carbon::now()->timestamp,
+                           'placeholder' => Illuminate\Support\Carbon::now()->timestamp,
                            'format'=>'date',
                        ])
             <div class="form-group">

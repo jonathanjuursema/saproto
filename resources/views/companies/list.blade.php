@@ -34,7 +34,7 @@
                         </a>
 
                         <div class="mt-3">
-                            {!! Markdown::convert($company->excerpt) !!}
+                            {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($company->excerpt) !!}
                         </div>
                     </div>
                 </div>

@@ -281,7 +281,7 @@
                             This feature was requested by pretty much everyone.
                         </small>
 
-                        @if(Carbon::now()->month===Carbon::DECEMBER)
+                        @if(Illuminate\Support\Carbon::now()->month===Illuminate\Support\Carbon::DECEMBER)
                             <br>
                             <a href="{{route('december::toggle')}}">
                                 <button type="button"
