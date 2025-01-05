@@ -66,4 +66,12 @@ class NarrowcastingItem extends Model
             'campaign_end' => 'datetime',
         ];
     }
+
+    #[Override]
+    protected static function booted(): void
+    {
+        static::deleting(static function (NarrowCastingItem $item) {
+            $item->image?->delete();
+        });
+    }
 }

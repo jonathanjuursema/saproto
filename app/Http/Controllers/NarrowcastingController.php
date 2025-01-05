@@ -9,7 +9,6 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 
@@ -18,7 +17,8 @@ class NarrowcastingController extends Controller
     /** @return View */
     public function index()
     {
-        return view('narrowcasting.list', ['messages' => NarrowcastingItem::query()->orderBy('campaign_start', 'desc')->paginate(10)]);
+        $messages = NarrowcastingItem::query()->orderBy('campaign_start', 'desc')->paginate(10);
+        return view('narrowcasting.list', ['messages' => $messages]);
     }
 
     /** @return View */
@@ -66,6 +66,9 @@ class NarrowcastingController extends Controller
         return view('narrowcasting.edit', ['item' => $narrowcasting]);
     }
 
+    /**
+     * @throws FileNotFoundException
+     */
     public function update(NarrowCastingRequest $request, NarrowcastingItem $narrowcasting)
     {
         $data = $request->validated();
