@@ -14,7 +14,7 @@
 
                 <div class="card-header bg-dark text-white mb-1">
                     @yield('page-title')
-                    <a class="badge bg-info float-end" href="{{ route('narrowcasting::create') }}">
+                    <a class="badge bg-info float-end" href="{{ route('narrowcastings.create') }}">
                         Create a new campaign.</a>
                     <a class="badge bg-danger float-end me-2" href="{{ route('narrowcasting::clear') }}">
                         Delete all past campaigns.</a>
@@ -51,8 +51,8 @@
                                     @endif
                                 </td>
                                 <td style="overflow-wrap: break-word; max-width: 160px">{{ $message->name }}</td>
-                                <td>{{ date('l F j Y, H:i', $message->campaign_start) }}</td>
-                                <td>{{ date('l F j Y, H:i', $message->campaign_end) }}</td>
+                                <td>{{ $message->campaign_start->format('l F j Y, H:i') }}</td>
+                                <td>{{$message->campaign_end->format('l F j Y, H:i')}}</td>
                                 <td>
                                     @if($message->image || $message->youtube_id)
                                         {{ $message->slide_duration }} seconds
@@ -61,12 +61,18 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('narrowcasting::edit', ['id' => $message->id]) }}">
+                                    <a href="{{ route('narrowcastings.edit', ['narrowcasting' => $message]) }}">
                                         <i class="fas fa-edit me-2" aria-hidden="true"></i>
                                     </a>
-                                    <a href="{{ route('narrowcasting::delete', ['id' => $message->id]) }}">
-                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                    </a>
+                                    @include('components.modals.confirm-modal', [
+                                        'action' => route("narrowcastings.destroy", ['narrowcasting'=>$message]),
+                                        'method'=>'DELETE',
+                                        'classes' => 'fas fa-trash text-danger',
+                                        'text' => '',
+                                        'confirm' => 'Delete',
+                                        'title' => 'Confirm deleting this slide',
+                                        'message' => 'Are you sure you want to delete the slide?',
+                                    ])
                                 </td>
 
                             </tr>

@@ -128,7 +128,7 @@
 
                                         <li role="separator" class="dropdown-divider"></li>
                                         <a class="dropdown-item"
-                                           href="{{ route("narrowcasting::index") }}">Narrowcasting</a>
+                                           href="{{ route("narrowcastings.index") }}">Narrowcasting</a>
                                         <a class="dropdown-item" href="{{ route("companies::admin") }}">Companies</a>
                                         <a class="dropdown-item" href="{{ route("joboffers::admin") }}">Job offers</a>
                                         <a class="dropdown-item"
@@ -287,7 +287,7 @@
                                    role="button" aria-haspopup="true" aria-expanded="false">
                                     {{ Auth::user()->calling_name }}
                                     <img id="profile-picture" class="rounded-circle ms-2" alt="your profile picture"
-                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}"/>
+                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}" />
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end mt-2">

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NarrowCastingRequest;
 use App\Models\NarrowcastingItem;
 use App\Models\StorageEntry;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 
@@ -37,107 +38,64 @@ class NarrowcastingController extends Controller
      *
      * @throws FileNotFoundException
      */
-    public function store(Request $request)
+    public function store(NarrowCastingRequest $request)
     {
-        if (! $request->file('image') && ! $request->has('youtube_id')) {
-            Session::flash('flash_message', 'Every campaign needs either an image or a video!');
-
-            return Redirect::back();
+        $data = $request->validated();
+        if ($data['youtube_id']) {
+            $data['slide_duration'] = -1;
         }
 
-        $narrowcasting = new NarrowcastingItem;
-        $narrowcasting->name = $request->name;
-        $narrowcasting->campaign_start = strtotime($request->campaign_start);
-        $narrowcasting->campaign_end = strtotime($request->campaign_end);
-        $narrowcasting->slide_duration = $request->slide_duration;
+        $narrowcasting = NarrowcastingItem::query()->create($data);
 
-        if ($request->file('image')) {
-            $file = new StorageEntry;
+        if ($data(['image']) && !$data['youtube_id']) {
+            $file = StorageEntry::create();
             $file->createFromFile($request->file('image'));
-
             $narrowcasting->image()->associate($file);
         }
 
-        $youtube_id = $request->get('youtube_id');
+        Session::flash('flash_message', "Your campaign '" . $narrowcasting->name . "' has been added.");
 
-        if ($request->has('youtube_id') && strlen($youtube_id) > 0) {
-            $narrowcasting->youtube_id = $youtube_id;
-            $narrowcasting->save();
-            $narrowcasting->slide_duration = -1;
-        }
-
-        $narrowcasting->save();
-
-        Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been added.");
-
-        return Redirect::route('narrowcasting::index');
+        return Redirect::route('narrowcastings.index');
     }
 
     /**
-     * @param  int  $id
      * @return View
      */
-    public function edit($id)
+    public function edit(NarrowcastingItem $narrowcasting)
     {
-        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
-
         return view('narrowcasting.edit', ['item' => $narrowcasting]);
     }
 
-    /**
-     * @param  int  $id
-     * @return RedirectResponse
-     *
-     * @throws FileNotFoundException
-     */
-    public function update(Request $request, $id)
+    public function update(NarrowCastingRequest $request, NarrowcastingItem $narrowcasting)
     {
-        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
+        $data = $request->validated();
+        if ($data['youtube_id']) {
+            $data['slide_duration'] = -1;
+        }
 
-        $narrowcasting->name = $request->name;
-        $narrowcasting->campaign_start = strtotime($request->campaign_start);
-        $narrowcasting->campaign_end = strtotime($request->campaign_end);
-        $narrowcasting->slide_duration = $request->slide_duration;
+        $narrowcasting->update($data);
 
-        if ($request->file('image')) {
-            $file = new StorageEntry;
+        if ($data(['image']) && !$data['youtube_id']) {
+            $narrowcasting->image?->delete();
+            $file = StorageEntry::create();
             $file->createFromFile($request->file('image'));
-
             $narrowcasting->image()->associate($file);
         }
 
-        $youtube_id = $request->get('youtube_id');
+        Session::flash('flash_message', "Your campaign '" . $narrowcasting->name . "' has been saved.");
 
-        if ($request->has('youtube_id') && strlen($youtube_id) > 0) {
-
-            $narrowcasting->youtube_id = $youtube_id;
-            $narrowcasting->save();
-            $narrowcasting->slide_duration = -1;
-        } else {
-            $narrowcasting->youtube_id = null;
-        }
-
-        $narrowcasting->save();
-
-        Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been saved.");
-
-        return Redirect::route('narrowcasting::index');
+        return Redirect::route('narrowcastings.index');
     }
 
     /**
-     * @param  int  $id
      * @return RedirectResponse
-     *
-     * @throws Exception
      */
-    public function destroy($id)
+    public function destroy(NarrowcastingItem $narrowcasting)
     {
-        $narrowcasting = NarrowcastingItem::query()->findOrFail($id);
-
-        Session::flash('flash_message', "Your campaign '".$narrowcasting->name."' has been deleted.");
+        Session::flash('flash_message', "Your campaign '" . $narrowcasting->name . "' has been deleted.");
         $narrowcasting->delete();
 
-        return Redirect::route('narrowcasting::index');
+        return Redirect::route('narrowcastings.index');
     }
 
     /**
@@ -153,7 +111,7 @@ class NarrowcastingController extends Controller
 
         Session::flash('flash_message', 'All finished campaigns have been deleted.');
 
-        return Redirect::route('narrowcasting::index');
+        return Redirect::route('narrowcastings.index');
     }
 
     /** @return array Return a JSON object of all currently active campaigns. */

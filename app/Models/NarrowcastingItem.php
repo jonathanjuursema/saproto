@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Carbon;
 use Eloquent;
+use Faker\Core\DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * Narrowcasting Item Model.
@@ -14,8 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $name
  * @property int|null $image_id
- * @property int $campaign_start
- * @property int $campaign_end
+ * @property DateTime $campaign_start
+ * @property DateTime $campaign_end
  * @property int $slide_duration
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -43,9 +45,25 @@ class NarrowcastingItem extends Model
 
     protected $guarded = ['id'];
 
-    /** @return BelongsTo */
-    public function image()
+    protected $fillable = [
+        'name',
+        'campaign_start',
+        'campaign_end',
+        'slide_duration',
+        'youtube_id',
+    ];
+
+    public function image(): BelongsTo
     {
         return $this->belongsTo(StorageEntry::class);
+    }
+
+    #[Override]
+    protected function casts(): array
+    {
+        return [
+            'campaign_start' => 'datetime',
+            'campaign_end' => 'datetime',
+        ];
     }
 }

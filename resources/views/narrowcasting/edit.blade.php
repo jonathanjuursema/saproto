@@ -11,10 +11,11 @@
         <div class="col-md-4">
 
             <div class="card mb-3">
+                <form
+                    action="{{ !empty($item) ? route('narrowcastings.update', ['narrowcasting'=>$item]) : route("narrowcastings.store") }}"
 
-                <form method="post"
-                      action="{{ ($item == null ? route("narrowcasting::store") : route("narrowcasting::update", ['id' => $item->id])) }}"
-                      enctype="multipart/form-data">
+                    method="POST">
+                    <input type="hidden" name="_method" value="{{ !empty($item) ? "PUT" : "POST" }}">
 
                     @csrf
 
@@ -34,13 +35,13 @@
                         @include('components.forms.datetimepicker', [
                             'name' => 'campaign_start',
                             'label' => 'Campaign start:',
-                            'placeholder' => $item ? $item->campaign_start : date('U')
+                            'placeholder' => $item ? $item->campaign_start->valueOf() : date('U')
                         ])
 
                         @include('components.forms.datetimepicker', [
                             'name' => 'campaign_end',
                             'label' => 'Campaign end:',
-                            'placeholder' => $item ? $item->campaign_end : null
+                            'placeholder' => $item ? $item->campaign_end->valueOf() : null
                         ])
 
                         <div class="form-group">
@@ -56,7 +57,8 @@
                         </div>
 
                         <p>
-                            <sup><strong>Note:</strong> if a YouTube ID is present, the image file and slide duration
+                            <sup><strong>Note:</strong> if a YouTube ID is present, the image file and slide
+                                duration
                                 field is ignored and hidden.</sup>
                         </p>
 
@@ -98,10 +100,11 @@
                             Submit
                         </button>
 
-                        <a href="{{ route("narrowcasting::index") }}" class="btn btn-default">Cancel</a>
+                        <a href="{{ route("narrowcastings.index") }}" class="btn btn-default">Cancel</a>
 
                         <p class="text-center mb-0 mt-2">
-                            Developed with <span class="text-danger"><i class="fab fa-youtube fa-fw"></i> YouTube</span>
+                            Developed with <span class="text-danger"><i
+                                    class="fab fa-youtube fa-fw"></i> YouTube</span>
                         </p>
 
                     </div>

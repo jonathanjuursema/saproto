@@ -328,18 +328,11 @@ Route::middleware('forcedomain')->group(function () {
     });
 
     /* --- Routes related to narrowcasting (Board only) --- */
-    Route::controller(NarrowcastingController::class)->prefix('narrowcasting')->name('narrowcasting::')->group(function () {
-        Route::middleware(['auth', 'permission:board'])->group(function () {
-            Route::get('index', 'index')->name('index');
-            Route::get('create', 'create')->name('create');
-            Route::post('store', 'store')->name('store');
-            Route::get('edit/{id}', 'edit')->name('edit');
-            Route::post('edit/{id}', 'update')->name('update');
-            Route::get('delete/{id}', 'destroy')->name('delete');
-            Route::get('clear', 'clear')->name('clear');
-        });
-        Route::get('', 'show')->name('display');
+    Route::controller(NarrowcastingController::class)->middleware(['auth', 'permission:board'])->group(function () {
+        Route::get('narrowcasting/clear', 'clear')->name('narrowcasting::clear');
+        Route::resource('narrowcastings', NarrowcastingController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     });
+    Route::get('narrowcasting', [NarrowcastingController::class, 'show'])->name('display');
 
     /* --- Routes related to companies --- */
     Route::controller(CompanyController::class)->prefix('companies')->name('companies::')->group(function () {
