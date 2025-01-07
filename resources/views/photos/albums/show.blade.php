@@ -22,11 +22,11 @@
     <div class="card mb-3">
 
         <div class="card-header bg-dark text-white text-end">
-            <a href="{{route("photo::albums")}}" class="btn btn-success float-start me-3">
+            <a href="{{route("photoalbums.index")}}" class="btn btn-success float-start me-3">
                 <i class="fas fa-list"></i> <span class="d-none d-sm-inline">Album overview</span>
             </a>
             @can('protography')
-                <a href="{{route("photo::admin::edit", ['id' => $album->id])}}"
+                <a href="{{ route("photo::admin::photoalbums.edit", ['photoalbum' => $album]) }}"
                    class="btn btn-success float-start me-3">
                     <i class="fas fa-edit"></i> <span class="d-none d-sm-inline">Edit album</span>
                 </a>

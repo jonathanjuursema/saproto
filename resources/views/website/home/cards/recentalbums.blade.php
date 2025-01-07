@@ -5,7 +5,7 @@
         @foreach($albums as $album)
 
             @include('website.home.cards.card-bg-image', [
-            'url' => route('photo::album::list', ['id' => $album->id]) ,
+            'url' => route('photo::photoalbums.show', ['photoalbum' => $album]) ,
             'img' => $album->thumb(),
             'html' => sprintf('<sub>%s</sub><br><strong>%s</strong>', date("M j, Y", $album->date_taken), $album->name),
             'leftborder' => 'info'
@@ -13,7 +13,7 @@
 
         @endforeach
 
-        <a href="{{ route('photo::albums') }}" class="btn btn-info btn-block">All photos</a>
+        <a href="{{ route('photoalbums.index') }}" class="btn btn-info btn-block">All photos</a>
 
     </div>
 </div>

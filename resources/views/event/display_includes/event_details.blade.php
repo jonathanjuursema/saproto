@@ -149,7 +149,7 @@
                 @foreach($event->albums as $album)
 
                     @include('website.home.cards.card-bg-image', [
-                        'url' => route('photo::album::list', ['id' => $album->id]),
+                        'url' => route('photo::photoalbums.show', ['photoalbum' => $album]),
                         'img' => $album->thumb(),
                         'html' => sprintf('<em>%s</em><br><strong><i class="fas fa-fw fa-images" aria-hidden="true"></i> %s</strong>', date("M j, Y", $album->date_taken), $album->name)
                     ])

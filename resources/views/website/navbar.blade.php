@@ -191,7 +191,8 @@
 
                                     <li role="separator" class="dropdown-divider"></li>
                                     <a class="dropdown-item" href="{{ route("headerimages.index") }}">Header Images</a>
-                                    <a class="dropdown-item" href="{{ route("photo::admin::index") }}">Photo Admin</a>
+                                    <a class="dropdown-item" href="{{ route("photo::admin::photoalbums.index") }}">Photo
+                                        Admin</a>
 
                                     @can('sysadmin')
                                         <li role="separator" class="dropdown-divider"></li>
@@ -230,7 +231,7 @@
                                     <ul class="dropdown-menu">
                                         <a class="dropdown-item" href="{{ route("headerimages.index") }}">Header
                                             Images</a>
-                                        <a class="dropdown-item" href="{{ route("photo::admin::index") }}">Photo
+                                        <a class="dropdown-item" href="{{ route("photo::admin::photoalbums.index") }}">Photo
                                             Admin</a>
                                     </ul>
                                 </li>
@@ -238,7 +239,8 @@
 
                             @can('protography')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route("photo::admin::index") }}" role="button"
+                                    <a class="nav-link" href="{{ route("photo::admin::photoalbums.index") }}"
+                                       role="button"
                                        aria-haspopup="false" aria-expanded="false">Photo Admin</a>
                                 </li>
                             @endcan
@@ -287,7 +289,7 @@
                                    role="button" aria-haspopup="true" aria-expanded="false">
                                     {{ Auth::user()->calling_name }}
                                     <img id="profile-picture" class="rounded-circle ms-2" alt="your profile picture"
-                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}"/>
+                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}" />
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end mt-2">

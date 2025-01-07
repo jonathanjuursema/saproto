@@ -37,7 +37,7 @@
                             @foreach($photoAlbums as $album)
 
                                 @include('website.home.cards.card-bg-image', [
-                                'url' => route('photo::album::list', ['id' => $album->id]) ,
+                                'url' => route('photo::photoalbums.show', ['photoalbum' => $album]) ,
                                 'img' => $album->thumb(),
                                 'html' => sprintf('<sub>%s</sub><br><strong>%s</strong>', date("M j, Y", $album->date_taken), $album->name),
                                 'leftborder' => 'info'

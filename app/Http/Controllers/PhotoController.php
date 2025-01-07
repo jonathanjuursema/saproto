@@ -5,44 +5,68 @@ namespace App\Http\Controllers;
 use App\Models\Photo;
 use App\Models\PhotoAlbum;
 use App\Models\PhotoLikes;
+use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class PhotoController extends Controller
 {
-    /** @return View */
-    public function index()
-    {
-        $albums = PhotoAlbum::query()->orderBy('date_taken', 'desc')
-            ->where('published', true)
-            ->paginate(24);
-
-        return view('photos.list', ['albums' => $albums]);
-    }
-
-    public function show(int $id): View|RedirectResponse
-    {
-        $album = PhotoAlbum::query()->findOrFail($id);
-
-        $photos = $album->items()->orderBy('date_taken', 'desc')->paginate(24);
-
-        return view('photos.album', ['album' => $album, 'photos' => $photos]);
-    }
-
     /**
      * @return View
      */
-    public function photo(int $id)
+    public function index(Photo $photo)
     {
-        $photo = Photo::with('album')
+        $photo = $photo::with('album')
             ->withCount('likes')
             ->withExists(['likes as liked_by_me' => static function ($q) {
                 $q->where('user_id', Auth::id());
-            }])->findOrFail($id);
+            }])->get();
 
         return view('photos.photopage', ['photo' => $photo]);
+    }
+
+    public function show()
+    {
+
+    }
+
+    /**
+     * @return JsonResponse|string
+     */
+    public function store(Request $request, int $id)
+    {
+        $album = PhotoAlbum::query()->findOrFail($id);
+        if (!$request->hasFile('file')) {
+            return response()->json([
+                'message' => 'photo not found in request!',
+            ], 404);
+        }
+
+        if ($album->published) {
+            return response()->json([
+                'message' => 'album already published! Unpublish to add more photos!',
+            ], 500);
+        }
+
+        try {
+            $photo = Photo::create('private', true);
+            $photo->addMedia($request->file('file'))->toMediaCollection('photos');
+
+            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
+
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => $exception,
+            ], 500);
+        }
     }
 
     /**

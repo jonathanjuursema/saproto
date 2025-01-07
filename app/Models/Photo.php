@@ -46,8 +46,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Photo extends Model implements HasMedia
 {
-    use InteractsWithMedia;
     use HasFactory;
+    use InteractsWithMedia;
 
     protected $table = 'photos';
 
@@ -59,18 +59,37 @@ class Photo extends Model implements HasMedia
     protected static function booted(): void
     {
         static::addGlobalScope('private', function (Builder $builder) {
-            $builder->unless(Auth::user()?->is_member, fn($builder) => $builder->where('private', false)
+            $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)
                 ->whereHas('album', function ($query) {
                     $query->where('private', false);
                 }));
         });
 
         static::addGlobalScope('published', function (Builder $builder) {
-            $builder->unless(Auth::user()?->can('protography'), fn($builder) => $builder->whereHas('album', function ($query) {
+            $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->whereHas('album', function ($query) {
                 $query->where('published', true);
             }));
         });
     }
+
+    //
+    //    public function registerMediaConversions(Media $media = null): void
+    //    {
+    //        $this->addMediaConversion('big')
+    //            ->width(1920)
+    //            ->height(1080)
+    //            ->nonQueued(); // Optional: processes the conversion without queue
+    //
+    //        $this->addMediaConversion('medium')
+    //            ->width(1280)
+    //            ->height(720)
+    //            ->nonQueued();
+    //
+    //        $this->addMediaConversion('small')
+    //            ->width(640)
+    //            ->height(360)
+    //            ->nonQueued();
+    //    }
 
     public function album(): BelongsTo
     {

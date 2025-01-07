@@ -29,7 +29,7 @@
             @else
                 @can('publishalbums')
                     <a class="btn btn-danger text-white btn-block mb-3"
-                       href="{{ route('photo::admin::publish', ['id'=>$album->id]) }}">
+                       href="{{ route('photo::admin::publish', ['photoalbum'=>$album]) }}">
                         This album is not yet published, click here to publish the album.
                     </a>
                 @else
@@ -40,7 +40,7 @@
             @endif
 
             <a class="btn btn-info text-white btn-block mb-3"
-               href="{{ route('photo::album::list', ['id' => $album->id]) }}">
+               href="{{ route('photo::photoalbums.show', ['photoalbum' => $album]) }}">
                 Preview album
             </a>
 
@@ -109,7 +109,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <a class="btn btn-danger"
-                               href="{{ route('photo::admin::delete', ['id' => $album->id]) }}">
+                               href="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}">
                                 Delete Album
                             </a>
                         </div>
@@ -174,7 +174,7 @@
 
 
             <div class="card mb-3">
-                <form method="POST" action="{{ route('photo::admin::action', ['id' => $album->id]) }}">
+                <form method="POST" action="{{ route('photo::admin::photo', ['id' => $album->id]) }}">
                     {{ csrf_field() }}
 
                     <div class="card-header bg-dark text-white text-center">

@@ -12,10 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Image\Enums\Fit;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\PhotoAlbum.
@@ -54,7 +50,6 @@ class PhotoAlbum extends Model
 {
     use HasFactory;
 
-
     protected $table = 'photo_albums';
 
     protected $guarded = ['id'];
@@ -64,9 +59,9 @@ class PhotoAlbum extends Model
     #[Override]
     protected static function booted(): void
     {
-        static::addGlobalScope('published', fn(Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn($builder) => $builder->where('published', true)));
+        static::addGlobalScope('published', fn (Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->where('published', true)));
 
-        static::addGlobalScope('private', fn(Builder $builder) => $builder->unless(Auth::user()?->is_member, fn($builder) => $builder->where('private', false)));
+        static::addGlobalScope('private', fn (Builder $builder) => $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)));
     }
 
     public function event(): BelongsTo
@@ -86,7 +81,7 @@ class PhotoAlbum extends Model
 
     public function scopeName($query, string $name): Builder
     {
-        return $query->where('name', 'LIKE', '%' . $name . '%');
+        return $query->where('name', 'LIKE', '%'.$name.'%');
     }
 
     public function thumb(): ?string

@@ -42,7 +42,8 @@ use App\Http\Controllers\OrderLineController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\PhotoAdminController;
+use App\Http\Controllers\PhotoAlbumAdminController;
+use App\Http\Controllers\PhotoAlbumController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -53,6 +54,7 @@ use App\Http\Controllers\QueryController;
 use App\Http\Controllers\RegistrationHelperController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\SearchController;
+
 /* --- use App\Http\Controllers\RadioController; --- */
 
 use App\Http\Controllers\ShortUrlController;
@@ -76,7 +78,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
-require __DIR__.'/minisites.php';
+require __DIR__ . '/minisites.php';
 
 /* Route block convention:
  *
@@ -876,27 +878,24 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('dismiss/{id}', 'dismiss')->name('dismiss');
     });
 
+    /* --- Routes related to photo albums --- */
+    // Public routes
     /* --- Routes related to photos --- */
     Route::prefix('photos')->name('photo::')->group(function () {
         // Public routes
-        Route::controller(PhotoController::class)->group(function () {
-            Route::get('', 'index')->name('albums');
-            Route::get('/like/{id}', 'toggleLike')->middleware(['auth'])->name('likes');
-            Route::get('/photo/{id}', 'photo')->name('view');
-            Route::get('{id}', 'show')->name('album::list');
-        });
+        Route::resource('photoalbums', PhotoAlbumController::class)->only(['index', 'show']);
 
+        Route::controller(PhotoController::class)->group(function () {
+            Route::get('{id}', 'index')->name('view');
+            Route::get('/like/{id}', 'toggleLike')->middleware(['auth'])->name('likes');
+        });
         /* --- Routes related to the photo admin. (Protography only) --- */
-        Route::controller(PhotoAdminController::class)->prefix('admin')->middleware(['permission:protography'])->name('admin::')->group(function () {
-            Route::get('index', 'index')->name('index');
-            Route::post('create', 'create')->name('create');
-            Route::get('edit/{id}', 'edit')->name('edit');
-            Route::post('edit/{id}', 'update')->middleware(['permission:publishalbums'])->name('update');
-            Route::post('edit/{id}/action', 'action')->name('action');
-            Route::post('edit/{id}/upload', 'upload')->name('upload');
-            Route::get('edit/{id}/delete', 'delete')->middleware(['permission:publishalbums'])->name('delete');
-            Route::get('publish/{id}', 'publish')->middleware(['permission:publishalbums'])->name('publish');
-            Route::get('unpublish/{id}', 'unpublish')->middleware(['permission:publishalbums'])->name('unpublish');
+        Route::prefix('admin')->name('admin::')->group(function () {
+            Route::resource('photoalbums', PhotoAlbumAdminController::class)->only(['index', 'create', 'edit', 'update', 'destroy']);
+        });
+        Route::controller(PhotoAlbumAdminController::class)->prefix('admin')->middleware(['permission:protography'])->name('admin::')->group(function () {
+            Route::get('publish/{photoalbum}', 'publish')->middleware(['permission:publishalbums'])->name('publish');
+            Route::get('unpublish/{photoalbum}', 'unpublish')->middleware(['permission:publishalbums'])->name('unpublish');
         });
     });
 
