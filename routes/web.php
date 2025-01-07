@@ -113,7 +113,7 @@ Route::middleware('forcedomain')->group(function () {
 
     Route::resource('headerimages', HeaderImageController::class)->only(['index', 'create', 'store', 'destroy'])->middleware(['auth', 'permission:header-image']);
 
-    /* Routes for the search function. All public*/
+    /* Routes for the search function. All public */
     Route::controller(SearchController::class)->name('search::')->group(function () {
         Route::get('search', 'search')->name('get');
         Route::post('search', 'search')->name('post');
@@ -922,7 +922,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('{id}/revoke/{user}', 'revoke')->name('revoke');
     });
 
-    /* Routes related to the password manager. (Access restricted in controller)*/
+    /* Routes related to the password manager. (Access restricted in controller) */
     Route::controller(PasswordController::class)->prefix('passwordstore')->middleware(['auth'])->name('passwordstore::')->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('auth', 'getAuth')->name('auth');
@@ -950,7 +950,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('caniworkinthesmartxp', 'canWork');
     });
 
-    /* The routes for Protube. (Public)*/
+    /* The routes for Protube. (Public) */
     Route::controller(ProtubeController::class)->prefix('protube')->name('protube::')->group(function () {
         Route::get('dashboard', 'dashboard')->middleware(['auth'])->name('dashboard');
         Route::get('togglehistory', 'toggleHistory')->middleware(['auth'])->name('togglehistory');
@@ -1011,7 +1011,7 @@ Route::middleware('forcedomain')->group(function () {
         });
     });
 
-    /* Routes related to the Short URL Service*/
+    /* Routes related to the Short URL Service */
     Route::get('go/{short?}', [ShortUrlController::class, 'go'])->name('short_urls.go');
     Route::get('short_urls/qr_code/{id}', [ShortUrlController::class, 'qrCode'])->name('short_urls.qr_code')->middleware(['auth', 'permission:board']);
     Route::resource('short_urls', ShortUrlController::class)->except('show')->middleware(['auth', 'permission:board']);

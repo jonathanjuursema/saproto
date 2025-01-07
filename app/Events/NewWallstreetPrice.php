@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Override;
 
 class NewWallstreetPrice implements ShouldBroadcastNow
 {
@@ -25,6 +26,7 @@ class NewWallstreetPrice implements ShouldBroadcastNow
     /**
      * Get the channels the event should broadcast on.
      */
+    #[Override]
     public function broadcastOn(): array
     {
         return [

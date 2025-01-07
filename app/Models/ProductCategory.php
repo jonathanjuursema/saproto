@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Override;
 
 /**
  * Product Category Model.
@@ -56,6 +57,7 @@ class ProductCategory extends Model
         return $products->sortBy('name');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

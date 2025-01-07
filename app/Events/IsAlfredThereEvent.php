@@ -2,15 +2,14 @@
 
 namespace App\Events;
 
-use App\Models\WallstreetEvent;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Override;
 
-class NewWallstreetEvent implements ShouldBroadcastNow
+class IsAlfredThereEvent implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -19,26 +18,27 @@ class NewWallstreetEvent implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public int $wallstreetDrinkId,
-        public WallstreetEvent $wallstreetEvent
-    ) {}
+    public function __construct(public string $status, public ?string $text, public ?string $unix) {}
 
     /**
      * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
      */
     #[Override]
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('wallstreet-prices.'.$this->wallstreetDrinkId),
+            new Channel('isalfredthere'),
         ];
     }
 
     public function broadcastWith(): array
     {
         return [
-            'data' => $this->wallstreetEvent,
+            'status' => $this->status,
+            'text' => $this->text,
+            'unix' => $this->unix,
         ];
     }
 }

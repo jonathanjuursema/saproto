@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Bank;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<Bank>
@@ -15,6 +16,7 @@ class BankFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition()
     {
         return [

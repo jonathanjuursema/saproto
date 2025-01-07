@@ -135,7 +135,7 @@ class GoogleSync extends Command
                 continue;
             }
 
-            //Try to find the corresponding Google Group by committee name and set the email if necessary.
+            // Try to find the corresponding Google Group by committee name and set the email if necessary.
             if (($googleGroup = $googleGroups->firstWhere('name', $committee->name)) != null) {
                 $googleGroup->setEmail(strtolower($committee->email));
                 $this->pp(

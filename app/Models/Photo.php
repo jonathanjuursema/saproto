@@ -55,6 +55,7 @@ class Photo extends Model implements HasMedia
 
     protected $with = ['file'];
 
+    #[Override]
     protected static function booted(): void
     {
         static::addGlobalScope('private', function (Builder $builder) {
@@ -151,6 +152,7 @@ class Photo extends Model implements HasMedia
         return $this->file->generatePath();
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();

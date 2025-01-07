@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Override;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Define your route model bindings, pattern filters, etc.
      */
+    #[Override]
     public function boot(): void
     {
         parent::boot();

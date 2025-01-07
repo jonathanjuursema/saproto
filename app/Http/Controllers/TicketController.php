@@ -370,7 +370,7 @@ class TicketController extends Controller
             for ($i = 0; $i < $amount; $i++) {
                 $oid = $ticket->product->buyForUser(Auth::user(), 1, $ticket->product->price, null, null, null, sprintf('ticket_bought_by_%u', Auth::user()->id));
 
-                //Non-members can only buy prepaid tickets, as we have no way of resolving their payment otherwise.
+                // Non-members can only buy prepaid tickets, as we have no way of resolving their payment otherwise.
                 if ($ticket->is_prepaid || ! Auth::user()->is_member) {
                     $prepaid_tickets[] = $oid;
                     $total_cost += $ticket->product->price;

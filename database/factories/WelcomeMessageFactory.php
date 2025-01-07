@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\WelcomeMessage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<WelcomeMessage>
@@ -14,6 +15,7 @@ class WelcomeMessageFactory extends Factory
 {
     protected $model = WelcomeMessage::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

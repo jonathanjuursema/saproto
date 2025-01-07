@@ -5,6 +5,7 @@ namespace App\Csp\Policies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Override;
 use Spatie\Csp\Directive;
 use Spatie\Csp\Keyword;
 use Spatie\Csp\Policies\Policy;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProtoPolicy extends Policy
 {
+    #[Override]
     public function shouldBeApplied(Request $request, Response $response): bool
     {
         // Don't apply csp in debug mode to enable the whoops (standard laravel) error page to be displayed correctly.
@@ -23,6 +25,7 @@ class ProtoPolicy extends Policy
         return parent::shouldBeApplied($request, $response);
     }
 
+    #[Override]
     public function configure(): void
     {
         $this

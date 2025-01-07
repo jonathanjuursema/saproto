@@ -147,9 +147,9 @@ class MollieController extends Controller
             $end->nextWeekday();
         }
 
-        //generate a list of all the accounts and their total orderlines for the given month
-        //grouped by account number and then by orderline date
-        //this is used to generate a table with the total orderlines for each account, and product
+        // generate a list of all the accounts and their total orderlines for the given month
+        // grouped by account number and then by orderline date
+        // this is used to generate a table with the total orderlines for each account, and product
         $accounts = Account::query()->join('products', 'accounts.id', '=', 'products.account_id')
             ->join('orderlines', 'products.id', '=', 'orderlines.product_id')
             ->join('mollie_transactions', 'orderlines.payed_with_mollie', '=', 'mollie_transactions.id')

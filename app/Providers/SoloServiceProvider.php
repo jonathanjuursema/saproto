@@ -6,9 +6,11 @@ use AaronFrancis\Solo\Commands\EnhancedTailCommand;
 use AaronFrancis\Solo\Facades\Solo;
 use AaronFrancis\Solo\Manager;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class SoloServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         // Solo may not (should not!) exist in prod, so we have to

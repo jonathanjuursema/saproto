@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * Member Model.
@@ -70,6 +71,7 @@ class Member extends Model
 
     protected $guarded = ['id', 'user_id'];
 
+    #[Override]
     protected function casts(): array
     {
         return [

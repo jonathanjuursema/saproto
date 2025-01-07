@@ -181,6 +181,11 @@ class Email extends Model
         $variable_from = ['$calling_name', '$name'];
         $variable_to = [$user->calling_name, $user->name];
 
+        if ($this->to_member || $this->to_active || $this->to_pending) {
+            $variable_from[] = '$username';
+            $variable_to[] = $user->member->proto_username ?? '(no username found)';
+        }
+
         return str_replace($variable_from, $variable_to, $this->body);
     }
 

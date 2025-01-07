@@ -2,7 +2,7 @@ services:
     laravel.test:
         container_name: '${SAIL_CONTAINER_NAME}-app'
         build:
-            context: ./vendor/laravel/sail/runtimes/8.2
+            context: ./vendor/laravel/sail/runtimes/8.3
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'

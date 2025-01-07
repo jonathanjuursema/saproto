@@ -328,7 +328,7 @@ class DirectAdminSync extends Command
     private function executeQueries(DirectAdmin $da, array $queries): void
     {
         foreach ($queries as $query) {
-            //$this->info('Query '.$i.'/'.count($queries).': '.$query['cmd'].implode($query['options'])); //Temporarily disabled to reduce Sentry spam
+            // $this->info('Query '.$i.'/'.count($queries).': '.$query['cmd'].implode($query['options'])); //Temporarily disabled to reduce Sentry spam
             $da->query($query['cmd'], $query['options']);
 
             $response = $da->fetch_parsed_body();

@@ -18,7 +18,7 @@ class ProBoto
     {
         $authHeader = request()->header('Authorization');
         if ($authHeader) {
-            //Remove the "Bearer" part from the header
+            // Remove the "Bearer" part from the header
             $secret = explode(' ', $authHeader)[1];
             if ($secret === Config::string('app-proto.proboto-secret')) {
                 return $next($request);

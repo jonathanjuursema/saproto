@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<Dinnerform>
@@ -15,6 +16,7 @@ class DinnerformFactory extends Factory
 {
     protected $model = Dinnerform::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

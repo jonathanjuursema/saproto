@@ -69,8 +69,6 @@ Route::group(['middleware' => ['forcedomain'], 'as' => 'api::'], static function
         Route::get('all_prices/{id}', ['as' => 'all_prices', 'uses' => 'WallstreetController@getAllPrices']);
         Route::get('toggle_event', ['as' => 'toggle_event', 'uses' => 'WallstreetController@toggleEvent', 'middleware' => ['permission:tipcie']]);
     });
-    /* Route related to the IsAlfredThere API */
-    Route::get('isalfredthere', ['as' => 'isalfredthere', 'uses' => 'IsAlfredThereController@getApi']);
     /* Routes related to the OmNomCom Wrapped API */
     Route::get('wrapped')->middleware('auth:api')->uses('WrappedController@index')->name('wrapped');
 });

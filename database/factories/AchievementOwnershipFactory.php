@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Achievement;
 use App\Models\AchievementOwnership;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<AchievementOwnership>
@@ -16,6 +17,7 @@ class AchievementOwnershipFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         $date = fake()->dateTimeBetween('-1 year')->format('Y-m-d H:i:s');

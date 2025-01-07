@@ -6,6 +6,7 @@ use App\Models\CodexSong;
 use App\Models\CodexSongCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<CodexSong>
@@ -14,6 +15,7 @@ class CodexSongFactory extends Factory
 {
     protected $model = CodexSong::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

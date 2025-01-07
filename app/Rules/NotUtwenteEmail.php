@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
+use Override;
 
 class NotUtwenteEmail implements ValidationRule
 {
@@ -14,6 +15,7 @@ class NotUtwenteEmail implements ValidationRule
      *
      * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
+    #[Override]
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (Str::endsWith(strtolower($value), 'utwente.nl')) {

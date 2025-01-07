@@ -6,6 +6,7 @@ use App\Enums\MembershipTypeEnum;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<Member>
@@ -17,6 +18,7 @@ class MemberFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         $created_at = fake()->dateTimeBetween('2011-04-20')->format('Y-m-d H:i:s');

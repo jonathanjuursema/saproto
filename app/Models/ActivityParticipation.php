@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
 /**
  * Activity Participation Model.
@@ -73,6 +74,7 @@ class ActivityParticipation extends Model
         return $this->belongsTo(HelpingCommittee::class, 'committees_activities_id');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

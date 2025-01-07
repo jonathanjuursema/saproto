@@ -6,6 +6,7 @@ use App\Models\Committee;
 use App\Models\StorageEntry;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<Committee>
@@ -14,6 +15,7 @@ class CommitteeFactory extends Factory
 {
     protected $model = Committee::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

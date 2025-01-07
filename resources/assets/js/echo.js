@@ -14,10 +14,9 @@ window.Echo = new Echo({
     encrypted: true,
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-    cluster: 'eu',
+    cluster: 'eu'
 });
 if (import.meta.env.DEV) {
-    console.log(window.Echo);
     Pusher.log = (msg) => {
         console.log(msg);
     };

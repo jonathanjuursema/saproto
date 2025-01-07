@@ -61,6 +61,7 @@ class PhotoAlbum extends Model
 
     protected $with = ['thumbPhoto'];
 
+    #[Override]
     protected static function booted(): void
     {
         static::addGlobalScope('published', fn(Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn($builder) => $builder->where('published', true)));

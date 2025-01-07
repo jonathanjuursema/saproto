@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //add a random number of minutes to the wallstreet events
+        // add a random number of minutes to the wallstreet events
         Schema::table('wallstreet_drink', function (Blueprint $table) {
             $table->integer('random_events_chance')->default(0);
             $table->dropColumn('random_events');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //reverse the migration
+        // reverse the migration
         Schema::table('wallstreet_drink', function (Blueprint $table) {
             $table->dropColumn('random_events_chance');
             $table->boolean('random_events')->default(false);

@@ -16,7 +16,7 @@ class ProTubeApiService
     /**
      * @var string API route prefix
      */
-    private const API_PREFIX = '/api/laravel';
+    private const string API_PREFIX = '/api/laravel';
 
     private static function client(): PendingRequest
     {
@@ -50,7 +50,7 @@ class ProTubeApiService
      */
     public static function skipSong(): bool
     {
-        //when in production don't update the protube admin status
+        // when in production don't update the protube admin status
         if (! App::environment('production')) {
             return true;
         }
@@ -72,7 +72,7 @@ class ProTubeApiService
      */
     public static function updateAdmin(int $userID, bool $admin): bool
     {
-        //when in production don't update the protube admin status
+        // when in production don't update the protube admin status
         if (! App::environment('production')) {
             return true;
         }
