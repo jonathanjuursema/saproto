@@ -13,7 +13,8 @@ use App\Models\OrderLine;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
-use Carbon;
+// use Carbon;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class AchievementsCron extends Command
@@ -302,7 +303,7 @@ class AchievementsCron extends Command
      */
     private function nThProducts($user, array $products, int $n): bool
     {
-        return $user->orderlines()->whereIn('product_id', $products)->sum('units') > $n;
+        return $user->orderlines()->whereIn('product_id', $products)->sum('units') >= $n;
     }
 
     /**
