@@ -251,7 +251,20 @@ class OmNomController extends Controller
             $result->message = '';
 
             if ($user->show_omnomcom_total) {
-                $result->message = sprintf('You have spent a total of <strong>€%0.2f</strong>', OrderLine::query()->where('user_id', $user->id)->where('created_at', 'LIKE', sprintf('%s %%', date('Y-m-d')))->sum('total_price'));
+                $categories = collect($stores)->pluck('categories')->flatten()->unique();
+
+                $totalSpent = OrderLine::query()
+                    ->where('user_id', $user->id)
+                    ->where('created_at', 'LIKE', sprintf('%s %%', date('Y-m-d')))
+                    ->whereHas('product.categories', function ($query) use ($categories) {
+                        $query->whereIn('categories.id', $categories);
+                    })
+                    ->sum('total_price');
+
+                $result->message = sprintf(
+                    'You have spent a total of <strong>€%0.2f</strong>',
+                    $totalSpent
+                );
             }
 
             if ($user->show_omnomcom_calories) {
