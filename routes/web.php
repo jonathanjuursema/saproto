@@ -54,7 +54,6 @@ use App\Http\Controllers\QueryController;
 use App\Http\Controllers\RegistrationHelperController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\SearchController;
-
 /* --- use App\Http\Controllers\RadioController; --- */
 
 use App\Http\Controllers\ShortUrlController;
@@ -78,7 +77,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
-require __DIR__ . '/minisites.php';
+require __DIR__.'/minisites.php';
 
 /* Route block convention:
  *
@@ -890,12 +889,12 @@ Route::middleware('forcedomain')->group(function () {
             Route::get('/like/{id}', 'toggleLike')->middleware(['auth'])->name('likes');
         });
         /* --- Routes related to the photo admin. (Protography only) --- */
-        Route::prefix('admin')->name('admin::')->group(function () {
+        Route::prefix('admin')->name('admin::')->middleware(['permission:protography'])->group(function () {
+            Route::post('{photoalbum}/upload', 'PhotoController@store')->name('upload');
             Route::resource('photoalbums', PhotoAlbumAdminController::class)->only(['index', 'create', 'edit', 'update', 'destroy']);
-        });
-        Route::controller(PhotoAlbumAdminController::class)->prefix('admin')->middleware(['permission:protography'])->name('admin::')->group(function () {
-            Route::get('publish/{photoalbum}', 'publish')->middleware(['permission:publishalbums'])->name('publish');
-            Route::get('unpublish/{photoalbum}', 'unpublish')->middleware(['permission:publishalbums'])->name('unpublish');
+
+            Route::get('publish/{photoalbum}', ['publish', PhotoAlbumAdminController::class])->middleware(['permission:publishalbums'])->name('publish');
+            Route::get('unpublish/{photoalbum}', ['unpublish', PhotoAlbumAdminController::class])->middleware(['permission:publishalbums'])->name('unpublish');
         });
     });
 

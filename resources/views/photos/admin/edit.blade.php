@@ -174,7 +174,7 @@
 
 
             <div class="card mb-3">
-                <form method="POST" action="{{ route('photo::admin::photo', ['id' => $album->id]) }}">
+                <form method="POST" action="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}">
                     {{ csrf_field() }}
 
                     <div class="card-header bg-dark text-white text-center">
@@ -313,7 +313,7 @@
                     let formData = new FormData();
                     formData.append('file', file);
                     toggleRunning();
-                    await post('{{ route('photo::admin::upload', ['id' => $album->id], false) }}', formData, { parse: false })
+                    await post('{{ route('photo::admin::upload', ['photoalbum' => $album], false) }}', formData, { parse: false })
                         .then(response => {
                             response.text().then(text => {
                                 document.getElementById('photo-view').innerHTML += text;

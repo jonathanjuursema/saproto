@@ -22,7 +22,7 @@
     <div class="card mb-3">
 
         <div class="card-header bg-dark text-white text-end">
-            <a href="{{route("photoalbums.index")}}" class="btn btn-success float-start me-3">
+            <a href="{{route("photo::photoalbums.index")}}" class="btn btn-success float-start me-3">
                 <i class="fas fa-list"></i> <span class="d-none d-sm-inline">Album overview</span>
             </a>
             @can('protography')

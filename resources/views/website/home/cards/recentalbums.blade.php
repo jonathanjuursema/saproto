@@ -13,7 +13,7 @@
 
         @endforeach
 
-        <a href="{{ route('photoalbums.index') }}" class="btn btn-info btn-block">All photos</a>
+        <a href="{{ route('photo::photoalbums.index') }}" class="btn btn-info btn-block">All photos</a>
 
     </div>
 </div>

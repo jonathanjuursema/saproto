@@ -73,7 +73,7 @@ class PhotoAlbumAdminController extends Controller
         Gate::authorize('update', $photoalbum);
         $photoalbum->name = $request->input('album');
         $photoalbum->date_taken = strtotime($request->input('date'));
-        $photoalbum->private = (bool)$request->input('private');
+        $photoalbum->private = (bool) $request->input('private');
         $photoalbum->save();
 
         return Redirect::route('photo::admin::photoalbums.index', ['photoalbum' => $photoalbum]);
@@ -103,7 +103,7 @@ class PhotoAlbumAdminController extends Controller
 
         if ($photos) {
 
-            if ($photoalbum->published && !Auth::user()->can('publishalbums')) {
+            if ($photoalbum->published && ! Auth::user()->can('publishalbums')) {
                 abort(403, 'Unauthorized action.');
             }
 
@@ -116,7 +116,7 @@ class PhotoAlbumAdminController extends Controller
                     break;
 
                 case 'thumbnail':
-                    $photoalbum->thumb_id = (int)$photos[0];
+                    $photoalbum->thumb_id = (int) $photos[0];
                     break;
 
                 case 'private':
@@ -126,7 +126,7 @@ class PhotoAlbumAdminController extends Controller
                             continue;
                         }
 
-                        $photo->private = !$photo->private;
+                        $photo->private = ! $photo->private;
                         $photo->save();
                     }
 
@@ -146,7 +146,7 @@ class PhotoAlbumAdminController extends Controller
     {
         Gate::authorize('publish', PhotoAlbum::class);
 
-        if (!$photoalbum->items()->exists() || $photoalbum->thumb_id === null) {
+        if (! $photoalbum->items()->exists() || $photoalbum->thumb_id === null) {
             Session::flash('flash_message', 'Albums need at least one photo and a thumbnail to be published.');
 
             return Redirect::back();

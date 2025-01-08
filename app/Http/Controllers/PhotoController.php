@@ -6,16 +6,12 @@ use App\Models\Photo;
 use App\Models\PhotoAlbum;
 use App\Models\PhotoLikes;
 use Exception;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class PhotoController extends Controller
 {
@@ -35,33 +31,32 @@ class PhotoController extends Controller
 
     public function show()
     {
-
     }
 
     /**
      * @return JsonResponse|string
      */
-    public function store(Request $request, int $id)
+    public function store(Request $request, PhotoAlbum $photoalbum)
     {
-        $album = PhotoAlbum::query()->findOrFail($id);
         if (!$request->hasFile('file')) {
             return response()->json([
                 'message' => 'photo not found in request!',
             ], 404);
         }
 
-        if ($album->published) {
+        if ($photoalbum->published) {
             return response()->json([
                 'message' => 'album already published! Unpublish to add more photos!',
             ], 500);
         }
 
         try {
-            $photo = Photo::create('private', true);
-            $photo->addMedia($request->file('file'))->toMediaCollection('photos');
-
-            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
-
+            $photo = Photo::query()->create(['private' => true]);
+            $media = $photo->addMediaFromRequest('file')->toMediaCollection('photos');
+            return response()->json([
+                'message' => $media,
+            ]);
+//            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
         } catch (Exception $exception) {
             return response()->json([
                 'message' => $exception,
