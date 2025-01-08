@@ -121,7 +121,7 @@
                                         <a class="dropdown-item" href="{{ route("committee::create") }}">Add
                                             Committee</a>
                                         <a class="dropdown-item" href="{{ route("event::create") }}">Add Event</a>
-                                        <a class="dropdown-item" href="{{ route("event::category::admin") }}">Event
+                                        <a class="dropdown-item" href="{{ route("event::categories.create") }}">Event
                                             Categories</a>
                                         <a class="dropdown-item" href="{{ route("feedback::category::admin") }}">Feedback
                                             Categories</a>

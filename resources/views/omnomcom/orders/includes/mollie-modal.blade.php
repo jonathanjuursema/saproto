@@ -12,7 +12,7 @@
                     @if(count($methods) > 0)
                         @foreach ($methods as $method)
                             {{ $method->description.($loop->last ? "." : ", ") }}
-                      @endforeach
+                        @endforeach
                     @else
                         various payment methods.
                     @endif
@@ -20,7 +20,8 @@
                 @if($use_fees)
                     <p>
                         <strong>Important!</strong> Using this service you will incur a transaction fee on top
-                        of your outstanding balance for some methods. This transaction will appear in your OmNomCom history after payment.
+                        of your outstanding balance for some methods. This transaction will appear in your OmNomCom
+                        history after payment.
                         Hover on a payment method's icon to see the transaction fee.
                     </p>
                 @endif
@@ -30,7 +31,7 @@
                 </p>
             </div>
             <form method="post" action="{{ route('omnomcom::mollie::pay') }}">
-                {!! csrf_field() !!}
+                @csrf
                 @if ($use_fees)
                     <div class="modal-body text-left container">
                         Available payment methods

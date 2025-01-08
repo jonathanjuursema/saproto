@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\PhotoAlbum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<PhotoAlbum>
@@ -14,6 +15,7 @@ class PhotoAlbumFactory extends Factory
 {
     protected $model = PhotoAlbum::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

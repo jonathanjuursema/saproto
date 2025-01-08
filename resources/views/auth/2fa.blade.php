@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route('login::post') }}" autocomplete="off">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="form-group">
             <input type="text" class="form-control" id="code" name="2fa_totp_token"

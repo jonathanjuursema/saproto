@@ -37,6 +37,8 @@ class EventCategory extends Model
 
     protected $table = 'event_categories';
 
+    protected $fillable = ['name', 'icon'];
+
     public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'category_id');
@@ -46,6 +48,6 @@ class EventCategory extends Model
     {
         return Activity::query()->whereHas('event', function ($q) {
             $q->where('category_id', $this->id);
-        })->get()->average('price');
+        })->average('price') ?? 0;
     }
 }

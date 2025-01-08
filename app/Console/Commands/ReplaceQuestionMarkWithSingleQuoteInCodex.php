@@ -26,7 +26,7 @@ class ReplaceQuestionMarkWithSingleQuoteInCodex extends Command
      */
     public function handle(): void
     {
-        //foreach codex song loop through the lyrics and replace all triple question marks with quotes
+        // foreach codex song loop through the lyrics and replace all triple question marks with quotes
         $songs = CodexSong::all();
         foreach ($songs as $song) {
             $song->lyrics = str_replace('???', "'", $song->lyrics);

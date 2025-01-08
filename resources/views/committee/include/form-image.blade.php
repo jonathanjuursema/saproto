@@ -1,7 +1,7 @@
 <form method="post" action="{{ route("committee::image", ["id" => $committee->id]) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 
@@ -15,16 +15,16 @@
 
         @else
 
-        <div class="card-header bg-dark text-white">
-            Set image
-        </div>
+            <div class="card-header bg-dark text-white">
+                Set image
+            </div>
 
         @endif
 
         <div class="card-body">
 
             <div class="custom-file">
-                <input  type="file" class="form-control" id="image" name="image">
+                <input type="file" class="form-control" id="image" name="image">
                 <label class=form-label for="image">Choose file</label>
             </div>
 

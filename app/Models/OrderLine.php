@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Config;
+use Override;
 
 /**
  * App\Models\OrderLine.
@@ -66,6 +67,7 @@ class OrderLine extends Model
 
     protected $guarded = ['id'];
 
+    #[Override]
     protected function casts(): array
     {
         return [

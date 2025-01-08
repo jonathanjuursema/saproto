@@ -196,12 +196,12 @@
                             <div><b>{{rand(10, 20)}}.{{rand(0,100)}}</b></div>
                         </div>
                         <div class="wallstreet-info-item">
-                            <div>EPS (TTM)</div>
-                            <div><b>{{rand(0, 100)}}.{{rand(0,100)}}</b></div>
-                        </div>
-                        <div class="wallstreet-info-item">
                             <div>Forward Divided & Yield</div>
                             <div><b>{{ rand(0, 10) }} </b><span class="text-green">(0.12%)</span></div>
+                        </div>
+                        <div class="wallstreet-info-item">
+                            <div>Chief Technical Officer (CTO)</div>
+                            <i>Ysbrand Burgstede</i>
                         </div>
                     </div>
                 </div>
@@ -219,8 +219,9 @@
                     @foreach($prices as $price)
                         <div id="{{ preg_replace('/[^a-zA-Z0-9]/', '', $price->name) }}"
                              class="swiper-slide card w-25">
-                            <div class="stonks-card card-body event text-start d-flex justify-content-between flex-column {{ $price->image_url ? 'bg-img' : 'no-img'}}"
-                                 style="{{ sprintf('background: center no-repeat url(%s);', $price->img) }} background-size: cover;">
+                            <div
+                                class="stonks-card card-body event text-start d-flex justify-content-between flex-column {{ $price->image_url ? 'bg-img' : 'no-img'}}"
+                                style="{{ sprintf('background: center no-repeat url(%s);', $price->img) }} background-size: cover;">
 
                                 {{-- Title --}}
                                 <div class="fs-4">
@@ -235,7 +236,7 @@
 
                                     {{-- Change --}}
                                     <div id="diff"
-                                         class="fs-5 {{ $price->diff < 0 ? 'text-green' : 'text-danger' }}">
+                                         class="fs-5 {{ $price->diff < 0 ? 'text-danger' : 'text-green' }}">
                                         {{sprintf("%s %.2f%%", $price->diff < 0 ? "▼" : "▲", $price->diff)}}
                                     </div>
                                 </div>
@@ -257,124 +258,122 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"
             nonce='{{ csp_nonce() }}'></script>
+
+    @vite('resources/assets/js/echo.js')
+
     <script type='text/javascript' nonce='{{ csp_nonce() }}'>
-        const swiperOptions = {
-            loop: true,
-            observer: true,
-            autoplay: {
-                delay: 1,
-                disableOnInteraction: false,
-            },
-            slidesPerView: 'auto',
-            speed: 5000,
-        };
-
-        const swiper = new Swiper("#swiper-container", swiperOptions);
-
-        function updateCards(product, swiperInstance) {
-            let cards = swiperInstance.el.querySelectorAll(`#${product.name.replace(/[^a-zA-Z0-9]+/g, "")}`);
-            if (cards.length > 0) {
-                cards.forEach((card) => {
-                    card.querySelector("#price span").innerText = product.price.toFixed(2);
-                    card.querySelector("#diff").innerText = `${product.diff < 0 ? "▼" : "▲"} ${product.diff.toFixed(2)}%`;
-                    card.querySelector("#diff").className.replace(product.diff < 0 ? "text-danger" : "text-green", product.diff < 0 ? "text-green" : "text-danger");
-                })
-            } else {
-                //a new product has been added, reload the page
-                window.location.reload(true);
-            }
-        }
-
-        const handledEvents = [];
-
-        function updatePrices() {
-            get('{{route('api::wallstreet::updated_prices', ['id' => $activeDrink->id])}}').then((response) => {
-                    const lossDiv = document.getElementById("current_loss");
-                    lossDiv.innerHTML = "€ " + response.loss.toFixed(2);
-                    response.products.forEach((product) => {
-                        updateCards(product, swiper)
-                    })
-
-                    response.events.forEach((event) => {
-                        if (!handledEvents.includes(event.pivot.id)) {
-                            showEvent(event);
-                            handledEvents.push(event.pivot.id);
-                        }
-                    })
-                }
-            )
-        }
-
-        function showEvent(event) {
-            var a = new Audio("{{$sound_path}}");
-            a.play().catch(() => {
-                confirm("Click somewhere within the document for the sound to play!")
-            });
-            modalTitle = document.getElementById('modal-title');
-            modalBody = document.getElementById('modal-body');
-            modalBody.style.backgroundImage = `url(${event.img})`;
-            modalBody.style.backgroundSize = 'cover';
-            modalBody.style.backgroundPosition = 'center';
-            modalTitle.innerText = event.name;
-            modalBody.innerHTML = event.description;
-            window.modals.eventModal.show()
-            setTimeout(() => {
-                window.modals.eventModal.hide()
-            }, 10000)
-        }
-
-
-        const ctx = document.getElementById('wallstreet-graph-canvas');
-        var chart = null;
-
-
-        function createDataSets(products) {
-            let myData = {
-                datasets: [],
-            };
-            products.forEach((product) => {
-                let prices = [];
-                product.wallstreet_prices.forEach((price) => {
-                    prices.push({
-                        x: Date.parse(price.created_at),
-                        y: price.price
-                    })
-                });
-                myData.datasets.push({label: product.name, data: prices})
-            });
-            return myData;
-        }
-
-        function updateChart() {
-            get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
-                chart.data = createDataSets(products);
-                chart.update('none');
-            })
-        }
-
         window.addEventListener('load', _ => {
-            setInterval(updatePrices, 5000);
+            const swiper = new Swiper('#swiper-container', {
+                loop: true,
+                observer: true,
+                autoplay: {
+                    delay: 1,
+                    disableOnInteraction: false,
+                },
+                slidesPerView: 'auto',
+                speed: 5000,
+            });
+
+            const ctx = document.getElementById('wallstreet-graph-canvas');
+
             get(`{{route('api::wallstreet::all_prices', ['id'=>$activeDrink->id])}}`).then((products) => {
 
-                chart = new Chart(ctx, {
-                    type: "line",
+                var chart = new Chart(ctx, {
+                    type: 'line',
                     options: {
                         maintainAspectRatio: false,
                         spanGaps: true,
                         scales: {
                             x: {
-                                type: "time",
-                                parsing: false
-                            }
+                                type: 'time',
+                                parsing: false,
+                            },
                         },
                         responsive: true,
                     },
-                    data: createDataSets(products),
+                    data: {
+                        datasets: products.map((product) => {
+                            return {
+                                label: product.name,
+                                data: product.wallstreet_prices.map((price) => {
+                                    return {
+                                        x: Date.parse(price.created_at),
+                                        y: price.price,
+                                    };
+                                }),
+                            };
+                        }),
+                    },
                 });
-            });
 
-            updateChart();
-            setInterval(updateChart, 30000);
-        })
+                let id = {{$activeDrink->id}};
+
+                const modalTitle = document.getElementById('modal-title');
+                const modalBody = document.getElementById('modal-body');
+                const a = new Audio("{{$sound_path}}");
+                //listen to a new wallstreet event
+                window.Echo.private(`wallstreet-prices.${id}`)
+                    .listen('NewWallstreetEvent', (e) => {
+                        const event = e.data;
+                        a.play().catch(() => {
+                            confirm('Click somewhere within the document for the sound to play!');
+                        });
+                        if (event.image) {
+                            modalBody.style.backgroundImage = `url(${event.img})`;
+                            modalBody.style.backgroundSize = 'cover';
+                            modalBody.style.backgroundPosition = 'center';
+                        }
+                        modalTitle.innerText = event.name;
+                        modalBody.innerHTML = event.description;
+                        window.modals.eventModal.show();
+                        setTimeout(() => {
+                            window.modals.eventModal.hide();
+                        }, 10000);
+                    });
+
+                const lossDiv = document.getElementById('current_loss');
+                Echo.private(`wallstreet-prices.${id}`)
+                    .listen('NewWallstreetLossCalculation', (e) => {
+                        lossDiv.innerHTML = '€ ' + e.data.toFixed(2);
+                    });
+
+                //listen to a new wallstreet price
+                Echo.private(`wallstreet-prices.${id}`)
+                    .listen('NewWallstreetPrice', (e) => {
+                        let cards = swiper.el.querySelectorAll(`#${e.data.product.name.replace(/[^a-zA-Z0-9]+/g, '')}`);
+                        if (cards.length > 0) {
+                            cards.forEach((card) => {
+                                card.querySelector('#price span').innerText = e.data.price.toFixed(2);
+                                card.querySelector('#diff').innerText = `${e.data.diff < 0 ? '▼' : '▲'} ${e.data.diff.toFixed(2)}%`;
+                                if (e.data.diff < 0) {
+                                    card.querySelector('#diff').classList.add('text-danger');
+                                    card.querySelector('#diff').classList.remove('text-green');
+                                } else {
+                                    card.querySelector('#diff').classList.add('text-green');
+                                    card.querySelector('#diff').classList.remove('text-danger');
+                                }
+                            });
+                        }
+
+                        const dataset = chart.data.datasets.find((dataset) => dataset.label === e.data.product.name);
+                        if (dataset) {
+                            dataset.data.push({
+                                x: Date.parse(e.data.created_at),
+                                y: e.data.price,
+                            });
+                        } else {
+                            //if a new product is added the dataset is created
+                            chart.data.datasets.push({
+                                label: e.data.product.name,
+                                data: [{
+                                    x: Date.parse(e.data.created_at),
+                                    y: e.data.price,
+                                }],
+                            });
+                        }
+                        chart.update('none');
+                    });
+            });
+        });
     </script>
 @endpush

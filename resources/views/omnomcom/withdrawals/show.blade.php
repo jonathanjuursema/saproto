@@ -18,7 +18,7 @@
 
             <form method="post" action="{{ route('omnomcom::withdrawal::edit', ['id' => $withdrawal->id]) }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

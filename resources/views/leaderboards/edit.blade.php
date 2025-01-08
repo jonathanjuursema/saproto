@@ -14,7 +14,7 @@
                   action="{{ ($leaderboard == null ? route("leaderboards::store") : route("leaderboards::update", ['id' => $leaderboard->id])) }}"
                   enctype="multipart/form-data">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card md-3">
 
@@ -97,7 +97,7 @@
                       action="{{ route("leaderboards::entries::create")}}"
                       enctype="multipart/form-data">
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <input type="hidden" name="leaderboard_id" value="{{ $leaderboard->id }}">
 
@@ -167,7 +167,7 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="form-group autocomplete">
-                                            <input class="form-control user-search" name="user_id" required />
+                                            <input class="form-control user-search" name="user_id" required/>
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -209,7 +209,7 @@
 
 
         function updatePoints(id, points) {
-            post('{{ route('leaderboards::entries::update') }}', { id: id, points: points })
+            post('{{ route('leaderboards::entries::update') }}', {id: id, points: points})
                 .catch(err => {
                     console.error(err);
                     window.alert('Something went wrong while updating the points. Please try again.');

@@ -80,6 +80,8 @@
 
 @include('website.assets.javascripts')
 
+@vite('resources/assets/js/echo.js')
+
 @stack("javascript")
 
 <script type='text/javascript' nonce='{{ csp_nonce() }}'>
@@ -215,7 +217,7 @@
         //Initialize WallstreetDrink if active
 
         if ("{{$store_slug}}" === 'tipcie') {
-            initializeWallstreetDrink();
+            await initializeWallstreetDrink();
         }
     }
 
@@ -223,10 +225,40 @@
         await get(config.routes.api_wallstreet_active)
             .then(data => {
                 if (data) {
-                    setInterval(updateWallstreetPricing, 5000, data.id);
-                    console.log('Wallstreet drink is active');
+                    console.log(data)
+                    //listen to a new wallstreet price and update the prices accordingly
+                    Echo.private(`wallstreet-prices.${data.id}`)
+                        .listen('NewWallstreetPrice', (e) => {
+                            console.log(e);
+                            updatePrice(e.product.id, e.data.price);
+                        });
+
+                    //get the current prices on the first load
+                    get(`{{route('api::wallstreet::updated_prices', ['id'=>'_id'])}}`.replace('_id', data.id)).then((response) => {
+                        console.log("updating prices!", response)
+                        if (typeof response.products === 'undefined' || response.products.length === 0) {
+                            console.log('no products associated with the active drink!');
+                            return;
+                        }
+
+                        response.products.forEach((product) => {
+                            updatePrice(product.id, product.price)
+                        });
+
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+
+                    console.log("Wallstreet drink is active:", data.id)
                 }
-            });
+            })
+
+        function updatePrice(id, price) {
+            price[id] = price
+            document.querySelectorAll(`[data-id="${id}"]`).forEach((el) => {
+                el.querySelector('.product-price').innerHTML = "€".concat(price.toFixed(2))
+            })
+        }
     }
 
     function anythingInCart() {
@@ -388,26 +420,6 @@
             });
             lists[i].setAttribute('data-stock', count.toString());
         }
-    }
-
-    async function updateWallstreetPricing(id) {
-        await get(`{{route('api::wallstreet::updated_prices', ['id'=>'_id'])}}`.replace('_id', id)).then((response) => {
-            console.log('updating prices!');
-            if (typeof response.products === 'undefined' || response.products.length === 0) {
-                console.log('no products associated with the active drink!');
-                return;
-            }
-
-            response.products.forEach((product) => {
-                    price[product.id] = product.price;
-                    document.querySelectorAll(`[data-id="${product.id}"]`).forEach((el) => {
-                        el.querySelector('.product-price').innerHTML = '€'.concat(product.price.toFixed(2));
-                    });
-                },
-            );
-        }).catch((error) => {
-            console.log(error);
-        });
     }
 
     function establishNfcConnection() {

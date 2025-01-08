@@ -81,7 +81,7 @@
 
                             @endif
 
-                            {!! csrf_field() !!}
+                            @csrf
                             <div class="form-group">
                                 <label for="iban">IBAN Bank Account Number</label>
                                 <input type="text" class="form-control text-uppercase" id="iban" name="iban"
@@ -172,7 +172,7 @@
         iban.addEventListener('keyup', _ => {
             iban.value = iban.value.replace(' ', '');
             if (iban.value.length >= 15) {
-                get('{{ route('api::verify_iban') }}', { 'iban': iban.value })
+                get('{{ route('api::verify_iban') }}', {'iban': iban.value})
                     .then(data => update_iban_form(data))
                     .catch(error => {
                         console.error(error);
@@ -197,7 +197,7 @@
         submit.addEventListener('click', _ => {
             submit.disabled = true;
             if (bic.value.length >= 8) {
-                get('{{ route('api::verify_iban') }}', { 'iban': iban.value, 'bic': bic.value })
+                get('{{ route('api::verify_iban') }}', {'iban': iban.value, 'bic': bic.value})
                     .then(data => {
                         if (data.status === true) {
                             //bic.disabled = false

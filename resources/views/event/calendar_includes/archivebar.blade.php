@@ -138,7 +138,7 @@
                     <form method="post"
                           action="{{ route('event::set_reminder') }}">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <div class="row">
 

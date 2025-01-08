@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * @extends Factory<Page>
@@ -16,6 +17,7 @@ class PageFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition()
     {
         return [

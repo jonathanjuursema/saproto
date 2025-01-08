@@ -1,6 +1,6 @@
 <form method="post" enctype="multipart/form-data" action="{{ route("user::pic::update") }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

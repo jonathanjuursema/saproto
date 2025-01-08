@@ -38,8 +38,9 @@
                                     @include('components.modals.confirm-modal', [
                                             'action' => route('headerimages.destroy', ['headerimage' => $image]),
                                             'method'=>'DELETE',
-                                            'classes' => 'fa fa-trash-alt text-danger',
-                                            'text' => 'Delete',
+                                            'confirm' => 'Delete the headerimage',
+                                            'classes' => 'fa fa-trash text-danger',
+                                            'text' => '',
                                             'message' => "Are you sure you want to delete the headerimage?",
                                         ])
                                 </td>

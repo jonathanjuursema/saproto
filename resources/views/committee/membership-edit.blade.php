@@ -18,7 +18,7 @@
                   action="{{ route('committee::membership::update', ["id" => $membership->id]) }}"
                   method="post">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

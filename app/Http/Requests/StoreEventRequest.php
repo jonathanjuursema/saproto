@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class StoreEventRequest extends FormRequest
 {
@@ -30,7 +31,8 @@ class StoreEventRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    #[Override]
+    public function messages(): array
     {
         return [
             'gte' => 'The Event cannot end before it begins!', ];

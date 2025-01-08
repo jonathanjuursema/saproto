@@ -10,7 +10,7 @@
           action="{{ ($account == null ? route("omnomcom::accounts::store") : route("omnomcom::accounts::update", ['id' => $account->id])) }}"
           enctype="multipart/form-data">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="row justify-content-center">
 

@@ -27,7 +27,7 @@
 
         @endif
 
-        {!! csrf_field() !!}
+        @csrf
 
         <p>
             Create an account using the following details:
@@ -56,20 +56,20 @@
 
         <hr>
 
-            <p>
-                <a href="https://wiki.proto.utwente.nl/ict/privacy/start?do=export_pdf"
-                   target="_blank" class="btn btn-outline-secondary btn-block">
-                    Privacy policy
-                </a>
-            </p>
+        <p>
+            <a href="https://wiki.proto.utwente.nl/ict/privacy/start?do=export_pdf"
+               target="_blank" class="btn btn-outline-secondary btn-block">
+                Privacy policy
+            </a>
+        </p>
 
-            @include('components.forms.checkbox', [
-                'name' => 'privacy_policy_acceptance',
-                'label' => 'I have read and acknowledge the privacy policy.',
-                'required' => true
-            ])
+        @include('components.forms.checkbox', [
+            'name' => 'privacy_policy_acceptance',
+            'label' => 'I have read and acknowledge the privacy policy.',
+            'required' => true
+        ])
 
-            <hr>
+        <hr>
 
         <button type="submit" class="btn btn-success float-end">Create my account</button>
 

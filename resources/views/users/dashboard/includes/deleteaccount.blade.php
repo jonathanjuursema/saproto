@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        {!! csrf_field() !!}
+                        @csrf
                         <button type="button" class="btn btn-default" data-bs-dismiss="modal">
                             Keep my account.
                         </button>

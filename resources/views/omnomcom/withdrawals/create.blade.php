@@ -12,7 +12,7 @@
 
             <form method="post" action="{{ route("omnomcom::withdrawal::store") }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

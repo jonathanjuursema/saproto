@@ -7,6 +7,7 @@ use App\Models\OrderLine;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Config;
+use Override;
 
 /**
  * @extends Factory<OrderLine>
@@ -18,6 +19,7 @@ class OrderLineFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         /** @var Product $product */

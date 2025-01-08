@@ -1,7 +1,7 @@
 <div class="modal fade" id="addMembership" tabindex="-1" role="dialog" aria-labelledby="addMembershipLabel">
     <div class="modal-dialog" role="document">
         <form action="{{ route("user::member::create", ['id'=>$user->id]) }}" method="post">
-            {!! csrf_field() !!}
+            @csrf
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Make member</h5>

@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route("login::password::sync") }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <p>
             Please enter your password below.

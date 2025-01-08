@@ -22,6 +22,7 @@ use App\Http\Controllers\DmxFixtureController;
 use App\Http\Controllers\DmxOverrrideController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\EmailListController;
+use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FileController;
@@ -112,7 +113,7 @@ Route::middleware('forcedomain')->group(function () {
 
     Route::resource('headerimages', HeaderImageController::class)->only(['index', 'create', 'store', 'destroy'])->middleware(['auth', 'permission:header-image']);
 
-    /* Routes for the search function. All public*/
+    /* Routes for the search function. All public */
     Route::controller(SearchController::class)->name('search::')->group(function () {
         Route::get('search', 'search')->name('get');
         Route::post('search', 'search')->name('post');
@@ -470,7 +471,7 @@ Route::middleware('forcedomain')->group(function () {
         });
 
         Route::prefix('events')->name('events::')->group(function () {
-            Route::get('', 'eventIndex')->name('index');
+            Route::get('', 'events')->name('index');
             Route::post('store', 'addEvent')->name('store');
             Route::get('edit/{id}', 'editEvent')->name('edit');
             Route::post('update/{id}', 'updateEvent')->name('update');
@@ -487,6 +488,7 @@ Route::middleware('forcedomain')->group(function () {
      * Important: routes in this block always use event_id or a relevant other ID. activity_id is in principle never used.
      */
     Route::prefix('events')->name('event::')->group(function () {
+
         Route::controller(EventController::class)->group(function () {
 
             // Financials related to events (Finadmin only)
@@ -497,15 +499,6 @@ Route::middleware('forcedomain')->group(function () {
 
             // Event related admin (Board only)
             Route::middleware(['permission:board'])->group(function () {
-                // Categories
-                Route::prefix('categories')->name('category::')->group(function () {
-                    Route::get('index', 'categoryAdmin')->name('admin');
-                    Route::post('store', 'categoryStore')->name('store');
-                    Route::get('edit/{id}', 'categoryEdit')->name('edit');
-                    Route::post('update/{id}', 'categoryUpdate')->name('update');
-                    Route::get('delete/{id}', 'categoryDestroy')->name('delete');
-                });
-
                 // Events admin
                 Route::get('create', 'create')->name('create');
                 Route::post('store', 'store')->name('store');
@@ -534,6 +527,11 @@ Route::middleware('forcedomain')->group(function () {
             Route::get('{id}/login', 'forceLogin')->middleware(['auth'])->name('login');
             // Show event
             Route::get('{id}', 'show')->name('show');
+        });
+
+        // Event categories (Board only)
+        Route::controller(EventCategoryController::class)->middleware(['permission:board'])->group(function () {
+            Route::resource('categories', EventCategoryController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         });
 
         /* --- Related to presence & participation --- */
@@ -924,7 +922,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('{id}/revoke/{user}', 'revoke')->name('revoke');
     });
 
-    /* Routes related to the password manager. (Access restricted in controller)*/
+    /* Routes related to the password manager. (Access restricted in controller) */
     Route::controller(PasswordController::class)->prefix('passwordstore')->middleware(['auth'])->name('passwordstore::')->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('auth', 'getAuth')->name('auth');
@@ -952,7 +950,7 @@ Route::middleware('forcedomain')->group(function () {
         Route::get('caniworkinthesmartxp', 'canWork');
     });
 
-    /* The routes for Protube. (Public)*/
+    /* The routes for Protube. (Public) */
     Route::controller(ProtubeController::class)->prefix('protube')->name('protube::')->group(function () {
         Route::get('dashboard', 'dashboard')->middleware(['auth'])->name('dashboard');
         Route::get('togglehistory', 'toggleHistory')->middleware(['auth'])->name('togglehistory');
@@ -1013,7 +1011,7 @@ Route::middleware('forcedomain')->group(function () {
         });
     });
 
-    /* Routes related to the Short URL Service*/
+    /* Routes related to the Short URL Service */
     Route::get('go/{short?}', [ShortUrlController::class, 'go'])->name('short_urls.go');
     Route::get('short_urls/qr_code/{id}', [ShortUrlController::class, 'qrCode'])->name('short_urls.qr_code')->middleware(['auth', 'permission:board']);
     Route::resource('short_urls', ShortUrlController::class)->except('show')->middleware(['auth', 'permission:board']);

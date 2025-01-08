@@ -102,7 +102,7 @@
 
                 </div>
                 <form method="POST" action="{{ route('user::bank::delete') }}">
-                    {!! csrf_field() !!}
+                    @csrf
                     <div class="modal-footer">
 
                         <div class="btn-group btn-block">

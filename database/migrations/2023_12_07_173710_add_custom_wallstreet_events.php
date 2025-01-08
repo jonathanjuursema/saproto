@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //CREATE NEW TABLE CALLED wallstreet_drink_events with id, name and percentage
+        // CREATE NEW TABLE CALLED wallstreet_drink_events with id, name and percentage
         Schema::create('wallstreet_drink_events', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        //create a new table called wallstreet_drink_event_product with id, wallstreet_drink_event_id and product_id
+        // create a new table called wallstreet_drink_event_product with id, wallstreet_drink_event_id and product_id
         Schema::create('wallstreet_drink_event_product', function (Blueprint $table) {
             $table->id();
             $table->integer('wallstreet_drink_event_id')->unsigned();
@@ -46,7 +46,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //revert up
+        // revert up
         Schema::dropIfExists('wallstreet_drink_events');
         Schema::dropIfExists('wallstreet_drink_event_product');
         Schema::dropIfExists('wallstreet_drink_event');

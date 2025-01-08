@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * Codex song category model.
@@ -26,6 +27,7 @@ class CodexSongCategory extends Model
         return $this->hasMany(CodexSong::class, 'category_id');
     }
 
+    #[Override]
     protected static function booted()
     {
         static::deleting(static function ($category) {

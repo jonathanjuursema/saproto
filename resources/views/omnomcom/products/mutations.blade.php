@@ -15,7 +15,7 @@
                 </div>
                 <div class="card-body">
                     <form id="mut_filter_form" method="get" action="{{route('omnomcom::products::mutations')}}">
-                        {!! csrf_field() !!}
+                        @csrf
 
 
                         <div class="row">
@@ -40,11 +40,11 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                    @include('components.forms.datetimepicker', [
-                                        'name' => 'after',
-                                        'label' => 'Show after:',
-                                        'placeholder' => request()->has('after') ? strtotime(request()->input('after')) : 563886000
-                                    ])
+                                @include('components.forms.datetimepicker', [
+                                    'name' => 'after',
+                                    'label' => 'Show after:',
+                                    'placeholder' => request()->has('after') ? strtotime(request()->input('after')) : 563886000
+                                ])
                             </div>
 
                             <div class="col-md-12 mb-3">
@@ -69,7 +69,8 @@
                                 Apply
                             </button>
 
-                            <button type="submit" formaction="{{route("omnomcom::products::mutations_export")}}" class="btn btn-success mb-3">
+                            <button type="submit" formaction="{{route("omnomcom::products::mutations_export")}}"
+                                    class="btn btn-success mb-3">
                                 Export as CSV
                             </button>
                         </div>
@@ -89,29 +90,31 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
-                                    <tr class="bg-dark text-white">
-                                        <td>Product</td>
-                                        <td>Before</td>
-                                        <td>After</td>
-                                        <td>Delta</td>
-                                        <td>User</td>
-                                        <td>Made using bulk update</td>
-                                        <td>Creation time</td>
-                                    </tr>
+                                <tr class="bg-dark text-white">
+                                    <td>Product</td>
+                                    <td>Before</td>
+                                    <td>After</td>
+                                    <td>Delta</td>
+                                    <td>User</td>
+                                    <td>Made using bulk update</td>
+                                    <td>Creation time</td>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($mutations as $mutation)
-                                        <tr>
-                                            <td>{{$mutation->product->name}}</td>
-                                            <td>{{$mutation->before}}</td>
-                                            <td>{{$mutation->after}}</td>
-                                            <td class="text-{{$mutation->delta() > 0 ? 'white': 'danger'}}">
-                                                {{$mutation->delta()}}</td>
-                                            <td><a href="{{ route('user::profile', ['id' => $mutation->user->getPublicId()])  }}">{{$mutation->user->name}}</a></td>
-                                            <td>{{$mutation->is_bulk ? "Yes" : "No"}}</td>
-                                            <td>{{$mutation->date()}}</td>
-                                        </tr>
-                                    @endforeach
+                                @foreach($mutations as $mutation)
+                                    <tr>
+                                        <td>{{$mutation->product->name}}</td>
+                                        <td>{{$mutation->before}}</td>
+                                        <td>{{$mutation->after}}</td>
+                                        <td class="text-{{$mutation->delta() > 0 ? 'white': 'danger'}}">
+                                            {{$mutation->delta()}}</td>
+                                        <td>
+                                            <a href="{{ route('user::profile', ['id' => $mutation->user->getPublicId()])  }}">{{$mutation->user->name}}</a>
+                                        </td>
+                                        <td>{{$mutation->is_bulk ? "Yes" : "No"}}</td>
+                                        <td>{{$mutation->date()}}</td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -128,6 +131,5 @@
             </div>
         </div>
     </div>
-
 
 @endsection

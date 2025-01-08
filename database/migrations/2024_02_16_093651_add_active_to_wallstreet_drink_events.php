@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('wallstreet_drink_events', function (Blueprint $table) {
-            //add a active boolean to the wallstreet events
+            // add a active boolean to the wallstreet events
             $table->boolean('active')->default(true);
         });
     }

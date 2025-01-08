@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Override;
 
 /**
  * Storage Entry Model.
@@ -180,6 +181,7 @@ class StorageEntry extends Model
         return $algo.': '.hash_file($algo, $this->generateLocalPath());
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();

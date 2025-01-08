@@ -81,7 +81,7 @@ class SearchController extends Controller
 
         $events = collect();
         if ($presearch_event_ids) {
-            //load the events with all the correct data to show in the event block
+            // load the events with all the correct data to show in the event block
             Event::getEventBlockQuery()->whereIn('id', $presearch_event_ids)->get()->each(static function ($event) use ($events) {
                 if ($event->mayViewEvent(Auth::user())) {
                     $events->push($event);
@@ -136,10 +136,10 @@ class SearchController extends Controller
         }
 
         $terms = explode(' ', $query);
-        //make the search match all the terms, and is an active account
+        // make the search match all the terms, and is an active account
         $search = '(&(extensionattribute6=actief)';
         foreach ($terms as $term) {
-            //or all the individual fields
+            // or all the individual fields
             $search .= "(|(sn=*{$term}*)(middlename=*{$term}*)(givenName=*{$term}*)(telephoneNumber=*{$term}*)(otherTelephone=*{$term}*)(physicalDeliveryOfficeName=*{$term}*)";
             if (Auth::user()->can('board')) {
                 $search .= "(userPrincipalName={$term}@utwente.nl)";
@@ -148,11 +148,11 @@ class SearchController extends Controller
             $search .= ')';
         }
 
-        //close the search
+        // close the search
         $search .= ')';
 
         $result = LdapController::searchUtwente($search);
-        //check that we have a valid response
+        // check that we have a valid response
         if (isset($result->error)) {
             Session::flash('flash_message', 'Something went wrong while searching the UT LDAP server.'.($result->error ? ' '.$result->error : ''));
 

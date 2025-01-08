@@ -119,7 +119,7 @@ class OtherDataSeeder extends Seeder
         $n = 10;
         $output->task("creating {$n} pages", fn () => Page::factory()->count($n)->create());
 
-        //create quotes and good ideas
+        // create quotes and good ideas
         $n = 100;
         $output->task("creating {$n} Good Ideas", fn () => Feedback::factory()->state(['feedback_category_id' => 1])->count($n)->create());
         $output->task("creating {$n} quotes", fn () => Feedback::factory()->state(['feedback_category_id' => 2])->count($n)->create());

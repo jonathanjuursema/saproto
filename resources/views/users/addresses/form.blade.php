@@ -1,7 +1,7 @@
 <form class="form-horizontal" method="POST"
       action="{{ $action == 'add' ? route('user::address::store', ['id' => $user->id]) : route('user::address::update', ['id' => $user->id]) }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <p class="text-center">
         Address<br>

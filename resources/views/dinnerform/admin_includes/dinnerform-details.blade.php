@@ -2,7 +2,7 @@
       action="{{ ( ! isset($dinnerformCurrent) ? route("dinnerform::store") : route("dinnerform::update", ['id' => $dinnerformCurrent->id])) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

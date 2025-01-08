@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Passport\Client;
 use Laravel\Passport\HasApiTokens;
+use Override;
 use Solitweb\DirectAdmin\DirectAdmin;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -562,6 +563,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return WelcomeMessage::query()->where('user_id', $this->id)->first()?->message;
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

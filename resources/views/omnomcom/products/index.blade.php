@@ -47,7 +47,7 @@
 
             <form method="post" action="{{ route("omnomcom::products::bulkupdate") }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

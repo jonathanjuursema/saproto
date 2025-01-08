@@ -34,12 +34,12 @@
                         class="far fa-face-grin-squint"></i>
                 </i> <i class="d-none" id="alfred-away" style="font-size: 120px;"><i
                         class="far fa-grimace"></i>
-                </i> <i class="" id="alfred-unknown" style="font-size: 120px;"><i
+                </i> <i class="d-none" id="alfred-unknown" style="font-size: 120px;"><i
                         class="fas fa-circle-question"></i>
                 </i>
             </div>
             <a href="//{{ config('app-proto.primary-domain') }}{{ route('homepage', [], false) }}">
-                <img src="{{ asset('images/logo/inverse.png') }}" alt="Proto logo" width="472px" height="120px">
+                <img src="{{ asset('images/logo/inverse.png') }}" alt="Proto logo" width="472px">
             </a>
 
         </div>
@@ -63,83 +63,91 @@
 @endpush
 
 @push('javascript')
+
+    @vite('resources/assets/js/echo.js')
+
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-        const status = document.getElementById('alfred-status');
+        const statusElement = document.getElementById('alfred-status');
         const text = document.getElementById('alfred-text');
         const time = document.getElementById('alfred-actualtime');
-        let oldStatus = null;
         const statuses = {
             there: {
                 text: 'Alfred is there!',
                 htmlElement: document.getElementById('alfred-there'),
-                color: 'bg-success',
+                color: 'bg-success'
             },
             jur: {
                 text: 'Jur is here to help you! <br> <div style="font-size: 20px;">You might have to check Flex Office though...</div>',
                 htmlElement: document.getElementById('jur-there'),
-                color: 'bg-success',
+                color: 'bg-success'
             },
             unknown: {
                 text: 'We couldn\'t find Alfred...',
                 htmlElement: document.getElementById('alfred-unknown'),
-                color: 'bg-warning',
+                color: 'bg-warning'
+            },
+            text: {
+                text: 'We couldn\'t find Alfred...',
+                htmlElement: document.getElementById('alfred-unknown'),
+                color: 'bg-warning'
             },
             away: {
                 text: 'Nope, Alfred will be back in a bit.',
                 htmlElement: document.getElementById('alfred-away'),
-                color: 'bg-danger',
+                color: 'bg-danger'
             },
             error: {
                 text: 'We couldn\'t find Alfred...',
                 htmlElement: document.getElementById('alfred-error'),
-                color: 'bg-warning',
-            },
+                color: 'bg-warning'
+            }
         };
 
         window.addEventListener('load', _ => {
-            lookForAlfred();
-            setInterval(lookForAlfred, 10000);
+            updateStatus({
+                status: "{{$status}}",
+                text: "{{$text}}",
+                unix: "{{$unix}}"
+            });
+
+            window.Echo.channel(`isalfredthere`)
+                .listen('IsAlfredThereEvent', (status) => {
+                    updateStatus(status);
+                })
+                .error((error) => {
+                    console.error(error);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 10000);
+                });
         });
 
-        function lookForAlfred() {
-            get("{{route('api::isalfredthere')}}")
-                .then(data => {
-                    //set the extra text Alfred can set himself
-                    if (data.text.length > 0) {
-                        text.innerHTML = '"'.concat(data.text, '"');
-                    } else {
-                        text.innerHTML = '';
-                    }
+        const updateStatus = (status) => {
+            if (status.text?.length > 0) {
+                text.innerHTML = '"'.concat(status.text ?? '', '"');
+            } else {
+                text.innerHTML = '';
+            }
 
-                    // keep track if the status has changed, if not do nothing
-                    if (oldStatus === data.status) {
-                        return;
-                    }
-                    oldStatus = data.status;
+            // hide all smileys
+            Object.keys(statuses).forEach((key) => {
+                statuses[key].htmlElement.classList.add('d-none');
+            });
 
-                    // hide all smileys
-                    Object.keys(statuses).forEach((key) => {
-                        statuses[key].htmlElement.classList.add('d-none');
-                    });
+            // set the new status
+            setNewStatus(statuses[status.status]);
 
-                    // set the new status
-                    setNewStatus(statuses[data.status]);
-
-                    // set the time submessage and start the timer if Alfred is away
-                    if (data.status === 'away') {
-                        time.innerHTML = `That would be ${data.back}.`;
-                        time.classList.remove('d-none');
-                        status.setAttribute('data-countdown-start', data.backunix);
-                        window.timerList.forEach((timer) => {
-                            timer.start();
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    setNewStatus(statuses.error);
+            // set the time submessage and start the timer if Alfred is away
+            if (status.status === 'away') {
+                const date = new window.moment(status.unix);
+                time.innerHTML = `That would be ${date.format('DD-MM-Y HH:mm')}.`;
+                time.classList.remove('d-none');
+                statusElement.setAttribute('data-countdown-start', date.unix());
+                window.timerList.forEach((timer) => {
+                    timer.start();
                 });
-        }
+            }
+        };
 
         const setNewStatus = (newStatus) => {
             // stop all timers
@@ -147,7 +155,7 @@
                 timer.stop();
             });
             // set the big status text
-            status.innerHTML = newStatus.text;
+            statusElement.innerHTML = newStatus.text;
 
             //reveal the correct smiley
             newStatus.htmlElement.classList.remove('d-none');

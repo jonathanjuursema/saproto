@@ -1,6 +1,6 @@
 <form class="form-horizontal" method="post" action="{{ route("user::changemail", ['id'=>$user->id]) }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 
@@ -56,7 +56,7 @@
 
 <form class="form-horizontal" method="post" action="{{ route("user::dashboard::show") }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

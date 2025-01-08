@@ -12,12 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //add an int category_id column to codex_songs
+        // add an int category_id column to codex_songs
         Schema::table('codex_songs', function (Blueprint $table) {
             $table->foreignId('category_id')->after('id');
         });
 
-        //get the rows from the codex_category_song table and insert them into the new category_id column
+        // get the rows from the codex_category_song table and insert them into the new category_id column
         $songs = DB::table('codex_category_song')->get();
         foreach ($songs as $song) {
             DB::table('codex_songs')->where('id', $song->song)->update(['category_id' => $song->category]);
@@ -31,10 +31,10 @@ return new class extends Migration
             $table->dropColumn('text_index');
         });
 
-        //remove the codex_category_song table
+        // remove the codex_category_song table
         Schema::dropIfExists('codex_category_song');
 
-        //remove the codex_codexshuffle table
+        // remove the codex_codexshuffle table
         Schema::dropIfExists('codex_codexshuffle');
 
     }
@@ -44,7 +44,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //reverse the changes
+        // reverse the changes
         Schema::create('codex_category_song', function (Blueprint $table) {
             $table->integer('song');
             $table->integer('category');

@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route('passwordstore::postAuth') }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <input type="password" class="form-control mb-3" id="password" name="password"
                placeholder="Password">

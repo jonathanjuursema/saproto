@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<Activity>
@@ -14,6 +15,7 @@ class ActivityFactory extends Factory
 {
     protected $model = Activity::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

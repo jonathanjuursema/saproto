@@ -20,7 +20,7 @@ return new class extends Migration
         }
 
         Schema::table('events', function (Blueprint $table) {
-            //add a new column that counts the amount of users who signed up called users_count for the event_block number
+            // add a new column that counts the amount of users who signed up called users_count for the event_block number
             $table->unsignedInteger('unique_users_count')->after('publication')->default(0);
         });
 
@@ -30,18 +30,18 @@ return new class extends Migration
             }
         });
 
-        //add index to activities_users
+        // add index to activities_users
         Schema::table('activities_users', function (Blueprint $table) {
             $table->index('user_id');
             $table->index('activity_id');
         });
 
-        //add index to activities.event_id
+        // add index to activities.event_id
         Schema::table('activities', function (Blueprint $table) {
             $table->index('event_id');
         });
 
-        //add index to events start and end
+        // add index to events start and end
         Schema::table('events', function (Blueprint $table) {
             $table->index('start');
             $table->index('end');

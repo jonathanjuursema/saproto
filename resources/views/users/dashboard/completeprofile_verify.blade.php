@@ -20,7 +20,7 @@
 
                         @include('users.registerwizard_macro')
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <input type="hidden" name="verified" value="true">
 

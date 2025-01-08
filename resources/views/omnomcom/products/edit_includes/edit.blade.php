@@ -8,7 +8,7 @@
             @yield('page-title')
         </div>
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="card-body">
 

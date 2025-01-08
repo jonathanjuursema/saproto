@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\ActivityParticipation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<ActivityParticipation>
@@ -17,6 +18,7 @@ class ActivityParticipationFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         return [

@@ -18,7 +18,7 @@
 
                     <div class="card-body">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <p>
                             If you confirm below, the following information will be deleted:

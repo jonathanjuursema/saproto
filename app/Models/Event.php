@@ -17,6 +17,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Override;
 
 /**
  * Event Model.
@@ -96,6 +97,7 @@ class Event extends Model
 
     protected $appends = ['is_future', 'formatted_date'];
 
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -127,17 +129,17 @@ class Event extends Model
 
     public function mayViewEvent(?User $user): bool
     {
-        //board may always view events
+        // board may always view events
         if ($user?->can('board')) {
             return true;
         }
 
-        //only show secret events if the user is participating, helping or organising
+        // only show secret events if the user is participating, helping or organising
         if ($this->secret && ($user instanceof User && $this->activity && ($this->activity->isParticipating($user) || $this->activity->isHelping($user) || $this->activity->isOrganising($user)))) {
             return true;
         }
 
-        //show non-secret events only when published
+        // show non-secret events only when published
         return ! $this->secret && (! $this->publication || $this->isPublished());
     }
 
@@ -322,7 +324,7 @@ class Event extends Model
         return $users->sort(static fn ($a, $b): int => strcmp($a->name, $b->name));
     }
 
-    //recounts the unique users on an event to make the fetching of the event_block way faster
+    // recounts the unique users on an event to make the fetching of the event_block way faster
     public function updateUniqueUsersCount(): void
     {
         $allUserIds = collect();
@@ -366,6 +368,7 @@ class Event extends Model
         ];
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();

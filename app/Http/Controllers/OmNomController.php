@@ -69,7 +69,7 @@ class OmNomController extends Controller
     public function stock(Request $request)
     {
         $stores = Config::array('omnomcom.stores');
-        if (! $stores[$request->store]) {
+        if (! array_key_exists($request->store, $stores)) {
             abort(404);
         }
 
@@ -224,7 +224,7 @@ class OmNomController extends Controller
                 }
 
                 $isDuringRestrictedHours = date('Hi') <= str_replace(':', '', Config::string('omnomcom.alcohol-start')) && date('Hi') >= str_replace(':', '', Config::string('omnomcom.alcohol-end'));
-                if ($product->is_alcoholic && $store['alcohol_time_constraint '] && $isDuringRestrictedHours) {
+                if ($product->is_alcoholic && $store['alcohol_time_constraint'] && $isDuringRestrictedHours) {
                     $result->message = "You can't buy alcohol at the moment; alcohol can only be bought between ".config('omnomcom.alcohol-start').' and '.config('omnomcom.alcohol-end').'.';
 
                 }

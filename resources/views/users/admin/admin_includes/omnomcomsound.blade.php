@@ -14,7 +14,8 @@
                         Your browser does not support the audio element.
                     </audio>
                 </div>
-                <a href="{{ route("user::member::omnomcomsound::delete", ['id'=>$user->id]) }}" class="btn btn-outline-danger btn-block">
+                <a href="{{ route("user::member::omnomcomsound::delete", ['id'=>$user->id]) }}"
+                   class="btn btn-outline-danger btn-block">
                     <i class="fas fa-trash-alt"></i>
                 </a>
             </div>
@@ -25,20 +26,21 @@
             </div>
         @endif
 
-        <form method="post" action="{{ route('user::member::omnomcomsound::update', ['id'=>$user->id]) }}" enctype="multipart/form-data">
-            {!! csrf_field() !!}
-                <div class="card-footer">
-                    <div class="row">
-                            <div class="input-group flex-nowrap">
-                                <div class="custom-file">
-                                    <input id="sound" type="file" class="form-control" name="sound">
-                                </div>
-                                <button type="submit" class="btn btn-outline-info">
-                                    <i class="fas fa-file-upload"></i>
-                                </button>
-                            </div>
+        <form method="post" action="{{ route('user::member::omnomcomsound::update', ['id'=>$user->id]) }}"
+              enctype="multipart/form-data">
+            @csrf
+            <div class="card-footer">
+                <div class="row">
+                    <div class="input-group flex-nowrap">
+                        <div class="custom-file">
+                            <input id="sound" type="file" class="form-control" name="sound">
                         </div>
+                        <button type="submit" class="btn btn-outline-info">
+                            <i class="fas fa-file-upload"></i>
+                        </button>
                     </div>
+                </div>
+            </div>
         </form>
     </div>
 @endif

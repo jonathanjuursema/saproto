@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('achievements_users', function (Blueprint $table) {
-            //add description to achievement_users
+            // add description to achievement_users
             $table->string('description')->nullable();
         });
     }
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('achievements_users', function (Blueprint $table) {
-            //revert up
+            // revert up
             $table->dropColumn('description');
         });
     }

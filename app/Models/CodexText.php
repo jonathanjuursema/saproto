@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * Codex text model.
@@ -34,6 +35,7 @@ class CodexText extends Model
         return $this->belongsToMany(Codex::class, 'codex_codex_text', 'text_id', 'codex');
     }
 
+    #[Override]
     protected static function booted()
     {
         static::deleting(static function ($text) {

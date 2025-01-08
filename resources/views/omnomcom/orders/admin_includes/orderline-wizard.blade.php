@@ -10,7 +10,7 @@
 
             <form method="post" action="{{ route('omnomcom::orders::storebulk') }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

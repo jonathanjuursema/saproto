@@ -1,7 +1,7 @@
 <form method="post"
       action="{{ ( $new ? route("committee::store") : route("committee::update", ["id" => $committee->id]) ) }}">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card">
 
@@ -123,7 +123,7 @@
 @push('javascript')
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
         // Update the is active checkbox when the committee type is changed
-        document.getElementById('is_society').addEventListener('change', function() {
+        document.getElementById('is_society').addEventListener('change', function () {
             updateIsSociety(this.value === '1');
         });
 

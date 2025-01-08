@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Collection;
 
 /**
  * Class WallstreetDrink.
@@ -35,13 +34,28 @@ class WallstreetDrink extends Model
         return $this->belongsToMany(Product::class, 'product_wallstreet_drink');
     }
 
-    public function orders(): Collection|array
+    public function orders()
     {
-        return OrderLine::query()->where('created_at', '>=', Carbon::createFromTimestamp($this->start_time))->where('created_at', '<=', Carbon::createFromTimestamp($this->end_time))->get();
+        $productIDs = $this->products()->pluck('id');
+
+        return OrderLine::query()
+            ->where('created_at', '>=', Carbon::createFromTimestamp($this->start_time))
+            ->where('created_at', '<=', Carbon::createFromTimestamp($this->end_time))
+            ->whereHas('product', function ($q) use ($productIDs) {
+                $q->whereIn('id', $productIDs);
+            });
     }
 
     public function events(): BelongsToMany
     {
         return $this->belongsToMany(WallstreetEvent::class, 'wallstreet_drink_event', 'wallstreet_drink_id', 'wallstreet_drink_events_id')->withPivot('id')->withTimestamps();
+    }
+
+    public function loss()
+    {
+        return $this->orders()
+            ->selectRaw('(original_unit_price*units)-total_price AS loss')
+            ->get()
+            ->sum('loss');
     }
 }

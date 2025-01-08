@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Support\Facades\Redirect;
+use Override;
 
 class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
 {
@@ -18,6 +19,7 @@ class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
     /**
      * Handle an incoming request.
      **/
+    #[Override]
     public function handle($request, Closure $next, ...$guards): mixed
     {
         if ($request->ajax() && $this->auth->guest()) {

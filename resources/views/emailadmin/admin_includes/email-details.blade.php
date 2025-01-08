@@ -2,7 +2,7 @@
       action="{{ ($email == null ? route("email::store") : route("email::update", ['id' => $email->id])) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 
@@ -167,7 +167,7 @@
                         ])
 
                         <select multiple name="listSelect[]" id="listSelect" class="form-control"
-                            {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
+                                {{ ($email?->to_list ? '' : 'disabled="disabled"') }}>
 
                             @foreach(App\Models\EmailList::all() as $list)
 

@@ -16,7 +16,7 @@
                       action="{{ ($item == null ? route("narrowcasting::store") : route("narrowcasting::update", ['id' => $item->id])) }}"
                       enctype="multipart/form-data">
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <div class="card-header bg-dark text-white">
                         @yield('page-title')

@@ -14,7 +14,7 @@
 
                 <form method="post" action="{{ route("headerimages.store") }}" enctype="multipart/form-data">
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <div class="card-header bg-dark text-white">
                         @yield('page-title')
@@ -30,7 +30,7 @@
 
                         <div class="form-group autocomplete">
                             <label for="user">Credits:</label>
-                            <input class="form-control user-search" id="user" name="user" />
+                            <input class="form-control user-search" id="user" name="user"/>
                         </div>
 
                         <div class="form-group">

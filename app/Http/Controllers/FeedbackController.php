@@ -59,7 +59,7 @@ class FeedbackController extends Controller
 
     private function getMostVoted(FeedbackCategory $category): Model|Feedback|null
     {
-        //find the most voted piece of feedback
+        // find the most voted piece of feedback
         $mostVotedID = FeedbackVote::query()
             ->whereHas('feedback', static function ($query) use ($category) {
                 $query->where('feedback_category_id', $category->id)
@@ -81,7 +81,7 @@ class FeedbackController extends Controller
         if ($category->review) {
             $unreviewed = Feedback::query()->where('reviewed', false)->where('feedback_category_id', $category->id);
 
-            //get all unreviewed feedback for authorized users
+            // get all unreviewed feedback for authorized users
             if (Auth::user()->id === $category->reviewer_id || Auth::user()->can('sysadmin')) {
                 return $unreviewed->limit(20)->get();
             }
@@ -279,7 +279,7 @@ class FeedbackController extends Controller
 
     public function categoryStore(Request $request): RedirectResponse
     {
-        //regex to remove all non-alphanumeric characters
+        // regex to remove all non-alphanumeric characters
         $newUrl = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '', $request->input('name')));
         if (FeedbackCategory::query()->where('url', $newUrl)->first()) {
             Session::flash('flash_message', 'This category-url already exists! Try a different name!');
@@ -309,7 +309,7 @@ class FeedbackController extends Controller
 
     public function categoryUpdate(Request $request, int $id)
     {
-        //regex to remove all non-alphanumeric characters
+        // regex to remove all non-alphanumeric characters
         $newUrl = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '', $request->input('name')));
         if (FeedbackCategory::query()->where('url', $newUrl)->first() && FeedbackCategory::query()->where('url', $newUrl)->first()->id !== $id) {
             Session::flash('flash_message', 'This category-url already exists! Try a different name!');

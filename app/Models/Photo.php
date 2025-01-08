@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
+use Override;
 
 /**
  * Photo model.
@@ -52,6 +53,7 @@ class Photo extends Model
 
     protected $with = ['file'];
 
+    #[Override]
     protected static function booted(): void
     {
         static::addGlobalScope('private', function (Builder $builder) {
@@ -140,7 +142,7 @@ class Photo extends Model
 
     public function thumbnail(): string
     {
-        return $this->file->generateImagePath(400, 400);
+        return $this->file->generateImagePath(800, 300);
     }
 
     public function getUrlAttribute(): string
@@ -148,6 +150,7 @@ class Photo extends Model
         return $this->file->generatePath();
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();

@@ -8,7 +8,7 @@
 
     <form method="POST" action="{{ route("login::password::reset::send") }}">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <p>
             Please enter your e-mail address.

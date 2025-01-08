@@ -39,10 +39,12 @@
         "util.promisify": "^1.0.1"
     },
     "devDependencies": {
-        "glob": "^7.1.6",
+        "glob": "^11.0.0",
+        "laravel-echo": "^1.17.1",
         "laravel-vite-plugin": "^0.7.8",
         "postcss": "^8.2.7",
         "postcss-discard-comments": "^7.0.3",
+        "pusher-js": "^8.4.0-rc2",
         "resolve-url-loader": "^5.0.0",
         "sass": "1.38.2",
         "sass-loader": "^12.1.0",

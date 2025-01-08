@@ -32,7 +32,7 @@ try {
             __DIR__.'/resources/views',
             __DIR__.'/tests',
             __DIR__.'/database',
-        ])->withPhpSets(php82: true)
+        ])->withPhpSets(php83: true)
         ->withsets([
             LaravelLevelSetList::UP_TO_LARAVEL_110,
             LaravelSetList::LARAVEL_CODE_QUALITY,
