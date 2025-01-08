@@ -50,3 +50,5 @@ storage/oauth-public.key
 
 #Google Cloud Platform Credentials
 application_default_credentials.json
+
+yarn.lock

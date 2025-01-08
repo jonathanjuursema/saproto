@@ -74,13 +74,20 @@ class EmailController extends Controller
             return Redirect::route('email::index');
         }
 
+        $senderAddress = $request->input('sender_address');
+        if (! filter_var($senderAddress.'@test.com', FILTER_VALIDATE_EMAIL)) {
+            Session::flash('flash_message', 'Sender address is not a valid e-mail address.');
+
+            return Redirect::back();
+        }
+
         $email = Email::query()->create([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
             'time' => strtotime($request->input('time')),
             'sender_name' => $request->input('sender_name'),
-            'sender_address' => $request->input('sender_address'),
+            'sender_address' => $senderAddress,
         ]);
         $this->updateEmailDestination($email, $request->input('destinationType'), $request->input('listSelect'), $request->input('eventSelect'), $request->has('toBackup'));
         Session::flash('flash_message', 'Your e-mail has been saved.');
@@ -143,13 +150,20 @@ class EmailController extends Controller
             return Redirect::back();
         }
 
+        $senderAddress = $request->input('sender_address');
+        if (! filter_var($senderAddress.'@test.com', FILTER_VALIDATE_EMAIL)) { // test.com just as a test
+            Session::flash('flash_message', 'Sender address is not a valid e-mail address.');
+
+            return Redirect::back();
+        }
+
         $email->fill([
             'description' => $request->input('description'),
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
             'time' => strtotime($request->input('time')),
             'sender_name' => $request->input('sender_name'),
-            'sender_address' => $request->input('sender_address'),
+            'sender_address' => $senderAddress,
         ]);
 
         $this->updateEmailDestination($email, $request->input('destinationType'), $request->input('listSelect'), $request->input('eventSelect'), $request->has('toBackup'));
