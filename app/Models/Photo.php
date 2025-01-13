@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
+use Override;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -60,27 +61,28 @@ class Photo extends Model implements HasMedia
     protected static function booted(): void
     {
         static::addGlobalScope('private', function (Builder $builder) {
-            $builder->unless(Auth::user()?->is_member, fn($builder) => $builder->where('private', false)
+            $builder->unless(Auth::user()?->is_member, fn ($builder) => $builder->where('private', false)
                 ->whereHas('album', function ($query) {
                     $query->where('private', false);
                 }));
         });
 
         static::addGlobalScope('published', function (Builder $builder) {
-            $builder->unless(Auth::user()?->can('protography'), fn($builder) => $builder->whereHas('album', function ($query) {
+            $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->whereHas('album', function ($query) {
                 $query->where('published', true);
             }));
         });
     }
 
+    #[Override]
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('photos')
             ->useDisk($this->private ? 'private' : 'public');
     }
 
-
-    public function registerMediaConversions(Media $media = null): void
+    #[Override]
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('big')
             ->width(1920)

@@ -29,16 +29,14 @@ class PhotoController extends Controller
         return view('photos.photopage', ['photo' => $photo]);
     }
 
-    public function show()
-    {
-    }
+    public function show() {}
 
     /**
      * @return JsonResponse|string
      */
     public function store(Request $request, PhotoAlbum $photoalbum)
     {
-        if (!$request->hasFile('file')) {
+        if (! $request->hasFile('file')) {
             return response()->json([
                 'message' => 'photo not found in request!',
             ], 404);
@@ -53,10 +51,11 @@ class PhotoController extends Controller
         try {
             $photo = Photo::query()->create(['private' => true]);
             $media = $photo->addMediaFromRequest('file')->toMediaCollection('photos');
+
             return response()->json([
                 'message' => $media,
             ]);
-//            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
+            //            return html_entity_decode(view('photos.includes.selectablephoto', ['photo' => $photo]));
         } catch (Exception $exception) {
             return response()->json([
                 'message' => $exception,
