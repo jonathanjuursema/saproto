@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\HashMapItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<HashMapItem>
@@ -15,6 +16,7 @@ class HashMapItemFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition()
     {
         return [

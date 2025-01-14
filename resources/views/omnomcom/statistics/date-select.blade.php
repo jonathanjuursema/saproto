@@ -12,7 +12,7 @@
 
             <form method="post">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card">
 

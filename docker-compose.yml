@@ -2,7 +2,7 @@ services:
     laravel.test:
         container_name: '${SAIL_CONTAINER_NAME}-app'
         build:
-            context: ./vendor/laravel/sail/runtimes/8.2
+            context: ./vendor/laravel/sail/runtimes/8.3
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
@@ -25,6 +25,7 @@ services:
         depends_on:
             - mariadb
             - mailpit
+            - soketi
             - redis
             - selenium
     mariadb:
@@ -41,17 +42,12 @@ services:
         volumes:
             - 'sail-mariadb:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
-        networks:
-            - sail
         healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-u${DB_USERNAME}'
-                - '-p${DB_PASSWORD}'
+            test: [ "CMD", "mysqladmin", "ping", "-u${DB_USERNAME}", "-p${DB_PASSWORD}" ]
             retries: 3
             timeout: 5s
+        networks:
+            - sail
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
@@ -74,21 +70,31 @@ services:
             - sail
         depends_on:
             - mariadb
+    soketi:
+        image: 'quay.io/soketi/soketi:latest-16-alpine'
+        environment:
+            SOKETI_DEBUG: '${SOKETI_DEBUG:-1}'
+            SOKETI_METRICS_SERVER_PORT: '9601'
+            SOKETI_DEFAULT_APP_ID: '${PUSHER_APP_ID}'
+            SOKETI_DEFAULT_APP_KEY: '${PUSHER_APP_KEY}'
+            SOKETI_DEFAULT_APP_SECRET: '${PUSHER_APP_SECRET}'
+        ports:
+            - '${PUSHER_PORT:-6001}:6001'
+            - '${PUSHER_METRICS_PORT:-9601}:9601'
+        networks:
+            - sail
     redis:
         image: 'redis:alpine'
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
         volumes:
             - 'sail-redis:/data'
-        networks:
-            - sail
         healthcheck:
-            test:
-                - CMD
-                - redis-cli
-                - ping
+            test: [ "CMD", "redis-cli", "ping" ]
             retries: 3
             timeout: 5s
+        networks:
+            - sail
     selenium:
         image: selenium/standalone-chromium
         extra_hosts:

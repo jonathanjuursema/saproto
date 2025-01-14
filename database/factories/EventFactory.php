@@ -8,6 +8,7 @@ use App\Models\EventCategory;
 use App\Models\StorageEntry;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<Event>
@@ -16,6 +17,7 @@ class EventFactory extends Factory
 {
     protected $model = Event::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

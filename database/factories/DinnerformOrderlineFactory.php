@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<DinnerformOrderline>
@@ -16,6 +17,7 @@ class DinnerformOrderlineFactory extends Factory
 {
     protected $model = DinnerformOrderline::class;
 
+    #[Override]
     public function definition(): array
     {
         return [

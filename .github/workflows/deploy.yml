@@ -50,6 +50,10 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: 🔨 build front-end
+        env:
+          VITE_PUSHER_APP_KEY: ${{ secrets.PUSHER_APP_KEY }}
+          VITE_PUSHER_HOST: ${{ secrets.PUSHER_HOST }}
+          VITE_PUSHER_PORT: ${{ secrets.PUSHER_PORT }}
         run: npm run build
 
       - name: 🗑️ Remove storage directory
@@ -73,7 +77,7 @@ jobs:
           type: 'zip'
           filename: ${{ env.BUILD_ARTIFACT_STAGING_DIR }}build.zip
           path: ${{ env.BUILD_SOURCE_DIR }}
-          exclusions: 'storage/* build/* node_modules/*'
+          exclusions: 'build/* storage/* *.git* .editorconfig /*node_modules/* /tests/*'
 
       - name: ➗ Calculate checksum
         run: openssl md5 ${{ env.BUILD_ARTIFACT_STAGING_DIR }}build.zip | cut -d" " -f2 > ${{ env.BUILD_ARTIFACT_STAGING_DIR }}checksum.txt

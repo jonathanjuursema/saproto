@@ -21,7 +21,7 @@
                 <ul class="list-group list-group-flush">
                     @foreach(Config::array('omnomcom.stores') as $slug => $store)
                         <a href="{{ route('omnomcom::store::show', ['store' => $slug]) }}" class="list-group-item">
-                            {{ $store->name }}
+                            {{ $store['name'] }}
                         </a>
                     @endforeach
                 </ul>

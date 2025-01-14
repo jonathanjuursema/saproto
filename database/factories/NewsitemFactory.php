@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @extends Factory<Model>
@@ -16,6 +17,7 @@ class NewsitemFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         $published_at = fake()->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d H:i:s');

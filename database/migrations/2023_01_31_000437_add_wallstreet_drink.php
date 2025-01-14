@@ -29,7 +29,7 @@ class AddWallstreetDrink extends Migration
             $table->timestamps();
         });
 
-        //pivot table for many to many relation between products and wallstreet_drink
+        // pivot table for many to many relation between products and wallstreet_drink
         Schema::create('product_wallstreet_drink', function (Blueprint $table) {
             $table->foreignId('wallstreet_drink_id');
             $table->foreignId('product_id');

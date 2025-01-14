@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Override;
 
 /**
  *Codex song model.
@@ -25,7 +26,7 @@ class CodexSong extends Model
 
     protected $table = 'codex_songs';
 
-    //belongs to one category on category_id in codex_songs
+    // belongs to one category on category_id in codex_songs
     public function category(): BelongsTo
     {
         return $this->belongsTo(CodexSongCategory::class, 'category_id');
@@ -36,6 +37,7 @@ class CodexSong extends Model
         return $this->belongsToMany(Codex::class, 'codex_codex_song', 'song', 'codex');
     }
 
+    #[Override]
     protected static function booted()
     {
         static::deleting(function ($song) {

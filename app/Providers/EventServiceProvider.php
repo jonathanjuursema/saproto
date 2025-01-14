@@ -7,6 +7,7 @@ use App\Handlers\Events\AuthLoginEventHandler;
 use App\Handlers\Events\SamlLoginEventHandler;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Override;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Register any other events for your application.
      */
+    #[Override]
     public function boot(): void
     {
         parent::boot();

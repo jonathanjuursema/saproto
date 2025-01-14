@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\CommitteeMembership;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<CommitteeMembership>
@@ -15,6 +16,7 @@ class CommitteeMembershipFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition()
     {
         $created_at = fake()->dateTimeBetween('-1 year', '+1 year');

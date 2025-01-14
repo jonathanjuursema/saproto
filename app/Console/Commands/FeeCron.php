@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\User;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class FeeCron extends Command

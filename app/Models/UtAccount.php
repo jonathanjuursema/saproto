@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property string $department
@@ -24,6 +25,7 @@ class UtAccount extends Model
 {
     protected $table = 'ut_accounts';
 
+    #[Override]
     protected function casts(): array
     {
         return [

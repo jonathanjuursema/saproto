@@ -13,8 +13,8 @@ use App\Models\OrderLine;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
-use Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class AchievementsCron extends Command
 {
@@ -74,7 +74,7 @@ class AchievementsCron extends Command
             19 => fn ($user): bool => $this->achievementBeast($user), // Achievement Beast
             20 => fn ($user): bool => $this->nThProducts($user, [2], 5), // Hangry
             21 => fn ($user): bool => $this->nThProducts($user, [487], 15), // Cry Baby
-            22 => fn ($user): bool => //weizen outside, grolsch weizen, weizen small, weizen big
+            22 => fn ($user): bool => // weizen outside, grolsch weizen, weizen small, weizen big
             $this->nThProducts($user, [805, 211, 758, 1039], 20), // True German
             23 => fn ($user): bool => $this->oldFart($user), // Old Fart
             24 => function ($user) {
@@ -302,7 +302,7 @@ class AchievementsCron extends Command
      */
     private function nThProducts($user, array $products, int $n): bool
     {
-        return $user->orderlines()->whereIn('product_id', $products)->sum('units') > $n;
+        return $user->orderlines()->whereIn('product_id', $products)->sum('units') >= $n;
     }
 
     /**

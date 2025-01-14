@@ -3,12 +3,14 @@
 namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
+use Override;
 
 class HomePage extends Page
 {
     /**
      * Get the URL for the page.
      */
+    #[Override]
     public function url(): string
     {
         return '/';
@@ -17,6 +19,7 @@ class HomePage extends Page
     /**
      * Assert that the browser is on the page.
      */
+    #[Override]
     public function assert(Browser $browser): void
     {
         //
@@ -27,6 +30,7 @@ class HomePage extends Page
      *
      * @return array<string, string>
      */
+    #[Override]
     public function elements(): array
     {
         return [

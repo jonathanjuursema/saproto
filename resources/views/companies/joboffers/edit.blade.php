@@ -10,7 +10,7 @@
           action="{{ ($joboffer == null ? route("joboffers::store") : route("joboffers::update", ['id' => $joboffer->id])) }}"
           enctype="multipart/form-data">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="row justify-content-center">
 

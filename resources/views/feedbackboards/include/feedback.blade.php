@@ -1,10 +1,13 @@
 <div class="feedback card mb-3 h-100">
 
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-dark text-reset">
         <span data-id="{{ $feedback->id }}">
             <span class="votes d-inline-block">{{ $feedback->voteScore() }}</span>
-            <i class="upvote fa-thumbs-up cursor-pointer {{ $feedback->userVote(Auth::user()) == 1 ? "fas" : "far" }}"></i>
-            <i class="downvote fa-thumbs-down cursor-pointer {{ $feedback->userVote(Auth::user()) == -1 ? "fas" : "far" }}"></i>
+            <span class="{{ $feedback->userVote(Auth::user()) == 1 ? "text-info" : "text-white" }}">
+                <i class="upvote fas fa-thumbs-up cursor-pointer "></i>
+            </span>
+            <span class="{{ $feedback->userVote(Auth::user()) == -1 ? "text-danger" : "text-white" }}"><i
+                    class="downvote fas fa-thumbs-down cursor-pointer"></i></span>
         </span>
 
         @if(! $feedback->reviewed && $feedback->category->review && ! $feedback->deleted_at && Auth::user()->id===$feedback->category->reviewer_id)

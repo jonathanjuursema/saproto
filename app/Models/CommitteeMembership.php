@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Override;
 
 /**
  * Committee Membership Model.
@@ -67,6 +68,7 @@ class CommitteeMembership extends Model
         return $this->belongsTo(Committee::class);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

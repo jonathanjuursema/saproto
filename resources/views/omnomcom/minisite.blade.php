@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use App\Models\Product; @endphp
+    <!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -10,14 +11,14 @@
 
     <meta name="theme-color" content="#0089FA">
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="OmNomCom Inventory Viewer" />
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="OmNomCom Inventory Viewer"/>
     <meta property="og:description"
-          content="The OmNomCom Inventory Viewer can tell you if your favourite nom is available in the Protopolis. Give it a try!" />
-    <meta property="og:url" content="https://www.omnomcom.nl/" />
-    <meta property="og:image" content="{{ asset('images/subsites/omnomcom.jpg') }}" />
+          content="The OmNomCom Inventory Viewer can tell you if your favourite nom is available in the Protopolis. Give it a try!"/>
+    <meta property="og:url" content="https://www.omnomcom.nl/"/>
+    <meta property="og:image" content="{{ asset('images/subsites/omnomcom.jpg') }}"/>
 
-    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
 
     <style>
         html {
@@ -159,43 +160,43 @@
     <input type="text" id="search_query" name="query">
 
     <div id="results">
-        @foreach(App\Models\Product::where('is_visible', true)
+        @foreach(Product::where('is_visible', true)
                 ->where(function ($query) {
                     $query->where('is_visible_when_no_stock', true)
                     ->orWhere('stock','>',0);
                 })
+                ->whereHas('categories', function ($query) {
+                    $query->whereIn('product_categories.id', \Illuminate\Support\Facades\Config::array('omnomcom.stores.protopolis.categories'));
+                })
                 ->get() as $i => $product)
+            @php /**@var Product $product */ @endphp
 
-            @if($product->categories->whereIn('id', Config::array('omnomcom.stores.protopolis.categories'))->count() > 0)
-
-                <div class='result d-none {{ ($product->stock <= 0 ? 'unavailable' : '') }}'>
-                    <div class='result_image'
-                         @if($product->image)
-                             style='background-image:url("{{ $product->image->generateImagePath(400,null) }}")'
-                        @endif
-                    ></div>
-                    <div class='result_info'>
-                        <div class='result_name'>{{ $product->name }}</div>
-                        <div class='result_price'>
-                            <div class='result_title'>Price</div>
-                            <div class='result_data'>&euro;{{ number_format($product->price, 2, '.', ',') }}</div>
-                        </div>
-                        <div class='result_amount'>
-                            <div class='result_title'>Available</div>
-                            <div class='result_data'>{{ $product->stock }}</div>
-                        </div>
-                        <div
-                            class='result_category'>{{ implode(", ", $product->categories->pluck('name')->toArray()) }}</div>
+            <div class='result d-none {{ ($product->stock <= 0 ? 'unavailable' : '') }}'>
+                <div class='result_image'
+                     @if($product->image)
+                         style='background-image:url("{{ $product->image->generateImagePath(400,null) }}")'
+                    @endif
+                ></div>
+                <div class='result_info'>
+                    <div class='result_name'>{{ $product->name }}</div>
+                    <div class='result_price'>
+                        <div class='result_title'>Price</div>
+                        <div class='result_data'>&euro;{{ number_format($product->price, 2) }}</div>
                     </div>
+                    <div class='result_amount'>
+                        <div class='result_title'>Available</div>
+                        <div class='result_data'>{{ $product->stock }}</div>
+                    </div>
+                    <div
+                        class='result_category'>{{ implode(", ", $product->categories->pluck('name')->toArray()) }}</div>
                 </div>
-
-            @endif
+            </div>
 
         @endforeach
     </div>
 
     <a href="https://www.proto.utwente.nl/">
-        <img src="{{ asset('images/logo/inverse.png') }}" style="width: 400px;">
+        <img src="{{ asset('images/logo/inverse.png') }}" style="width: 400px;" alt="{{$product->name}}">
     </a>
 
 </div>

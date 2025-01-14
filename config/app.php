@@ -4,6 +4,7 @@ use Aacotroneo\Saml2\Saml2ServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\RouteServiceProvider;
+use App\Providers\SoloServiceProvider;
 use Biscolab\ReCaptcha\Facades\ReCaptcha;
 use Biscolab\ReCaptcha\ReCaptchaServiceProvider;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use Illuminate\Cache\CacheServiceProvider;
+use Illuminate\Concurrency\ConcurrencyServiceProvider;
 use Illuminate\Cookie\CookieServiceProvider;
 use Illuminate\Database\DatabaseServiceProvider;
 use Illuminate\Database\Eloquent\Model;
@@ -217,6 +219,7 @@ return [
         ValidationServiceProvider::class,
         ViewServiceProvider::class,
         NotificationServiceProvider::class,
+        ConcurrencyServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -224,6 +227,7 @@ return [
         AppServiceProvider::class,
         EventServiceProvider::class,
         RouteServiceProvider::class,
+        \App\Providers\BroadcastServiceProvider::class,
 
         /*
          * External Service Providers
@@ -236,6 +240,7 @@ return [
         ServiceProvider::class,
         Saml2ServiceProvider::class,
         Sentry\Laravel\ServiceProvider::class,
+        SoloServiceProvider::class,
     ],
 
     /*

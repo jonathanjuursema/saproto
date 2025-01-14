@@ -26,7 +26,7 @@
 
                     <div class="card-body">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <div class="form-group">
                             <label for="title">Title:</label>
@@ -91,7 +91,7 @@
                 <form method="post" action="{{ route("page::image", ["id" => $item->id]) }}"
                       enctype="multipart/form-data">
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <div class="card mb-3">
 
@@ -130,7 +130,7 @@
                 <form method="post" action="{{ route("page::file::create", ["id" => $item->id]) }}"
                       enctype="multipart/form-data">
 
-                    {!! csrf_field() !!}
+                    @csrf
 
                     <div class="card mb-3">
 

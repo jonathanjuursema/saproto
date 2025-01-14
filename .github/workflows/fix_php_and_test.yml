@@ -15,7 +15,7 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - name: 🔍 Read .env
-        run: grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV
+        run: grep -E 'PHP_VERSION' .env.prod >> $GITHUB_ENV && cp .env.ci .env
 
       - name: 🖱️ Set Node v${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
@@ -26,7 +26,8 @@ jobs:
       - name: 📥 Install front-end dependencies
         run: npm ci --ignore-scripts
 
-      - run: npm run build --if-present
+      - name: 🔨 build front-end
+        run: npm run build --if-present
 
       - uses: actions/upload-artifact@v4
         with:

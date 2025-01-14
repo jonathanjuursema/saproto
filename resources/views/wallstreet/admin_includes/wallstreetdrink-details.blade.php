@@ -2,7 +2,7 @@
       action="{{ ( ! isset($currentDrink) ? route("wallstreet::store") : route("wallstreet::update", ['id' => $currentDrink->id])) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

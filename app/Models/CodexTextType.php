@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * Codex text type model.
@@ -24,6 +25,7 @@ class CodexTextType extends Model
         return $this->hasMany(CodexText::class, 'type_id');
     }
 
+    #[Override]
     protected static function booted()
     {
         static::deleting(static function ($type) {

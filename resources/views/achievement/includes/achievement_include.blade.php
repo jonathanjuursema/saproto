@@ -19,9 +19,9 @@
         <span class="float-end">
               @for($i = 0; $i < 5; $i++)
                 @if($i< $achievement->numberOfStars())
-                    <i class="text-white far fa-star"></i>
+                    <i class="text-white fas fa-star"></i>
                 @else
-                    <i class="achievement-{{ $achievement->tier }} far fa-star"></i>
+                    <i class="achievement-{{ $achievement->tier }} fas fa-star"></i>
                 @endif
             @endfor
         </span>

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
+use Override;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -45,6 +46,7 @@ class Handler extends ExceptionHandler
      *
      * @throws Throwable
      */
+    #[Override]
     public function report(Throwable $e): void
     {
         if ($this->shouldReport($e) && app()->bound('sentry') && App::environment('production')) {
@@ -62,6 +64,7 @@ class Handler extends ExceptionHandler
      *
      * @throws Throwable
      */
+    #[Override]
     public function render($request, Throwable $e)
     {
         if ($e instanceof UnauthorizedException) {
@@ -77,6 +80,7 @@ class Handler extends ExceptionHandler
      * @param  Request  $request
      * @return JsonResponse|RedirectResponse
      */
+    #[Override]
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ($request->expectsJson()) {
@@ -93,6 +97,7 @@ class Handler extends ExceptionHandler
      *
      * @throws Throwable
      */
+    #[Override]
     protected function renderHttpException(HttpExceptionInterface $e)
     {
         if (! view()->exists("errors.{$e->getStatusCode()}")) {

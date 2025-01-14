@@ -2,7 +2,7 @@
       action="{{ ($email == null ? route("email::store") : route("email::update", ['id' => $email->id])) }}"
       enctype="multipart/form-data">
 
-    {!! csrf_field() !!}
+    @csrf
 
     <div class="card mb-3">
 

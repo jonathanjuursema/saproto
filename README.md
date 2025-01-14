@@ -126,6 +126,14 @@ for changes to scripts or stylesheets.
 When adding a new library or client-side dependency through npm don't forget to require the scripts in `application.js`
 and the stylesheet in `vendor.scss`.
 
+#### Websockets
+
+In some parts of the website we use websockets to update the page in real-time.
+For this we use a soketi server. This runs in a docker container in your sail setup.
+
+For the frontend we use the [Laravel Echo](https://laravel.com/docs/broadcasting) library to connect to the
+websocket server.
+
 #### Localhost
 
 When you have finished the above setup the following port will be exposed on localhost.
@@ -166,6 +174,18 @@ sail shell
 
 ```
 sail artisan migrate:fresh --seed
+```
+
+#### Run dev commands (Laravel Solo)
+
+When your sail container is running, you can use [Laravel Solo](https://github.com/aarondfrancis/solo) to run all the
+commands you would normally in different
+terminals. It will automatically start `npm run dev` and tail the logs. Use the arrow keys to switch between the
+different tabs, and press `q` to exit.
+The queue and schedule are not automatically run. To run these, switch to the tab and press 's'.
+
+```
+sail artisan solo
 ```
 
 ### Code completion, style and static analysis

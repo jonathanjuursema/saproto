@@ -14,7 +14,7 @@
                   action="{{ ($card == null ? route("user::rfid::add") : route("user::rfid::update", ['id' => $card->id])) }}"
                   enctype="multipart/form-data">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

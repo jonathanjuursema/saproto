@@ -5,69 +5,78 @@
 @endsection
 
 @section('container')
-<div style="position: relative; height:90vh; width:95vw; margin-left:auto">
-<canvas id="myChart"></canvas>
-</div>
+    <div style="position: relative; height:90vh; width:95vw; margin-left:auto">
+        <canvas id="myChart"></canvas>
+    </div>
 @endsection
 
+@vite('resources/assets/js/echo.js')
+
 @push('javascript')
-{{--    chart.js and the date adapter--}}
-<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    {{--    chart.js and the date adapter--}}
+    <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce="{{ csp_nonce() }}"
+            src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-<script nonce="{{ csp_nonce() }}">
-    const ctx = document.getElementById('myChart');
-    var chart=null;
+    <script nonce="{{ csp_nonce() }}">
+        // Initialize when page is loaded
+        window.addEventListener('load', _ => {
+            const ctx = document.getElementById('myChart');
 
-    function createDataSets(products){
-        let myData = {
-            datasets: [],
-        };
-        products.forEach((product) => {
-            let prices = [];
-            product.wallstreet_prices.forEach((price) => {
-                prices.push({
-                    x: Date.parse(price.created_at),
-                    y: price.price
-                })
-            });
-            myData.datasets.push({label: product.name, data: prices})
-        });
-        return myData;
-    }
+            get(`{{route('api::wallstreet::all_prices', ['id'=>$id])}}`).then((products) => {
 
-    function updateChart(){
-        get(`{{route('api::wallstreet::all_prices', ['id'=>$id])}}`).then((products) => {
-            console.log("updating chart")
-            console.log(products)
-            chart.data = createDataSets(products);
-            chart.update('none');
-        })
-    }
-
-    window.addEventListener('load', _ => {
-        get(`{{route('api::wallstreet::all_prices', ['id'=>$id])}}`).then((products) => {
-            console.log("creating chart")
-
-            chart = new Chart(ctx, {
-                type: "line",
-                options: {
-                    spanGaps: true,
-                    scales: {
-                        x: {
-                            type: "time",
-                            parsing: false
-                        }
+                var chart = new Chart(ctx, {
+                    type: "line",
+                    options: {
+                        maintainAspectRatio: false,
+                        spanGaps: true,
+                        scales: {
+                            x: {
+                                type: "time",
+                                parsing: false
+                            }
+                        },
+                        responsive: true,
                     },
-                    responsive:true,
-                },
-                data: createDataSets(products),
+                    data: {
+                        datasets: products.map((product) => {
+                            return {
+                                label: product.name,
+                                data: product.wallstreet_prices.map((price) => {
+                                    return {
+                                        x: Date.parse(price.created_at),
+                                        y: price.price
+                                    }
+                                })
+                            }
+                        })
+                    },
+                });
+
+                let id = {{$id}};
+                //listen to a new wallstreet price
+                Echo.private(`wallstreet-prices.${id}`)
+                    .listen('NewWallstreetPrice', (e) => {
+                        const dataset = chart.data.datasets.find((dataset) => dataset.label === e.data.product.name)
+                        if (dataset) {
+                            dataset.data.push({
+                                x: Date.parse(e.data.created_at),
+                                y: e.data.price
+                            });
+                        } else {
+                            //if a new product is added the dataset is created
+                            chart.data.datasets.push({
+                                label: e.data.product.name,
+                                data: [{
+                                    x: Date.parse(e.data.created_at),
+                                    y: e.data.price
+                                }]
+                            })
+                        }
+                        chart.update('none');
+                    });
             });
         });
 
-        updateChart();
-        setInterval(updateChart, 30000);
-    })
-
-</script>
+    </script>
 @endpush

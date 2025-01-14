@@ -78,6 +78,11 @@ class EmailController extends Controller
 
         if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
             Session::flash('flash_message', 'Please select a destination for the email.');
+        }
+        
+        $senderAddress = $request->input('sender_address');
+        if (! filter_var($senderAddress.'@test.com', FILTER_VALIDATE_EMAIL)) {
+            Session::flash('flash_message', 'Sender address is not a valid e-mail address.');
 
             return Redirect::back();
         }
@@ -88,7 +93,7 @@ class EmailController extends Controller
             'body' => $request->input('body'),
             'time' => strtotime($request->input('time')),
             'sender_name' => $request->input('sender_name'),
-            'sender_address' => $request->input('sender_address'),
+            'sender_address' => $senderAddress,
         ]);
         $this->updateEmailDestination($email, $request->enum('destination', EmailDestination::class), $request->input('listSelect') ?? [], $request->input('eventSelect') ?? [], $request->input('users') ?? []);
         Session::flash('flash_message', 'Your e-mail has been saved.');
@@ -147,6 +152,11 @@ class EmailController extends Controller
 
         if ($request->enum('destination', EmailDestination::class) === EmailDestination::NO_DESTINATION) {
             Session::flash('flash_message', 'Please select a destination for the email.');
+        }
+        
+        $senderAddress = $request->input('sender_address');
+        if (! filter_var($senderAddress.'@test.com', FILTER_VALIDATE_EMAIL)) { // test.com just as a test
+            Session::flash('flash_message', 'Sender address is not a valid e-mail address.');
 
             return Redirect::back();
         }
@@ -157,7 +167,7 @@ class EmailController extends Controller
             'body' => $request->input('body'),
             'time' => strtotime($request->input('time')),
             'sender_name' => $request->input('sender_name'),
-            'sender_address' => $request->input('sender_address'),
+            'sender_address' => $senderAddress,
         ]);
 
         $this->updateEmailDestination($email, $request->enum('destination', EmailDestination::class), $request->input('listSelect') ?? [], $request->input('eventSelect') ?? [], $request->input('users') ?? []);

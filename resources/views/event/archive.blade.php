@@ -10,13 +10,13 @@
 
     <div class="row justify-content-center">
 
-        @foreach($months as $key => $month)
+        @foreach($eventsPerMonth as $monthNumber => $events)
 
-            @if(date('F Y', strtotime($year.'-'.$key.'-25')) < date('U') || count($month) > 0)
+            @if(date('F Y', strtotime($year.'-'.$monthNumber.'-25')) < date('U') || count($events) > 0)
 
                 @include('event.calendar_includes.rendermonth', [
-                    'events' => $month,
-                    'month_name' => date('F Y', strtotime($year.'-'.$key.'-25'))
+                    'events' => $events,
+                    'month_name' => date('F Y', strtotime($year.'-'.$monthNumber.'-25'))
                 ])
 
             @endif

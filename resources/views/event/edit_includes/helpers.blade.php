@@ -10,7 +10,7 @@
 
             <form method="post" action="{{ route('event::addhelp', ['id'=>$event->id]) }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="form-group autocomplete">
                     <input class="form-control committee-search" name="committee" required>
@@ -51,7 +51,7 @@
 
                     <form method="post" action="{{ route('event::updatehelp', ['id' => $committee->pivot->id]) }}">
 
-                        {!! csrf_field() !!}
+                        @csrf
 
                         <div class="row">
 

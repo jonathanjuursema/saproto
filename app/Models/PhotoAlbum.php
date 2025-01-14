@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
+use Override;
 
 /**
  * App\Models\PhotoAlbum.
@@ -56,6 +57,7 @@ class PhotoAlbum extends Model
 
     protected $with = ['thumbPhoto'];
 
+    #[Override]
     protected static function booted(): void
     {
         static::addGlobalScope('published', fn (Builder $builder) => $builder->unless(Auth::user()?->can('protography'), fn ($builder) => $builder->where('published', true)));

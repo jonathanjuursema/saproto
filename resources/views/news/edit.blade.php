@@ -20,7 +20,7 @@
           action="@if($new) {{ route("news::store") }} @else {{ route("news::update", ['id' => $item->id]) }} @endif"
           enctype="multipart/form-data">
 
-        {!! csrf_field() !!}
+        @csrf
 
         <div class="row justify-content-center">
 

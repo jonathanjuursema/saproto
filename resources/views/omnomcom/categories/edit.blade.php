@@ -14,7 +14,7 @@
                   action="{{ ($category == null ? route("omnomcom::categories::store") : route("omnomcom::categories::update", ['id' => $category->id])) }}"
                   enctype="multipart/form-data">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 

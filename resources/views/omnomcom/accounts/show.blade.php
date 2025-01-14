@@ -12,7 +12,7 @@
 
             <form method="post" action="{{ route('omnomcom::accounts::aggregate', ['account' => $account->id]) }}">
 
-                {!! csrf_field() !!}
+                @csrf
 
                 <div class="card mb-3">
 
