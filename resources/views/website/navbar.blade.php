@@ -447,10 +447,22 @@
                                         Weekly Update
                                     </a>
 
-                                    <li role="separator" class="dropdown-divider"></li>
-                                    <a class="dropdown-item" href="{{ route("headerimages.index") }}">Header Images</a>
-                                    <a class="dropdown-item" href="{{ route("photo::admin::photoalbums.index") }}">Photo
-                                        Admin</a>
+                                    <li
+                                        role="separator"
+                                        class="dropdown-divider"
+                                    ></li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{{ route('headerimages.index') }}"
+                                    >
+                                        Header Images
+                                    </a>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{{ route('photo::admin::photoalbums.index') }}"
+                                    >
+                                        Photo Admin
+                                    </a>
 
                                     @can('sysadmin')
                                         <li
@@ -530,19 +542,33 @@
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <a class="dropdown-item" href="{{ route("headerimages.index") }}">Header
-                                            Images</a>
-                                        <a class="dropdown-item" href="{{ route("photo::admin::photoalbums.index") }}">Photo
-                                            Admin</a>
+                                        <a
+                                            class="dropdown-item"
+                                            href="{{ route('headerimages.index') }}"
+                                        >
+                                            Header Images
+                                        </a>
+                                        <a
+                                            class="dropdown-item"
+                                            href="{{ route('photo::admin::photoalbums.index') }}"
+                                        >
+                                            Photo Admin
+                                        </a>
                                     </ul>
                                 </li>
                             @endif
 
                             @can('protography')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route("photo::admin::photoalbums.index") }}"
-                                       role="button"
-                                       aria-haspopup="false" aria-expanded="false">Photo Admin</a>
+                                    <a
+                                        class="nav-link"
+                                        href="{{ route('photo::admin::photoalbums.index') }}"
+                                        role="button"
+                                        aria-haspopup="false"
+                                        aria-expanded="false"
+                                    >
+                                        Photo Admin
+                                    </a>
                                 </li>
                             @endcan
 
@@ -627,8 +653,12 @@
                                     aria-expanded="false"
                                 >
                                     {{ Auth::user()->calling_name }}
-                                    <img id="profile-picture" class="rounded-circle ms-2" alt="your profile picture"
-                                         src="{{ Auth::user()->generatePhotoPath(100, 100) }}" />
+                                    <img
+                                        id="profile-picture"
+                                        class="rounded-circle ms-2"
+                                        alt="your profile picture"
+                                        src="{{ Auth::user()->generatePhotoPath(100, 100) }}"
+                                    />
                                 </a>
 
                                 <div

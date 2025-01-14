@@ -15,11 +15,11 @@
                     '<button class="btn btn-block btn-danger mb-1"><i class="fas fa-trash"></i> Delete</button>',
                 'title' => 'Confirm Delete',
                 'message' => "Are you sure you want to delete this user's account?
-                                                                                                                                                                                                                            <div class='form-group mt-2'>
-                                                                                                                                                                                                                                <label for='confirm-input'>Confirm by typing the users name ($user->name):</label>
-                                                                                                                                                                                                                                <input type='text' class='form-control' id='confirm-input' name='name'
-                                                                                                                                                                                                                                       value='' placeholder='$user->name' required>
-                                                                                                                                                                                                                            </div>",
+                                                                                                                                                                                                                                    <div class='form-group mt-2'>
+                                                                                                                                                                                                                                        <label for='confirm-input'>Confirm by typing the users name ($user->name):</label>
+                                                                                                                                                                                                                                        <input type='text' class='form-control' id='confirm-input' name='name'
+                                                                                                                                                                                                                                               value='' placeholder='$user->name' required>
+                                                                                                                                                                                                                                    </div>",
                 'confirm' => 'Delete',
             ]
         )

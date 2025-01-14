@@ -54,8 +54,10 @@
                 @endcan
             @endif
 
-            <a class="btn btn-info text-white btn-block mb-3"
-               href="{{ route('photo::photoalbums.show', ['photoalbum' => $album]) }}">
+            <a
+                class="btn btn-info text-white btn-block mb-3"
+                href="{{ route('photo::photoalbums.show', ['photoalbum' => $album]) }}"
+            >
                 Preview album
             </a>
 
@@ -162,9 +164,17 @@
                             Are you sure you want to delete the album?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <a class="btn btn-danger"
-                               href="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                            >
+                                Close
+                            </button>
+                            <a
+                                class="btn btn-danger"
+                                href="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}"
+                            >
                                 Delete Album
                             </a>
                         </div>
@@ -250,7 +260,10 @@
             </div>
 
             <div class="card mb-3">
-                <form method="POST" action="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}">
+                <form
+                    method="POST"
+                    action="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}"
+                >
                     {{ csrf_field() }}
 
                     <div class="card-header bg-dark text-white text-center">
@@ -439,18 +452,28 @@
 
             async function uploadFiles(fileQueue) {
                 while (fileQueue.length) {
-                    let file = fileQueue.shift();
-                    let formData = new FormData();
-                    formData.append('file', file);
-                    toggleRunning();
-                    await post('{{ route('photo::admin::upload', ['photoalbum' => $album], false) }}', formData, { parse: false })
-                        .then(response => {
-                            response.text().then(text => {
-                                document.getElementById('photo-view').innerHTML += text;
-                                document.getElementById('error-bar').classList.add('d-none');
-                                document.querySelector('#error-bar ul').innerHTML = '';
-                                toggleRunning();
-                            });
+                    let file = fileQueue.shift()
+                    let formData = new FormData()
+                    formData.append('file', file)
+                    toggleRunning()
+                    await post(
+                        '{{ route('photo::admin::upload', ['photoalbum' => $album], false) }}',
+                        formData,
+                        { parse: false }
+                    )
+                        .then((response) => {
+                            response.text().then((text) => {
+                                document.getElementById(
+                                    'photo-view'
+                                ).innerHTML += text
+                                document
+                                    .getElementById('error-bar')
+                                    .classList.add('d-none')
+                                document.querySelector(
+                                    '#error-bar ul'
+                                ).innerHTML = ''
+                                toggleRunning()
+                            })
                         })
                         .catch((err) => {
                             let errText

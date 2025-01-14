@@ -13,9 +13,11 @@
                 </div>
 
                 <div class="card-body">
-
-                    <form method="post" action="{{ route('photo::admin::photoalbums.index') }}"
-                          class="form-main">
+                    <form
+                        method="post"
+                        action="{{ route('photo::admin::photoalbums.index') }}"
+                        class="form-main"
+                    >
                         {{ csrf_field() }}
                         <div class="input-group">
                             <input
@@ -41,7 +43,10 @@
                     Add Album
                 </div>
 
-                <form method="post" action="{{ route('photo::admin::photoalbums.create') }}">
+                <form
+                    method="post"
+                    action="{{ route('photo::admin::photoalbums.create') }}"
+                >
                     {{ csrf_field() }}
                     <div class="card-body">
                         <div class="form-group">
@@ -94,17 +99,25 @@
                     <div class="row">
                         @foreach ($unpublished as $album)
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
-
-                                @include('website.home.cards.card-bg-image', [
-                                'url' => route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) ,
-                                'img' => $album->thumb(),
-                                'html' => sprintf('<sub>%s</sub><br>%s<strong>%s</strong>', date("M j, Y", $album->date_taken),
-                                $album->private ? '<i class="fas fa-eye-slash me-1 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This album contains photos only visible to members."></i>' : null,
-                                $album->name),
-                                'photo_pop' => true,
-                                'height' => 150
-                                ])
-
+                                @include(
+                                    'website.home.cards.card-bg-image',
+                                    [
+                                        'url' => route('photo::admin::photoalbums.edit', [
+                                            'photoalbum' => $album,
+                                        ]),
+                                        'img' => $album->thumb(),
+                                        'html' => sprintf(
+                                            '<sub>%s</sub><br>%s<strong>%s</strong>',
+                                            date('M j, Y', $album->date_taken),
+                                            $album->private
+                                                ? '<i class="fas fa-eye-slash me-1 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This album contains photos only visible to members."></i>'
+                                                : null,
+                                            $album->name,
+                                        ),
+                                        'photo_pop' => true,
+                                        'height' => 150,
+                                    ]
+                                )
                             </div>
                         @endforeach
                     </div>
@@ -121,17 +134,25 @@
                     <div class="row">
                         @foreach ($published as $album)
                             <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">
-
-                                @include('website.home.cards.card-bg-image', [
-                                'url' => route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) ,
-                                'img' => $album->thumb(),
-                                'html' => sprintf('<sub>%s</sub><br>%s<strong>%s</strong>', date("M j, Y", $album->date_taken),
-                                $album->private ? '<i class="fas fa-eye-slash me-1 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This album contains photos only visible to members."></i>' : null,
-                                $album->name),
-                                'photo_pop' => true,
-                                'height' => 150
-                                ])
-
+                                @include(
+                                    'website.home.cards.card-bg-image',
+                                    [
+                                        'url' => route('photo::admin::photoalbums.edit', [
+                                            'photoalbum' => $album,
+                                        ]),
+                                        'img' => $album->thumb(),
+                                        'html' => sprintf(
+                                            '<sub>%s</sub><br>%s<strong>%s</strong>',
+                                            date('M j, Y', $album->date_taken),
+                                            $album->private
+                                                ? '<i class="fas fa-eye-slash me-1 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="This album contains photos only visible to members."></i>'
+                                                : null,
+                                            $album->name,
+                                        ),
+                                        'photo_pop' => true,
+                                        'height' => 150,
+                                    ]
+                                )
                             </div>
                         @endforeach
                     </div>
