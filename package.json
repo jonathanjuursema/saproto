@@ -33,6 +33,7 @@
         "cross-env": "^7.0.3",
         "easymde": "^2.18.0",
         "moment": "^2.29.2",
+        "prettier-plugin-blade": "^2.1.19",
         "quagga": "^0.6.16",
         "signature_pad": "^3.0.0-beta.4",
         "swiper": "^8.0.7",

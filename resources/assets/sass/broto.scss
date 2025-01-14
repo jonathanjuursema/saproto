@@ -10,18 +10,18 @@ $grey-dark: #212121;
 $dark: $grey-dark;
 $light: $grey-medium;
 
- $theme-colors: (
-         "primary": $primary,
-         "secondary": $secondary,
-         "brand-primary": $brand-primary,
-         "success": $success,
-         "info": $info,
-         "warning": $warning,
-         "danger": $danger,
-         "omnomcom": $omnomcom,
-         "dark": $dark,
-         "light": $light
- );
+$theme-colors: (
+    'primary': $primary,
+    'secondary': $secondary,
+    'brand-primary': $brand-primary,
+    'success': $success,
+    'info': $info,
+    'warning': $warning,
+    'danger': $danger,
+    'omnomcom': $omnomcom,
+    'dark': $dark,
+    'light': $light,
+);
 
 //body
 $body-bg: $grey-light;
@@ -48,7 +48,7 @@ $link-color: $info;
 $link-hover-color: lighten($info, 10%);
 
 //navbar
-$navbar-dark-color: rgba(255, 255, 255, .75);
+$navbar-dark-color: rgba(255, 255, 255, 0.75);
 $navbar-dark-hover-color: #fff;
 
 //photos
@@ -92,98 +92,122 @@ $popover-header-bg: $grey-dark;
 @import 'partials/components';
 
 .text-dark {
-  color: #f1f1f1 !important;
+    color: #f1f1f1 !important;
 }
 
 //horizontal line
 hr {
-  border-color: $grey-light !important;
+    border-color: $grey-light !important;
 }
 
 //list group
 .list-group-item {
-  background-color: $grey-light !important;
+    background-color: $grey-light !important;
 }
 .list-group-item-dark {
-  background-color: $grey-dark !important;
-  color: #fff !important;
+    background-color: $grey-dark !important;
+    color: #fff !important;
 }
 
 //select2
 .select2-dropdown {
-  background-color: $grey-dark;
-  border: 1px solid rgba(0,0,0,.125);
+    background-color: $grey-dark;
+    border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 //buttons
 .btn.btn-outline-dark {
-  color: #fff;
-  border-color: #aaa;
+    color: #fff;
+    border-color: #aaa;
 }
 
 .btn.btn-outline-dark:hover {
-  background: $info;
+    background: $info;
 }
 
 .btn.lampOn:hover {
-  background: $primary;
-  border-color: $primary;
+    background: $primary;
+    border-color: $primary;
 }
 
 .btn.lampOff:hover {
-  background: $warning;
-  border-color: $warning;
+    background: $warning;
+    border-color: $warning;
 }
 
 //modals
 .modal-header button {
-  color: #fff;
-  text-shadow: 0 1px 0 $grey-dark;
+    color: #fff;
+    text-shadow: 0 1px 0 $grey-dark;
 }
 
 //cards
-.card.leftborder.leftborder-info { background-color: $grey-dark; }
-.card-header.bg-dark { background-color: $grey-dark !important; }
-.card-header.bg-white { background-color: $grey-dark !important; }
+.card.leftborder.leftborder-info {
+    background-color: $grey-dark;
+}
+.card-header.bg-dark {
+    background-color: $grey-dark !important;
+}
+.card-header.bg-white {
+    background-color: $grey-dark !important;
+}
 
 //simplemde
 .editor-toolbar button {
-  @extend .text-white;
-  &.active, &:hover{
-    @extend .bg-dark;
-  }
+    @extend .text-white;
+    &.active,
+    &:hover {
+        @extend .bg-dark;
+    }
 }
 
 .editor-toolbar.disabled-for-preview button {
-  @extend .bg-dark
+    @extend .bg-dark;
 }
 
 //datetimepicker
-.bootstrap-datetimepicker-widget.dropdown-menu { background-color: $grey-dark !important; }
+.bootstrap-datetimepicker-widget.dropdown-menu {
+    background-color: $grey-dark !important;
+}
 
 //custom file labels
 .custom-file-label::after {
-  color: #fff !important;
+    color: #fff !important;
 }
 
 //protube admin search results
 .video:nth-child(2n) {
-  background-color: $grey-dark !important;
+    background-color: $grey-dark !important;
 }
 
 //scrollbar (webkit only)
 html {
-  scrollbar-face-color: $grey-dark;
-  scrollbar-base-color: $grey-dark;
-  scrollbar-3dlight-color: $grey-dark;
-  scrollbar-highlight-color: $grey-dark;
-  scrollbar-track-color: $grey-medium;
-  scrollbar-shadow-color: $grey-dark;
+    scrollbar-face-color: $grey-dark;
+    scrollbar-base-color: $grey-dark;
+    scrollbar-3dlight-color: $grey-dark;
+    scrollbar-highlight-color: $grey-dark;
+    scrollbar-track-color: $grey-medium;
+    scrollbar-shadow-color: $grey-dark;
 }
 
-::-webkit-scrollbar { width: 10px; height: 3px; }
-::-webkit-scrollbar-track { background-color: $grey-dark; }
-::-webkit-scrollbar-track-piece { background-color: #000; }
-::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px; }
-::-webkit-scrollbar-corner { background-color: $grey-dark; }
-::-webkit-resizer { background-color: #666; }
+::-webkit-scrollbar {
+    width: 10px;
+    height: 3px;
+}
+::-webkit-scrollbar-track {
+    background-color: $grey-dark;
+}
+::-webkit-scrollbar-track-piece {
+    background-color: #000;
+}
+::-webkit-scrollbar-thumb {
+    height: 50px;
+    background-color: #666;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-corner {
+    background-color: $grey-dark;
+}
+::-webkit-resizer {
+    background-color: #666;
+}

@@ -19,36 +19,54 @@ $light: #fff;
 
 //select2
 .select2-dropdown {
-  background-color: #fff !important;
-  border: 1px solid rgba(0,0,0,.125) !important;
+    background-color: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.125) !important;
 }
 
 //rainbow barf
-body, .card, .navbar {
-  background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3
-  , #dd00f3);
-  background-size: 1800% 1800%;
-  animation: rainbow 18s ease infinite;
+body,
+.card,
+.navbar {
+    background: linear-gradient(
+        124deg,
+        #ff2400,
+        #e81d1d,
+        #e8b71d,
+        #e3e81d,
+        #1de840,
+        #1ddde8,
+        #2b1de8,
+        #dd00f3,
+        #dd00f3
+    );
+    background-size: 1800% 1800%;
+    animation: rainbow 18s ease infinite;
 }
 
 .box {
-  pointer-events: none;
-  position: absolute;
-  animation: rotate 2.5s infinite linear;
-  margin: 0;
-  overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    animation: rotate 2.5s infinite linear;
+    margin: 0;
+    overflow: hidden;
 }
 
 @keyframes rotate {
-  100% {
-    transform: rotate(360deg);
-  }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes rainbow {
-  0%{background-position:0% 82%}
-  50%{background-position:100% 19%}
-  100%{background-position:0% 82%}
+    0% {
+        background-position: 0% 82%;
+    }
+    50% {
+        background-position: 100% 19%;
+    }
+    100% {
+        background-position: 0% 82%;
+    }
 }
 
 //table

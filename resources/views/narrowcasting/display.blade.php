@@ -11,7 +11,10 @@
             overflow: hidden;
         }
 
-        #slideshow, #fullpagetext, #yt-player, .slide {
+        #slideshow,
+        #fullpagetext,
+        #yt-player,
+        .slide {
             position: absolute;
             top: 0;
             left: 0;
@@ -35,7 +38,8 @@
             color: #fff;
         }
 
-        #slideshow, #yt-player {
+        #slideshow,
+        #yt-player {
             transition: all 1s;
         }
 
@@ -45,7 +49,6 @@
             transition: all 1s;
             opacity: 1;
         }
-
     </style>
 @endpush
 
@@ -54,19 +57,18 @@
         <div id="text-container"></div>
     </div>
 
-    <div id="slideshow" class="opacity-0">
+    <div id="slideshow" class="opacity-0"></div>
 
-    </div>
-
-    <div id="yt-player" class="opacity-0 w-full">
-    </div>
+    <div id="yt-player" class="opacity-0 w-full"></div>
 </div>
 
 @push('javascript')
-
-    <script type="text/javascript" src="https://www.youtube.com/iframe_api" nonce="{{ csp_nonce() }}"></script>
+    <script
+        type="text/javascript"
+        src="https://www.youtube.com/iframe_api"
+        nonce="{{ csp_nonce() }}"
+    ></script>
     <script type="text/javascript" nonce="{{ csp_nonce() }}">
-
         let campaigns = []
         let currentCampaign = 0
         let previousWasVideo = false
@@ -76,8 +78,8 @@
         function onYouTubeIframeAPIReady() {
             youtubePlayer = new YT.Player('yt-player', {
                 events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange,
                 },
                 playerVars: {
                     modestbranding: 1,
@@ -86,22 +88,26 @@
                     disablekb: 1,
                     fs: 0,
                     iv_load_policy: 3,
-
-                }
-            });
-            setTimeout(updateSlide, 1000);
+                },
+            })
+            setTimeout(updateSlide, 1000)
         }
 
         async function updateCampaigns() {
-            await get('{{ route("api::screen::narrowcasting") }}')
+            await get('{{ route('api::screen::narrowcasting') }}')
                 .then((data) => {
-                    if (campaigns.length !== 0 && campaigns.length !== data.length) {
-                        window.location.reload();
+                    if (
+                        campaigns.length !== 0 &&
+                        campaigns.length !== data.length
+                    ) {
+                        window.location.reload()
                     }
 
                     campaigns = data
                 })
-                .catch(error => console.log('Error loading campaigns from server:', error))
+                .catch((error) =>
+                    console.log('Error loading campaigns from server:', error)
+                )
         }
 
         function onPlayerReady(event) {
@@ -112,7 +118,10 @@
 
         function onPlayerStateChange(event) {
             if (event.data == YT.PlayerState.PLAYING) {
-                setTimeout(updateSlide, (youtubePlayer.getDuration() - 1) * 1000)
+                setTimeout(
+                    updateSlide,
+                    (youtubePlayer.getDuration() - 1) * 1000
+                )
             }
         }
 
@@ -123,7 +132,7 @@
             const player = document.getElementById('yt-player')
 
             if (campaigns.length === 0) {
-                textContainer.innerHTML = "There are no messages to display. :)"
+                textContainer.innerHTML = 'There are no messages to display. :)'
                 text.classList.remove(hideClass)
                 slides.classList.add(hideClass)
                 player.classList.add(hideClass)
@@ -140,7 +149,7 @@
                 const campaign = campaigns[currentCampaign]
 
                 //hide the last slide
-                let oldCampaign = currentCampaign - 1;
+                let oldCampaign = currentCampaign - 1
                 if (oldCampaign < 0) oldCampaign += campaigns.length
                 const oldSlide = document.getElementById('slide-' + oldCampaign)
                 if (oldSlide) {
@@ -151,18 +160,25 @@
                     slides.classList.remove(hideClass)
 
                     //show the new slide if it exists, otherwise create it
-                    const slide = document.getElementById('slide-' + currentCampaign)
+                    const slide = document.getElementById(
+                        'slide-' + currentCampaign
+                    )
                     if (slide) {
                         slide.classList.remove(hideClass)
                     } else {
-                        slides.innerHTML += '<div id="slide-' + currentCampaign + '" class="slide" style="background-image: url(' + campaign.image + ');"></div>'
+                        slides.innerHTML +=
+                            '<div id="slide-' +
+                            currentCampaign +
+                            '" class="slide" style="background-image: url(' +
+                            campaign.image +
+                            ');"></div>'
                     }
-                    setTimeout(updateSlide, campaign.slide_duration * 1000);
+                    setTimeout(updateSlide, campaign.slide_duration * 1000)
 
-                    previousWasVideo = false;
+                    previousWasVideo = false
                 } else {
-                    youtubePlayer.loadVideoById(campaign.video, "highres");
-                    youtubePlayer.playVideo();
+                    youtubePlayer.loadVideoById(campaign.video, 'highres')
+                    youtubePlayer.playVideo()
 
                     player.classList.remove(hideClass)
 
@@ -172,11 +188,10 @@
             }
         }
 
-        window.addEventListener('load', _ => {
+        window.addEventListener('load', (_) => {
             updateCampaigns()
             const everyTwoHours = 60 * 60 * 2 * 1000
             setInterval(updateCampaigns, everyTwoHours)
-        });
+        })
     </script>
-
 @endpush

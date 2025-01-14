@@ -5,11 +5,19 @@
 @endsection
 
 @section('login-body')
-
-    <p>Are you sure you want to approve
+    <p>
+        Are you sure you want to approve
         <br />
-        <strong>{{ $description }}</strong>?</p>
+        <strong>{{ $description }}</strong>
+        ?
+    </p>
 
-    <p><a href="{{ route('qr::approve', ['code' => $code]) }}" class="btn btn-success">Approve</a></p>
-
+    <p>
+        <a
+            href="{{ route('qr::approve', ['code' => $code]) }}"
+            class="btn btn-success"
+        >
+            Approve
+        </a>
+    </p>
 @endsection

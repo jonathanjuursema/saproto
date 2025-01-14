@@ -1,42 +1,39 @@
 @charset "UTF-8";
 
-
 // Custom variables
 
 @import 'partials/variables';
 
-
 //colors
 
-$blue-light: #60803F;
+$blue-light: #60803f;
 
-$blue-medium: #354D31;
+$blue-medium: #354d31;
 
-$blue-dark: #14232A;
+$blue-dark: #14232a;
 
 $dark: $blue-medium;
 
 $light: $blue-light;
 
-$warning: #EA5D0B;
+$warning: #ea5d0b;
 
 $info: #028090;
 
-$brand-primary: #A31824;
+$brand-primary: #a31824;
 
 $theme-colors: (
-        "primary": $brand-primary,
-        "secondary": $secondary,
-        "brand-primary": $brand-primary,
-        "success": $info,
-        "info": $info,
-        "warning": $warning,
-        "danger": $danger,
-        "omnomcom": $omnomcom,
-        "dark": $dark,
-        "light": $light
+    'primary': $brand-primary,
+    'secondary': $secondary,
+    'brand-primary': $brand-primary,
+    'success': $info,
+    'info': $info,
+    'warning': $warning,
+    'danger': $danger,
+    'omnomcom': $omnomcom,
+    'dark': $dark,
+    'light': $light,
 );
-
 
 //body
 
@@ -44,11 +41,9 @@ $body-bg: $blue-dark;
 
 $body-color: #fff;
 
-
 //modal
 
 $modal-content-bg: $blue-light;
-
 
 //table
 
@@ -57,18 +52,14 @@ $table-color: #fff;
 $table-border-color: $blue-dark;
 
 table > tbody {
-
-  border-top-color: $blue-dark !important;
-
+    border-top-color: $blue-dark !important;
 }
-
 
 //list group
 
 $list-group-bg: $blue-medium;
 
 $list-group-color: #fff;
-
 
 //input
 
@@ -80,20 +71,17 @@ $input-group-addon-color: #fff;
 
 $input-border-color: #aaaaaa;
 
-
 //link
 
 $link-color: $info;
 
 $link-hover-color: lighten($info, 10%);
 
-
 //navbar
 
-$navbar-dark-color: rgba(255, 255, 255, .75);
+$navbar-dark-color: rgba(255, 255, 255, 0.75);
 
 $navbar-dark-hover-color: #fff;
-
 
 //photos
 
@@ -111,7 +99,6 @@ $photo-gradient: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
 
 $photo-hover-gradient: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
 
-
 //calendar events
 
 $event-gradient: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
@@ -121,7 +108,6 @@ $event-hover-gradient: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
 $event-bg: $blue-medium;
 
 $event-hover-bg: $blue-light;
-
 
 //cards
 
@@ -134,7 +120,6 @@ $card-collapse-bg: #fff;
 $card-header: $blue-medium;
 
 $card-title: $blue-medium;
-
 
 //pagination
 
@@ -152,11 +137,9 @@ $pagination-disabled-border-color: $blue-dark;
 
 $pagination-focus-bg: $blue-light;
 
-
 $popover-bg: $blue-light;
 
 $popover-header-bg: $blue-medium;
-
 
 //import bootstrap after setting variables
 @import 'bootstrap';
@@ -167,331 +150,223 @@ $popover-header-bg: $blue-medium;
 // concatenated SCSS from views
 @import 'partials/components';
 
-
 .text-dark {
-
-  color: #f1f1f1 !important;
-
+    color: #f1f1f1 !important;
 }
-
 
 //horizontal line
 
 hr {
-
-  border-color: $blue-dark !important;
-
+    border-color: $blue-dark !important;
 }
-
 
 //list group
 
 .list-group-item {
-
-  background-color: $blue-medium;
-
+    background-color: $blue-medium;
 }
-
 
 .list-group-item-dark {
+    background-color: $blue-dark;
 
-  background-color: $blue-dark;
-
-  color: #fff;
-
+    color: #fff;
 }
-
 
 //input
 
 .form-control[readonly] {
+    background-color: inherit;
 
-  background-color: inherit;
-
-  @extend .text-muted
-
+    @extend .text-muted;
 }
-
 
 //buttons
 
 .btn {
+    &-outline-dark {
+        color: #fff;
 
-  &-outline-dark {
+        border-color: #aaa;
 
-    color: #fff;
-
-    border-color: #aaa;
-
-
-    &:hover {
-
-      background: $info;
-
+        &:hover {
+            background: $info;
+        }
     }
 
-  }
+    &.lamp {
+        &On:hover {
+            background: $primary;
 
+            border-color: $primary;
+        }
 
-  &.lamp {
+        &Off:hover {
+            background: $warning;
 
-    &On:hover {
-
-      background: $primary;
-
-      border-color: $primary;
-
+            border-color: $warning;
+        }
     }
 
-
-    &Off:hover {
-
-      background: $warning;
-
-      border-color: $warning;
-
+    &-close {
+        @extend .btn-close-white;
     }
-
-  }
-
-
-  &-close {
-
-    @extend .btn-close-white
-
-  }
-
 }
-
 
 //modals
 
 .modal-header button {
+    color: #fff;
 
-  color: #fff;
-
-  text-shadow: 0 1px 0 $blue-medium;
-
+    text-shadow: 0 1px 0 $blue-medium;
 }
-
 
 //cards
 
 .card.leftborder.leftborder-info {
-
-  background-color: $blue-medium;
-
+    background-color: $blue-medium;
 }
-
 
 .card-header.bg-dark {
-
-  background-color: $blue-medium !important;
-
+    background-color: $blue-medium !important;
 }
-
 
 .card-header.bg-light {
-
-  background-color: $blue-dark !important;
-
+    background-color: $blue-dark !important;
 }
-
 
 //simplemde
 
 .editor-toolbar button {
+    @extend .text-white;
 
-  @extend .text-white;
-
-
-  &.active, &:hover {
-
-    @extend .bg-dark;
-
-  }
-
+    &.active,
+    &:hover {
+        @extend .bg-dark;
+    }
 }
-
 
 .main-footer {
-
-  background-color: $blue-medium !important;
-
+    background-color: $blue-medium !important;
 }
-
 
 .editor-toolbar.disabled-for-preview button {
-
-  @extend .bg-dark;
-
+    @extend .bg-dark;
 }
-
 
 //datetimepicker
 
 .datetimepicker::-webkit-calendar-picker-indicator {
-
-  background-color: #f1f1f1;
-
+    background-color: #f1f1f1;
 }
-
 
 //custom file labels
 
 .custom-file-label::after {
-
-  color: #fff !important;
-
+    color: #fff !important;
 }
-
 
 //protube admin search results
 
 .video:nth-child(2n) {
-
-  background-color: $blue-medium !important;
-
+    background-color: $blue-medium !important;
 }
-
 
 //font-awesome icon picker
 
 .iconpicker-dropdown ul {
-
-  background-color: $blue-light !important;
-
+    background-color: $blue-light !important;
 }
-
 
 //scrollbar (webkit only)
 
 html {
+    scrollbar-face-color: $blue-medium;
 
-  scrollbar-face-color: $blue-medium;
+    scrollbar-base-color: $blue-medium;
 
-  scrollbar-base-color: $blue-medium;
+    scrollbar-3dlight-color: $blue-medium;
 
-  scrollbar-3dlight-color: $blue-medium;
+    scrollbar-highlight-color: $blue-medium;
 
-  scrollbar-highlight-color: $blue-medium;
+    scrollbar-track-color: $blue-light;
 
-  scrollbar-track-color: $blue-light;
-
-  scrollbar-shadow-color: $blue-medium;
-
+    scrollbar-shadow-color: $blue-medium;
 }
-
 
 ::-webkit-scrollbar {
+    width: 10px;
 
-  width: 10px;
-
-  height: 3px;
-
+    height: 3px;
 }
-
 
 ::-webkit-scrollbar-track {
-
-  background-color: $blue-medium;
-
+    background-color: $blue-medium;
 }
-
 
 ::-webkit-scrollbar-track-piece {
-
-  background-color: #000;
-
+    background-color: #000;
 }
-
 
 ::-webkit-scrollbar-thumb {
+    height: 50px;
 
-  height: 50px;
+    background-color: #666;
 
-  background-color: #666;
-
-  border-radius: 3px;
-
+    border-radius: 3px;
 }
-
 
 ::-webkit-scrollbar-corner {
-
-  background-color: $blue-medium;
-
+    background-color: $blue-medium;
 }
-
 
 ::-webkit-resizer {
-
-  background-color: #666;
-
+    background-color: #666;
 }
-
 
 .snowflake {
+    --size: 1vw;
 
-  --size: 1vw;
+    width: var(--size);
 
-  width: var(--size);
+    height: var(--size);
 
-  height: var(--size);
+    background: white;
 
-  background: white;
+    border-radius: 50%;
 
-  border-radius: 50%;
+    position: fixed;
 
-  position: fixed;
-
-  top: -5vh;
-
+    top: -5vh;
 }
-
 
 @keyframes snowfall {
+    0% {
+        transform: translate3d(var(--left-ini), 0, 0);
+    }
 
-  0% {
-
-    transform: translate3d(var(--left-ini), 0, 0);
-
-  }
-
-  100% {
-
-    transform: translate3d(var(--left-end), 110vh, 0);
-
-  }
-
+    100% {
+        transform: translate3d(var(--left-end), 110vh, 0);
+    }
 }
-
 
 @for $i from 1 through 120 {
+    .snowflake:nth-child(#{$i}) {
+        --size: #{random(5) * 0.2}vw;
 
-  .snowflake:nth-child(#{$i}) {
+        --left-ini: #{random(20) - 10}vw;
 
-    --size: #{random(5) * 0.2}vw;
+        --left-end: #{random(20) - 10}vw;
 
-    --left-ini: #{random(20) - 10}vw;
+        left: #{random(100)}vw;
 
-    --left-end: #{random(20) - 10}vw;
+        animation: snowfall #{5 + random(10)}s linear infinite;
 
-    left: #{random(100)}vw;
-
-    animation: snowfall #{5 + random(10)}s linear infinite;
-
-    animation-delay: -#{random(10)}s;
-
-  }
-
+        animation-delay: -#{random(10)}s;
+    }
 }
-
 
 /* added small blur every 6 snowflakes*/
 
 .snowflake:nth-child(6n) {
-
-  filter: blur(1px);
-
+    filter: blur(1px);
 }

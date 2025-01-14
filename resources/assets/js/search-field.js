@@ -1,4 +1,4 @@
-import BaseComponent from "bootstrap/js/src/base-component"
+import BaseComponent from 'bootstrap/js/src/base-component'
 
 /**
  * ------------------------------------------------------------------------
@@ -15,15 +15,15 @@ const CLASS_NAME_SELECTED_CONTAINER = 'selected-items'
 const CLASS_NAME_SELECTED = 'selected-item'
 
 const Default = {
-    optionTemplate: (el, item) => el.innerHTML = item.name,
-    selectedTemplate: item => item.name ?? item.id,
-    sorter: null
+    optionTemplate: (el, item) => (el.innerHTML = item.name),
+    selectedTemplate: (item) => item.name ?? item.id,
+    sorter: null,
 }
 
 const DefaultType = {
     optionTemplate: 'function',
     selectedTemplate: 'function',
-    sorter: '(null|function)'
+    sorter: '(null|function)',
 }
 
 /**
@@ -81,7 +81,8 @@ class SearchField extends BaseComponent {
 
         this._element.parentNode.append(this._resultsContainer)
         this._element.parentNode.append(this._invalidMessage)
-        if (this._multiple) this._element.parentNode.append(this._selectedContainer)
+        if (this._multiple)
+            this._element.parentNode.append(this._selectedContainer)
         else this._element.parentNode.append(this._inputElement)
 
         this._element.classList.add(CLASS_NAME_SEARCH_FIELD)
@@ -90,12 +91,17 @@ class SearchField extends BaseComponent {
         this._element.required = false
 
         this._element.form.removeEventListener('submit', preventSubmitBounce)
-        this._element.form.addEventListener('submit', this._checkRequired.bind(this))
+        this._element.form.addEventListener(
+            'submit',
+            this._checkRequired.bind(this)
+        )
         this._element.onkeyup = debounce(this._search.bind(this))
     }
 
     _checkRequired(e) {
-        const selectedAny = this._selectedContainer.children.length !== 0 || this._inputElement.value !== ''
+        const selectedAny =
+            this._selectedContainer.children.length !== 0 ||
+            this._inputElement.value !== ''
         if (!this._required || selectedAny) return true
         this._invalidMessage.style.display = 'block'
         e.preventDefault()
@@ -120,7 +126,7 @@ class SearchField extends BaseComponent {
         let el = document.createElement('div')
         el.classList.add(CLASS_NAME_RESULT)
         this._config.optionTemplate(el, item)
-        el.addEventListener('click', _ => {
+        el.addEventListener('click', (_) => {
             if (this._multiple) this._addSelected(item)
             else this._setSelected(item)
             this._search()
@@ -147,7 +153,7 @@ class SearchField extends BaseComponent {
         let el = document.createElement('span')
         el.innerHTML = this._config.selectedTemplate(item)
         el.classList.add(CLASS_NAME_SELECTED)
-        el.onclick = _ => {
+        el.onclick = (_) => {
             el.remove()
             if (this._selectedContainer.children.length === 0) {
                 this._element.required = true
@@ -184,25 +190,31 @@ class SearchField extends BaseComponent {
         this._resultsContainer.append(item)
     }
 
-    _search()  {
+    _search() {
         this.clearResults()
 
-        if (this._element.value.length < 3) return this._setResults('<span>type at least 3 characters</span>')
+        if (this._element.value.length < 3)
+            return this._setResults('<span>type at least 3 characters</span>')
         this._setResults('<span>searching...</span>')
 
         this._invalidMessage.style.display = 'none'
 
-        get( this._route,{q: this._element.value})
-        .then(data => {
-            if (data.length === 0) return this._setResults('<span>no results</span>')
-            this.clearResults()
-            if (this._config.sorter) data.sort(this._config.sorter)
-            data.forEach(item => this._addResults(this._createResultElement(item)))
-        })
-        .catch(err => {
-            this._setResults('<span class="text-danger">there was an error!</span>')
-            console.error(err)
-        })
+        get(this._route, { q: this._element.value })
+            .then((data) => {
+                if (data.length === 0)
+                    return this._setResults('<span>no results</span>')
+                this.clearResults()
+                if (this._config.sorter) data.sort(this._config.sorter)
+                data.forEach((item) =>
+                    this._addResults(this._createResultElement(item))
+                )
+            })
+            .catch((err) => {
+                this._setResults(
+                    '<span class="text-danger">there was an error!</span>'
+                )
+                console.error(err)
+            })
     }
 }
 

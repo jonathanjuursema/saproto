@@ -1,23 +1,23 @@
 #leaderboard-accordion {
-  .card-header:hover {
-    cursor: pointer;
-  }
-  .place-1 {
-    color: #ffd02a;
-  }
-  .place-2 {
-    color: #cccccc;
-  }
-  .place-3 {
-    color: #fd9744;
-  }
-
+    .card-header:hover {
+        cursor: pointer;
+    }
+    .place-1 {
+        color: #ffd02a;
+    }
+    .place-2 {
+        color: #cccccc;
+    }
+    .place-3 {
+        color: #fd9744;
+    }
 }
 
-.le_decrease, .le_increase {
-  user-select: none;
-  &:hover {
-    @extend .text-muted;
-    cursor: pointer;
-  }
+.le_decrease,
+.le_increase {
+    user-select: none;
+    &:hover {
+        @extend .text-muted;
+        cursor: pointer;
+    }
 }

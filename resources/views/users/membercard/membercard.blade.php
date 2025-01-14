@@ -1,7 +1,7 @@
 <page>
-
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
         }
@@ -50,22 +50,36 @@
         }
     </style>
     <div id="card">
-        @if(!$overlayonly)
+        @if (! $overlayonly)
             <div id="details">
                 <div id="name">{{ $user->name }}</div>
                 <div class="heading">Member since</div>
-                <div>{{ ($user->member->created_at->timestamp < 0 ? 'Before we kept track!' : date('F j, Y', strtotime($user->member->created_at))) }}</div>
+                <div>
+                    {{ $user->member->created_at->timestamp < 0 ? 'Before we kept track!' : date('F j, Y', strtotime($user->member->created_at)) }}
+                </div>
                 <div class="heading">Card validity</div>
-                <div>{{ date('M Y') }} - {{ date('M Y', strtotime('+3 years')) }}</div>
-                <barcode id="barcode" label="none" value="{{ $user->id }}"></barcode>
+                <div>
+                    {{ date('M Y') }} -
+                    {{ date('M Y', strtotime('+3 years')) }}
+                </div>
+                <barcode
+                    id="barcode"
+                    label="none"
+                    value="{{ $user->id }}"
+                ></barcode>
             </div>
 
-            @if($user->photo)
-                <img id="photo" src="data:image/webp;base64,{{ $user->photo->getBase64(450,450) }}">
+            @if ($user->photo)
+                <img
+                    id="photo"
+                    src="data:image/webp;base64,{{ $user->photo->getBase64(450, 450) }}"
+                />
             @else
-                <img id="photo" src="{{ public_path('images/default-avatars/other.png') }}">
+                <img
+                    id="photo"
+                    src="{{ public_path('images/default-avatars/other.png') }}"
+                />
             @endif
         @endif
     </div>
-
 </page>

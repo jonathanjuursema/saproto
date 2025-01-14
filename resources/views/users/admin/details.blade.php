@@ -5,37 +5,26 @@
 @endsection
 
 @section('container')
-
     <div class="row">
-
         <div class="col-md-3">
-
             @include('users.admin.admin_includes.contact')
 
             @include('users.admin.admin_includes.update')
 
             @include('users.admin.admin_includes.omnomcomsound')
-
         </div>
 
         <div class="col-md-3">
-
             @include('users.admin.admin_includes.actions')
-
         </div>
 
         <div class="col-md-3">
-
             @include('users.admin.admin_includes.membership')
-
         </div>
 
         <div class="col-md-3">
-
             @include('users.admin.admin_includes.hoofd')
-
         </div>
-
     </div>
 
     <!-- Modal for adding membership to user -->
@@ -46,5 +35,4 @@
 
     <!-- Modal for changing a users email -->
     @include('users.admin.admin_includes.changemail-modal')
-
 @endsection

@@ -5,23 +5,20 @@
 @endsection
 
 @section('container')
-
     <div class="row justify-content-center mb-3">
-
         <div class="col-md-3">
-
-
             <div class="card">
-
                 <div class="card-header bg-dark text-white">
                     @yield('page-title')
                 </div>
 
                 <div class="card-body">
-
                     <p>
-                        Between <strong>{{ $start }}</strong> and <strong>{{ $end }}</strong> the following payments
-                        took place:
+                        Between
+                        <strong>{{ $start }}</strong>
+                        and
+                        <strong>{{ $end }}</strong>
+                        the following payments took place:
                     </p>
 
                     <p>
@@ -35,17 +32,17 @@
                         Card payments:
                         &euro;{{ number_format($total_card, 2) }}
                     </p>
-
                 </div>
 
                 <div class="card-footer">
-                    <a href="{{ route("omnomcom::payments::statistics") }}" class="btn btn-success btn-block">Back</a>
+                    <a
+                        href="{{ route('omnomcom::payments::statistics') }}"
+                        class="btn btn-success btn-block"
+                    >
+                        Back
+                    </a>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 @endsection

@@ -3,6 +3,7 @@
 @section('page-title')
     S.A. Proto | Narrowcasting
 @endsection
+
 @push('stylesheet')
     <style>
         html {

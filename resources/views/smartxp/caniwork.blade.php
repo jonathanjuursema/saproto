@@ -1,188 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta
+            name="viewport"
+            content="initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
 
-<head>
+        <meta name="theme-color" content="#C1FF00" />
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Can you work in the SmartXP?" />
+        <meta
+            property="og:description"
+            content="Do you want to know if the SmartXP is available for working? Check the SmartXP timetable here!"
+        />
+        <meta
+            property="og:url"
+            content="https://www.caniworkintheSmartXP.nl/"
+        />
+        <meta
+            property="og:image"
+            content="{{ asset('images/subsites/smartxp.jpg') }}"
+        />
 
-    <meta name="theme-color" content="#C1FF00">
+        <link
+            rel="shortcut icon"
+            href="{{ asset('images/favicons/favicon' . mt_rand(1, 4) . '.png') }}"
+        />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Can you work in the SmartXP?" />
-    <meta property="og:description"
-          content="Do you want to know if the SmartXP is available for working? Check the SmartXP timetable here!" />
-    <meta property="og:url" content="https://www.caniworkintheSmartXP.nl/" />
-    <meta property="og:image" content="{{ asset('images/subsites/smartxp.jpg') }}" />
+        <title>Can I work in the SmartXP?</title>
 
-    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}" />
+        @include('website.assets.stylesheets')
 
-    <title>Can I work in the SmartXP?</title>
+        <style type="text/css">
+            * {
+                box-sizing: border-box;
+            }
 
-    @include('website.assets.stylesheets')
+            html,
+            body {
+                font-family: Lato, sans-serif;
 
-    <style type="text/css">
+                position: absolute;
 
-        * {
-            box-sizing: border-box;
-        }
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
 
-        html, body {
-            font-family: Lato, sans-serif;
+                background-color: #555;
+            }
 
-            position: absolute;
+            .box {
+                position: relative;
 
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
+                background-color: rgba(0, 0, 0, 0.5);
+                border-bottom: 5px solid #c1ff00;
+                box-shadow: 0 0 20px -7px #000;
 
-            background-color: #555;
-        }
+                overflow: auto;
 
-        .box {
-            position: relative;
+                border-radius: 0.25rem;
+            }
 
-            background-color: rgba(0, 0, 0, 0.5);
-            border-bottom: 5px solid #c1ff00;
-            box-shadow: 0 0 20px -7px #000;
+            .box-header {
+                font-size: 30px;
+                font-weight: bold;
 
-            overflow: auto;
+                color: #fff;
 
-            border-radius: .25rem;
-        }
+                text-align: center;
 
-        .box-header {
-            font-size: 30px;
-            font-weight: bold;
+                padding: 15px 0;
+                margin: 0 40px;
+                border-bottom: 2px solid #fff;
+            }
 
-            color: #fff;
+            .box-header.small {
+                font-size: 20px;
 
-            text-align: center;
+                margin: 0px 10px;
+            }
 
-            padding: 15px 0;
-            margin: 0 40px;
-            border-bottom: 2px solid #fff;
-        }
+            .notice {
+                text-align: center;
+                font-size: 20px;
+                font-weight: bold;
+                margin-top: 20px;
+                color: #fff;
+            }
 
-        .box-header.small {
-            font-size: 20px;
+            .activity {
+                width: 100%;
 
-            margin: 0px 10px;
-        }
+                color: #fff;
 
-        .notice {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: #fff;
-        }
+                text-align: left;
 
-        .activity {
-            width: 100%;
+                padding: 20px 40px;
 
-            color: #fff;
+                font-size: 20px;
+            }
 
-            text-align: left;
+            .activity:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
 
-            padding: 20px 40px;
+            .activity.past {
+                opacity: 0.5;
+            }
 
-            font-size: 20px;
-        }
+            .activity.current {
+                color: #c1ff00;
+            }
+        </style>
+    </head>
 
-        .activity:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+    <body>
+        <div class="container-fluid">
+            <div class="row justify-content-center" style="margin-bottom: 50px">
+                <div class="box-header">
+                    The SmartXp is currently
 
-        .activity.past {
-            opacity: 0.5;
-        }
+                    @if ($occupied)
+                        <span class="text-danger">occupied.</span>
+                    @else
+                        <span class="text-primary">not occupied!</span>
+                    @endif
 
-        .activity.current {
-            color: #c1ff00;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="container-fluid">
-
-    <div class="row justify-content-center" style="margin-bottom: 50px;">
-
-        <div class="box-header">
-            The SmartXp is currently
-
-            @if($occupied)
-                <span class="text-danger">occupied.</span>
-            @else
-                <span class="text-primary">not occupied!</span>
-            @endif
-
-            Here's the timetable for this week:
-        </div>
-
-    </div>
-
-    <div class="row">
-
-        @foreach($timetable as $dayname => $day)
-
-            <div class="col-md-2">
-
-                <div class="box">
-
-                    <div class="box-header">
-
-                        {{ ucfirst($dayname) }}
-
-                    </div>
-
-                    <div id="timetable">
-
-                        @if(count($day) > 0)
-                            @foreach($day as $activity)
-                                <div
-                                    class="activity {{ ($activity->current ? 'current' : ($activity->over ? 'past' : '')) }}">
-                                    {{ date('H:i', $activity->start) }} - {{ date('H:i', $activity->end) }}<br>
-                                    <strong>{{ $activity->title }}</strong> ({{ $activity->type }})
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="notice" style="margin-bottom: 25px;">Nothing!</div>
-                        @endif
-
-                    </div>
-
+                    Here's the timetable for this week:
                 </div>
-
             </div>
 
-        @endforeach
+            <div class="row">
+                @foreach ($timetable as $dayname => $day)
+                    <div class="col-md-2">
+                        <div class="box">
+                            <div class="box-header">
+                                {{ ucfirst($dayname) }}
+                            </div>
 
-    </div>
+                            <div id="timetable">
+                                @if (count($day) > 0)
+                                    @foreach ($day as $activity)
+                                        <div
+                                            class="activity {{ $activity->current ? 'current' : ($activity->over ? 'past' : '') }}"
+                                        >
+                                            {{ date('H:i', $activity->start) }}
+                                            - {{ date('H:i', $activity->end) }}
+                                            <br />
+                                            <strong>
+                                                {{ $activity->title }}
+                                            </strong>
+                                            ({{ $activity->type }})
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div
+                                        class="notice"
+                                        style="margin-bottom: 25px"
+                                    >
+                                        Nothing!
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
 
-    <div class="row">
-
-        <div class="col-md-12 mt-3" style="text-align: center;">
-
-            <a href="https://www.proto.utwente.nl/">
-                <img src="{{ asset('images/logo/inverse.png') }}" style="width: 300px; margin: 40px;">
-            </a>
-
+            <div class="row">
+                <div class="col-md-12 mt-3" style="text-align: center">
+                    <a href="https://www.proto.utwente.nl/">
+                        <img
+                            src="{{ asset('images/logo/inverse.png') }}"
+                            style="width: 300px; margin: 40px"
+                        />
+                    </a>
+                </div>
+            </div>
         </div>
 
-    </div>
-
-</div>
-
-@include('website.assets.javascripts')
-@stack('javascript')
-
-</body>
-
+        @include('website.assets.javascripts')
+        @stack('javascript')
+    </body>
 </html>

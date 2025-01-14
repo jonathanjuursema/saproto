@@ -13,6 +13,9 @@
 
 # Local files
 /personal
+public/storage
+/storage/media-library
+
 
 # IDE files
 /.idea
@@ -26,6 +29,7 @@ phpstan.neon
 
 # Meta files
 composer.phar
+yarn.lock
 
 # Generated files
 /public/build
@@ -50,5 +54,3 @@ storage/oauth-public.key
 
 #Google Cloud Platform Credentials
 application_default_credentials.json
-public/storage
-/storage/media-library

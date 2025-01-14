@@ -111,7 +111,7 @@
     },
     "scripts": {
         "fix": [
-            "./vendor/bin/rector process && ./vendor/bin/pint"
+            "./vendor/bin/rector process && ./vendor/bin/pint && npx prettier --write resources/"
         ],
         "pint": [
             "./vendor/bin/pint"

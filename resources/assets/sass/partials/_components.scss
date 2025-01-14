@@ -1,856 +1,930 @@
 // Achievements
 .achievement- {
-  &common {
-    border-color: #d86100 !important;
-    background: #fd9744;
-    color: #d86100;
-  }
-  &uncommon {
-    border-color: #808080 !important;
-    background: #cccccc;
-    color: #808080;
-  }
-  &rare {
-    border-color: #a77d00 !important;
-    background: #ffd02a;
-    color: #a77d00;
-  }
-  &epic {
-    border-color: #638080 !important;
-    background: #b9cccc;
-    color: #638080;
-  }
-  &legendary {
-    border-color: #99c5dc !important;
-    background: #d8ebf5;
-    color: #99c5dc;
-  }
+    &common {
+        border-color: #d86100 !important;
+        background: #fd9744;
+        color: #d86100;
+    }
+    &uncommon {
+        border-color: #808080 !important;
+        background: #cccccc;
+        color: #808080;
+    }
+    &rare {
+        border-color: #a77d00 !important;
+        background: #ffd02a;
+        color: #a77d00;
+    }
+    &epic {
+        border-color: #638080 !important;
+        background: #b9cccc;
+        color: #638080;
+    }
+    &legendary {
+        border-color: #99c5dc !important;
+        background: #d8ebf5;
+        color: #99c5dc;
+    }
 }
 
 select {
-  &.COMMON {
-    color: #de843b;
-  }
-  &.UNCOMMON {
-    color: #de843b;
-  }
-  &.RARE {
-    color: #c09c21;
-  }
-  &.EPIC {
-    color: #9db3b3;
-  }
-  &.LEGENDARY {
-    color: #b7d8e8;
-  }
+    &.COMMON {
+        color: #de843b;
+    }
+    &.UNCOMMON {
+        color: #de843b;
+    }
+    &.RARE {
+        color: #c09c21;
+    }
+    &.EPIC {
+        color: #9db3b3;
+    }
+    &.LEGENDARY {
+        color: #b7d8e8;
+    }
 }
 
 .achievement-preview {
-  margin-left: -100px !important;
-  width: 683px;
-  @media screen and (max-width: 768px) {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: auto !important;
-  }
+    margin-left: -100px !important;
+    width: 683px;
+    @media screen and (max-width: 768px) {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+    }
 
-  .achievement {
-    margin: 0;
-  }
+    .achievement {
+        margin: 0;
+    }
 }
 
 .feedback {
-  .votes { min-width: 20px; }
-  .upvote:hover {
-    color: $success;
-    font-weight: bolder;
-  }
-  .downvote:hover {
-    color: $danger;
-    font-weight: bolder;
-  }
-  .reply:hover {
-    color: $info;
-  }
-  .archive, .restore {
-    color: $white;
-    &:hover {
-      color: $warning;
+    .votes {
+        min-width: 20px;
     }
-  }
-  .delete {
-    color: $white;
-    &:hover {
-      color: $danger;
+    .upvote:hover {
+        color: $success;
+        font-weight: bolder;
     }
-  }
+    .downvote:hover {
+        color: $danger;
+        font-weight: bolder;
+    }
+    .reply:hover {
+        color: $info;
+    }
+    .archive,
+    .restore {
+        color: $white;
+        &:hover {
+            color: $warning;
+        }
+    }
+    .delete {
+        color: $white;
+        &:hover {
+            color: $danger;
+        }
+    }
 }
 
 // Card collapse
 $card-collapse-bg: #fff !default;
 .card-body.collapse {
-  background: $card-collapse-bg;
+    background: $card-collapse-bg;
 }
 
 // Auth
 #auth {
-  &__container {
-    margin-top: 50px;
-    clear: both;
-    text-align: center;
-    .form-control {
-      background-color: #fafafa;
-      border-color: #fafafa;
-      color: #000;
+    &__container {
+        margin-top: 50px;
+        clear: both;
+        text-align: center;
+        .form-control {
+            background-color: #fafafa;
+            border-color: #fafafa;
+            color: #000;
+        }
+        .btn-default {
+            background-color: #222;
+            border-color: #222;
+            color: #fff;
+        }
     }
-    .btn-default {
-      background-color: #222;
-      border-color: #222;
-      color: #fff;
+    &__header,
+    &__container {
+        color: #fff;
     }
-  }
-  &__header, &__container {
-    color: #fff;
-  }
-  &__logo {
-    margin-bottom: 25px;
-    width: 50%;
-  }
+    &__logo {
+        margin-bottom: 25px;
+        width: 50%;
+    }
 }
 
 // Company logos
 .rotating-logo {
-  animation: rotate 3s infinite linear;
+    animation: rotate 3s infinite linear;
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .company-athom {
-  @extend .rotating-logo;
+    @extend .rotating-logo;
 }
 
 // Errors
 #error {
-  &__header {
-    margin-top: 100px;
-    text-align: center;
-  }
-  &__container {
-    margin-top: 25px;
-    clear: both;
-    text-align: center;
-    .form-control {
-      background-color: #fafafa;
-      border-color: #fafafa;
-      color: #000;
+    &__header {
+        margin-top: 100px;
+        text-align: center;
     }
-    .btn-default {
-      background-color: #222;
-      border-color: #222;
-      color: #fff;
+    &__container {
+        margin-top: 25px;
+        clear: both;
+        text-align: center;
+        .form-control {
+            background-color: #fafafa;
+            border-color: #fafafa;
+            color: #000;
+        }
+        .btn-default {
+            background-color: #222;
+            border-color: #222;
+            color: #fff;
+        }
     }
-  }
-  &__header, &__container {
-    color: #fff;
-  }
-  &__logo {
-    margin-top: 100px;
-    margin-bottom: 25px;
-    width: 50%;
-  }
-
+    &__header,
+    &__container {
+        color: #fff;
+    }
+    &__logo {
+        margin-top: 100px;
+        margin-bottom: 25px;
+        width: 50%;
+    }
 }
 
 // Events
-$event-gradient: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)) !default;
-$event-hover-gradient: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)) !default;
+$event-gradient: linear-gradient(
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.8)
+) !default;
+$event-hover-gradient: linear-gradient(
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.7)
+) !default;
 $event-bg: #eee !default;
 $event-hover-bg: #aaa !default;
 
 .event {
-  * { position: relative; z-index: 2; }
-  p { margin: 0; }
-  &::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: $event-gradient;
-    content: '';
-    z-index: 1;
-  }
-  &:hover.event::after {
-    background-image: $event-hover-gradient;
-  }
-  &.no-img {
-    background: $event-bg;
-    &:hover { background: $event-hover-bg; }
-  }
+    * {
+        position: relative;
+        z-index: 2;
+    }
+    p {
+        margin: 0;
+    }
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: $event-gradient;
+        content: '';
+        z-index: 1;
+    }
+    &:hover.event::after {
+        background-image: $event-hover-gradient;
+    }
+    &.no-img {
+        background: $event-bg;
+        &:hover {
+            background: $event-hover-bg;
+        }
+    }
 }
 
 #archive-bar {
-  #category-search { width: 250px; }
+    #category-search {
+        width: 250px;
+    }
 }
 
 // Product images
 .product-image {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  & > img {
-    max-width: 70%;
-    max-height: 70%;
-  }
-
+    & > img {
+        max-width: 70%;
+        max-height: 70%;
+    }
 }
 
 // Password Manager
 .passwordmanager {
-  &__shownote {
-    cursor: pointer;
-  }
-  &__hidden {
-    position: absolute;
-    top: 0;
-    left: -9999px;
-  }
+    &__shownote {
+        cursor: pointer;
+    }
+    &__hidden {
+        position: absolute;
+        top: 0;
+        left: -9999px;
+    }
 }
 
 // Photo admin
 .photo-select {
-  input{ display: none; }
-  .photo-select .card {
-    cursor: pointer;
-    transition: .2s;
-  }
-  .card {
-    label {
-      margin-bottom: 0;
-      cursor: pointer;
-      transition: .2s;
+    input {
+        display: none;
     }
-    &:before {
-      background-color: white;
-      color: white;
-      content: " ";
-      display: block;
-      border-radius: 50%;
-      border: 1px solid $blue;
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      line-height: 28px;
-      transition-duration: 0.2s;
-      transform: scale(0);
-      z-index: 10;
+    .photo-select .card {
+        cursor: pointer;
+        transition: 0.2s;
     }
-  }
-  input:checked + .card:before {
-    content: "✓";
-    background-color: $blue;
-    transform: scale(1);
-  }
-  input:checked + .card{
-    transform: scale(0.9);
-  }
+    .card {
+        label {
+            margin-bottom: 0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        &:before {
+            background-color: white;
+            color: white;
+            content: ' ';
+            display: block;
+            border-radius: 50%;
+            border: 1px solid $blue;
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            line-height: 28px;
+            transition-duration: 0.2s;
+            transform: scale(0);
+            z-index: 10;
+        }
+    }
+    input:checked + .card:before {
+        content: '✓';
+        background-color: $blue;
+        transform: scale(1);
+    }
+    input:checked + .card {
+        transform: scale(0.9);
+    }
 }
 
 // Card Background Photos
 $photo_pop-color: #fff !default;
 $photo-color: #222 !default;
 $photo-hover-color: #222 !default;
-$photo-gradient: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.7)) !default;
-$photo-hover-gradient: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.6)) !default;
+$photo-gradient: linear-gradient(
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.7)
+) !default;
+$photo-hover-gradient: linear-gradient(
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.6)
+) !default;
 
 .photo_pop {
-  color: $photo_pop-color;
-  background-size: cover;
-  background-position: center center;
-  height: 100px;
-  &:hover {
     color: $photo_pop-color;
-    strong { text-decoration: underline; }
-  }
+    background-size: cover;
+    background-position: center center;
+    height: 100px;
+    &:hover {
+        color: $photo_pop-color;
+        strong {
+            text-decoration: underline;
+        }
+    }
 }
 
 .photo {
-  color: $photo-color;
-  background-size: cover;
-  background-position: center center;
-  &::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: $photo-gradient;
-    content: '';
-    z-index: 0;
-  }
-  &:hover {
     color: $photo-color;
-    &.photo::after { background-image: $photo-hover-gradient; }
-  }
-  * { z-index: 1; }
+    background-size: cover;
+    background-position: center center;
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: $photo-gradient;
+        content: '';
+        z-index: 0;
+    }
+    &:hover {
+        color: $photo-color;
+        &.photo::after {
+            background-image: $photo-hover-gradient;
+        }
+    }
+    * {
+        z-index: 1;
+    }
 }
 
-
 // Search input
-[type="search"]::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 14px;
-  width: 14px;
-  background-image: url("/resources/assets/images/font-awesome/fa-x.svg");
-  background-size: 14px 14px;
+[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 14px;
+    width: 14px;
+    background-image: url('/resources/assets/images/font-awesome/fa-x.svg');
+    background-size: 14px 14px;
 }
 
 // Datetimepicker
 .datetimepicker::-webkit-calendar-picker-indicator {
-  background-image: unset;
-  background-color: $dark;
-  height: 15px;
-  mask: url("/resources/assets/images/font-awesome/fa-calendar.svg") no-repeat;
-  -webkit-mask: url("/resources/assets/images/font-awesome/fa-calendar.svg") no-repeat;
-  &:hover {
-    cursor: pointer
-  }
+    background-image: unset;
+    background-color: $dark;
+    height: 15px;
+    mask: url('/resources/assets/images/font-awesome/fa-calendar.svg') no-repeat;
+    -webkit-mask: url('/resources/assets/images/font-awesome/fa-calendar.svg')
+        no-repeat;
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 // Profile
 #about {
-  .card-header {
-    height: 240px;
-  }
+    .card-header {
+        height: 240px;
+    }
 }
 
 // Global
 main {
-  min-height: calc(100vh - 292px);
-  &#nonavandfooter {
-    margin-bottom: 20px;
-    border-top: solid 20px $dark;
-    border-bottom: solid 20px $dark;
-  }
-  &#dashboard {
-    margin-top: 66px;
-    padding-bottom: 20px;
-    min-height: calc(100vh - 66px);
-    margin-bottom: 30px;
-    border-bottom: solid 20px $dark;
-  }
+    min-height: calc(100vh - 292px);
+    &#nonavandfooter {
+        margin-bottom: 20px;
+        border-top: solid 20px $dark;
+        border-bottom: solid 20px $dark;
+    }
+    &#dashboard {
+        margin-top: 66px;
+        padding-bottom: 20px;
+        min-height: calc(100vh - 66px);
+        margin-bottom: 30px;
+        border-bottom: solid 20px $dark;
+    }
 
-  &-footer {
-    height: 205px;
-  }
+    &-footer {
+        height: 205px;
+    }
 }
 
 .outline-none {
-  outline: none !important;
+    outline: none !important;
 }
 
 .underline-on-hover:hover {
-  text-decoration: underline !important;
+    text-decoration: underline !important;
 }
 
 .btn {
-  // Style btn-block like Bootstrap 4
-  &-block {
-    width: 100%;
-  }
-  &-outline {
-    &-info, &-success {
-      &:hover, &:focus, &:active {
+    // Style btn-block like Bootstrap 4
+    &-block {
+        width: 100%;
+    }
+    &-outline {
+        &-info,
+        &-success {
+            &:hover,
+            &:focus,
+            &:active {
+                color: $white;
+            }
+        }
+    }
+    &-info,
+    &-success,
+    &-primary {
         color: $white;
-      }
-    }
-  }
-  &-info, &-success, &-primary {
-    color: $white;
 
-    &:hover, &:focus, &:active {
-      color: $white;
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+        }
     }
-  }
 }
 
 a.badge {
-  text-decoration: none;
-  &:hover {
-    color: inherit;
-    text-decoration: underline;
-  }
+    text-decoration: none;
+    &:hover {
+        color: inherit;
+        text-decoration: underline;
+    }
 }
 
 .form-group.autocomplete {
-  position: relative;
+    position: relative;
 
-  .search-field {
-    & ~ .selected-items {
-      @extend .form-control;
-      padding: $spacer * .25;
-      display: none;
-      border-top: 0;
+    .search-field {
+        & ~ .selected-items {
+            @extend .form-control;
+            padding: $spacer * 0.25;
+            display: none;
+            border-top: 0;
 
-      .selected-item {
-        @extend .badge;
-        padding-left: $spacer * .25;
-        margin: $spacer * .5 $spacer * .25;
-        background-color: $success;
-        display: inline-block;
+            .selected-item {
+                @extend .badge;
+                padding-left: $spacer * 0.25;
+                margin: $spacer * 0.5 $spacer * 0.25;
+                background-color: $success;
+                display: inline-block;
 
-        &:before {
-          content: '⨯';
-          margin-right: 3px;
+                &:before {
+                    content: '⨯';
+                    margin-right: 3px;
+                }
+
+                &:hover {
+                    &:before {
+                        color: $danger;
+                    }
+
+                    cursor: pointer;
+                    background-color: mix($white, $success, 10%) !important;
+                }
+            }
         }
 
-        &:hover {
-          &:before {
-            color: $danger;
-          }
+        & ~ .search-results {
+            @extend .form-control;
+            display: none;
+            z-index: 1;
+            padding: 0;
+            position: absolute;
+            max-height: 200px;
+            max-width: calc(100vw - 20px);
+            overflow-y: auto;
+            background-color: $light;
 
-          cursor: pointer;
-          background-color: mix($white, $success, 10%) !important;
+            &:not(:disabled):hover {
+                display: block;
+            }
+
+            div,
+            span {
+                padding-left: 7px;
+                padding-right: 7px;
+                overflow-x: hidden;
+            }
+
+            div {
+                &:hover {
+                    background-color: $info;
+                    cursor: pointer;
+                }
+            }
         }
-      }
+
+        &:not(:disabled) {
+            &:focus,
+            &:active {
+                & + .search-results {
+                    display: block;
+                }
+            }
+        }
     }
-
-    & ~ .search-results {
-      @extend .form-control;
-      display: none;
-      z-index: 1;
-      padding: 0;
-      position: absolute;
-      max-height: 200px;
-      max-width: calc(100vw - 20px);
-      overflow-y: auto;
-      background-color: $light;
-
-      &:not(:disabled):hover {
-        display: block;
-      }
-
-      div, span {
-        padding-left: 7px;
-        padding-right: 7px;
-        overflow-x: hidden;
-      }
-
-      div {
-        &:hover {
-          background-color: $info;
-          cursor: pointer;
-        }
-      }
-    }
-
-    &:not(:disabled) {
-      &:focus, &:active {
-        & + .search-results {
-          display: block;
-        }
-      }
-    }
-  }
 }
 
 .card > .table-responsive .table {
-  th {
-    &:first-child {
-      padding-left: 20px !important;
+    th {
+        &:first-child {
+            padding-left: 20px !important;
+        }
+        &:last-child {
+            padding-right: 20px !important;
+            a {
+                text-decoration: none;
+            }
+        }
     }
-    &:last-child {
-      padding-right: 20px !important;
-      a { text-decoration: none }
-    }
-  }
-  td {
-    &:first-child {
-      padding-left: 20px !important;
-    }
+    td {
+        &:first-child {
+            padding-left: 20px !important;
+        }
 
-    &:last-child {
-      padding-right: 20px !important;
-      a { text-decoration: none }
+        &:last-child {
+            padding-right: 20px !important;
+            a {
+                text-decoration: none;
+            }
+        }
     }
-  }
 }
 
 header > nav.navbar {
-  @media (max-width: 1200px) {
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-  #profile-picture {
-    width: 45px;
-    height: 45px;
-    border: 2px solid white;
-    margin: -14px 0 -11px 0;
-  }
+    @media (max-width: 1200px) {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+    #profile-picture {
+        width: 45px;
+        height: 45px;
+        border: 2px solid white;
+        margin: -14px 0 -11px 0;
+    }
 }
 
 #admin-nav-item .dropdown-menu {
-  @media (min-width: 1200px) {
-    max-height: 80vh;
-    overflow-y: auto;
-  }
+    @media (min-width: 1200px) {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
 }
 
 .alert > p {
-  margin: 0 !important;
+    margin: 0 !important;
 }
 
 img {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 a.card {
-  color: #222;
+    color: #222;
 }
 
 // Helpers
 .ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .leftborder {
-  border-left-width: 5px !important;
-  border-left-style: solid !important;
-  &-primary {
-    border-left-color: $primary;
-  }
-  &-success {
-    border-left-color: $success;
-  }
-  &-info {
-    border-left-color: $info;
-  }
-  &-warning {
-    border-left-color: $warning;
-  }
-  &-danger {
-    border-left-color: $danger;
-  }
+    border-left-width: 5px !important;
+    border-left-style: solid !important;
+    &-primary {
+        border-left-color: $primary;
+    }
+    &-success {
+        border-left-color: $success;
+    }
+    &-info {
+        border-left-color: $info;
+    }
+    &-warning {
+        border-left-color: $warning;
+    }
+    &-danger {
+        border-left-color: $danger;
+    }
 }
 
-.cursor-pointer { cursor: pointer; }
-.cursor-default { cursor: default; }
-.pointer-events-none { pointer-events: none}
+.cursor-pointer {
+    cursor: pointer;
+}
+.cursor-default {
+    cursor: default;
+}
+.pointer-events-none {
+    pointer-events: none;
+}
 
 //Signature pad
 #signature-pad {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width:100%;
-  height:300px;
-  background-color: white;
-  border: 2px solid $dark;
-  @extend .rounded;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 300px;
+    background-color: white;
+    border: 2px solid $dark;
+    @extend .rounded;
 }
 
 .wrapper {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    position: relative;
+    width: 100%;
+    height: 300px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 //OmNomCom
 #display-fullscreen {
-  display: none;
-  .modal-dialog-centered { max-width: 500px; }
-  img { height: 200px; }
+    display: none;
+    .modal-dialog-centered {
+        max-width: 500px;
+    }
+    img {
+        height: 200px;
+    }
 }
 
 @media (max-width: 1280px) and (max-height: 720px), (orientation: portrait) {
-  #omnomcom { display: none; }
-  #display-fullscreen { display: unset; }
+    #omnomcom {
+        display: none;
+    }
+    #display-fullscreen {
+        display: unset;
+    }
 }
 
 #omnomcom {
-  .btn-category {
-    min-width: 190px;
-    opacity: 0.6;
-    transform: translate(0, 0);
-    &.active {
-      opacity: 1.0;
-      transform: translate(20px, 0);
-    }
-  }
-
-  #reload-button {
-    opacity: 0;
-  }
-
-  #product-nav {
-    overflow: auto;
-    max-height: 85vh;
-  }
-
-  .category-view {
-    display: flex;
-    flex-wrap: wrap;
-    padding-right: 10px;
-
-    &.inactive {
-      display: none;
-      opacity: 0;
-      z-index: 0;
-      height: 0;
-    }
-  }
-
-  .product {
-    padding: 10px 0 0 10px;
-
-    &:hover:not(.nostock) { cursor: pointer; }
-
-    &.nostock {
-      opacity: 0.5;
-
-      .product-stock {
-        display: none;
-      }
+    .btn-category {
+        min-width: 190px;
+        opacity: 0.6;
+        transform: translate(0, 0);
+        &.active {
+            opacity: 1;
+            transform: translate(20px, 0);
+        }
     }
 
-    &-inner {
-      position: relative;
-      width: 100%;
-      height: 130px;
-      background-color: #333;
-      color: #fff;
-    }
-
-    &-details {
-      position: absolute;
-      top: 0;
-      left: 130px;
-      right: 0;
-      bottom: 0;
-      background-color: #333;
-    }
-
-    &-name {
-      margin: 10px;
-      text-align: right;
-      font-size: 20px;
-      max-height: 56px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    &-price {
-      position: absolute;
-      bottom: 10px;
-      left: -50px;
-      padding: 10px;
-      color: #fff;
-      font-weight: bold;
-      background-color: #26ADE4;
-    }
-
-    &-stock {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      padding: 10px;
-      color: #fff;
-      background-color: #111;
-    }
-
-    &-image {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      bottom: 20px;
-      padding: 15px;
-      width: 90px;
-      border-radius: 45px;
-      background-color: #111;
-
-      &-inner {
-        width: 100%;
-        height: 100%;
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-        padding: 10px;
-      }
-    }
-  }
-
-  .user {
-    &-age {
-      color: #fff;
-      font-weight: bold;
-      background-color: #26ADE4;
-    }
-
-    &-image {
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-  }
-
-  #cart {
-    position: absolute;
-    left: 40px;
-    bottom: 0;
-    top: -20px;
-  }
-
-  #cart-overflow {
-    @extend .cart-product;
-    z-index: 2;
-  }
-
-  .cart-product {
-    position: absolute;
-    transition: left 500ms;
-    width: 90px;
-    height: 90px;
-    margin-top: 10px;
-    margin-right: 10px;
-    border-radius: 45px;
-    background-color: #111;
-    border: 10px solid #26ADE4;
-
-    &:hover { cursor: pointer; }
-
-    &-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 15px;
-
-      &-inner {
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    &-count {
-      position: absolute;
-      min-width: 45px;
-      height: 45px;
-      right: -15px;
-      bottom: -15px;
-      padding: 10px;
-      font-weight: bold;
-      color: $white;
-      text-align: center;
-      background-color: darken($omnomcom, 10%);
-    }
-  }
-
-  #controls {
-    .btn {
-      transition: all 0.5s;
-      transform: translate(0, 0);
-      opacity: 1;
-
-      &:disabled {
-        transform: translate(200px, 0);
+    #reload-button {
         opacity: 0;
-      }
-    }
-  }
-
-  #logout-button {
-    margin-top: 50px;
-  }
-
-  .info {
-    line-height: 50px;
-    font-size: 20px;
-    transition: all 0.5s;
-    opacity: 1;
-
-    &.inactive {
-      opacity: 0.5;
-    }
-  }
-
-  .modal {
-    .qrAuth {
-      text-align: center;
-      color: #eeeeee;
-      font-size: 20px;
-
-      img {
-        background-color: #eeeeee;
-        padding: 15px
-      }
     }
 
-    &#finished-modal {
-      .modal-content {
-        background-color: #343334;
-        overflow-y: hidden;
-      }
-      #purchase-movie {
-        margin-top: 20px;
-        margin-bottom: -30px;
-      }
+    #product-nav {
+        overflow: auto;
+        max-height: 85vh;
     }
-  }
+
+    .category-view {
+        display: flex;
+        flex-wrap: wrap;
+        padding-right: 10px;
+
+        &.inactive {
+            display: none;
+            opacity: 0;
+            z-index: 0;
+            height: 0;
+        }
+    }
+
+    .product {
+        padding: 10px 0 0 10px;
+
+        &:hover:not(.nostock) {
+            cursor: pointer;
+        }
+
+        &.nostock {
+            opacity: 0.5;
+
+            .product-stock {
+                display: none;
+            }
+        }
+
+        &-inner {
+            position: relative;
+            width: 100%;
+            height: 130px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        &-details {
+            position: absolute;
+            top: 0;
+            left: 130px;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+        }
+
+        &-name {
+            margin: 10px;
+            text-align: right;
+            font-size: 20px;
+            max-height: 56px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &-price {
+            position: absolute;
+            bottom: 10px;
+            left: -50px;
+            padding: 10px;
+            color: #fff;
+            font-weight: bold;
+            background-color: #26ade4;
+        }
+
+        &-stock {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px;
+            color: #fff;
+            background-color: #111;
+        }
+
+        &-image {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            bottom: 20px;
+            padding: 15px;
+            width: 90px;
+            border-radius: 45px;
+            background-color: #111;
+
+            &-inner {
+                width: 100%;
+                height: 100%;
+                background-size: contain;
+                background-position: center center;
+                background-repeat: no-repeat;
+                padding: 10px;
+            }
+        }
+    }
+
+    .user {
+        &-age {
+            color: #fff;
+            font-weight: bold;
+            background-color: #26ade4;
+        }
+
+        &-image {
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+    }
+
+    #cart {
+        position: absolute;
+        left: 40px;
+        bottom: 0;
+        top: -20px;
+    }
+
+    #cart-overflow {
+        @extend .cart-product;
+        z-index: 2;
+    }
+
+    .cart-product {
+        position: absolute;
+        transition: left 500ms;
+        width: 90px;
+        height: 90px;
+        margin-top: 10px;
+        margin-right: 10px;
+        border-radius: 45px;
+        background-color: #111;
+        border: 10px solid #26ade4;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 15px;
+
+            &-inner {
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center center;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        &-count {
+            position: absolute;
+            min-width: 45px;
+            height: 45px;
+            right: -15px;
+            bottom: -15px;
+            padding: 10px;
+            font-weight: bold;
+            color: $white;
+            text-align: center;
+            background-color: darken($omnomcom, 10%);
+        }
+    }
+
+    #controls {
+        .btn {
+            transition: all 0.5s;
+            transform: translate(0, 0);
+            opacity: 1;
+
+            &:disabled {
+                transform: translate(200px, 0);
+                opacity: 0;
+            }
+        }
+    }
+
+    #logout-button {
+        margin-top: 50px;
+    }
+
+    .info {
+        line-height: 50px;
+        font-size: 20px;
+        transition: all 0.5s;
+        opacity: 1;
+
+        &.inactive {
+            opacity: 0.5;
+        }
+    }
+
+    .modal {
+        .qrAuth {
+            text-align: center;
+            color: #eeeeee;
+            font-size: 20px;
+
+            img {
+                background-color: #eeeeee;
+                padding: 15px;
+            }
+        }
+
+        &#finished-modal {
+            .modal-content {
+                background-color: #343334;
+                overflow-y: hidden;
+            }
+            #purchase-movie {
+                margin-top: 20px;
+                margin-bottom: -30px;
+            }
+        }
+    }
 }
 
 // Membership Contract
 #membership-contract > div {
-  max-width: 600px
+    max-width: 600px;
 }
 
 // Tables
 #user-admin {
-  .table-responsive {
-    .controls { min-width: 100px; }
-    .fullname { min-width: 180px; }
-    .utwente-department { min-width: 70px; }
-  }
+    .table-responsive {
+        .controls {
+            min-width: 100px;
+        }
+        .fullname {
+            min-width: 180px;
+        }
+        .utwente-department {
+            min-width: 70px;
+        }
+    }
 }
 
 #news-admin {
-  .table-responsive {
-    .title {
-      min-width: 160px;
-      overflow-wrap: break-word }
-  }
+    .table-responsive {
+        .title {
+            min-width: 160px;
+            overflow-wrap: break-word;
+        }
+    }
 }
 
 #companies-admin {
-  .table-responsive {
-    .name {
-      overflow-wrap: break-word;
-      max-width: 130px;
+    .table-responsive {
+        .name {
+            overflow-wrap: break-word;
+            max-width: 130px;
+        }
+        .url {
+            overflow-wrap: break-word;
+            max-width: 220px;
+        }
     }
-    .url {
-      overflow-wrap: break-word;
-      max-width: 220px;
-    }
-  }
 }

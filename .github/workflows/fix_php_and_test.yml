@@ -26,6 +26,15 @@ jobs:
       - name: 📥 Install front-end dependencies
         run: npm ci --ignore-scripts
 
+      - name: lint with prettier
+        run: npx prettier --write resources/
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Automatic Blade linting (Prettier Blade)
+          skip_fetch: true
+
       - name: 🔨 build front-end
         run: npm run build --if-present
 
