@@ -206,12 +206,6 @@ class BankController extends Controller
         }
 
         try {
-            $country = substr($iban, 0, 2);
-
-            if ($country === 'NL') {
-                $response->bic = self::getNlBicFromIban($iban);
-            }
-
             if (! self::verifyBicIsValid($response->bic)) {
                 $response->status = false;
                 $response->message = 'Your BIC is not valid.';
@@ -248,95 +242,5 @@ class BankController extends Controller
     public static function generateAuthorizationId($user): string
     {
         return 'PROTOX'.str_pad(strval($user->id), 5, '0', STR_PAD_LEFT).'X'.str_pad(strval(mt_rand(0, 99999)), 5, '0');
-    }
-
-    private static function getNlBicFromIban(string $iban): ?string
-    {
-        $data = [ // Data from: https://www.betaalvereniging.nl/wp-content/uploads/BIC-lijst-NL.xlsx
-            'ABNA' => 'ABNANL2A',
-            'ABNC' => 'ABNCNL2A',
-            'ADYB' => 'ADYBNL2A',
-            'AEGO' => 'AEGONL2U',
-            'AINH' => 'AINHNL22',
-            'ANDL' => 'ANDLNL2A',
-            'ARBN' => 'ARBNNL22',
-            'ARSN' => 'ARSNNL21',
-            'ASNB' => 'ASNBNL21',
-            'BARC' => 'BARCNL22',
-            'BCIT' => 'BCITNL2A',
-            'BICK' => 'BICKNL2A',
-            'BINK' => 'BINKNL21',
-            'BITS' => 'BITSNL2A',
-            'BKCH' => 'BKCHNL2R',
-            'BKMG' => 'BKMGNL2A',
-            'BLGW' => 'BLGWNL21',
-            'BNDA' => 'BNDANL2A',
-            'BNGH' => 'BNGHNL2G',
-            'BNPA' => 'BNPANL2A',
-            'BOFA' => 'BOFANLNX',
-            'BOFS' => 'BOFSNL21002',
-            'BOTK' => 'BOTKNL2X',
-            'BUNQ' => 'BUNQNL2A',
-            'CCBV' => 'CCBVNL2A',
-            'CHAS' => 'CHASNL2X',
-            'CITC' => 'CITCNL2A',
-            'CITI' => 'CITINL2X',
-            'COBA' => 'COBANL2X',
-            'DELE' => 'DELENL22',
-            'DEUT' => 'DEUTNL2A',
-            'DHBN' => 'DHBNNL2R',
-            'DNIB' => 'DNIBNL2G',
-            'EBPB' => 'EBPBNL22',
-            'EBUR' => 'EBURNL21',
-            'FBHL' => 'FBHLNL2A',
-            'FLOR' => 'FLORNL2A',
-            'FNOM' => 'FNOMNL22',
-            'FRNX' => 'FRNXNL2A',
-            'FROM' => 'FROMNL2A',
-            'FVLB' => 'FVLBNL22',
-            'FXBB' => 'FXBBNL22',
-            'GILL' => 'GILLNL2A',
-            'HAND' => 'HANDNL2A',
-            'HIFX' => 'HIFXNL2A',
-            'HUSH' => 'HUSHNL2A',
-            'HSBC' => 'HSBCNL2A',
-            'ICBC' => 'ICBCNL2A',
-            'ICBK' => 'ICBKNL2A',
-            'ICEP' => 'ICEPNL21',
-            'INGB' => 'INGBNL2A',
-            'ISAE' => 'ISAENL2A',
-            'ISBK' => 'ISBKNL2A',
-            'KABA' => 'KABANL2A',
-            'KNAB' => 'KNABNL2H',
-            'KOEX' => 'KOEXNL2A',
-            'KRED' => 'KREDNL2X',
-            'LOYD' => 'LOYDNL2A',
-            'LPLN' => 'LPLNNL2F',
-            'MHCB' => 'MHCBNL2A',
-            'MODR' => 'MODRNL22',
-            'NNBA' => 'NNBANL2G',
-            'NWAB' => 'NWABNL2G',
-            'PANX' => 'PANXNL22',
-            'PCBC' => 'PCBCNL2A',
-            'PNOW' => 'PNOWNL2A',
-            'RABO' => 'RABONL2U',
-            'RBRB' => 'RBRBNL21',
-            'REVO' => 'REVONL22',
-            'SBOS' => 'SBOSNL2A',
-            'SNSB' => 'SNSBNL2A',
-            'SOGE' => 'SOGENL2A',
-            'SWNB' => 'SWNBNL22',
-            'TRIO' => 'TRIONL2U',
-            'UGBI' => 'UGBINL2A',
-            'VOWA' => 'VOWANL21',
-            'VPAY' => 'VPAYNL22',
-            'VTPS' => 'VTPSNL2R',
-            'YOUR' => 'YOURNL2A',
-            'ZWLB' => 'ZWLBNL21',
-        ];
-
-        $bank = substr($iban, 4, 4);
-
-        return $data[$bank] ?? null;
     }
 }

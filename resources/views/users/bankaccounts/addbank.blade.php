@@ -114,12 +114,15 @@
                                     id="bic"
                                     name="bic"
                                     placeholder=""
+                                    required
                                 />
                             </div>
 
-                            <!-- <p>
-                                <span id="bic-message">Enter your IBAN first.</span>
-                             -->
+                            <p>
+                                <span id="bic-message">
+                                    Enter your IBAN first.
+                                </span>
+                            </p>
 
                             <hr />
 
@@ -185,34 +188,33 @@
         const form = document.getElementById('iban-form')
         const ibanMessage = document.getElementById('iban-message')
         const bicMessage = document.getElementById('bic-message')
+        console.log('Init')
 
-        iban.addEventListener('keyup', (_) => {
+        const onkey = (_) => {
             iban.value = iban.value.replace(' ', '')
             if (iban.value.length >= 15) {
-                get('{{ route('api::verify_iban') }}', { iban: iban.value })
+                get('{{ route('api::verify_iban') }}', {
+                    iban: iban.value,
+                    bic: bic.value,
+                })
                     .then((data) => update_iban_form(data))
                     .catch((error) => {
                         console.error(error)
                         iban_message(
                             'black',
-                            'We could not automatically verify your IBAN.'
+                            'We could not automatically verify your IBAN, try typing it again.'
                         )
-                        bic_message('red', 'Please enter your BIC.')
-                        bic.value = ''
-                        //bic.disabled = false
+                        bic_message('black', '')
                     })
             } else {
                 iban_message('black', 'Please enter your IBAN above.')
-                bic_message('black', 'Enter your IBAN first.')
-                bic.value = ''
-                //bic.disabled = true
+                bic_message('black', ' ')
                 submit.disabled = true
             }
-        })
+        }
+        iban.addEventListener('keyup', onkey)
 
-        bic.addEventListener('keyup', (_) => {
-            submit.disabled = bic.value < 8
-        })
+        bic.addEventListener('keyup', onkey)
 
         submit.addEventListener('click', (_) => {
             submit.disabled = true
@@ -223,20 +225,16 @@
                 })
                     .then((data) => {
                         if (data.status === true) {
-                            //bic.disabled = false
                             form.submit()
                         } else {
                             update_iban_form(data)
                         }
                     })
                     .catch((err) => {
-                        console.error(err)
-                        //bic.disabled = true
-                        form.submit()
+                        console.error(err) // Log the fetch error
                     })
             } else {
                 bic_message('red', 'Please enter your BIC.')
-                //bic.disabled = false
             }
         })
 
@@ -252,26 +250,21 @@
 
         function update_iban_form(data) {
             if (data.status === false) {
-                iban_message('red', data.message)
-                bic_message('red', data.message)
-                bic.value = ''
+                if (data.message.includes('BIC')) {
+                    bic_message('red', data.message)
+                    iban_message('green', 'Your IBAN is valid!')
+                } else {
+                    iban_message('red', data.message)
+                    bic_message('red', '')
+                }
                 submit.disabled = true
-            } else if (data.bic !== '') {
-                iban_message('green', 'Your IBAN is valid!')
-                bic_message('green', 'We found your BIC for you!')
-                bic.value = data.bic
-                iban.value = data.iban
-                //bic.disabled = true
-                submit.disabled = false
             } else {
                 iban_message('green', 'Your IBAN is valid!')
                 bic_message(
-                    'red',
-                    'We could not find your BIC. Please enter your it manually.'
+                    'green',
+                    'The BIC is also valid! Make sure that it matches your bank too!'
                 )
-                iban.value = data.iban
-                bic.value = ''
-                //bic.disabled = false
+                submit.disabled = false
             }
         }
     </script>
