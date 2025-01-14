@@ -32,7 +32,7 @@ class PhotoController extends Controller
     public function show() {}
 
     /**
-     * @return JsonResponse|string
+     * @return JsonResponse
      */
     public function store(Request $request, PhotoAlbum $photoalbum)
     {

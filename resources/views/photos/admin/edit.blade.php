@@ -39,7 +39,7 @@
                 @can('publishalbums')
                     <a
                         class="btn btn-danger text-white btn-block mb-3"
-                        href="{{ route('photo::admin::publish', ['id' => $album->id]) }}"
+                        href="{{ route('photo::admin::publish', ['photoalbum' => $album]) }}"
                     >
                         This album is not yet published, click here to publish
                         the album.

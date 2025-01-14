@@ -44,7 +44,7 @@ class PhotoAlbumAdminController extends Controller
 
         $photoalbum->save();
 
-        return Redirect::route('photo::admin::photoalbums.edit', ['id' => $photoalbum->id]);
+        return Redirect::route('photo::admin::photoalbums.edit', ['photoalbum' => $photoalbum]);
     }
 
     /**

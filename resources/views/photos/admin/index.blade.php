@@ -44,7 +44,7 @@
                 </div>
 
                 <form
-                    method="post"
+                    method="put"
                     action="{{ route('photo::admin::photoalbums.create') }}"
                 >
                     {{ csrf_field() }}

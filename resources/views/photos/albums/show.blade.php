@@ -32,7 +32,7 @@
             </a>
             @can('protography')
                 <a
-                    href="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album]) }}"
+                    href="{{ route('photo::admin::photoalbums.edit', ['photoalbum' => $album->id]) }}"
                     class="btn btn-success float-start me-3"
                 >
                     <i class="fas fa-edit"></i>
