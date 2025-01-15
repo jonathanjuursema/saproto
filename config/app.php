@@ -1,6 +1,5 @@
 <?php
 
-use Aacotroneo\Saml2\Saml2ServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\RouteServiceProvider;
@@ -130,6 +129,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | If your application is behind a proxy, you may specify the proxy server
+    | that should be trusted for the purposes of generating secure URLs.
+    | This will prevent the "X-Forwarded-For" header from being used.
+    |
+    */
+    'trusted_proxies' => env('TRUSTED_PROXIES', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
@@ -238,8 +249,8 @@ return [
         MarkdownServiceProvider::class,
         HashidsServiceProvider::class,
         ServiceProvider::class,
-        Saml2ServiceProvider::class,
         Sentry\Laravel\ServiceProvider::class,
+        \SocialiteProviders\Manager\ServiceProvider::class,
         SoloServiceProvider::class,
     ],
 

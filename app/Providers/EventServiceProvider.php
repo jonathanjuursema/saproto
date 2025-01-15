@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
-use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use App\Handlers\Events\AuthLoginEventHandler;
-use App\Handlers\Events\SamlLoginEventHandler;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Override;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,8 +19,8 @@ class EventServiceProvider extends ServiceProvider
         Login::class => [
             AuthLoginEventHandler::class,
         ],
-        Saml2LoginEvent::class => [
-            SamlLoginEventHandler::class,
+        SocialiteWasCalled::class => [
+            'SocialiteProviders\\Saml2\\Saml2ExtendSocialite@handle',
         ],
     ];
 

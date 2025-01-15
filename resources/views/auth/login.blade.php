@@ -8,8 +8,10 @@
     <form method="POST" action="{{ route('login::post') }}">
         @csrf
 
+        {!! csrf_field() !!}
+
         <a
-            href="{{ route('login::edu') }}"
+            href="{{ route('login::surf::login') }}"
             class="btn btn-success btn-block mb-3"
         >
             <i class="fas fa-university me-2"></i>

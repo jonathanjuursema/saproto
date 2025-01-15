@@ -7,7 +7,7 @@
             class="card-body event text-start {{ $event->image ? "bg-img" : "no-img" }}"
             @if (empty($lazyload) && $event->image)
                 style="{{ sprintf("background: center no-repeat url(%s);", $event->image->generateImagePath(800, 300)) }}
-                                                                                                                                                                                                                                                                                                                                                            background-size: cover;"
+                                                                                                                                                                                                                                                                                                                                                                                                background-size: cover;"
             @elseif ($event->image)
                 data-bgimage="{{ $event->image->generateImagePath(800, 300) ?? "" }}"
             @endif

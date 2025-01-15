@@ -25,7 +25,7 @@
             />
         </div>
 
-        <button type="submit" class="btn btn-success btn-block">
+        <button type="submit" class="mt-2 btn btn-success btn-block">
             Synchronize password for {{ Auth::user()->calling_name }}
         </button>
     </form>

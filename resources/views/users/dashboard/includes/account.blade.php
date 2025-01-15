@@ -136,7 +136,7 @@
                                 {{ $user->utwente_username ?? $user->edu_username }}
                                 <a
                                     class="badge rounded-pill bg-danger float-end"
-                                    href="{{ route('user::edu::delete') }}"
+                                    href="{{ route('user::surf::unlink') }}"
                                 >
                                     <i class="fas fa-unlink fa-fw"></i>
                                 </a>
@@ -144,7 +144,7 @@
                                 Not linked
                                 <a
                                     class="badge rounded-pill bg-primary float-end"
-                                    href="{{ route('user::edu::create') }}"
+                                    href="{{ route('user::surf::link') }}"
                                 >
                                     <i class="fas fa-user-plus fa-fw"></i>
                                 </a>

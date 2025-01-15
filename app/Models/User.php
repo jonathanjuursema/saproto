@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Enums\MembershipTypeEnum;
+use App\Http\Controllers\EmailListController;
+use App\Mail\PasswordResetEmail;
+use App\Mail\RegistrationConfirmation;
+use App\Mail\UsernameReminderEmail;
 use Carbon;
 use Eloquent;
 use Exception;
@@ -23,6 +27,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Passport\Client;
 use Laravel\Passport\HasApiTokens;
@@ -569,5 +574,52 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
         return [
             'deleted_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Register a new user.
+     * This method will send a confirmation email and a password reset email.
+     * The user will be subscribed to the default email lists.
+     */
+    public static function register(string $email, string $callingName, string $fullName, ?string $utwenteId = null, ?string $utwenteEmail = null): User
+    {
+        $user = \App\Models\User::query()->create([
+            'email' => $email,
+            'calling_name' => $callingName,
+            'name' => $fullName,
+            'utwente_username' => $utwenteId,
+            'edu_username' => $utwenteEmail,
+        ]);
+
+        Mail::to($user)->queue((new RegistrationConfirmation($user))->onQueue('high'));
+
+        $user->sendPasswordResetEmail();
+
+        EmailListController::autoSubscribeToLists('autoSubscribeUser', $user);
+
+        return $user;
+    }
+
+    /**
+     * Send a password reset email to this user.
+     */
+    public function sendPasswordResetEmail(): void
+    {
+        /** @var PasswordReset $reset */
+        $reset = PasswordReset::query()->create([
+            'email' => $this->email,
+            'token' => Str::random(128),
+            'valid_to' => strtotime('+1 hour'),
+        ]);
+
+        Mail::to($this)->queue((new PasswordResetEmail($this, $reset->token))->onQueue('high'));
+    }
+
+    /**
+     * Send an email to this user with their username.
+     */
+    public function sendForgotUsernameEmail(): void
+    {
+        Mail::to($this)->queue((new UsernameReminderEmail($this))->onQueue('high'));
     }
 }

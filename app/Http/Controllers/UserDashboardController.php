@@ -207,7 +207,7 @@ class UserDashboardController extends Controller
                 'text' => 'In order to become a member of Study Association Proto, you need a Proto account. You can create that here. After creating your account, activate it by using the link mailed to you.',
             ],
             [
-                'url' => Auth::check() ? route('user::edu::create', ['id' => $user->id, 'wizard' => 1]) : null,
+                'url' => Auth::check() ? route('user::surf::link', ['id' => $user->id, 'wizard' => 1]) : null,
                 'unlocked' => Auth::check(),
                 'done' => Auth::check() && Auth::user()->edu_username,
                 'heading' => 'Link your UTwente account',

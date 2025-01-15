@@ -53,8 +53,6 @@ use App\Http\Controllers\QueryController;
 use App\Http\Controllers\RegistrationHelperController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\SearchController;
-/* --- use App\Http\Controllers\RadioController; --- */
-
 use App\Http\Controllers\ShortUrlController;
 use App\Http\Controllers\SmartXpScreenController;
 use App\Http\Controllers\SpotifyController;
@@ -65,7 +63,9 @@ use App\Http\Controllers\TFAController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TIPCieController;
 use App\Http\Controllers\UserAdminController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WallstreetController;
@@ -127,43 +127,48 @@ Route::middleware('forcedomain')->group(function () {
 
     /* --- Routes related to authentication. All public --- */
     Route::controller(AuthController::class)->name('login::')->group(function () {
-        Route::get('login', 'getLogin')->name('show');
-        Route::post('login', 'postLogin')->middleware(['throttle:5,1'])->name('post');
-        Route::get('logout', 'getLogout')->name('logout');
-        Route::get('logout/redirect', 'getLogoutRedirect')->name('logout::redirect');
+        Route::get('register', 'registerIndex')->name('register::index');
+        Route::post('register', 'register')->middleware(['throttle:5,1'])->name('register');
+
+        Route::get('login', 'loginIndex')->name('show');
+        Route::post('login', 'login')->middleware(['throttle:5,1'])->name('post');
+
+        Route::get('logout', 'logout')->name('logout');
+        Route::get('logout/redirect', 'logoutAndRedirect')->name('logout::redirect');
 
         Route::prefix('password')->name('password::')->group(function () {
-            Route::get('reset/{token}', 'getPasswordReset')->name('reset::token');
-            Route::post('reset', 'postPasswordReset')->middleware(['throttle:5,1'])->name('reset::submit');
+            Route::get('reset/{token}', [UserPasswordController::class, 'resetPasswordIndex'])->name('reset::token');
+            Route::post('reset', [UserPasswordController::class, 'resetPassword'])->middleware(['throttle:5,1'])->name('reset::submit');
 
-            Route::get('email', 'getPasswordResetEmail')->name('reset');
-            Route::post('email', 'postPasswordResetEmail')->middleware(['throttle:5,1'])->name('reset::send');
-
-            Route::get('sync', 'getPasswordSync')->middleware(['auth'])->name('sync::index');
-            Route::post('sync', 'postPasswordSync')->middleware(['throttle:5,1', 'auth'])->name('sync');
-
-            Route::get('change', 'getPasswordChange')->middleware(['auth'])->name('change::index');
-            Route::post('change', 'postPasswordChange')->middleware(['throttle:5,1', 'auth'])->name('change');
+            Route::get('email', [UserPasswordController::class, 'requestPasswordResetIndex'])->name('reset');
+            Route::post('email', [UserPasswordController::class, 'requestPasswordReset'])->middleware(['throttle:5,1'])->name('reset::send');
         });
 
-        Route::get('register', 'getRegister')->name('register::index');
-        Route::post('register', 'postRegister')->middleware(['throttle:5,1'])->name('register');
-        Route::post('register/surfconext', 'postRegisterSurfConext')->middleware(['throttle:5,1'])->name('register::surfconext');
+        Route::prefix('surf')->name('surf::')->group(function () {
+            Route::get('login', [SurfConextController::class, 'login'])->name('login');
+            Route::post('callback', [SurfConextController::class, 'callback'])->name('callback');
+            Route::get('meta', [SurfConextController::class, 'provideMetadataForSurfConext'])->name('meta');
+        });
 
-        Route::get('surfconext', 'startSurfConextAuth')->name('edu');
-        Route::get('surfconext/post', 'postSurfConextAuth')->name('edupost');
+        Route::get('username', [UserPasswordController::class, 'forgotUsernameIndex'])->name('requestusername::index');
+        Route::post('username', [UserPasswordController::class, 'forgotUsername'])->middleware(['throttle:5,1'])->name('requestusername');
+    });
 
-        Route::get('username', 'requestUsername')->name('requestusername::index');
-        Route::post('username', 'requestUsername')->middleware(['throttle:5,1'])->name('requestusername');
+    /* --- Authenticated routed related to password modifications --- */
+    Route::prefix('password')->name('login::password::')->middleware(['auth'])->group(function () {
+        Route::get('sync', [UserPasswordController::class, 'syncPasswordsIndex'])->name('sync::index');
+        Route::post('sync', [UserPasswordController::class, 'syncPasswords'])->middleware(['throttle:5,1'])->name('sync');
+
+        Route::get('change', [UserPasswordController::class, 'changePasswordIndex'])->name('change::index');
+        Route::post('change', [UserPasswordController::class, 'changePassword'])->middleware(['throttle:5,1'])->name('change');
     });
 
     /* --- Routes related to user profiles --- */
     Route::prefix('user')->name('user::')->middleware(['auth'])->group(function () {
 
         /* --- Public routes ---- */
-        Route::controller(AuthController::class)->group(function () {
-            Route::post('delete', 'deleteUser')->name('delete');
-            Route::post('password', 'updatePassword')->name('changepassword');
+        Route::controller(UserController::class)->group(function () {
+            Route::post('delete', 'destroy')->name('delete');
         });
 
         Route::get('personal_key', [UserDashboardController::class, 'generateKey'])->name('personal_key::generate');
@@ -219,9 +224,9 @@ Route::middleware('forcedomain')->group(function () {
         });
 
         /* --- Routes related to UT accounts --- */
-        Route::controller(SurfConextController::class)->prefix('edu')->name('edu::')->group(function () {
-            Route::get('delete', 'destroy')->name('delete');
-            Route::get('create', 'create')->name('create');
+        Route::controller(SurfConextController::class)->prefix('surf')->name('surf::')->group(function () {
+            Route::get('unlink', 'unlinkAccount')->name('unlink');
+            Route::get('link', 'linkAccount')->name('link');
         });
 
         /* --- Routes related to 2FA --- */
