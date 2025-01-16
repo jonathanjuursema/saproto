@@ -17,7 +17,7 @@ class AuthorizationController extends Controller
 {
     public function index(): view
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions', 'users')->get();
         $permissions = Permission::all();
 
         return view('authorization.overview', ['roles' => $roles, 'permissions' => $permissions]);
@@ -37,21 +37,21 @@ class AuthorizationController extends Controller
         $user = User::query()->findOrFail($request->user);
 
         if ($user->hasRole($role)) {
-            Session::flash('flash_message', $user->name.' already has role: <strong>'.$role->name.'</strong>.');
+            Session::flash('flash_message', $user->name . ' already has role: <strong>' . $role->name . '</strong>.');
 
             return Redirect::back();
         }
 
         $user->assignRole($role);
 
-        Session::flash('flash_message', $user->name.' has been granted role: <strong>'.$role->name.'</strong>.');
+        Session::flash('flash_message', $user->name . ' has been granted role: <strong>' . $role->name . '</strong>.');
 
         return Redirect::back();
     }
 
     /**
-     * @param  int  $id  role ID
-     * @param  int  $userId  user ID
+     * @param int $id role ID
+     * @param int $userId user ID
      */
     public function revoke(int $id, int $userId): RedirectResponse
     {
@@ -70,14 +70,14 @@ class AuthorizationController extends Controller
         // Call Protube webhook to remove this user's admin rights, only remove when role is protube
         if ($role->name === 'protube') {
             $updatedAdmin = ProTubeApiService::updateAdmin($user->id, false);
-            if (! $updatedAdmin) {
-                Session::flash('flash_message', 'Failed to remove ProTube admin status for '.$user->name.'.');
+            if (!$updatedAdmin) {
+                Session::flash('flash_message', 'Failed to remove ProTube admin status for ' . $user->name . '.');
 
                 return Redirect::back();
             }
         }
 
-        Session::flash('flash_message', '<strong>'.$role->name.'</strong> has been revoked from '.$user->name.'.');
+        Session::flash('flash_message', '<strong>' . $role->name . '</strong> has been revoked from ' . $user->name . '.');
 
         return Redirect::back();
     }

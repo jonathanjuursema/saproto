@@ -51,6 +51,8 @@ class Achievement extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'achievements_users');

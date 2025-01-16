@@ -18,7 +18,11 @@ class MenuController extends Controller
     /** @return View */
     public function index()
     {
-        $menuItems = MenuItem::query()->whereNull('parent')->with('children', 'page')->orderBy('order')->get();
+        $menuItems = MenuItem::query()
+            ->whereNull('parent')
+            ->with('children', 'page')
+            ->orderBy('order')
+            ->get();
 
         return view('menu.list', ['menuItems' => $menuItems]);
     }
@@ -55,7 +59,7 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return View
      */
     public function edit(Router $router, $id)
@@ -68,7 +72,7 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function update(Request $request, $id)
@@ -100,7 +104,7 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function orderUp($id)
@@ -109,7 +113,7 @@ class MenuController extends Controller
         $menuItem = MenuItem::query()->findOrFail($id);
         $menuItemAbove = MenuItem::query()->where('parent', $menuItem->parent)->where('order', '<', $menuItem->order)->orderBy('order', 'desc')->first();
 
-        if (! $menuItemAbove) {
+        if (!$menuItemAbove) {
             abort(400, 'Item is already top item.');
         }
 
@@ -121,7 +125,7 @@ class MenuController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return RedirectResponse
      */
     public function orderDown($id)
@@ -130,7 +134,7 @@ class MenuController extends Controller
         $menuItem = MenuItem::query()->findOrFail($id);
         $menuItemBelow = MenuItem::query()->where('parent', $menuItem->parent)->where('order', '>', $menuItem->order)->orderBy('order', 'asc')->first();
 
-        if (! $menuItemBelow) {
+        if (!$menuItemBelow) {
             abort(400, 'Item is already bottom item.');
         }
 
@@ -200,10 +204,10 @@ class MenuController extends Controller
     {
         $routes = $router->getRoutes()->getRoutesByMethod()['GET'];
 
-        return array_filter($routes, static fn ($route): bool => $route->getName() &&
-            ! str_contains($route->uri(), '{') &&
-            ! str_contains($route->getName(), 'api::') &&
-            ! str_contains($route->getName(), 'login::') &&
-            ! str_contains($route->uri(), 'oauth'));
+        return array_filter($routes, static fn($route): bool => $route->getName() &&
+            !str_contains($route->uri(), '{') &&
+            !str_contains($route->getName(), 'api::') &&
+            !str_contains($route->getName(), 'login::') &&
+            !str_contains($route->uri(), 'oauth'));
     }
 }

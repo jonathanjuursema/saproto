@@ -6,6 +6,7 @@ use App\Http\Controllers\SpotifyController;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use SpotifyWebAPI\SpotifyWebAPI;
 use SpotifyWebAPI\SpotifyWebAPIException;
 
 class SpotifySync extends Command
@@ -116,20 +117,14 @@ class SpotifySync extends Command
         $this->info('Done!');
     }
 
-    public function updatePlaylist($spotify, string $playlistId, $spotifyUris): void
+    public function updatePlaylist(SpotifyWebAPI $spotify, string $playlistId, array $spotifyUris): void
     {
         $this->info('---');
 
-        $this->info('Updating playlist '.$playlistId.' with '.count($spotifyUris).' songs.');
+        $this->info('Updating playlist ' . $playlistId . ' with ' . count($spotifyUris) . ' songs.');
 
-        try {
-            $spotify->replacePlaylistTracks($playlistId, $spotifyUris);
-        } catch (SpotifyWebAPIException $spotifyWebAPIException) {
-            $this->error('Error updating playlist '.$playlistId.': '.$spotifyWebAPIException->getMessage());
+        $spotify->replacePlaylistTracks($playlistId, $spotifyUris);
 
-            return;
-        }
-
-        $this->info('Playlist '.$playlistId.' updated.');
+        $this->info('Playlist ' . $playlistId . ' updated.');
     }
 }

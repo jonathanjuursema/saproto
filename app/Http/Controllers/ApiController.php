@@ -93,7 +93,7 @@ class ApiController extends Controller
             $query->where('published', true)->where('private', false);
         });
 
-        if (! $privateQuery->count()) {
+        if (!$privateQuery->count()) {
             return response()->json(['error' => 'No public photos found!.'], 404);
         }
 
@@ -113,7 +113,7 @@ class ApiController extends Controller
         $photo = $query->inRandomOrder()->with('album')->first();
 
         //        if we picked a year and therefore a query where no photos exist, pick a random public photo as fallback
-        if (! $photo) {
+        if (!$photo) {
             $photo = $privateQuery->inRandomOrder()->with('album')->first();
         }
 
@@ -229,15 +229,15 @@ class ApiController extends Controller
         return $data;
     }
 
-    public function discordVerifyMember($userId): JsonResponse
+    public function discordVerifyMember(int $userId): JsonResponse
     {
         $user = User::query()->firstWhere('discord_id', $userId);
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['error' => 'No Proto user found with this Discord account linked.'], 404);
         }
 
-        if (! $user->is_member) {
+        if (!$user->is_member) {
             return response()->json(['error' => 'Failed to verify Proto membership. Please visit the Proto website to confirm your membership is approved.'], 403);
         }
 

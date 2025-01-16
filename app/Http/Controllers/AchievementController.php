@@ -6,6 +6,7 @@ use App\Models\Achievement;
 use App\Models\AchievementOwnership;
 use App\Models\User;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Exception;
 use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Http\RedirectResponse;
@@ -60,11 +61,11 @@ class AchievementController extends Controller
 
         if (Achievement::query()->where('page_name', '=', $request->page_name)->first()) {
             $achievement->save();
-            Session::flash('flash_message', 'saproto.nl/achieve/'.$achievement->page_name.' is not a unique url.');
+            Session::flash('flash_message', 'saproto.nl/achieve/' . $achievement->page_name . ' is not a unique url.');
         } else {
             $achievement->page_name = $request->page_name != '' ? $request->page_name : null;
             $achievement->save();
-            Session::flash('flash_message', "Achievement '".$achievement->name."' has been created.");
+            Session::flash('flash_message', "Achievement '" . $achievement->name . "' has been created.");
         }
 
         return Redirect::route('achievement::edit', ['id' => $achievement->id]);
@@ -84,11 +85,11 @@ class AchievementController extends Controller
 
         if (Achievement::query()->where('page_name', '=', $request->page_name)->where('id', '!=', $achievement->id)->first()) {
             $achievement->save();
-            Session::flash('flash_message', 'saproto.nl/achieve/'.$request->page_name.' is not a unique url.');
+            Session::flash('flash_message', 'saproto.nl/achieve/' . $request->page_name . ' is not a unique url.');
         } else {
             $achievement->page_name = $request->page_name != '' ? $request->page_name : null;
             $achievement->save();
-            Session::flash('flash_message', "Achievement '".$achievement->name."' has been updated.");
+            Session::flash('flash_message', "Achievement '" . $achievement->name . "' has been updated.");
         }
 
         return Redirect::back();
@@ -102,13 +103,13 @@ class AchievementController extends Controller
         /** @var Achievement $achievement */
         $achievement = Achievement::query()->findOrFail($id);
         if (count($achievement->users) > 0) {
-            Session::flash('flash_message', "Achievement '".$achievement->name."' has users associated with it. You cannot remove it.");
+            Session::flash('flash_message', "Achievement '" . $achievement->name . "' has users associated with it. You cannot remove it.");
 
             return Redirect::route('achievement::index');
         }
 
         $achievement->delete();
-        Session::flash('flash_message', "Achievement '".$achievement->name."' has been removed.");
+        Session::flash('flash_message', "Achievement '" . $achievement->name . "' has been removed.");
 
         return Redirect::route('achievement::index');
     }
@@ -116,7 +117,7 @@ class AchievementController extends Controller
     public function achieve(string $page_name): View|RedirectResponse
     {
         $user = Auth::user();
-        if (! $user->is_member) {
+        if (!$user->is_member) {
             Session::flash('flash_message', 'You need to be a member to receive this achievement');
 
             return Redirect::back();
@@ -159,19 +160,19 @@ class AchievementController extends Controller
         $awarded = '';
         foreach ($userIds as $userId) {
             $user = User::query()->find($userId);
-            if (! $user) {
+            if (!$user) {
                 continue;
             }
 
-            if (! $this->giveAchievement($achievement, $user, $request->input('description'), $request->input('achieved_on'))) {
+            if (!$this->giveAchievement($achievement, $user, $request->input('description'), $request->input('achieved_on'))) {
                 continue;
             }
 
-            $awarded = $awarded.' '.$user->name.',';
+            $awarded = $awarded . ' ' . $user->name . ',';
         }
 
         if ($awarded !== '' && $awarded !== '0') {
-            Session::flash('flash_message', "Achievement $achievement->name has been newly given to:".$awarded);
+            Session::flash('flash_message', "Achievement $achievement->name has been newly given to:" . $awarded);
         } else {
             Session::flash('flash_message', "Achievement $achievement->name had already been achieved by all users!");
         }
@@ -233,10 +234,10 @@ class AchievementController extends Controller
         }
     }
 
-    private function giveAchievement($achievement, $user, $description, $achievedOn): bool
+    private function giveAchievement(Achievement $achievement, User $user, string $description, DateTimeInterface|null|string $achievedOn): bool
     {
         $achieved = $user->achievements()->where('achievement_id', $achievement->id)->first();
-        if (! $achieved) {
+        if (!$achieved) {
             $relation = new AchievementOwnership([
                 'user_id' => $user->id,
                 'achievement_id' => $achievement->id,

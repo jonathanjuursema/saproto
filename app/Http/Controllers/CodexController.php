@@ -6,6 +6,10 @@ use App\Libraries\PDF_TOC;
 use App\Models\Codex;
 use App\Models\CodexSongCategory;
 use App\Models\CodexTextType;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -16,7 +20,7 @@ class CodexController extends Controller
 {
     protected string $table = 'codex_codices';
 
-    public function index()
+    public function index(): View
     {
         $codices = Codex::query()->orderBy('name')->get();
         $textTypes = CodexTextType::with('texts')->withCount('texts')->get();
@@ -25,7 +29,7 @@ class CodexController extends Controller
         return view('codex.index', ['codices' => $codices, 'textTypes' => $textTypes, 'songTypes' => $songTypes]);
     }
 
-    public function create()
+    public function create(): View
     {
         $textTypes = CodexTextType::with('texts')->withCount('texts')->get();
         $songTypes = CodexSongCategory::query()->orderBy('name')->with('songs')->withCount('songs')->get();
@@ -33,7 +37,7 @@ class CodexController extends Controller
         return view('codex.codex-edit', ['codex' => null, 'textTypes' => $textTypes, 'songTypes' => $songTypes, 'mySongs' => [], 'myTexts' => [], 'myTextTypes' => []]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $codex = new Codex;
         $this->saveCodex($codex, $request);
@@ -41,7 +45,7 @@ class CodexController extends Controller
         return Redirect::route('codex.index');
     }
 
-    public function edit(Codex $codex)
+    public function edit(Codex $codex): View
     {
         $textTypes = CodexTextType::with('texts')->withCount('texts')->get();
         $songTypes = CodexSongCategory::query()->orderBy('name')->with('songs')->withCount('songs')->get();
@@ -51,14 +55,14 @@ class CodexController extends Controller
         return view('codex.codex-edit', ['codex' => $codex, 'textTypes' => $textTypes, 'songTypes' => $songTypes, 'mySongs' => $mySongs, 'myTextTypes' => $myTexts]);
     }
 
-    public function update(Request $request, Codex $codex)
+    public function update(Request $request, Codex $codex): RedirectResponse
     {
         $this->saveCodex($codex, $request);
 
         return Redirect::route('codex.index');
     }
 
-    public function destroy(Codex $codex)
+    public function destroy(Codex $codex): RedirectResponse
     {
         $codex->songs()->detach();
         $codex->texts()->detach();
@@ -87,7 +91,7 @@ class CodexController extends Controller
         $codex->texts()->sync($validated['textids'] ?? []);
     }
 
-    public function show(Codex $codex)
+    public function show(Codex $codex): null
     {
         $categories = CodexSongCategory::query()->whereHas('songs', function ($q) use ($codex) {
             $q->whereHas('codices', function ($q) use ($codex) {
@@ -170,7 +174,7 @@ class CodexController extends Controller
                         }
 
                         $count += 1;
-                        $pdf->Cell($bulletListIndent, $textHeight, $count.'.');
+                        $pdf->Cell($bulletListIndent, $textHeight, $count . '.');
                     } else {
                         $count = 0;
                     }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\MenuItem;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -17,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Model::preventLazyLoading(!app()->isProduction());
+        
         Paginator::useBootstrapFive();
 
         view()->composer('*', function ($view) {
@@ -24,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('website.navbar', static function ($view) {
-            $menuItems = Cache::rememberForever('website.navbar', static fn () => MenuItem::query()->whereNull('parent')->orderBy('order')->with('page')->with('children')->get());
+            $menuItems = Cache::rememberForever('website.navbar', static fn() => MenuItem::query()->whereNull('parent')->orderBy('order')->with('page')->with('children')->get());
             $view->with('menuItems', $menuItems);
         });
 
@@ -46,5 +50,7 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     #[Override]
-    public function register() {}
+    public function register()
+    {
+    }
 }

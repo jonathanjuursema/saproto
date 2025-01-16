@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\CodexSongCategory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use View;
 
 class CodexSongCategoryController extends Controller
 {
-    public function index() {}
+    public function index()
+    {
+    }
 
-    public function create()
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\View\View
     {
         return view('codex.song-category-edit', ['category' => null]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -28,14 +32,16 @@ class CodexSongCategoryController extends Controller
         return Redirect::route('codex.index');
     }
 
-    public function show($id) {}
+    public function show($id)
+    {
+    }
 
-    public function edit(CodexSongCategory $codexSongCategory)
+    public function edit(CodexSongCategory $codexSongCategory): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\View\View
     {
         return view('codex.song-category-edit', ['category' => $codexSongCategory]);
     }
 
-    public function update(Request $request, CodexSongCategory $codexSongCategory)
+    public function update(Request $request, CodexSongCategory $codexSongCategory): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -47,7 +53,7 @@ class CodexSongCategoryController extends Controller
         return Redirect::route('codex.index');
     }
 
-    public function destroy(CodexSongCategory $codexSongCategory)
+    public function destroy(CodexSongCategory $codexSongCategory): RedirectResponse
     {
         $codexSongCategory->songs()->delete();
         $codexSongCategory->delete();

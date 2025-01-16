@@ -33,7 +33,7 @@ class QueryController extends Controller
             $end = strtotime($request->end) + 86399; // Add one day to make it inclusive.
         }
 
-        $events = Event::with(['activity', 'activity.users', 'activity.helpingCommitteeInstances'])
+        $events = Event::with(['activity', 'activity.users', 'activity.backupUsers', 'activity.helpingCommitteeInstances', 'committee'])
             ->where('start', '>=', $start)->where('end', '<=', $end)
             ->orderBy('start')->get();
 
@@ -82,9 +82,9 @@ class QueryController extends Controller
             ->groupBy('membership_type')
             ->get()
             /** @phpstan-ignore-next-line */
-            ->keyBy(fn ($item) => $item->membership_type->value)->map(fn ($item) => $item->count);
+            ->keyBy(fn($item) => $item->membership_type->value)->map(fn($item) => $item->count);
 
-        $count_total = $count_per_type->reject(static fn ($value, $key): bool => in_array($key, [MembershipTypeEnum::PENDING->value, MembershipTypeEnum::PET->value]))->sum();
+        $count_total = $count_per_type->reject(static fn($value, $key): bool => in_array($key, [MembershipTypeEnum::PENDING->value, MembershipTypeEnum::PET->value]))->sum();
 
         $count_active = $activeUserQuery->count();
 
